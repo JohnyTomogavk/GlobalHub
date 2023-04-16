@@ -73,11 +73,6 @@ module.exports = {
                 type: mode === 'production' ? 'asset' : 'asset/resource',
             },
             {
-                test: /\.jsx?$/,
-                exclude: /node_modules/,
-                loader: 'babel-loader',
-            },
-            {
                 test: /\.ts(x?)$/,
                 use: 'ts-loader',
                 exclude: /node_modules/,
