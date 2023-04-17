@@ -10,7 +10,7 @@
     "clean": "rd /s /q dist",
     "lint": "eslint src/**/*.{js,jsx,ts,tsx,json}",
     "lint:fix": "eslint --fix src/**/*.{js,jsx,ts,tsx,json}",
-    "prettier": "prettier --config .prettierrc.json --write \"src/**/*.{js,jsx,ts,tsx,css,md,json}\""
+    "prettier": "prettier --config .prettierrc --write \"src/**/*.{js,jsx,ts,tsx,css,md,json}\""
   },
   "keywords": [],
   "author": "",
@@ -26,6 +26,7 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "html-loader": "^4.2.0",
     "html-webpack-plugin": "^5.5.0",
     "mini-css-extract-plugin": "^2.7.5",
