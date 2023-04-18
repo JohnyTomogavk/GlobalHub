@@ -29,8 +29,8 @@ const plugins = [
     template: './src/index.html',
   }),
   new MiniCssExtractPlugin({
-    filename: isDevMode ? '[name].css' : '[name].[contenthash].css',
-    chunkFilename: isDevMode ? '[id].css' : '[id].[contenthash].css',
+    filename: isDevMode() ? '[name].css' : '[name].[contenthash].css',
+    chunkFilename: isDevMode() ? '[id].css' : '[id].[contenthash].css',
   }),
 ];
 
@@ -54,28 +54,44 @@ module.exports = {
     hot: true,
   },
   module: {
+    strictExportPresence: true,
     rules: [
       {
         test: /\.(html)$/,
         use: ['html-loader'],
       },
       {
-        test: /\.(sa|sc|c)ss$/,
+        test: /\.ts(x?)$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.s[ac]ss$/i,
         use: [
           MiniCssExtractPlugin.loader,
-          'css-loader',
-          'postcss-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true,
+              modules: {
+                mode: 'local',
+                auto: true,
+                localIdentName: isDevMode()
+                  ? '[name]__[local]--[hash:base64:5]'
+                  : '[hash:base64]',
+              },
+            },
+          },
           'sass-loader',
         ],
       },
       {
         test: /\.(png|jpe?g|gif|svg|webp|ico)$/i,
         type: mode === 'production' ? 'asset' : 'asset/resource',
-      },
-      {
-        test: /\.ts(x?)$/,
-        use: 'ts-loader',
-        exclude: /node_modules/,
       },
     ],
   },

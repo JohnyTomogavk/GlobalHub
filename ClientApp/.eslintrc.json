@@ -36,11 +36,11 @@
     "comma-dangle": [
       "error",
       {
-        "arrays": "never",
-        "objects": "always",
-        "imports": "never",
-        "exports": "never",
-        "functions": "never"
+        "arrays": "always-multiline",
+        "exports": "always-multiline",
+        "functions": "never",
+        "imports": "always-multiline",
+        "objects": "always-multiline"
       }
     ],
     "jsx-quotes": [
@@ -71,6 +71,8 @@
           1
         ]
       }
-    ]
+    ],
+    "@typescript-eslint/explicit-function-return-type": "error",
+    "no-console": "error"
   }
 }

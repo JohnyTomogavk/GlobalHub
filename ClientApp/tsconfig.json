@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "experimentalDecorators": true,
+    "baseUrl": ".",
     "target": "es5",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
-    "allowJs": true,
+    "allowJs": false,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -17,14 +17,11 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": false,
-    "jsx": "react",
-    "typeRoots": [
-      "node_modules/@types",
-      "./src/typings"
-    ]
+    "noEmitOnError": true,
+    "jsx": "react-jsx",
+    "sourceMap": true
   },
-  "include": [
-    "src"
+  "exclude": [
+    "node_modules"
   ]
 }
