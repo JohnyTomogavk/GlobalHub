@@ -1,7 +1,7 @@
 import '../styles/main.scss';
 import React, { useState } from 'react';
 
-function App() {
+function App() :React.FC {
   const [state, setState] = useState(0);
   setState(state + 1);
 
