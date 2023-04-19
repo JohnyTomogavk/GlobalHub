@@ -24,5 +24,7 @@ jobs:
 
     - name: Build
       run: |
+        cd ClientApp
         npm install
         npx webpack
+        npm run lint
