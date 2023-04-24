@@ -1,9 +1,21 @@
-import { Avatar, Badge, Button, Popover, Space } from 'antd';
-import { BellOutlined } from '@ant-design/icons';
+import type { MenuProps } from 'antd';
+import { Avatar, Badge, Button, Dropdown, Popover } from 'antd';
+import { BellOutlined, TranslationOutlined } from '@ant-design/icons';
 import styles from './UserToolBar.module.scss';
 import React from 'react';
-import { NotificationPopover } from '../notificationPopover/NotificationPopover';
 import userIcon from '/assets/png1.png';
+import NotificationPopover from '../notificationPopover/NotificationPopover';
+
+const items: MenuProps['items'] = [
+  {
+    key: '1',
+    label: <span>English</span>,
+  },
+  {
+    key: '2',
+    label: <span>Russian</span>,
+  },
+];
 
 const UserToolBar = (): JSX.Element => {
   const userName = 'Johny Tomogavk';
@@ -24,10 +36,21 @@ const UserToolBar = (): JSX.Element => {
           <Button icon={<BellOutlined />}></Button>
         </Badge>
       </Popover>
-      <Space>
-        <Avatar src={userIcon} shape={'square'} />
-        <span className={styles.userName}>{userName}</span>
-      </Space>
+
+      <Dropdown
+        trigger={['click']}
+        arrow={true}
+        menu={{
+          items,
+          selectable: true,
+          defaultSelectedKeys: ['1'],
+        }}
+      >
+        <Button type={'default'} icon={<TranslationOutlined />} />
+      </Dropdown>
+
+      <Avatar src={userIcon} shape={'square'} />
+      <span className={styles.userName}>{userName}</span>
     </div>
   );
 };

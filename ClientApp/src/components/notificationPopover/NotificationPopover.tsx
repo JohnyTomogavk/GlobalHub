@@ -76,25 +76,21 @@ const data = [
   },
 ];
 
-export const NotificationPopover = (): JSX.Element => {
-  return (
-    <List
-      itemLayout="horizontal"
-      dataSource={data}
-      renderItem={(item, index): JSX.Element => (
-        <List.Item>
-          <List.Item.Meta
-            avatar={
-              <Avatar
-                src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`}
-              />
-            }
-            title={<a href="https://ant.design">{item.title}</a>}
-            description="Ant Design, a design language for
+const NotificationPopover = (): JSX.Element => (
+  <List
+    itemLayout="horizontal"
+    dataSource={data}
+    renderItem={(item, index): JSX.Element => (
+      <List.Item>
+        <List.Item.Meta
+          avatar={<Avatar />}
+          title={`${item.title} - ${index}`}
+          description="Ant Design, a design language for
             background applications, is refined by Ant UED Team"
-          />
-        </List.Item>
-      )}
-    />
-  );
-};
+        />
+      </List.Item>
+    )}
+  />
+);
+
+export default NotificationPopover;

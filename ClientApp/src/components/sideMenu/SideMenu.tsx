@@ -2,11 +2,13 @@ import React from 'react';
 import Title from 'antd/es/typography/Title';
 import { Divider, Menu, MenuProps, Space } from 'antd';
 import {
+  CheckOutlined,
   DesktopOutlined,
-  FileOutlined,
   GlobalOutlined,
+  LogoutOutlined,
   PieChartOutlined,
-  TeamOutlined,
+  ProfileOutlined,
+  SettingOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import Sider from 'antd/es/layout/Sider';
@@ -31,44 +33,45 @@ function getItem(
 const items: MenuItem[] = [
   getItem('Dashboard', '1', <PieChartOutlined />),
   getItem('Budgets', '2', <DesktopOutlined />),
-  getItem('Notes', 'sub1', <UserOutlined />, [
-    getItem('Note 1', '3'),
+  getItem('Notes', 'notes', <UserOutlined />, [
+    getItem('Note to customer', '3'),
     getItem('Shopping list', '4'),
     getItem('University disciplines todo', '5'),
   ]),
-  getItem('Reports', 'sub2', <TeamOutlined />, [
-    getItem('Monthly budget report', '6'),
+  getItem('Tasks', '6', <CheckOutlined />),
+  getItem('Reports', 'Reports', <PieChartOutlined />, [
+    getItem('Monthly budget report', '7'),
   ]),
-  getItem('Tasks', '9', <FileOutlined />),
+  getItem('Profile', '8', <ProfileOutlined />),
+  getItem('Settings', '9', <SettingOutlined />),
+  getItem('Logout', '10', <LogoutOutlined />),
 ];
 
-export const SideMenu = (): JSX.Element => {
-  return (
-    <Sider className={styles.siderContainer} theme={'light'}>
-      <div className={styles.systemLogo}>
-        <Title
-          style={{
-            margin: 0,
-          }}
-          level={3}
-        >
-          <Space>
-            <GlobalOutlined />
-            <span>Global Hub</span>
-          </Space>
-        </Title>
-      </div>
-      <Divider
+export const SideMenu = (): JSX.Element => (
+  <Sider className={styles.siderContainer} theme={'light'}>
+    <div className={styles.systemLogo}>
+      <Title
         style={{
-          margin: '0',
+          margin: 0,
         }}
-      />
-      <Menu
-        theme="light"
-        defaultSelectedKeys={['1']}
-        mode="inline"
-        items={items}
-      />
-    </Sider>
-  );
-};
+        level={3}
+      >
+        <Space>
+          <GlobalOutlined />
+          <span>Global Hub</span>
+        </Space>
+      </Title>
+    </div>
+    <Divider
+      style={{
+        margin: '0',
+      }}
+    />
+    <Menu
+      theme="light"
+      defaultSelectedKeys={['1']}
+      mode="inline"
+      items={items}
+    />
+  </Sider>
+);

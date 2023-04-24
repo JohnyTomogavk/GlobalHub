@@ -5,6 +5,7 @@ import AppHeader from '../header/Header';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { SideMenu } from '../sideMenu/SideMenu';
 import styles from './App.module.scss';
+import Title from 'antd/es/typography/Title';
 
 const { Content } = Layout;
 
@@ -14,7 +15,7 @@ const App: React.FC = () => {
   } = theme.useToken();
 
   return (
-    <Layout hasSider>
+    <Layout>
       <PanelGroup direction={'horizontal'}>
         <Panel minSize={15} maxSize={40} defaultSize={15}>
           <Affix offsetTop={0}>
@@ -54,10 +55,12 @@ const App: React.FC = () => {
                   background: colorBgContainer,
                 }}
               >
+                <Title level={2}>New topic</Title>
                 {Array.from({ length: 100 }, (_, index) => (
                   <React.Fragment key={index}>
-                    {index % 20 === 0 && index ? 'more' : '...'}
-                    <br />
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                    At, nulla, veniam. Amet aspernatur atque cupiditate magni
+                    necessitatibus placeat repellendus sunt! br
                   </React.Fragment>
                 ))}
               </div>

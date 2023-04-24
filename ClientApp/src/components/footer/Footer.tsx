@@ -2,8 +2,8 @@ import React from 'react';
 import { Footer } from 'antd/es/layout/layout';
 import styles from './Footer.module.scss';
 
-export const AppFooter = (): JSX.Element => (
-  <Footer className={styles.footer}>
-    ©2023 Tomogavk Ltd. | All Rights Reserved
-  </Footer>
-);
+export const AppFooter = (): JSX.Element => {
+  const copyright = '©2023 Tomogavk Solutions | All Rights Reserved';
+
+  return <Footer className={styles.footer}>{copyright}</Footer>;
+};
