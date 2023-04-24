@@ -1,0 +1,13 @@
+.siderContainer {
+  height: 100vh;
+  max-width: none !important;
+  width: 100% !important;
+
+  div.systemLogo {
+    height: 3rem;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
