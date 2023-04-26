@@ -1,5 +1,5 @@
 import React from 'react';
-import { Affix, Breadcrumb, Layout, theme } from 'antd';
+import { Affix, Breadcrumb, Layout } from 'antd';
 import { AppFooter } from '../footer/Footer';
 import AppHeader from '../header/Header';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
@@ -10,10 +10,6 @@ import Title from 'antd/es/typography/Title';
 const { Content } = Layout;
 
 const App: React.FC = () => {
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
-
   return (
     <Layout>
       <PanelGroup direction={'horizontal'}>
@@ -26,11 +22,7 @@ const App: React.FC = () => {
         <Panel minSize={60} maxSize={90} defaultSize={85}>
           <Layout>
             <AppHeader />
-            <Content
-              style={{
-                margin: '0 16px',
-              }}
-            >
+            <Content className={styles.contentWrapper}>
               <Breadcrumb
                 items={[
                   {
@@ -46,15 +38,9 @@ const App: React.FC = () => {
                     title: 'An Application',
                   },
                 ]}
-                style={{ margin: '16px 0' }}
+                className={styles.breadCrumps}
               ></Breadcrumb>
-              <div
-                style={{
-                  padding: 24,
-                  minHeight: 360,
-                  background: colorBgContainer,
-                }}
-              >
+              <div className={styles.contentContainer}>
                 <Title level={2}>New topic</Title>
                 {Array.from({ length: 100 }, (_, index) => (
                   <React.Fragment key={index}>

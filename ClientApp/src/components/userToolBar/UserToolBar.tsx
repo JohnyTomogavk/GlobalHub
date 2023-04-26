@@ -26,10 +26,7 @@ const UserToolBar = (): JSX.Element => {
         title={<span>Notifications</span>}
         content={<NotificationPopover />}
         trigger="click"
-        overlayStyle={{
-          width: '400px',
-          height: '10rem',
-        }}
+        overlayClassName={styles.notificationOverlay}
         placement="bottomLeft"
       >
         <Badge size={'small'} count={4}>

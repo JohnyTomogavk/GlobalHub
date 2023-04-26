@@ -1,13 +1,19 @@
-.siderContainer {
+aside.siderContainer {
   height: 100vh;
-  max-width: none !important;
-  width: 100% !important;
 
-  div.systemLogo {
+  .systemLogo {
     height: 3rem;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgb(255 255 255 / 20%);
     display: flex;
     align-items: center;
     justify-content: center;
+
+    .title {
+      margin: 0
+    }
+  }
+
+  .menuDivider {
+    margin: 0;
   }
 }

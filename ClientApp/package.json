@@ -11,7 +11,7 @@
     "lint": "eslint src/**/*.{js,jsx,ts,tsx,json}",
     "lint:fix": "eslint --fix src/**/*.{js,jsx,ts,tsx,json}",
     "prettier": "prettier --config .prettierrc --write \"src/**/*.{js,jsx,ts,tsx,css,md,json}\"",
-    "lint:scss": "stylelint \"src/**/*.{css,scss}\" --config ./codeStyleConfigs/.stylelint-config"
+    "lint:scss": "stylelint \"src/**/*.{css,scss}\" --config .stylelintrc.json"
   },
   "keywords": [],
   "author": "",

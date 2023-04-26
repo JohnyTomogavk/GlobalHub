@@ -48,25 +48,16 @@ const items: MenuItem[] = [
 ];
 
 export const SideMenu = (): JSX.Element => (
-  <Sider className={styles.siderContainer} theme={'light'}>
+  <Sider width="100%" className={styles.siderContainer} theme="light">
     <div className={styles.systemLogo}>
-      <Title
-        style={{
-          margin: 0,
-        }}
-        level={3}
-      >
+      <Title className={styles.title} level={3}>
         <Space>
           <GlobalOutlined />
           <span>Global Hub</span>
         </Space>
       </Title>
     </div>
-    <Divider
-      style={{
-        margin: '0',
-      }}
-    />
+    <Divider className={styles.menuDivider} />
     <Menu
       theme="light"
       defaultSelectedKeys={['1']}
