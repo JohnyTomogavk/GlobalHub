@@ -1,5 +1,6 @@
 import React from 'react';
 import { Avatar, List } from 'antd';
+import styles from './NotificationPopover.module.scss';
 
 const data = [
   {
@@ -78,6 +79,7 @@ const data = [
 
 const NotificationPopover = (): JSX.Element => (
   <List
+    className={styles.notificationListContent}
     itemLayout="horizontal"
     dataSource={data}
     renderItem={(item, index): JSX.Element => (
