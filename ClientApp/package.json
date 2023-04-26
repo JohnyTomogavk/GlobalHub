@@ -10,7 +10,8 @@
     "clean": "rd /s /q dist",
     "lint": "eslint src/**/*.{js,jsx,ts,tsx,json}",
     "lint:fix": "eslint --fix src/**/*.{js,jsx,ts,tsx,json}",
-    "prettier": "prettier --config .prettierrc --write \"src/**/*.{js,jsx,ts,tsx,css,md,json}\""
+    "prettier": "prettier --config .prettierrc --write \"src/**/*.{js,jsx,ts,tsx,css,md,json}\"",
+    "lint:scss": "stylelint \"src/**/*.{css,scss}\" --config .stylelintrc.json"
   },
   "keywords": [],
   "author": "",
@@ -36,6 +37,10 @@
     "sass": "^1.62.0",
     "sass-loader": "^13.2.2",
     "style-loader": "^3.3.2",
+    "stylelint": "^15.6.0",
+    "stylelint-config-recommended-scss": "^10.0.0",
+    "stylelint-config-standard": "^33.0.0",
+    "stylelint-config-standard-scss": "^8.0.0",
     "ts-loader": "^9.4.2",
     "typescript": "^5.0.4",
     "webpack": "^5.79.0",
@@ -43,8 +48,10 @@
     "webpack-dev-server": "^4.13.2"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.0.1",
     "antd": "^5.4.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-resizable-panels": "^0.0.41"
   }
 }

@@ -1,0 +1,13 @@
+.headerWrapper {
+  max-width: unset;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 3rem;
+  line-height: 3rem;
+
+  .autocomplete input {
+    width: 20rem;
+  }
+}

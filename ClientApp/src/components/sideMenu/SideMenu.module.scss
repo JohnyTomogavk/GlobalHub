@@ -1,0 +1,19 @@
+aside.siderContainer {
+  height: 100vh;
+
+  .systemLogo {
+    height: 3rem;
+    background: rgb(255 255 255 / 20%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .title {
+      margin: 0
+    }
+  }
+
+  .menuDivider {
+    margin: 0;
+  }
+}

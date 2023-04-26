@@ -48,10 +48,10 @@
       "prefer-double"
     ],
     "max-len": [
-      "error",
+      "warn",
       {
-        "code": 80,
-        "ignoreUrls": true
+        "code": 120,
+        "ignorePattern": "^import"
       }
     ],
     "padding-line-between-statements": [
@@ -73,6 +73,108 @@
       }
     ],
     "@typescript-eslint/explicit-function-return-type": "error",
-    "no-console": "error"
+    "no-console": "error",
+    "operator-linebreak": [
+      "error",
+      "before",
+      {
+        "overrides": {
+          "=": "after"
+        }
+      }
+    ],
+    "spaced-comment": [
+      "error",
+      "always",
+      {
+        "markers": [
+          "/"
+        ]
+      }
+    ],
+    "semi": "error",
+    "no-trailing-spaces": "error",
+    "no-undef-init": "error",
+    "no-var": "error",
+    "no-underscore-dangle": "error",
+    "no-restricted-imports": "error",
+    "no-debugger": "error",
+    "no-empty": "off",
+    "no-empty-function": "off",
+    "no-eval": "error",
+    "no-fallthrough": "error",
+    "no-bitwise": "error",
+    "no-caller": "error",
+    "no-extra-semi": "error",
+    "indent": "off",
+    "@typescript-eslint/keyword-spacing": "error",
+    "brace-style": [
+      "error",
+      "1tbs"
+    ],
+    "arrow-body-style": "error",
+    "@typescript-eslint/unified-signatures": "error",
+    "space-before-blocks": "error",
+    "@typescript-eslint/quotes": [
+      "error",
+      "single"
+    ],
+    "@typescript-eslint/semi": [
+      "error",
+      "always"
+    ],
+    "@typescript-eslint/type-annotation-spacing": "error",
+    "@typescript-eslint/no-use-before-define": [
+      "error",
+      {
+        "classes": true
+      }
+    ],
+    "@typescript-eslint/prefer-function-type": "error",
+    "@typescript-eslint/member-ordering": [
+      "error",
+      {
+        "default": [
+          "signature",
+          "public-field",
+          "protected-field",
+          "private-field",
+          "public-constructor",
+          "protected-constructor",
+          "private-constructor",
+          "public-method",
+          "protected-method",
+          "private-method"
+        ]
+      }
+    ],
+    "@typescript-eslint/no-empty-interface": "error",
+    "@typescript-eslint/no-inferrable-types": [
+      "error",
+      {
+        "ignoreParameters": true
+      }
+    ],
+    "@typescript-eslint/no-misused-new": "error",
+    "@typescript-eslint/no-non-null-assertion": "error",
+    "@typescript-eslint/no-shadow": [
+      "error",
+      {
+        "hoist": "all"
+      }
+    ],
+    "@typescript-eslint/no-unused-expressions": [
+      "error",
+      {
+        "allowTernary": true
+      }
+    ],
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ]
   }
 }

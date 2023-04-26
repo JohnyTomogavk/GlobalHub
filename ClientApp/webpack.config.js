@@ -26,7 +26,8 @@ const optimization = {
 const plugins = [
   new HtmlWebpackPlugin({
     filename: 'index.html',
-    template: './src/index.html',
+    template: 'public/index.html',
+    favicon: 'public/favicon.png',
   }),
   new MiniCssExtractPlugin({
     filename: isDevMode() ? '[name].css' : '[name].[contenthash].css',
@@ -70,7 +71,7 @@ module.exports = {
         use: ['style-loader', 'css-loader'],
       },
       {
-        test: /\.s[ac]ss$/i,
+        test: /\.module.s[ac]ss$/i,
         use: [
           MiniCssExtractPlugin.loader,
           {
