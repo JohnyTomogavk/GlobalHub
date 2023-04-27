@@ -1,0 +1,25 @@
+{
+  "HEADER": {
+    "LANGUAGES": {
+      "LANGUAGE": "Language",
+      "ENGLISH": "English",
+      "RUSSIAN": "Russian"
+    },
+    "SEARCH_PANEL": {
+      "TYPE_HERE": "Type here..."
+    },
+    "NOTIFICATION_POPOVER": {
+      "NOTIFICATIONS": "Notifications"
+    }
+  },
+  "SIDE_MENU": {
+    "DASHBOARD": "Dashboard",
+    "BUDGETS": "Budgets",
+    "NOTES": "Notes",
+    "TASKS": "Tasks",
+    "REPORTS": "Reports",
+    "PROFILE": "Profile",
+    "SETTINGS": "Settings",
+    "LOGOUT": "Sign out"
+  }
+}

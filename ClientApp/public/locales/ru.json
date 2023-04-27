@@ -1,0 +1,25 @@
+{
+  "HEADER": {
+    "LANGUAGES": {
+      "LANGUAGE": "Язык",
+      "ENGLISH": "Английский",
+      "RUSSIAN": "Русский"
+    },
+    "SEARCH_PANEL": {
+      "TYPE_HERE": "Введите ваше запрос..."
+    },
+    "NOTIFICATION_POPOVER": {
+      "NOTIFICATIONS": "Уведомления"
+    }
+  },
+  "SIDE_MENU": {
+    "DASHBOARD": "Дашборд",
+    "BUDGETS": "Финансы",
+    "NOTES": "Заметки",
+    "TASKS": "Задачи",
+    "REPORTS": "Отчеты",
+    "PROFILE": "Профиль",
+    "SETTINGS": "Настройки",
+    "LOGOUT": "Выйти"
+  }
+}

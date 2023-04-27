@@ -50,8 +50,10 @@
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
     "antd": "^5.4.2",
+    "i18next": "^22.4.15",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-i18next": "^12.2.2",
     "react-resizable-panels": "^0.0.41"
   }
 }
