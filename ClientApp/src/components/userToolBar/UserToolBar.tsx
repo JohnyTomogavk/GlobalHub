@@ -1,4 +1,3 @@
-import type { MenuProps } from 'antd';
 import { Avatar, Badge, Button, Dropdown, Popover, Typography } from 'antd';
 import { BellOutlined, TranslationOutlined } from '@ant-design/icons';
 import React from 'react';
@@ -8,6 +7,7 @@ import { EN, RU } from '../../constants/languages.constants';
 import { useTranslation } from 'react-i18next';
 import { i18n as i18n_type } from 'i18next';
 import styles from './UserToolBar.module.scss';
+import { SideMenuItem } from '../../models/sideMenu/menuItem';
 
 const { Text } = Typography;
 
@@ -19,7 +19,7 @@ const UserToolBar = (): JSX.Element => {
   const { i18n } = useTranslation();
   const { t } = i18n;
 
-  const languages: MenuProps['items'] = [
+  const languages: SideMenuItem[] = [
     {
       label: t('HEADER.LANGUAGES.LANGUAGE'),
       type: 'group',
