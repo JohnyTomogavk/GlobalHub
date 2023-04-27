@@ -3,6 +3,7 @@ import React from 'react';
 import App from './components/app/App';
 import { ConfigProvider, theme } from 'antd';
 import './services/localizationService';
+import { BrowserRouter } from 'react-router-dom';
 
 const root = ReactDOMClient.createRoot(
   document.querySelector('#root') as HTMLElement
@@ -18,7 +19,9 @@ const app: JSX.Element = (
         },
       }}
     >
-      <App />
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </ConfigProvider>
   </React.StrictMode>
 );
