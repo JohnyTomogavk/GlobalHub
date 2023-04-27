@@ -9,7 +9,9 @@
     "function-url-quotes": [
       "always",
       {
-        "except": ["empty"]
+        "except": [
+          "empty"
+        ]
       }
     ],
     "selector-attribute-quotes": "always",
@@ -31,14 +33,18 @@
     "selector-no-qualifying-type": [
       true,
       {
-        "ignore": ["class"]
+        "ignore": [
+          "class"
+        ]
       }
     ],
     "selector-max-universal": 0,
     "selector-type-no-unknown": [
       true,
       {
-        "ignore": ["custom-elements"]
+        "ignore": [
+          "custom-elements"
+        ]
       }
     ],
     "selector-pseudo-element-no-unknown": true,
@@ -48,7 +54,12 @@
     "shorthand-property-no-redundant-values": true,
     "declaration-block-semicolon-newline-after": "always",
     "block-closing-brace-newline-after": "always",
-    "rule-empty-line-before": ["always", {"ignore": "first-nested"}],
+    "rule-empty-line-before": [
+      "always",
+      {
+        "ignore": "first-nested"
+      }
+    ],
     "custom-property-empty-line-before": "always"
   }
 }

@@ -53,6 +53,7 @@ module.exports = {
   devServer: {
     static: './dist',
     hot: true,
+    historyApiFallback: true,
   },
   module: {
     strictExportPresence: true,
