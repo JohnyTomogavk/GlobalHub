@@ -1,0 +1,21 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{2E942728-1B61-448C-B823-BB9F3399D6B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotesService", "NotesService\NotesService.csproj", "{812734F2-DB92-4909-AC3A-B1D7B74188E4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{812734F2-DB92-4909-AC3A-B1D7B74188E4} = {2E942728-1B61-448C-B823-BB9F3399D6B8}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{812734F2-DB92-4909-AC3A-B1D7B74188E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{812734F2-DB92-4909-AC3A-B1D7B74188E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{812734F2-DB92-4909-AC3A-B1D7B74188E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{812734F2-DB92-4909-AC3A-B1D7B74188E4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
