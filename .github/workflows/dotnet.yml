@@ -23,7 +23,7 @@ jobs:
     - name: Navigate to backend directory
       run:  cd GlobalHub
     - name: Restore dependencies
-      run: dotnet restore
+      run: pwd && dotnet restore
     - name: Build
       run: dotnet build --no-restore
     - name: Test
