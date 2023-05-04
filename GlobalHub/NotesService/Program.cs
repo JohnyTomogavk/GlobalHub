@@ -1,15 +1,24 @@
+using NotesService.Config;
+using NotesService.Constants;
+using NotesService.Data.DbContext;
+using NotesService.Data.DbContext.Interfaces;
+using NotesService.Data.Repositories;
+using NotesService.Data.Repositories.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var notesDbConfigSection = builder.Configuration.GetSection(ConfigConstants.StorageConfigSectionName);
+builder.Services.Configure<NotesStoreConfig>(notesDbConfigSection);
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<INotesDbContext, NotesDbContext>();
+builder.Services.AddScoped<INotesRepository, NotesRepository>();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

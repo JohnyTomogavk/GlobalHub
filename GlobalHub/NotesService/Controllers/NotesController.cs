@@ -1,26 +1,41 @@
 using Microsoft.AspNetCore.Mvc;
-using NotesService.Models;
+using NotesService.Data.Repositories.Interfaces;
+using NotesService.Entities;
 
 namespace NotesService.Controllers;
 
+/// <summary>
+/// Controller that manages user's notes
+/// </summary>
 [ApiController]
-[Route("[controller]")]
+[Route("[controller]/[action]")]
 public class NotesController : ControllerBase
 {
-    private readonly ILogger<NotesController> _logger;
+    private readonly INotesRepository _notesRepository;
 
-    public NotesController(ILogger<NotesController> logger)
+    public NotesController(INotesRepository notesRepository)
     {
-        this._logger = logger;
+        _notesRepository = notesRepository;
     }
 
-    [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<Note> Get()
+    /// <summary>
+    /// Gets all notes
+    /// </summary>
+    /// <returns>Set that contains all notes from database</returns>
+    [HttpGet]
+    public IEnumerable<Note> GetAllNotes()
     {
-        return Enumerable.Range(1, 5).Select(index => new Note
-            {
-                CreationDate = default, UpdatedDate = default, Title = null, MarkdownContent = null
-            })
-            .ToArray();
+        var notes = _notesRepository.GetAll();
+        return notes;
+    }
+
+    /// <summary>
+    /// Creates new note
+    /// </summary>
+    /// <param name="note">New note that contains user's data</param>
+    [HttpPost]
+    public Note CreateNote(Note note)
+    {
+        return _notesRepository.Create(note);
     }
 }
