@@ -21,7 +21,9 @@ jobs:
       with:
         dotnet-version: 7.0.x
     - name: Navigate to backend directory
-      run: cd GlobalHub
+      run:  pwd
+            ls
+            cd GlobalHub
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
