@@ -26,7 +26,7 @@ jobs:
         dotnet-version: 7.0.x
     - run: pwd
     - name: Restore dependencies
-      run: pwd && ls && dotnet restore
+      run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
     - name: Test
