@@ -1,15 +1,23 @@
 import React from 'react';
 import { Header } from 'antd/es/layout/layout';
-import { AutoComplete, Input } from 'antd';
+import { AutoComplete, Input, theme } from 'antd';
 import UserToolBar from '../userToolBar/UserToolBar';
 import styles from './Header.module.scss';
 import { useTranslation } from 'react-i18next';
 
 const AppHeader = (): JSX.Element => {
   const { t } = useTranslation();
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
 
   return (
-    <Header className={styles.headerWrapper}>
+    <Header
+      style={{
+        background: colorBgContainer,
+      }}
+      className={styles.headerWrapper}
+    >
       <AutoComplete
         className={styles.autocomplete}
         dropdownMatchSelectWidth={500}

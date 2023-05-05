@@ -70,7 +70,7 @@ const UserToolBar = (): JSX.Element => {
       </Dropdown>
 
       <Avatar src={userIcon} shape={'square'} />
-      <span className={styles.userName}>{userName}</span>
+      <Text className={styles.userName}>{userName}</Text>
     </div>
   );
 };
