@@ -1,13 +1,12 @@
-import { Avatar, Badge, Button, Dropdown, Popover, Typography } from 'antd';
+import { Badge, Button, Dropdown, Popover, Typography } from 'antd';
 import { BellOutlined, TranslationOutlined } from '@ant-design/icons';
 import React from 'react';
-import userIcon from '/assets/png1.png';
 import NotificationPopover from '../notificationPopover/NotificationPopover';
-import { EN, RU } from '../../constants/languages.constants';
+import { EN, RU } from '../../../constants/languages.constants';
 import { useTranslation } from 'react-i18next';
 import { i18n as i18n_type } from 'i18next';
 import styles from './UserToolBar.module.scss';
-import { SideMenuItem } from '../../models/sideMenu/menuItem';
+import { SideMenuItem } from '../../../models/sideMenu/menuItem';
 
 const { Text } = Typography;
 
@@ -69,8 +68,9 @@ const UserToolBar = (): JSX.Element => {
         <Button type="default" icon={<TranslationOutlined />} />
       </Dropdown>
 
-      <Avatar src={userIcon} shape={'square'} />
-      <Text className={styles.userName}>{userName}</Text>
+      <Button type={'default'}>
+        <Text className={styles.userName}>{userName}</Text>
+      </Button>
     </div>
   );
 };

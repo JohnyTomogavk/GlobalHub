@@ -5,21 +5,18 @@ import {
   CheckOutlined,
   DollarOutlined,
   GlobalOutlined,
-  LogoutOutlined,
   PieChartOutlined,
   ReadOutlined,
-  SettingOutlined,
-  UserOutlined,
 } from '@ant-design/icons';
 import Sider from 'antd/es/layout/Sider';
 import styles from './SideMenu.module.scss';
 import { useTranslation } from 'react-i18next';
-import * as RoutingConstants from '../../constants/routingConstants';
+import * as RoutingConstants from '../../../constants/routingConstants';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { Link, useNavigate } from 'react-router-dom';
 import { NavigateFunction } from 'react-router/dist/lib/hooks';
-import { SideMenuItem } from '../../models/sideMenu/menuItem';
-import { MenuActionEvent } from '../../models/sideMenu/menuActionEvent';
+import { SideMenuItem } from '../../../models/sideMenu/menuItem';
+import { MenuActionEvent } from '../../../models/sideMenu/menuActionEvent';
 
 // TODO: consider to refactor this func
 const getMenuItem = (
@@ -78,14 +75,14 @@ export const SideMenu = (): JSX.Element => {
       false,
       [getMenuItem('Monthly budget report', '7')]
     ),
-    getMenuItem(t('SIDE_MENU.PROFILE'), '8', <UserOutlined />),
-    getMenuItem(t('SIDE_MENU.SETTINGS'), '9', <SettingOutlined />),
-    getMenuItem(
-      t('SIDE_MENU.LOGOUT'),
-      RoutingConstants.SIGN_OUT,
-      <LogoutOutlined />,
-      true
-    ),
+    // getMenuItem(t('SIDE_MENU.SETTINGS'), '9', <SettingOutlined />),
+    // getMenuItem(t('SIDE_MENU.PROFILE'), '8', <UserOutlined />),
+    // getMenuItem(
+    //   t('SIDE_MENU.LOGOUT'),
+    //   RoutingConstants.SIGN_OUT,
+    //   <LogoutOutlined />,
+    //   true
+    // ),
   ];
 
   const onPageSelected = (

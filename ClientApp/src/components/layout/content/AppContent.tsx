@@ -1,7 +1,7 @@
 import React from 'react';
 import { Breadcrumb } from 'antd';
 import styles from './AppContent.module.scss';
-import { AppRouter } from '../../router/AppRouter';
+import { AppRouter } from '../../../router/AppRouter';
 
 const breadCrumpsItems = [
   {
