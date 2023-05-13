@@ -1,7 +1,7 @@
 import React from 'react';
-import { Breadcrumb } from 'antd';
 import styles from './AppContent.module.scss';
 import { AppRouter } from '../../../router/AppRouter';
+import { Breadcrumb } from 'antd';
 
 const breadCrumpsItems = [
   {
@@ -17,11 +17,8 @@ const breadCrumpsItems = [
 
 export const AppContent = (): JSX.Element => (
   <>
-    <Breadcrumb
-      items={breadCrumpsItems}
-      className={styles.breadCrumps}
-    ></Breadcrumb>
-    <div className={styles.contentContainer}>
+    <Breadcrumb items={breadCrumpsItems} className={styles.breadCrumps}></Breadcrumb>
+    <div className={styles.pageContainer}>
       <AppRouter />
     </div>
   </>

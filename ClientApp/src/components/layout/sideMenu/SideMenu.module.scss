@@ -11,4 +11,16 @@
       margin: 0
     }
   }
+
+  .siderDivider {
+    margin-top: 0;
+  }
+}
+
+.sideMenuTree {
+  white-space: nowrap;
+  align-items: flex-start;
+  overflow: hidden;
+
+  // TOOD: Add ... if word in sideMenu breaks
 }

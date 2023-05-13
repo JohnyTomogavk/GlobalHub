@@ -18,15 +18,8 @@ const AppHeader = (): JSX.Element => {
       }}
       className={styles.headerWrapper}
     >
-      <AutoComplete
-        className={styles.autocomplete}
-        dropdownMatchSelectWidth={500}
-        options={[]}
-      >
-        <Input.Search
-          size="middle"
-          placeholder={t('HEADER.SEARCH_PANEL.TYPE_HERE').toString()}
-        />
+      <AutoComplete className={styles.autocomplete} dropdownMatchSelectWidth={500} options={[]}>
+        <Input.Search size="middle" placeholder={t('HEADER.SEARCH_PANEL.TYPE_HERE').toString()} />
       </AutoComplete>
       <UserToolBar />
     </Header>

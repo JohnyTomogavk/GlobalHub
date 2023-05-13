@@ -1,11 +1,11 @@
 import React from 'react';
 import { Affix, Layout } from 'antd';
-import { AppFooter } from '../footer/Footer';
-import AppHeader from '../header/Header';
+import { AppFooter } from '../layout/footer/Footer';
+import AppHeader from '../layout/header/Header';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
-import { SideMenu } from '../sideMenu/SideMenu';
+import { SideMenu } from '../layout/sideMenu/SideMenu';
 import styles from './App.module.scss';
-import { AppContent } from '../content/AppContent';
+import { AppContent } from '../layout/content/AppContent';
 
 const { Content } = Layout;
 
