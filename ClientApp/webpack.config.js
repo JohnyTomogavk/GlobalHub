@@ -45,6 +45,7 @@ module.exports = {
     extensions: ['.ts', '.tsx', '.js'],
   },
   output: {
+    publicPath: '/',
     path: path.resolve(__dirname, 'dist'),
     filename: 'index.[contenthash].js',
     assetModuleFilename: path.join('images', '[name].[contenthash][ext]'),

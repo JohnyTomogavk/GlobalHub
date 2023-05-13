@@ -10,9 +10,8 @@ export const BudgetComponent = (): JSX.Element => (
     {Array.from({ length: 100 }, (_, index) => (
       <React.Fragment key={index}>
         <Text>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. At, nulla,
-          veniam. Amet aspernatur atque cupiditate magni necessitatibus placeat
-          repellendus sunt! br
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. At, nulla, veniam. Amet aspernatur atque cupiditate
+          magni necessitatibus placeat repellendus sunt! br
         </Text>
       </React.Fragment>
     ))}
