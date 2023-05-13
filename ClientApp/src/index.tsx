@@ -5,25 +5,21 @@ import { ConfigProvider, theme } from 'antd';
 import './config/localizationConfigurator';
 import { BrowserRouter } from 'react-router-dom';
 
-const root = ReactDOMClient.createRoot(
-  document.querySelector('#root') as HTMLElement
-);
+const root = ReactDOMClient.createRoot(document.querySelector('#root') as HTMLElement);
 
 const app: JSX.Element = (
-  <React.StrictMode>
-    <ConfigProvider
-      theme={{
-        algorithm: [theme.defaultAlgorithm],
-        token: {
-          borderRadius: 0,
-        },
-      }}
-    >
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </ConfigProvider>
-  </React.StrictMode>
+  <ConfigProvider
+    theme={{
+      algorithm: [theme.defaultAlgorithm],
+      token: {
+        borderRadius: 0,
+      },
+    }}
+  >
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </ConfigProvider>
 );
 
 root.render(app);
