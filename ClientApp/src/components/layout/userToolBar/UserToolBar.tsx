@@ -1,13 +1,12 @@
-import { Avatar, Badge, Button, Dropdown, Popover, Typography } from 'antd';
+import { Badge, Button, Dropdown, Popover, Typography } from 'antd';
 import { BellOutlined, TranslationOutlined } from '@ant-design/icons';
 import React from 'react';
-import userIcon from '/assets/png1.png';
 import NotificationPopover from '../notificationPopover/NotificationPopover';
-import { EN, RU } from '../../constants/languages.constants';
+import { EN, RU } from '../../../constants/languagesConstants';
 import { useTranslation } from 'react-i18next';
 import { i18n as i18n_type } from 'i18next';
 import styles from './UserToolBar.module.scss';
-import { SideMenuItem } from '../../models/sideMenu/menuItem';
+import { antdMenuItem } from '../../../models/shared/antdMenuItem';
 
 const { Text } = Typography;
 
@@ -19,7 +18,7 @@ const UserToolBar = (): JSX.Element => {
   const { i18n } = useTranslation();
   const { t } = i18n;
 
-  const languages: SideMenuItem[] = [
+  const languages: antdMenuItem[] = [
     {
       label: t('HEADER.LANGUAGES.LANGUAGE'),
       type: 'group',
@@ -41,11 +40,7 @@ const UserToolBar = (): JSX.Element => {
   return (
     <div className={styles.headerToolbar}>
       <Popover
-        title={
-          <Text type="secondary">
-            {t('HEADER.NOTIFICATION_POPOVER.NOTIFICATIONS')}
-          </Text>
-        }
+        title={<Text type="secondary">{t('HEADER.NOTIFICATION_POPOVER.NOTIFICATIONS')}</Text>}
         content={<NotificationPopover />}
         trigger="click"
         overlayClassName={styles.notificationOverlay}
@@ -69,8 +64,9 @@ const UserToolBar = (): JSX.Element => {
         <Button type="default" icon={<TranslationOutlined />} />
       </Dropdown>
 
-      <Avatar src={userIcon} shape={'square'} />
-      <span className={styles.userName}>{userName}</span>
+      <Button danger type={'default'}>
+        {userName}
+      </Button>
     </div>
   );
 };

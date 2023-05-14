@@ -34,7 +34,8 @@
       true,
       {
         "ignore": [
-          "class"
+          "class",
+          "attribute"
         ]
       }
     ],
