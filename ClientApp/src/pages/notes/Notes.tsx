@@ -10,7 +10,6 @@ export const NotesComponent = (): JSX.Element => {
     holder: 'editorHolder',
     placeholder: 'Start typing your note here...',
     tools: EditorJsToolsConfig,
-    defaultBlock: 'Header',
     onReady(): void {
       new Undo({ editor });
     },

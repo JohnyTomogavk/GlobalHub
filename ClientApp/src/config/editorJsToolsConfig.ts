@@ -9,8 +9,8 @@ import ColorPlugin from 'editorjs-text-color-plugin';
 import Delimiter from 'codex.editor.delimiter';
 import InlineCode from 'codex.editor.inline-code';
 import CodeTool from 'codex.editor.code';
-import Quote from 'codex.editor.quote';
 import Alert from 'editorjs-alert';
+import AlignmentTuneTool from 'editorjs-text-alignment-blocktune';
 
 export const EditorJsToolsConfig = {
   table: {
@@ -25,10 +25,12 @@ export const EditorJsToolsConfig = {
   Header: {
     class: Header,
     inlineToolbar: true,
+    tunes: ['anyTuneAlignment'],
   },
   Checklist: {
     class: Checklist,
     inlineToolbar: true,
+    tunes: ['anyTuneAlignment'],
   },
   list: {
     class: NestedList,
@@ -71,14 +73,8 @@ export const EditorJsToolsConfig = {
   },
   Delimiter,
   InlineCode,
-  CodeTool,
-  quote: {
-    class: Quote,
-    inlineToolbar: true,
-    config: {
-      quotePlaceholder: 'Enter a quote',
-      captionPlaceholder: 'Quote author',
-    },
+  CodeTool: {
+    class: CodeTool,
   },
   alert: {
     class: Alert,
@@ -86,6 +82,16 @@ export const EditorJsToolsConfig = {
     config: {
       defaultType: 'primary',
       messagePlaceholder: 'Enter something',
+    },
+  },
+  anyTuneAlignment: {
+    class: AlignmentTuneTool,
+    config: {
+      default: 'left',
+      blocks: {
+        header: 'center',
+        list: 'right',
+      },
     },
   },
 };

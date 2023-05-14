@@ -23,8 +23,8 @@ const App: React.FC = () => (
           <AppHeader />
           <Content className={styles.contentWrapper}>
             <AppContent />
-            <AppFooter />
           </Content>
+          <AppFooter />
         </Layout>
       </Panel>
     </PanelGroup>
