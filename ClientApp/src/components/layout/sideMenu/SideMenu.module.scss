@@ -1,3 +1,4 @@
+
 .siderContainer {
   height: 100vh;
 
@@ -19,6 +20,45 @@
 
 .sideMenuTree {
   white-space: nowrap;
-  align-items: flex-start;
-  overflow: hidden;
+
+  span[title] {
+    overflow: hidden;
+
+    button {
+      overflow: hidden;
+    }
+  }
+}
+
+.sideMenuTopLevelItem {
+  .topLevelItem {
+    padding-right: 1.5rem;
+  }
+
+  .sideMenuItemTitleContainer {
+    display: inline-flex;
+    width: 100%;
+    justify-content: space-between;
+
+    .itemTitle {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sideMenuActionButton {
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      min-width: 24px;
+      display: none;
+
+      span {
+        height: 14px;
+      }
+    }
+  }
+
+  &:hover .sideMenuActionButton {
+    display: block;
+  }
 }

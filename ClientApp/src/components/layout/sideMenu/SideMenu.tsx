@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { MouseEventHandler, useState } from 'react';
 import Title from 'antd/es/typography/Title';
-import { Divider, Space, Tree } from 'antd';
+import { Button, Divider, Space, Tree } from 'antd';
 import {
   CheckOutlined,
   DashboardOutlined,
   DollarOutlined,
+  DownOutlined,
+  EllipsisOutlined,
   GlobalOutlined,
   PieChartOutlined,
+  PlusOutlined,
   ReadOutlined,
 } from '@ant-design/icons';
 import Sider from 'antd/es/layout/Sider';
@@ -18,13 +21,21 @@ import { getItemUrl } from '../../../helpers/urlHelper';
 import * as ResourceNameConstants from '../../../constants/resourceConstants';
 import styles from './SideMenu.module.scss';
 
-const sideMenuGroups = [
-  ResourceNameConstants.DASHBOARD_RESOURCE_NAME,
-  ResourceNameConstants.BUDGET_RESOURCE_NAME,
-  ResourceNameConstants.NOTE_RESOURCE_NAME,
-  ResourceNameConstants.TASK_RESOURCE_NAME,
-  ResourceNameConstants.REPORT_RESOURCE_NAME,
-];
+const getTopLevelItemTitleWithAddButton = (title: string, onClick?: MouseEventHandler): JSX.Element => (
+  <span className={[styles.sideMenuItemTitleContainer, styles.topLevelItem].join(' ')}>
+    <span className={styles.itemTitle}>{title}</span>
+    {onClick && (
+      <Button onClick={onClick} className={styles.sideMenuActionButton} size={'small'} icon={<PlusOutlined />} />
+    )}
+  </span>
+);
+
+const getItemWithActionButton = (title: string): JSX.Element => (
+  <span className={styles.sideMenuItemTitleContainer}>
+    <span className={styles.itemTitle}>{title}</span>
+    <Button className={styles.sideMenuActionButton} size={'small'} icon={<EllipsisOutlined />} />
+  </span>
+);
 
 export const SideMenu = (): JSX.Element => {
   const { t } = useTranslation();
@@ -32,13 +43,18 @@ export const SideMenu = (): JSX.Element => {
 
   const menuData: DataNode[] = [
     {
-      title: t('SIDE_MENU.DASHBOARD'),
+      title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.DASHBOARD')),
       key: ResourceNameConstants.DASHBOARD_RESOURCE_NAME,
       icon: <DashboardOutlined />,
-      isLeaf: true,
+      switcherIcon: <></>,
+      isLeaf: false,
     },
     {
-      title: t('SIDE_MENU.BUDGETS'),
+      className: styles.sideMenuTopLevelItem,
+      title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.BUDGETS'), (e): void => {
+        // TODO: Navigate to budget page and implement logic of creation there
+        e.stopPropagation();
+      }),
       key: getItemUrl(ResourceNameConstants.BUDGET_RESOURCE_NAME),
       icon: <DollarOutlined />,
       isLeaf: false,
@@ -54,18 +70,27 @@ export const SideMenu = (): JSX.Element => {
       ],
     },
     {
-      title: t('SIDE_MENU.NOTES'),
+      className: styles.sideMenuTopLevelItem,
+      title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.NOTES'), (e): void => {
+        // TODO: Navigate to note page and implement logic of creation there
+        e.stopPropagation();
+      }),
       key: getItemUrl(ResourceNameConstants.NOTE_RESOURCE_NAME),
       icon: <ReadOutlined />,
       children: [
         {
-          title: 'Note 1: Some notes just for example',
+          className: styles.sideMenuTopLevelItem,
+          title: getItemWithActionButton('Note 1: Some notes just for example'),
           key: getItemUrl(ResourceNameConstants.NOTE_RESOURCE_NAME, 'Note1'),
         },
       ],
     },
     {
-      title: t('SIDE_MENU.TASKS'),
+      className: styles.sideMenuTopLevelItem,
+      title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.TASKS'), (e): void => {
+        // TODO: Navigate to tasks page and implement logic of creation there
+        e.stopPropagation();
+      }),
       key: getItemUrl(ResourceNameConstants.TASK_RESOURCE_NAME),
       icon: <CheckOutlined />,
       children: [
@@ -80,7 +105,7 @@ export const SideMenu = (): JSX.Element => {
       ],
     },
     {
-      title: t('SIDE_MENU.REPORTS'),
+      title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.REPORTS')),
       key: getItemUrl(ResourceNameConstants.REPORT_RESOURCE_NAME),
       icon: <PieChartOutlined />,
       isLeaf: false,
@@ -116,8 +141,9 @@ export const SideMenu = (): JSX.Element => {
       </div>
       <Divider className={styles.siderDivider} />
       <Tree
+        switcherIcon={<DownOutlined />}
+        showLine
         showIcon
-        draggable={(item: DataNode): boolean => !sideMenuGroups.includes(item.key.toString())}
         onSelect={(selectedKeys: Key[]): void => {
           onPageSelected(selectedKeys);
         }}
