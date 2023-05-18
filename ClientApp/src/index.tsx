@@ -3,6 +3,7 @@ import React from 'react';
 import App from './components/app/App';
 import { ConfigProvider, theme } from 'antd';
 import './config/localizationConfigurator';
+import './config/relativeDateConfig';
 import { BrowserRouter } from 'react-router-dom';
 
 const root = ReactDOMClient.createRoot(document.querySelector('#root') as HTMLElement);

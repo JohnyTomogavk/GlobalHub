@@ -19,9 +19,9 @@ const App: React.FC = () => (
       </Panel>
       <PanelResizeHandle className={styles.resizeHandle} />
       <Panel minSize={60} maxSize={90} defaultSize={85}>
+        <AppHeader />
         <Layout>
-          <AppHeader />
-          <Content className={styles.contentWrapper}>
+          <Content>
             <AppContent />
           </Content>
           <AppFooter />
