@@ -1,5 +1,5 @@
 @use "src/styles.module" as *;
 
-.content {
-  @include page-content;
+.pageContent {
+  @include page-content-base;
 }

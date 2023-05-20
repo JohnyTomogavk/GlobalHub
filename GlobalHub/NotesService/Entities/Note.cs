@@ -3,7 +3,6 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace NotesService.Entities;
 
-// TODO: Add createdBy and updatedBy fields
 /// <summary>
 /// Entity that represents user's note in Markdown format
 /// </summary>
@@ -19,12 +18,17 @@ public class Note
     /// <summary>
     /// Date and time when the note was created
     /// </summary>
-    public DateTime CreationDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
     /// <summary>
     /// Date and time when the note was created
     /// </summary>
     public DateTime? UpdatedDate { get; set; } = null;
+
+    /// <summary>
+    /// Used Id of user that created the note
+    /// </summary>
+    public string? CreatedBy { get; set; }
 
     /// <summary>
     /// Note's title
@@ -34,5 +38,5 @@ public class Note
     /// <summary>
     /// Note's content in Markdown format
     /// </summary>
-    public string MarkdownContent { get; set; } = string.Empty;
+    public string RichTextContent { get; set; } = "{}";
 }

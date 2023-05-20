@@ -4,25 +4,16 @@ import React from 'react';
 import styles from './itemInfoHeader.module.scss';
 import { LoadingOutlined } from '@ant-design/icons';
 import ReactTimeAgo from 'react-time-ago';
+import { NOTE_TITLE_PLACEHOLDER } from '../../constants/notesConstants';
 
 const { Text } = Typography;
 
-const breadCrumbsItems = [
-  {
-    title: 'Budgets',
-  },
-  {
-    title: <a href="">My Own Budget</a>,
-  },
-  {
-    title: <a href="">Inner budget</a>,
-  },
-];
-
 interface IItemInfoSubHeader {
-  isLoading?: boolean;
+  isLoading: boolean;
+  itemTitle?: string;
+  setNoteTitle: (chagnedTitle: string) => void;
   lastEdited?: Date;
-  breadCrumpsItems?: { title: string }[];
+  breadCrumpsItems: ({ title: string } | { title: JSX.Element })[];
 }
 
 export const ItemInfoSubHeader = (props: IItemInfoSubHeader): JSX.Element => {
@@ -38,15 +29,25 @@ export const ItemInfoSubHeader = (props: IItemInfoSubHeader): JSX.Element => {
           background: colorBgContainer,
         }}
       >
-        <Breadcrumb items={breadCrumbsItems}></Breadcrumb>
+        <Breadcrumb items={props.breadCrumpsItems}></Breadcrumb>
         <Text
-          editable={{ triggerType: ['text', 'icon'] }}
+          editable={{
+            triggerType: ['text', 'icon'],
+            text: props.itemTitle,
+            onChange: (changedTitle: string) => props.setNoteTitle(changedTitle),
+            autoSize: {
+              minRows: 1,
+              maxRows: 1,
+            },
+            tooltip: props.itemTitle,
+          }}
+          ellipsis
           strong
           className={styles.itemTitle}
           inputMode={'text'}
-          placeholder={'Untitled'}
+          placeholder={NOTE_TITLE_PLACEHOLDER}
         >
-          Note 1: Some notes just for example
+          {props.itemTitle}
         </Text>
         <Text className={styles.itemSaveStatus} type={'secondary'}>
           {props.isLoading ? (
@@ -57,7 +58,11 @@ export const ItemInfoSubHeader = (props: IItemInfoSubHeader): JSX.Element => {
           ) : (
             <>
               <span>Edited </span>
-              <ReactTimeAgo date={new Date()} timeStyle={'round-minute'} locale={'en'} />
+              <ReactTimeAgo
+                date={props.lastEdited ? new Date(props.lastEdited) : new Date()}
+                timeStyle={'round-minute'}
+                locale={'en'}
+              />
             </>
           )}
         </Text>

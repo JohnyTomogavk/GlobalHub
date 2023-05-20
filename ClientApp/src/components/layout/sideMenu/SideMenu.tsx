@@ -17,9 +17,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import type { DataNode } from 'antd/es/tree';
 import { useTranslation } from 'react-i18next';
 import { Key } from 'antd/lib/table/interface';
-import { getItemUrl } from '../../../helpers/urlHelper';
+import { getClienItemtUrl } from '../../../helpers/urlHelper';
 import * as ResourceNameConstants from '../../../constants/resourceConstants';
+import { NOTE_RESOURCE_NAME } from '../../../constants/resourceConstants';
 import styles from './SideMenu.module.scss';
+import { createNote } from '../../../api/noteService';
+import { NOTE_TITLE_PLACEHOLDER } from '../../../constants/notesConstants';
 
 const getTopLevelItemTitleWithAddButton = (title: string, onClick?: MouseEventHandler): JSX.Element => (
   <span className={[styles.sideMenuItemTitleContainer, styles.topLevelItem].join(' ')}>
@@ -55,33 +58,40 @@ export const SideMenu = (): JSX.Element => {
         // TODO: Navigate to budget page and implement logic of creation there
         e.stopPropagation();
       }),
-      key: getItemUrl(ResourceNameConstants.BUDGET_RESOURCE_NAME),
+      key: getClienItemtUrl(ResourceNameConstants.BUDGET_RESOURCE_NAME),
       icon: <DollarOutlined />,
       isLeaf: false,
       children: [
         {
           title: 'Budget 1',
-          key: getItemUrl(ResourceNameConstants.BUDGET_RESOURCE_NAME, 'Budget1'),
+          key: getClienItemtUrl(ResourceNameConstants.BUDGET_RESOURCE_NAME, 'Budget1'),
         },
         {
           title: 'Budget 2',
-          key: getItemUrl(ResourceNameConstants.BUDGET_RESOURCE_NAME, 'Budget2'),
+          key: getClienItemtUrl(ResourceNameConstants.BUDGET_RESOURCE_NAME, 'Budget2'),
         },
       ],
     },
     {
       className: styles.sideMenuTopLevelItem,
       title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.NOTES'), (e): void => {
-        // TODO: Navigate to note page and implement logic of creation there
+        createNote({
+          title: NOTE_TITLE_PLACEHOLDER,
+        }).then((newNote) => {
+          const newNoteId = newNote.data;
+          const newNoteUrl = getClienItemtUrl(NOTE_RESOURCE_NAME, newNoteId);
+
+          navigation(newNoteUrl);
+        });
         e.stopPropagation();
       }),
-      key: getItemUrl(ResourceNameConstants.NOTE_RESOURCE_NAME),
+      key: getClienItemtUrl(ResourceNameConstants.NOTE_RESOURCE_NAME),
       icon: <ReadOutlined />,
       children: [
         {
           className: styles.sideMenuTopLevelItem,
           title: getItemWithActionButton('Note 1: Some notes just for example'),
-          key: getItemUrl(ResourceNameConstants.NOTE_RESOURCE_NAME, 'Note1'),
+          key: getClienItemtUrl(ResourceNameConstants.NOTE_RESOURCE_NAME, 'Note1'),
         },
       ],
     },
@@ -91,22 +101,22 @@ export const SideMenu = (): JSX.Element => {
         // TODO: Navigate to tasks page and implement logic of creation there
         e.stopPropagation();
       }),
-      key: getItemUrl(ResourceNameConstants.TASK_RESOURCE_NAME),
+      key: getClienItemtUrl(ResourceNameConstants.TASK_RESOURCE_NAME),
       icon: <CheckOutlined />,
       children: [
         {
           title: 'Task 1',
-          key: getItemUrl(ResourceNameConstants.TASK_RESOURCE_NAME, 'task1'),
+          key: getClienItemtUrl(ResourceNameConstants.TASK_RESOURCE_NAME, 'task1'),
         },
         {
           title: 'Task 2',
-          key: getItemUrl(ResourceNameConstants.TASK_RESOURCE_NAME, 'task2'),
+          key: getClienItemtUrl(ResourceNameConstants.TASK_RESOURCE_NAME, 'task2'),
         },
       ],
     },
     {
       title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.REPORTS')),
-      key: getItemUrl(ResourceNameConstants.REPORT_RESOURCE_NAME),
+      key: getClienItemtUrl(ResourceNameConstants.REPORT_RESOURCE_NAME),
       icon: <PieChartOutlined />,
       isLeaf: false,
       children: [

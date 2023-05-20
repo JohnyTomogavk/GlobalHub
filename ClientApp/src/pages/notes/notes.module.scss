@@ -1,5 +1,14 @@
 @use "src/styles.module" as *;
 
-.content {
-  @include page-content;
+.pageContent {
+  @include page-content-base;
+
+  .noteTitleContainer {
+    min-height: 7rem;
+  }
+
+  .noteTitle {
+    max-width: 650px;
+    margin: 0 auto 2rem;
+  }
 }
