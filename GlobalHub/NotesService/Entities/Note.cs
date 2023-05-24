@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using NotesService.Constants;
 
 namespace NotesService.Entities;
 
@@ -33,10 +34,10 @@ public class Note
     /// <summary>
     /// Note's title
     /// </summary>
-    public string Title { get; set; } = string.Empty;
+    public string Title { get; set; } = NotesConstants.DefaultNoteTitle;
 
     /// <summary>
     /// Note's content in Markdown format
     /// </summary>
-    public string RichTextContent { get; set; } = "{}";
+    public string RichTextContent { get; set; } = NotesConstants.DefaultNoteContentValue;
 }

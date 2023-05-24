@@ -4,7 +4,7 @@ namespace NotesService.Data.Repositories.Interfaces;
 
 public interface INotesRepository
 {
-    IEnumerable<Note> GetAll();
+    IEnumerable<Note> GetNotesMap();
     Note Create(Note newNote);
     Note GetById(string id);
     void DeleteById(string id);

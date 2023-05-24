@@ -1,18 +1,15 @@
-import React, { useEffect, useId, useState } from 'react';
-import EditorJS, { API, OutputData } from '@editorjs/editorjs';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { API, OutputData } from '@editorjs/editorjs';
 import { debounce } from 'lodash';
 import { ItemInfoSubHeader } from '../../components/itemInfoHeader/ItemInfoHeader';
 import styles from './notes.module.scss';
-import { EditorJsToolsConfig } from '../../config/editorJsToolsConfig';
 import { useParams } from 'react-router-dom';
 import { getNoteById, updateNoteContent, updateNoteTitle } from '../../api/noteService';
 import { Note } from '../../models/notes/note';
 import { AxiosResponse } from 'axios';
-import { NOTE_TITLE_PLACEHOLDER } from '../../constants/notesConstants';
+import { NOTE_DEFAULT_CONTENT, NOTE_TITLE_PLACEHOLDER } from '../../constants/notesConstants';
 import Title from 'antd/es/typography/Title';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const UndoPlugin = require('editorjs-undo');
+import { RichTextEditor } from '../../components/richTextEditor/RichTextEditor';
 
 const breadCrumbsItems = [
   {
@@ -30,20 +27,16 @@ const editorOnChangeDebounce = 2500;
 
 export const NotesComponent = (): JSX.Element => {
   const { id } = useParams();
-  const editorHolderId = useId();
   const [isLoading, setLoading] = useState<boolean>(false);
-  const [editorInstance, setEditorInstance] = useState<EditorJS | undefined>(undefined);
 
   const [note, setNote] = useState<Note | undefined>(undefined);
-  const [noteTitle, setNoteTitle] = useState<string | undefined>(undefined);
+  const noteRef = useRef(note);
 
-  const onEditorContentChange = (api: API, event: CustomEvent): void => {
+  const onEditorContentChange = (api: API): void => {
     api.saver.save().then((data: OutputData) => {
+      if (noteRef.current === undefined) return;
       setLoading(true);
-
-      if (note === undefined) return;
-
-      updateNoteContent(note.id, {
+      updateNoteContent(noteRef.current.id, {
         content: JSON.stringify(data),
       })
         .then((updatedNoteResponse: AxiosResponse<Note>): void => {
@@ -53,20 +46,22 @@ export const NotesComponent = (): JSX.Element => {
     });
   };
 
-  const onNoteTitleUpdate = (newTitle: string): void => {
+  const onNoteTitleUpdate = (changedTitle: string): void => {
     if (note === undefined) return;
 
-    const getNewTitle = newTitle.length !== 0 ? newTitle : NOTE_TITLE_PLACEHOLDER;
+    const newTitle = changedTitle.length !== 0 ? changedTitle : NOTE_TITLE_PLACEHOLDER;
 
-    setNoteTitle(getNewTitle);
+    setNote({
+      ...note,
+      title: newTitle,
+    });
 
     setLoading(true);
     updateNoteTitle(note.id, {
-      newTitle: getNewTitle,
+      newTitle: newTitle,
     })
       .then((noteUpdateResponse: AxiosResponse<Note>): void => {
         setNote(noteUpdateResponse.data);
-        setNoteTitle(noteUpdateResponse.data.title);
       })
       .finally(() => {
         setLoading(false);
@@ -78,34 +73,17 @@ export const NotesComponent = (): JSX.Element => {
   useEffect((): void => {
     if (id === undefined) return;
 
-    getNoteById(id).then((item: AxiosResponse<Note>): void => {
-      setNote(item.data);
-      setNoteTitle(item.data.title);
+    getNoteById(id).then(({ data }) => {
+      setNote(data);
+      noteRef.current = data;
     });
   }, [id]);
-
-  useEffect((): void => {
-    if (editorInstance === undefined && note !== undefined) {
-      const editor = new EditorJS({
-        holder: editorHolderId,
-        placeholder: 'Start typing your note here...',
-        tools: EditorJsToolsConfig,
-        onReady(): void {
-          new UndoPlugin({ editor });
-        },
-        onChange: debouncedOnChange,
-        data: JSON.parse(note.richTextContent),
-      });
-
-      setEditorInstance(editor);
-    }
-  }, [note]);
 
   return (
     <>
       <ItemInfoSubHeader
         breadCrumpsItems={breadCrumbsItems}
-        itemTitle={noteTitle}
+        itemTitle={note?.title}
         setNoteTitle={onNoteTitleUpdate}
         lastEdited={note?.updatedDate ?? note?.createdDate}
         isLoading={isLoading}
@@ -115,17 +93,25 @@ export const NotesComponent = (): JSX.Element => {
           <Title
             editable={{
               triggerType: ['text'],
-              text: noteTitle,
+              text: note?.title,
               onChange: (changedTitle: string) => onNoteTitleUpdate(changedTitle),
             }}
             level={2}
             className={styles.noteTitle}
             inputMode={'text'}
           >
-            {noteTitle}
+            {note?.title}
           </Title>
         </div>
-        <div id={editorHolderId}></div>
+        {useMemo(
+          () => (
+            <RichTextEditor
+              data={JSON.parse(note?.richTextContent ?? NOTE_DEFAULT_CONTENT)}
+              onChange={debouncedOnChange}
+            />
+          ),
+          [note?.id]
+        )}
       </div>
     </>
   );

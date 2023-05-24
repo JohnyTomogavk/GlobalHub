@@ -20,6 +20,22 @@ public class NotesController : ControllerBase
     }
 
     /// <summary>
+    /// Gets all available for current user notes
+    /// </summary>
+    /// <returns>Dto that contains Id and Title for each menu item that available for current user</returns>
+    [HttpGet]
+    public AvailableNotesDto GetNoteMap()
+    {
+        var notes = _notesRepository.GetNotesMap();
+        var noteMap = new AvailableNotesDto()
+        {
+            NoteMaps = notes.Select(note => new NoteMenuItem { Id = note.Id, Title = note.Title })
+        };
+
+        return noteMap;
+    }
+
+    /// <summary>
     /// Gets all notes
     /// </summary>
     /// <returns>Set that contains all notes from database</returns>
@@ -36,13 +52,13 @@ public class NotesController : ControllerBase
     /// </summary>
     /// <param name="createNoteDto">Dto that contains data for the new note</param>
     [HttpPost]
-    public string CreateNote(CreateNoteDto createNoteDto)
+    public Note CreateNote(CreateNoteDto createNoteDto)
     {
         // TODO: Initialize other fields when according logic will be implemented
         var newNote = new Note { CreatedDate = DateTime.Now, Title = createNoteDto.Title };
         var createdNote = _notesRepository.Create(newNote);
 
-        return createdNote.Id;
+        return createdNote;
     }
 
     /// <summary>
