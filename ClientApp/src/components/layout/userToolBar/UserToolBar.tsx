@@ -1,22 +1,26 @@
 import { Badge, Button, Dropdown, Popover, Typography } from 'antd';
-import { BellOutlined, TranslationOutlined } from '@ant-design/icons';
+import { BellOutlined, FormatPainterOutlined, TranslationOutlined } from '@ant-design/icons';
 import React from 'react';
 import NotificationPopover from '../notificationPopover/NotificationPopover';
 import { EN, RU } from '../../../constants/languagesConstants';
 import { useTranslation } from 'react-i18next';
 import { i18n as i18n_type } from 'i18next';
-import styles from './UserToolBar.module.scss';
 import { antdMenuItem } from '../../../models/shared/antdMenuItem';
+import CommonStore from '../../../store/commonStore';
+import { observer } from 'mobx-react-lite';
+import styles from './UserToolBar.module.scss';
 
 const { Text } = Typography;
 
-const onLanguageSelect = (i18: i18n_type, selectedLanguage: string): void => {
-  i18.changeLanguage(selectedLanguage).then();
-};
-
-const UserToolBar = (): JSX.Element => {
+const UserToolBar = observer((): JSX.Element => {
   const { i18n } = useTranslation();
   const { t } = i18n;
+  const { currentLanguage, setLanguage, isDarkTheme, toggleTheme } = CommonStore;
+
+  const onLanguageSelect = (i18: i18n_type, selectedLanguage: string): void => {
+    setLanguage(selectedLanguage);
+    i18.changeLanguage(selectedLanguage).then();
+  };
 
   const languages: antdMenuItem[] = [
     {
@@ -47,7 +51,7 @@ const UserToolBar = (): JSX.Element => {
         placement="bottomLeft"
       >
         <Badge size="small" count={4}>
-          <Button icon={<BellOutlined />}></Button>
+          <Button title={'Notifications'} icon={<BellOutlined />}></Button>
         </Badge>
       </Popover>
 
@@ -57,18 +61,25 @@ const UserToolBar = (): JSX.Element => {
         menu={{
           items: languages,
           selectable: true,
-          defaultSelectedKeys: [EN],
+          defaultSelectedKeys: [currentLanguage],
           onSelect: (selectInfo) => onLanguageSelect(i18n, selectInfo.key),
         }}
       >
-        <Button type="default" icon={<TranslationOutlined />} />
+        <Button title={'Language'} type="default" icon={<TranslationOutlined />} />
       </Dropdown>
+
+      <Button
+        onClick={toggleTheme}
+        title={'Change theme'}
+        type={isDarkTheme ? 'primary' : 'default'}
+        icon={<FormatPainterOutlined />}
+      ></Button>
 
       <Button danger type={'default'}>
         {userName}
       </Button>
     </div>
   );
-};
+});
 
 export default UserToolBar;

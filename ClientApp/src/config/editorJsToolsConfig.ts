@@ -17,7 +17,6 @@ export const EditorJsToolsConfig = {
     class: Table,
     inlineToolbar: true,
     config: {
-      withHeadings: 1,
       rows: 2,
       cols: 3,
     },

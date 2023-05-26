@@ -19,7 +19,8 @@
     "isolatedModules": true,
     "noEmitOnError": true,
     "jsx": "react-jsx",
-    "sourceMap": true
+    "sourceMap": true,
+    "experimentalDecorators": true
   },
   "exclude": [
     "node_modules"
