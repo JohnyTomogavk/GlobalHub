@@ -92,4 +92,16 @@ public class NotesController : ControllerBase
 
         return _notesRepository.Update(note);
     }
+
+    /// <summary>
+    /// Deletes note with specified id
+    /// </summary>
+    /// <param name="id">Note's id</param>
+    [HttpDelete]
+    public string DeleteNote(string id)
+    {
+        _notesRepository.DeleteById(id);
+
+        return id;
+    }
 }

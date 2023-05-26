@@ -4,3 +4,4 @@ export const GET_NOTE_BY_ID = '/Notes/GetNoteById';
 export const UPDATE_NOTE_TITLE = '/Notes/UpdateNoteTitle';
 export const UPDATE_NOTE_CONTENT = '/Notes/UpdateNoteContent';
 export const GET_NOTES_MAP = '/Notes/GetNoteMap';
+export const DELETE_NOTE = '/Notes/DeleteNote';

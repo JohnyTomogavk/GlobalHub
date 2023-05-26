@@ -1,50 +1,81 @@
-import React, { MouseEventHandler, useState } from 'react';
+import React, { useEffect } from 'react';
 import Title from 'antd/es/typography/Title';
-import { Button, Divider, Space, Tree } from 'antd';
+import { Divider, Space, Tree } from 'antd';
 import {
   CheckOutlined,
   DashboardOutlined,
   DollarOutlined,
   DownOutlined,
-  EllipsisOutlined,
   GlobalOutlined,
   PieChartOutlined,
-  PlusOutlined,
   ReadOutlined,
 } from '@ant-design/icons';
 import Sider from 'antd/es/layout/Sider';
-import { Link, useNavigate } from 'react-router-dom';
-import type { DataNode } from 'antd/es/tree';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Key } from 'antd/lib/table/interface';
 import { getClienItemtUrl } from '../../../helpers/urlHelper';
 import * as ResourceNameConstants from '../../../constants/resourceConstants';
 import { NOTE_RESOURCE_NAME } from '../../../constants/resourceConstants';
 import styles from './SideMenu.module.scss';
-import { createNote } from '../../../api/noteService';
+import { createNote, getNotesMap } from '../../../api/noteService';
 import { NOTE_TITLE_PLACEHOLDER } from '../../../constants/notesConstants';
+import { SideMenuItemModel } from '../../../models/shared/sideMenu/sideMenuItemModel';
+import SideMenuStore from '../../../store/sideMenuStore';
+import { observer } from 'mobx-react-lite';
+import { Note } from '../../../models/notes/note';
+import { getItemTitleWithOptionsButton, getTopLevelItemTitleWithAddButton } from '../../../helpers/sideMenuHelper';
 
-const getTopLevelItemTitleWithAddButton = (title: string, onClick?: MouseEventHandler): JSX.Element => (
-  <span className={[styles.sideMenuItemTitleContainer, styles.topLevelItem].join(' ')}>
-    <span className={styles.itemTitle}>{title}</span>
-    {onClick && (
-      <Button onClick={onClick} className={styles.sideMenuActionButton} size={'small'} icon={<PlusOutlined />} />
-    )}
-  </span>
-);
-
-const getItemWithActionButton = (title: string): JSX.Element => (
-  <span className={styles.sideMenuItemTitleContainer}>
-    <span className={styles.itemTitle}>{title}</span>
-    <Button className={styles.sideMenuActionButton} size={'small'} icon={<EllipsisOutlined />} />
-  </span>
-);
-
-export const SideMenu = (): JSX.Element => {
+export const SideMenu = observer((): JSX.Element => {
   const { t } = useTranslation();
   const navigation = useNavigate();
+  const location = useLocation();
+  const { sideMenuNoteItems, selectedTreeKeys, addNewNoteToSideMenu, setNotesItemsToSideMenu, changeSelectedMenuKey } =
+    SideMenuStore;
 
-  const menuData: DataNode[] = [
+  const initializeActiveMenuItem = (currentPath: string): void => {
+    const pathSegments = currentPath.split('/').filter((item) => item !== '');
+
+    if (pathSegments.length === 1) {
+      changeSelectedMenuKey([pathSegments[0]]);
+    } else {
+      changeSelectedMenuKey([pathSegments.join('/')]);
+    }
+  };
+
+  const fetchNotes = async (): Promise<void> => {
+    const notesMapResponse = await getNotesMap();
+
+    const noteItems = notesMapResponse.data.noteMaps.map(
+      (noteMap): SideMenuItemModel => ({
+        className: styles.sideMenuItem,
+        title: getItemTitleWithOptionsButton(noteMap.title),
+        key: getClienItemtUrl(ResourceNameConstants.NOTE_RESOURCE_NAME, noteMap.id),
+        pageId: noteMap.id,
+      })
+    );
+
+    setNotesItemsToSideMenu(noteItems);
+  };
+
+  const addNewNoteToSideBar = (note: Note): void => {
+    const newNoteItem = {
+      className: styles.sideMenuItem,
+      title: getItemTitleWithOptionsButton(note.title),
+      key: getClienItemtUrl(ResourceNameConstants.NOTE_RESOURCE_NAME, note.id),
+      pageId: note.id,
+    };
+
+    addNewNoteToSideMenu(newNoteItem);
+  };
+
+  const onPageSelected = (keys: Key[]): void => {
+    if (keys.length === 0) return;
+    changeSelectedMenuKey(keys);
+    navigation(keys[0]?.toString() ?? '/');
+  };
+
+  const menuData: SideMenuItemModel[] = [
     {
       title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.DASHBOARD')),
       key: ResourceNameConstants.DASHBOARD_RESOURCE_NAME,
@@ -53,7 +84,7 @@ export const SideMenu = (): JSX.Element => {
       isLeaf: false,
     },
     {
-      className: styles.sideMenuTopLevelItem,
+      className: styles.sideMenuItem,
       title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.BUDGETS'), (e): void => {
         // TODO: Navigate to budget page and implement logic of creation there
         e.stopPropagation();
@@ -61,81 +92,56 @@ export const SideMenu = (): JSX.Element => {
       key: getClienItemtUrl(ResourceNameConstants.BUDGET_RESOURCE_NAME),
       icon: <DollarOutlined />,
       isLeaf: false,
-      children: [
-        {
-          title: 'Budget 1',
-          key: getClienItemtUrl(ResourceNameConstants.BUDGET_RESOURCE_NAME, 'Budget1'),
-        },
-        {
-          title: 'Budget 2',
-          key: getClienItemtUrl(ResourceNameConstants.BUDGET_RESOURCE_NAME, 'Budget2'),
-        },
-      ],
+      pageId: ResourceNameConstants.BUDGET_RESOURCE_NAME,
+      children: [],
     },
     {
-      className: styles.sideMenuTopLevelItem,
-      title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.NOTES'), (e): void => {
-        createNote({
+      className: styles.sideMenuItem,
+      title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.NOTES'), async (e): Promise<void> => {
+        const newNoteResponse = await createNote({
           title: NOTE_TITLE_PLACEHOLDER,
-        }).then((newNote) => {
-          const newNoteId = newNote.data;
-          const newNoteUrl = getClienItemtUrl(NOTE_RESOURCE_NAME, newNoteId);
-
-          navigation(newNoteUrl);
+        });
+        const newNoteUrl = getClienItemtUrl(NOTE_RESOURCE_NAME, newNoteResponse.data.id);
+        addNewNoteToSideBar(newNoteResponse.data);
+        changeSelectedMenuKey([newNoteUrl]);
+        navigation(newNoteUrl, {
+          replace: true,
         });
         e.stopPropagation();
       }),
       key: getClienItemtUrl(ResourceNameConstants.NOTE_RESOURCE_NAME),
       icon: <ReadOutlined />,
-      children: [
-        {
-          className: styles.sideMenuTopLevelItem,
-          title: getItemWithActionButton('Note 1: Some notes just for example'),
-          key: getClienItemtUrl(ResourceNameConstants.NOTE_RESOURCE_NAME, 'Note1'),
-        },
-      ],
+      pageId: ResourceNameConstants.NOTE_RESOURCE_NAME,
+      children: sideMenuNoteItems,
     },
     {
-      className: styles.sideMenuTopLevelItem,
+      className: styles.sideMenuItem,
       title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.TASKS'), (e): void => {
         // TODO: Navigate to tasks page and implement logic of creation there
         e.stopPropagation();
       }),
       key: getClienItemtUrl(ResourceNameConstants.TASK_RESOURCE_NAME),
       icon: <CheckOutlined />,
-      children: [
-        {
-          title: 'Task 1',
-          key: getClienItemtUrl(ResourceNameConstants.TASK_RESOURCE_NAME, 'task1'),
-        },
-        {
-          title: 'Task 2',
-          key: getClienItemtUrl(ResourceNameConstants.TASK_RESOURCE_NAME, 'task2'),
-        },
-      ],
+      pageId: ResourceNameConstants.TASK_RESOURCE_NAME,
+      isLeaf: false,
+      children: [],
     },
     {
       title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.REPORTS')),
       key: getClienItemtUrl(ResourceNameConstants.REPORT_RESOURCE_NAME),
       icon: <PieChartOutlined />,
       isLeaf: false,
-      children: [
-        {
-          title: 'No items inside',
-          key: -1,
-          disabled: true,
-        },
-      ],
+      children: [],
     },
   ];
 
-  const [selectedMenuKeys, setSelectedMenuKeys] = useState<Key[]>([]);
-  const onPageSelected = (keys: Key[]): void => {
-    if (keys.length !== 0) {
-      setSelectedMenuKeys(keys);
-      navigation(keys[0]?.toString() ?? '/');
-    }
-  };
+  useEffect(() => {
+    fetchNotes();
+  }, []);
+
+  useEffect(() => {
+    initializeActiveMenuItem(location.pathname);
+  }, [location]);
 
   return (
     <Sider width="100%" className={styles.siderContainer} theme="light">
@@ -154,15 +160,13 @@ export const SideMenu = (): JSX.Element => {
         switcherIcon={<DownOutlined />}
         showLine
         showIcon
-        onSelect={(selectedKeys: Key[]): void => {
-          onPageSelected(selectedKeys);
-        }}
+        onSelect={onPageSelected}
         defaultExpandAll
-        selectedKeys={selectedMenuKeys}
+        selectedKeys={selectedTreeKeys}
         rootClassName={styles.sideMenuTree}
         blockNode
         treeData={menuData}
       />
     </Sider>
   );
-};
+});

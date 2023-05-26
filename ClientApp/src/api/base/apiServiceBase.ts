@@ -1,11 +1,11 @@
 import axios, { AxiosResponse } from 'axios';
 
-export const GetRequest = async <TResponse, TParams>(
+export const GetRequest = async <TResponse, TParam>(
   url: string,
-  queryParams?: TParams
+  queryParams?: TParam
 ): Promise<AxiosResponse<TResponse>> =>
   axios.get(url, {
-    ...(queryParams ?? { params: queryParams }),
+    ...(queryParams ? { params: queryParams } : null),
   });
 
 export const PostRequest = async <TResponse, TBody>(url: string, body: TBody): Promise<AxiosResponse<TResponse>> =>
@@ -14,4 +14,10 @@ export const PostRequest = async <TResponse, TBody>(url: string, body: TBody): P
 export const PutRequest = async <TResponse, TBody>(url: string, body: TBody): Promise<AxiosResponse<TResponse>> =>
   axios.put(url, body);
 
-export const DeleteRequest = async (url: string): Promise<AxiosResponse> => axios.delete(url);
+export const DeleteRequest = async <TResponse, TParam>(
+  url: string,
+  queryParam: TParam
+): Promise<AxiosResponse<TResponse>> =>
+  axios.delete(url, {
+    data: queryParam,
+  });
