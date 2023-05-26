@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { API, OutputData } from '@editorjs/editorjs';
+import { API } from '@editorjs/editorjs';
 import { debounce } from 'lodash';
 import { ItemInfoSubHeader } from '../../components/itemInfoHeader/ItemInfoHeader';
 import styles from './notes.module.scss';
@@ -36,16 +36,15 @@ export const NotesComponent = (): JSX.Element => {
   const noteRef = useRef(note);
   const { renameNoteInSideMenu, removeNoteFromSideMenu, changeSelectedMenuKey } = SideMenuStore;
 
-  const onEditorContentChange = (api: API): void => {
-    api.saver.save().then(async (data: OutputData) => {
-      if (noteRef.current === undefined) return;
-      setLoading(true);
-      const updateNoteReponse = await updateNoteContent(noteRef.current.id, {
-        content: JSON.stringify(data),
-      });
-      setNote(updateNoteReponse.data);
-      setLoading(false);
+  const onEditorContentChange = async (api: API): Promise<void> => {
+    const data = await api.saver.save();
+    if (noteRef.current === undefined) return;
+    setLoading(true);
+    const updateNoteReponse = await updateNoteContent(noteRef.current.id, {
+      content: JSON.stringify(data),
     });
+    setNote(updateNoteReponse.data);
+    setLoading(false);
   };
 
   const onNoteTitleUpdate = async (changedTitle: string): Promise<void> => {
