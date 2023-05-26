@@ -20,6 +20,11 @@ public class NotesRepository : INotesRepository
         return _notesDbContext.Notes.FindSync(note => note != null).ToList();
     }
 
+    public IEnumerable<Note> GetNoteList()
+    {
+        return _notesDbContext.Notes.FindSync(item => item.CreatedBy == null).ToList();
+    }
+
     public Note Create(Note newNote)
     {
         _notesDbContext.Notes.InsertOne(newNote);

@@ -8,16 +8,22 @@ import { UpdateNoteContentDto } from '../dto/notes/updateNoteContentDto';
 import { UpdateNoteTitleDto } from '../dto/notes/updateNoteTitleDto';
 import { AvailableNotesDto } from '../dto/notes/sideMenu/availableNotesDto';
 
+export const getNoteById = async (id: string): Promise<AxiosResponse<Note>> => {
+  const resourceUrl = getResourceUrl(apiConstants.GET_NOTE_BY_ID, id);
+
+  return GetRequest<Note, string>(resourceUrl);
+};
+
 export const getNotesMap = async (): Promise<AxiosResponse<AvailableNotesDto>> => {
   const resourceUrl = getResourceUrl(apiConstants.GET_NOTES_MAP);
 
   return GetRequest<AvailableNotesDto, undefined>(resourceUrl);
 };
 
-export const getNoteById = async (id: string): Promise<AxiosResponse<Note>> => {
-  const resourceUrl = getResourceUrl(apiConstants.GET_NOTE_BY_ID, id);
+export const getNotesList = async (): Promise<AxiosResponse<Note[]>> => {
+  const resourceUrl = getResourceUrl(apiConstants.GET_NOTES_LIST);
 
-  return GetRequest<Note, string>(resourceUrl);
+  return GetRequest<Note[], undefined>(resourceUrl);
 };
 
 export const createNote = async (createDto: CreateNoteDto): Promise<AxiosResponse<Note>> => {

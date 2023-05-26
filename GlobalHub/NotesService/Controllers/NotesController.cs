@@ -19,6 +19,7 @@ public class NotesController : ControllerBase
         _notesRepository = notesRepository;
     }
 
+    // TODO: Add filtration by user id, when users will be implemented
     /// <summary>
     /// Gets all available for current user notes
     /// </summary>
@@ -45,6 +46,19 @@ public class NotesController : ControllerBase
         var note = _notesRepository.GetById(id);
 
         return note;
+    }
+
+    // TODO: Add filtration by user id, when users will be implemented
+    /// <summary>
+    /// Gets list of available notes
+    /// </summary>
+    /// <returns>Notes, available for current user</returns>
+    [HttpGet]
+    public IEnumerable<Note> GetNoteList()
+    {
+        var notes = _notesRepository.GetNoteList();
+
+        return notes;
     }
 
     /// <summary>
