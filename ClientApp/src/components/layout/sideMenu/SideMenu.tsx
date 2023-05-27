@@ -50,6 +50,7 @@ export const SideMenu = observer((): JSX.Element => {
       (noteMap): SideMenuItemModel => ({
         className: styles.sideMenuItem,
         title: getItemTitleWithOptionsButton(noteMap.title),
+        textTitle: noteMap.title,
         key: getClienItemtUrl(ResourceNameConstants.NOTE_RESOURCE_NAME, noteMap.id),
         pageId: noteMap.id,
       })
@@ -62,6 +63,7 @@ export const SideMenu = observer((): JSX.Element => {
     const newNoteItem = {
       className: styles.sideMenuItem,
       title: getItemTitleWithOptionsButton(note.title),
+      textTitle: note.title,
       key: getClienItemtUrl(ResourceNameConstants.NOTE_RESOURCE_NAME, note.id),
       pageId: note.id,
     };
@@ -82,6 +84,7 @@ export const SideMenu = observer((): JSX.Element => {
       icon: <DashboardOutlined />,
       switcherIcon: <></>,
       isLeaf: false,
+      pageId: ResourceNameConstants.DASHBOARD_RESOURCE_NAME,
     },
     {
       className: styles.sideMenuItem,
@@ -132,6 +135,7 @@ export const SideMenu = observer((): JSX.Element => {
       icon: <PieChartOutlined />,
       isLeaf: false,
       children: [],
+      pageId: ResourceNameConstants.REPORT_RESOURCE_NAME,
     },
   ];
 

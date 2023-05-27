@@ -88,7 +88,6 @@ export const NoteList = (): JSX.Element => {
   return (
     <Table
       size={'small'}
-      sticky={true}
       columns={columns}
       dataSource={notes}
       rowKey={(item: NoteItem): Key => item.id}
