@@ -42,6 +42,10 @@ class SideMenuStore {
   changeSelectedMenuKey(keys: Key[]): void {
     this.selectedTreeKeys = keys;
   }
+
+  getSideMenuItemByRoutingKey(routingKey: string): SideMenuItemModel | undefined {
+    return this.sideMenuNoteItems.find((item) => item.key === routingKey);
+  }
 }
 
 export default new SideMenuStore();

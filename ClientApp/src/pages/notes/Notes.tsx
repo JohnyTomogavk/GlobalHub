@@ -3,7 +3,7 @@ import { API } from '@editorjs/editorjs';
 import { debounce } from 'lodash';
 import { ItemInfoSubHeader } from '../../components/itemInfoHeader/ItemInfoHeader';
 import styles from './notes.module.scss';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { deleteNote, getNoteById, updateNoteContent, updateNoteTitle } from '../../api/noteService';
 import { Note } from '../../models/notes/note';
 import { NOTE_DEFAULT_CONTENT, NOTE_TITLE_PLACEHOLDER } from '../../constants/notesConstants';
@@ -12,29 +12,22 @@ import { RichTextEditor } from '../../components/richTextEditor/RichTextEditor';
 import SideMenuStore from '../../store/sideMenuStore';
 import { getItemTitleWithOptionsButton } from '../../helpers/sideMenuHelper';
 import * as RoutingConstants from '../../constants/routingConstants';
-
-const breadCrumbsItems = [
-  {
-    title: 'Budgets',
-  },
-  {
-    title: <a href="">My Own Budget</a>,
-  },
-  {
-    title: <a href="">Inner budget</a>,
-  },
-];
+import { observer } from 'mobx-react-lite';
+import { getBreadCrumbsItemsByLocation } from '../../helpers/breadCrumbsHelper';
 
 const editorOnChangeDebounce = 2500;
 
-export const NotesComponent = (): JSX.Element => {
+export const NotesComponent = observer((): JSX.Element => {
   const { id } = useParams();
+  const location = useLocation();
   const [isLoading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+  const [breadCrumbsItems, setBreadCrumbsItems] = useState<any[]>([]);
 
   const [note, setNote] = useState<Note | undefined>(undefined);
   const noteRef = useRef(note);
-  const { renameNoteInSideMenu, removeNoteFromSideMenu, changeSelectedMenuKey } = SideMenuStore;
+  const { renameNoteInSideMenu, removeNoteFromSideMenu, changeSelectedMenuKey, getSideMenuItemByRoutingKey } =
+    SideMenuStore;
 
   const onEditorContentChange = async (api: API): Promise<void> => {
     const data = await api.saver.save();
@@ -90,6 +83,14 @@ export const NotesComponent = (): JSX.Element => {
     loadNote();
   }, [id]);
 
+  useEffect(() => {
+    if (!note || !location) return;
+
+    const items = getBreadCrumbsItemsByLocation(location.pathname, getSideMenuItemByRoutingKey);
+
+    setBreadCrumbsItems(items);
+  }, [location, note]);
+
   return (
     <>
       <ItemInfoSubHeader
@@ -126,4 +127,4 @@ export const NotesComponent = (): JSX.Element => {
       </div>
     </>
   );
-};
+});
