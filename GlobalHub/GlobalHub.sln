@@ -13,6 +13,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{8A8803A9-8818-4CAB-8761-F8750F49423D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{C79219AE-8756-4C8B-A98F-D53EF3DBD115}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebStatus", "WebStatus\WebStatus.csproj", "{679ED316-D740-4334-B4FD-D0FEDF6862E9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MonitoringTools", "MonitoringTools", "{0AFC3EB0-30D2-461C-981A-4BEEEE2CAF6A}"
+	ProjectSection(SolutionItems) = preProject
+		DockerCompose-Monitoring.yml = DockerCompose-Monitoring.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,11 +29,21 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{FF9AF57C-8469-4371-B051-E6A64EC1429B} = {2E942728-1B61-448C-B823-BB9F3399D6B8}
+		{C79219AE-8756-4C8B-A98F-D53EF3DBD115} = {8A8803A9-8818-4CAB-8761-F8750F49423D}
+		{679ED316-D740-4334-B4FD-D0FEDF6862E9} = {8A8803A9-8818-4CAB-8761-F8750F49423D}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FF9AF57C-8469-4371-B051-E6A64EC1429B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FF9AF57C-8469-4371-B051-E6A64EC1429B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF9AF57C-8469-4371-B051-E6A64EC1429B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF9AF57C-8469-4371-B051-E6A64EC1429B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C79219AE-8756-4C8B-A98F-D53EF3DBD115}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C79219AE-8756-4C8B-A98F-D53EF3DBD115}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C79219AE-8756-4C8B-A98F-D53EF3DBD115}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C79219AE-8756-4C8B-A98F-D53EF3DBD115}.Release|Any CPU.Build.0 = Release|Any CPU
+		{679ED316-D740-4334-B4FD-D0FEDF6862E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{679ED316-D740-4334-B4FD-D0FEDF6862E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{679ED316-D740-4334-B4FD-D0FEDF6862E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{679ED316-D740-4334-B4FD-D0FEDF6862E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
