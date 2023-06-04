@@ -1,3 +1,4 @@
+using Common;
 using Microsoft.OpenApi.Models;
 using NotesService.Config;
 using NotesService.Constants;
@@ -5,8 +6,11 @@ using NotesService.Data.DbContext;
 using NotesService.Data.DbContext.Interfaces;
 using NotesService.Data.Repositories;
 using NotesService.Data.Repositories.Interfaces;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog(SerilogExtensions.LoggerConfiguration);
 
 var notesDbConfigSection = builder.Configuration.GetSection(ConfigConstants.StorageConfigSectionName);
 builder.Services.Configure<NotesStoreConfig>(notesDbConfigSection);
@@ -24,6 +28,8 @@ builder.Services.AddScoped<INotesRepository, NotesRepository>();
 
 var app = builder.Build();
 
+app.UseSerilogRequestLogging();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -31,7 +37,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
