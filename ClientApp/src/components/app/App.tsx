@@ -25,13 +25,13 @@ export const App = observer(() => {
     >
       <Layout>
         <PanelGroup direction={'horizontal'}>
-          <Panel minSize={15} maxSize={40} defaultSize={15}>
+          <Panel minSize={12} maxSize={40} defaultSize={12}>
             <Affix offsetTop={0}>
               <SideMenu />
             </Affix>
           </Panel>
           <PanelResizeHandle className={styles.resizeHandle} />
-          <Panel minSize={60} maxSize={90} defaultSize={85}>
+          <Panel minSize={60} maxSize={88} defaultSize={88}>
             <AppHeader />
             <Layout>
               <Content>

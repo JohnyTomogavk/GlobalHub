@@ -1,25 +1,25 @@
 import React, { useEffect, useId, useState } from 'react';
 import EditorJS, { API, OutputData } from '@editorjs/editorjs';
 import { EditorJsToolsConfig } from '../../config/editorJsToolsConfig';
-import { NOTE_DEFAULKT_EMPTY_BLOCK } from '../../constants/notesConstants';
+import { NOTE_DEFAULT_EMPTY_BLOCK } from '../../constants/notesConstants';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const UndoPlugin = require('editorjs-undo');
 
-interface EditorParameteres {
+interface EditorParameters {
   onChange: (api: API, event: CustomEvent) => void;
   data: OutputData;
 }
 
 const ensureBlocksNoteEmpty = (data: OutputData): OutputData => {
   if (data.blocks.length === 0) {
-    data.blocks.push(JSON.parse(NOTE_DEFAULKT_EMPTY_BLOCK));
+    data.blocks.push(JSON.parse(NOTE_DEFAULT_EMPTY_BLOCK));
   }
 
   return data;
 };
 
-export const RichTextEditor = (props: EditorParameteres): JSX.Element => {
+export const RichTextEditor = (props: EditorParameters): JSX.Element => {
   const editorHolderId = useId();
   const [editorInstance, setEditorInstance] = useState<EditorJS | undefined>(undefined);
 

@@ -6,7 +6,11 @@ import styles from './notes.module.scss';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { deleteNote, getNoteById, updateNoteContent, updateNoteTitle } from '../../api/noteService';
 import { Note } from '../../models/notes/note';
-import { NOTE_DEFAULT_CONTENT, NOTE_TITLE_PLACEHOLDER } from '../../constants/notesConstants';
+import {
+  EDITOR_ON_CHANGE_DEBOUNCE,
+  NOTE_DEFAULT_CONTENT,
+  NOTE_TITLE_PLACEHOLDER,
+} from '../../constants/notesConstants';
 import Title from 'antd/es/typography/Title';
 import { RichTextEditor } from '../../components/richTextEditor/RichTextEditor';
 import SideMenuStore from '../../store/sideMenuStore';
@@ -14,15 +18,15 @@ import { getItemTitleWithOptionsButton } from '../../helpers/sideMenuHelper';
 import * as RoutingConstants from '../../constants/routingConstants';
 import { observer } from 'mobx-react-lite';
 import { getBreadCrumbsItemsByLocation } from '../../helpers/breadCrumbsHelper';
-
-const editorOnChangeDebounce = 2500;
+import { BreadCrumbItem } from '../../models/breadCrumbs/breadCrumbItem';
 
 export const NotesComponent = observer((): JSX.Element => {
   const { id } = useParams();
   const location = useLocation();
+
   const [isLoading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
-  const [breadCrumbsItems, setBreadCrumbsItems] = useState<any[]>([]);
+  const [breadCrumbsItems, setBreadCrumbsItems] = useState<BreadCrumbItem[]>([]);
 
   const [note, setNote] = useState<Note | undefined>(undefined);
   const noteRef = useRef(note);
@@ -33,10 +37,10 @@ export const NotesComponent = observer((): JSX.Element => {
     const data = await api.saver.save();
     if (noteRef.current === undefined) return;
     setLoading(true);
-    const updateNoteReponse = await updateNoteContent(noteRef.current.id, {
+    const updateNoteResponse = await updateNoteContent(noteRef.current.id, {
       content: JSON.stringify(data),
     });
-    setNote(updateNoteReponse.data);
+    setNote(updateNoteResponse.data);
     setLoading(false);
   };
 
@@ -60,10 +64,11 @@ export const NotesComponent = observer((): JSX.Element => {
     setLoading(false);
   };
 
-  const debouncedOnChange = debounce(onEditorContentChange, editorOnChangeDebounce);
+  const debouncedOnChange = debounce(onEditorContentChange, EDITOR_ON_CHANGE_DEBOUNCE);
 
   const onItemDelete = async (): Promise<void> => {
     if (note?.id === undefined) return;
+
     const deletedNoteIdResponse = await deleteNote(note.id);
     removeNoteFromSideMenu(deletedNoteIdResponse.data);
     changeSelectedMenuKey([RoutingConstants.NOTE_LIST_ROUTE]);
@@ -74,7 +79,6 @@ export const NotesComponent = observer((): JSX.Element => {
     if (id === undefined) return;
 
     const noteResponse = await getNoteById(id);
-
     setNote(noteResponse.data);
     noteRef.current = noteResponse.data;
   };
@@ -95,7 +99,7 @@ export const NotesComponent = observer((): JSX.Element => {
     <>
       <ItemInfoSubHeader
         onDeleteCallback={onItemDelete}
-        breadCrumpsItems={breadCrumbsItems}
+        breadCrumbsItems={breadCrumbsItems}
         itemTitle={note?.title}
         lastEdited={note?.updatedDate ?? note?.createdDate}
         isLoading={isLoading}

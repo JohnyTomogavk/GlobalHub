@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import * as ResourceConstants from '../../constants/resourceConstants';
 import ReactTimeAgo from 'react-time-ago';
 import { Key } from 'antd/lib/table/interface';
-import { getClienItemtUrl } from '../../helpers/urlHelper';
+import { getClientItemUrl } from '../../helpers/urlHelper';
 import { deleteNote, getNotesList } from '../../api/noteService';
 import { Link } from 'react-router-dom';
 import { DeleteOutlined } from '@ant-design/icons';
@@ -72,7 +72,7 @@ export const NoteList = (): JSX.Element => {
       (item: Note) =>
         ({
           id: item.id,
-          title: <Link to={`/${getClienItemtUrl(ResourceConstants.NOTE_RESOURCE_NAME, item.id)}`}>{item.title}</Link>,
+          title: <Link to={`/${getClientItemUrl(ResourceConstants.NOTE_RESOURCE_NAME, item.id)}`}>{item.title}</Link>,
           updatedDate: new Date(item.updatedDate ?? item.createdDate),
           createdDate: new Date(item.createdDate),
         } as NoteItem)
