@@ -1,5 +1,5 @@
 version: "3.9"
-name: 'Global Hub - Monitoring&Health'
+name: 'global_hub_monitoring'
 services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.8.0

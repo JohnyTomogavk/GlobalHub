@@ -14,10 +14,4 @@ body {
   z-index: 1000;
   box-sizing: border-box;
   background-clip: padding-box;
-
-  &:hover, &:focus {
-    transition: all 1s ease;
-    border-left: 5px solid rgb(0 0 0 / 50%);
-    border-right: 5px solid rgb(0 0 0 / 50%);
-  }
 }
