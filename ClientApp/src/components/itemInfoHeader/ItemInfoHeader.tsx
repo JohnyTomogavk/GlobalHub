@@ -12,7 +12,7 @@ interface IItemInfoSubHeader {
   itemTitle?: string;
   lastEdited?: Date;
   onDeleteCallback: () => void;
-  breadCrumpsItems: ({ title: string } | { title: JSX.Element })[];
+  breadCrumbsItems: ({ title: string } | { title: JSX.Element })[];
 }
 
 export const ItemInfoSubHeader = (props: IItemInfoSubHeader): JSX.Element => {
@@ -28,7 +28,7 @@ export const ItemInfoSubHeader = (props: IItemInfoSubHeader): JSX.Element => {
           background: colorBgContainer,
         }}
       >
-        <Breadcrumb items={props.breadCrumpsItems}></Breadcrumb>
+        <Breadcrumb items={props.breadCrumbsItems}></Breadcrumb>
         <Space>
           <Text className={styles.itemSaveStatus} type={'secondary'}>
             {props.isLoading ? (

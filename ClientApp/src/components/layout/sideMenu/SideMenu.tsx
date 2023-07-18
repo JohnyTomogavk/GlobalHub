@@ -14,7 +14,7 @@ import Sider from 'antd/es/layout/Sider';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Key } from 'antd/lib/table/interface';
-import { getClienItemtUrl } from '../../../helpers/urlHelper';
+import { getClientItemUrl } from '../../../helpers/urlHelper';
 import * as ResourceNameConstants from '../../../constants/resourceConstants';
 import { NOTE_RESOURCE_NAME } from '../../../constants/resourceConstants';
 import styles from './SideMenu.module.scss';
@@ -51,7 +51,7 @@ export const SideMenu = observer((): JSX.Element => {
         className: styles.sideMenuItem,
         title: getItemTitleWithOptionsButton(noteMap.title),
         textTitle: noteMap.title,
-        key: getClienItemtUrl(ResourceNameConstants.NOTE_RESOURCE_NAME, noteMap.id),
+        key: getClientItemUrl(ResourceNameConstants.NOTE_RESOURCE_NAME, noteMap.id),
         pageId: noteMap.id,
       })
     );
@@ -64,7 +64,7 @@ export const SideMenu = observer((): JSX.Element => {
       className: styles.sideMenuItem,
       title: getItemTitleWithOptionsButton(note.title),
       textTitle: note.title,
-      key: getClienItemtUrl(ResourceNameConstants.NOTE_RESOURCE_NAME, note.id),
+      key: getClientItemUrl(ResourceNameConstants.NOTE_RESOURCE_NAME, note.id),
       pageId: note.id,
     };
 
@@ -92,7 +92,7 @@ export const SideMenu = observer((): JSX.Element => {
         // TODO: Navigate to budget page and implement logic of creation there
         e.stopPropagation();
       }),
-      key: getClienItemtUrl(ResourceNameConstants.BUDGET_RESOURCE_NAME),
+      key: getClientItemUrl(ResourceNameConstants.BUDGET_RESOURCE_NAME),
       icon: <DollarOutlined />,
       isLeaf: false,
       pageId: ResourceNameConstants.BUDGET_RESOURCE_NAME,
@@ -104,7 +104,7 @@ export const SideMenu = observer((): JSX.Element => {
         const newNoteResponse = await createNote({
           title: NOTE_TITLE_PLACEHOLDER,
         });
-        const newNoteUrl = getClienItemtUrl(NOTE_RESOURCE_NAME, newNoteResponse.data.id);
+        const newNoteUrl = getClientItemUrl(NOTE_RESOURCE_NAME, newNoteResponse.data.id);
         addNewNoteToSideBar(newNoteResponse.data);
         changeSelectedMenuKey([newNoteUrl]);
         navigation(newNoteUrl, {
@@ -112,7 +112,7 @@ export const SideMenu = observer((): JSX.Element => {
         });
         e.stopPropagation();
       }),
-      key: getClienItemtUrl(ResourceNameConstants.NOTE_RESOURCE_NAME),
+      key: getClientItemUrl(ResourceNameConstants.NOTE_RESOURCE_NAME),
       icon: <ReadOutlined />,
       pageId: ResourceNameConstants.NOTE_RESOURCE_NAME,
       children: sideMenuNoteItems,
@@ -123,7 +123,7 @@ export const SideMenu = observer((): JSX.Element => {
         // TODO: Navigate to tasks page and implement logic of creation there
         e.stopPropagation();
       }),
-      key: getClienItemtUrl(ResourceNameConstants.TASK_RESOURCE_NAME),
+      key: getClientItemUrl(ResourceNameConstants.TASK_RESOURCE_NAME),
       icon: <CheckOutlined />,
       pageId: ResourceNameConstants.TASK_RESOURCE_NAME,
       isLeaf: false,
@@ -131,7 +131,7 @@ export const SideMenu = observer((): JSX.Element => {
     },
     {
       title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.REPORTS')),
-      key: getClienItemtUrl(ResourceNameConstants.REPORT_RESOURCE_NAME),
+      key: getClientItemUrl(ResourceNameConstants.REPORT_RESOURCE_NAME),
       icon: <PieChartOutlined />,
       isLeaf: false,
       children: [],
