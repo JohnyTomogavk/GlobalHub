@@ -91,7 +91,6 @@ export const NotesComponent = observer((): JSX.Element => {
     if (!note || !location) return;
 
     const items = getBreadCrumbsItemsByLocation(location.pathname, getSideMenuItemByRoutingKey);
-
     setBreadCrumbsItems(items);
   }, [location, note]);
 
