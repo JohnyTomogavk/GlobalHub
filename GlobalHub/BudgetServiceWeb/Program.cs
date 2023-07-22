@@ -1,6 +1,8 @@
 using BudgetBusinessLayer.Validators;
 using BudgetDataLayer.Constants;
 using BudgetDataLayer.Data;
+using BudgetBusinessLayer.MappingProfiles;
+using BudgetService.Extensions;
 using Common;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +21,10 @@ builder.Services.AddSwaggerGen(action =>
 {
     action.SwaggerDoc("v1", new OpenApiInfo { Title = "Budget API", Version = "v1" });
 });
+
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+builder.Services.RegisterRepositories();
+builder.Services.RegisterServices();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
