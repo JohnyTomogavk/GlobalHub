@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { API } from '@editorjs/editorjs';
-import { debounce } from 'lodash';
+import { debounce, isEqual } from 'lodash';
 import { ItemInfoSubHeader } from '../../components/itemInfoHeader/ItemInfoHeader';
 import styles from './notes.module.scss';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -35,7 +35,8 @@ export const NotesComponent = observer((): JSX.Element => {
 
   const onEditorContentChange = async (api: API): Promise<void> => {
     const data = await api.saver.save();
-    if (noteRef.current === undefined) return;
+    if (noteRef.current === undefined || isEqual(data.blocks, JSON.parse(noteRef.current?.richTextContent).blocks))
+      return;
     setLoading(true);
     const updateNoteResponse = await updateNoteContent(noteRef.current.id, {
       content: JSON.stringify(data),
@@ -89,9 +90,7 @@ export const NotesComponent = observer((): JSX.Element => {
 
   useEffect(() => {
     if (!note || !location) return;
-
     const items = getBreadCrumbsItemsByLocation(location.pathname, getSideMenuItemByRoutingKey);
-
     setBreadCrumbsItems(items);
   }, [location, note]);
 
