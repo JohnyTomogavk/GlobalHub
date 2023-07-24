@@ -21,17 +21,25 @@ import styles from './SideMenu.module.scss';
 import { createNote, getNotesMap } from '../../../api/noteService';
 import { NOTE_TITLE_PLACEHOLDER } from '../../../constants/notesConstants';
 import { SideMenuItemModel } from '../../../models/shared/sideMenu/sideMenuItemModel';
-import SideMenuStore from '../../../store/sideMenuStore';
+import SideMenuStore from '../../../store/sideMenu/sideMenuStore';
 import { observer } from 'mobx-react-lite';
 import { Note } from '../../../models/notes/note';
-import { getItemTitleWithOptionsButton, getTopLevelItemTitleWithAddButton } from '../../../helpers/sideMenuHelper';
+import { getTopLevelItemTitleWithAddButton } from '../../../helpers/sideMenuHelper';
+import { getBudgetsMap } from '../../../api/budgetsService';
 
 export const SideMenu = observer((): JSX.Element => {
   const { t } = useTranslation();
   const navigation = useNavigate();
   const location = useLocation();
-  const { sideMenuNoteItems, selectedTreeKeys, addNewNoteToSideMenu, setNotesItemsToSideMenu, changeSelectedMenuKey } =
-    SideMenuStore;
+  const {
+    sideMenuNoteItems,
+    sideMenuBudgetItems,
+    selectedTreeKeys,
+    setBudgetMapsToSideMenu,
+    addNewNoteToSideMenu,
+    setNoteMapsItemsToSideMenu,
+    changeSelectedMenuKey,
+  } = SideMenuStore;
 
   const initializeActiveMenuItem = (currentPath: string): void => {
     const pathSegments = currentPath.split('/').filter((item) => item !== '');
@@ -43,32 +51,20 @@ export const SideMenu = observer((): JSX.Element => {
     }
   };
 
-  const fetchNotes = async (): Promise<void> => {
+  const fetchNotesMap = async (): Promise<void> => {
     const notesMapResponse = await getNotesMap();
 
-    const noteItems = notesMapResponse.data.noteMaps.map(
-      (noteMap): SideMenuItemModel => ({
-        className: styles.sideMenuItem,
-        title: getItemTitleWithOptionsButton(noteMap.title),
-        textTitle: noteMap.title,
-        key: getClientItemUrl(ResourceNameConstants.NOTE_RESOURCE_NAME, noteMap.id),
-        pageId: noteMap.id,
-      })
-    );
+    setNoteMapsItemsToSideMenu(notesMapResponse.data.noteMaps);
+  };
 
-    setNotesItemsToSideMenu(noteItems);
+  const fetchBudgetsMap = async (): Promise<void> => {
+    const budgetsMapResponse = await getBudgetsMap();
+
+    setBudgetMapsToSideMenu(budgetsMapResponse.data);
   };
 
   const addNewNoteToSideBar = (note: Note): void => {
-    const newNoteItem = {
-      className: styles.sideMenuItem,
-      title: getItemTitleWithOptionsButton(note.title),
-      textTitle: note.title,
-      key: getClientItemUrl(ResourceNameConstants.NOTE_RESOURCE_NAME, note.id),
-      pageId: note.id,
-    };
-
-    addNewNoteToSideMenu(newNoteItem);
+    addNewNoteToSideMenu(note);
   };
 
   const onPageSelected = (keys: Key[]): void => {
@@ -96,7 +92,7 @@ export const SideMenu = observer((): JSX.Element => {
       icon: <DollarOutlined />,
       isLeaf: false,
       pageId: ResourceNameConstants.BUDGET_RESOURCE_NAME,
-      children: [],
+      children: sideMenuBudgetItems,
     },
     {
       className: styles.sideMenuItem,
@@ -140,7 +136,8 @@ export const SideMenu = observer((): JSX.Element => {
   ];
 
   useEffect(() => {
-    fetchNotes();
+    fetchNotesMap();
+    fetchBudgetsMap();
   }, []);
 
   useEffect(() => {

@@ -2,6 +2,7 @@ import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { DashboardComponent } from '../pages/dashboard/Dashboard';
 import {
+  BUDGET_LIST_ROUTE,
   BUDGET_ROUTE,
   DASHBOARD_ROUTE,
   NOTE_LIST_ROUTE,
@@ -22,6 +23,7 @@ export const AppRouter = (): JSX.Element => (
     <Route path={NOTE_LIST_ROUTE} element={<NoteList />} />
     <Route path={NOTE_ROUTE} element={<NotesComponent />} />
     <Route path={BUDGET_ROUTE} element={<BudgetComponent />} />
+    <Route path={BUDGET_LIST_ROUTE} element={<BudgetComponent />} />
     <Route path={REPORTS_ROUTE} element={<DashboardComponent />} />
   </Routes>
 );

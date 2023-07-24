@@ -8,8 +8,8 @@ import { getClientItemUrl } from '../../helpers/urlHelper';
 import { deleteNote, getNotesList } from '../../api/noteService';
 import { Link } from 'react-router-dom';
 import { DeleteOutlined } from '@ant-design/icons';
-import SideMenuStore from '../../store/sideMenuStore';
 import { Note } from '../../models/notes/note';
+import SideMenuStore from '../../store/sideMenu/sideMenuStore';
 
 interface NoteItem {
   id: string;

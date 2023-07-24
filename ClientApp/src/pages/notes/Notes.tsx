@@ -13,12 +13,12 @@ import {
 } from '../../constants/notesConstants';
 import Title from 'antd/es/typography/Title';
 import { RichTextEditor } from '../../components/richTextEditor/RichTextEditor';
-import SideMenuStore from '../../store/sideMenuStore';
 import { getItemTitleWithOptionsButton } from '../../helpers/sideMenuHelper';
 import * as RoutingConstants from '../../constants/routingConstants';
 import { observer } from 'mobx-react-lite';
 import { getBreadCrumbsItemsByLocation } from '../../helpers/breadCrumbsHelper';
 import { BreadCrumbItem } from '../../models/breadCrumbs/breadCrumbItem';
+import SideMenuStore from '../../store/sideMenu/sideMenuStore';
 
 export const NotesComponent = observer((): JSX.Element => {
   const { id } = useParams();
