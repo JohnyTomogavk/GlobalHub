@@ -18,7 +18,8 @@ import * as RoutingConstants from '../../constants/routingConstants';
 import { observer } from 'mobx-react-lite';
 import { getBreadCrumbsItemsByLocation } from '../../helpers/breadCrumbsHelper';
 import { BreadCrumbItem } from '../../models/breadCrumbs/breadCrumbItem';
-import SideMenuStore from '../../store/sideMenu/sideMenuStore';
+import SideMenuNoteStore from '../../store/sideMenu/sideMenuNoteStore';
+import SideMenuCommonStore from '../../store/sideMenu/sideMenuCommonStore';
 
 export const NotesComponent = observer((): JSX.Element => {
   const { id } = useParams();
@@ -30,8 +31,8 @@ export const NotesComponent = observer((): JSX.Element => {
 
   const [note, setNote] = useState<Note | undefined>(undefined);
   const noteRef = useRef(note);
-  const { renameNoteInSideMenu, removeNoteFromSideMenu, changeSelectedMenuKey, getSideMenuItemByRoutingKey } =
-    SideMenuStore;
+  const { renameNoteInSideMenu, removeNoteFromSideMenu, getSideMenuItemByRoutingKey } = SideMenuNoteStore;
+  const { changeSelectedMenuKey } = SideMenuCommonStore;
 
   const onEditorContentChange = async (api: API): Promise<void> => {
     const data = await api.saver.save();

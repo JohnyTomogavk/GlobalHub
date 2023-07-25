@@ -6,7 +6,7 @@ import { EN, RU } from '../../../constants/languagesConstants';
 import { useTranslation } from 'react-i18next';
 import { i18n as i18n_type } from 'i18next';
 import { antdMenuItem } from '../../../models/shared/antdMenuItem';
-import CommonStore from '../../../store/commonStore';
+import CommonStore from '../../../store/uiConfigStore';
 import { observer } from 'mobx-react-lite';
 import styles from './UserToolBar.module.scss';
 

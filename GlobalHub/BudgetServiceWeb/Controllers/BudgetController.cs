@@ -1,4 +1,3 @@
-using AutoMapper;
 using BudgetBusinessLayer.Dto.Budget;
 using BudgetBusinessLayer.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -22,8 +21,16 @@ public class BudgetController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<BudgetMap>> GetBudgetsMap()
     {
-        var userBudgetsMap = await _budgetService.GetUserBudgetsMap();
-        
+        var userBudgetsMap = await _budgetService.GetUserBudgetsMapAsync();
+
+        return userBudgetsMap;
+    }
+
+    [HttpGet]
+    public async Task<BudgetDto> GetBudgetById(long id)
+    {
+        var userBudgetsMap = await _budgetService.GetBudgetByIdAsync(id);
+
         return userBudgetsMap;
     }
 }

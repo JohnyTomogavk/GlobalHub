@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { EN } from '../constants/languagesConstants';
 
-class CommonStore {
+class UiConfigStore {
   currentLanguage = EN;
   isDarkTheme = false;
 
@@ -24,4 +24,4 @@ class CommonStore {
   }
 }
 
-export default new CommonStore();
+export default new UiConfigStore();

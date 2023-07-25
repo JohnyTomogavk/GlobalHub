@@ -1,7 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import { SideMenuItemModel } from '../../models/shared/sideMenu/sideMenuItemModel';
 import { Key } from 'antd/lib/table/interface';
-import { BudgetMap } from '../../dto/sideMenu/budgetMap';
 import styles from '../../components/layout/sideMenu/SideMenu.module.scss';
 import { getItemTitleWithOptionsButton } from '../../helpers/sideMenuHelper';
 import { getClientItemUrl } from '../../helpers/urlHelper';
@@ -9,10 +8,8 @@ import * as ResourceNameConstants from '../../constants/resourceConstants';
 import { NoteMap } from '../../dto/sideMenu/noteMap';
 import { Note } from '../../models/notes/note';
 
-class SideMenuStore {
+class SideMenuNoteStore {
   sideMenuNoteItems: SideMenuItemModel[] = [];
-  sideMenuBudgetItems: SideMenuItemModel[] = [];
-  selectedTreeKeys: Key[] = [];
 
   constructor() {
     makeAutoObservable(
@@ -24,7 +21,11 @@ class SideMenuStore {
     );
   }
 
-  setNoteMapsItemsToSideMenu(items: NoteMap[]): void {
+  setNoteMapsItemsToSideMenu(items: NoteMap[] | undefined): void {
+    if (!items) {
+      return;
+    }
+
     const noteItems = items.map(
       (noteMap): SideMenuItemModel => ({
         className: styles.sideMenuItem,
@@ -64,27 +65,9 @@ class SideMenuStore {
     this.sideMenuNoteItems = this.sideMenuNoteItems.filter((item) => item.pageId !== itemId);
   }
 
-  changeSelectedMenuKey(keys: Key[]): void {
-    this.selectedTreeKeys = keys;
-  }
-
   getSideMenuItemByRoutingKey(routingKey: string): SideMenuItemModel | undefined {
     return this.sideMenuNoteItems.find((item) => item.key === routingKey);
   }
-
-  setBudgetMapsToSideMenu(items: BudgetMap[]): void {
-    const budgetItems = items.map(
-      (budgetMap): SideMenuItemModel => ({
-        className: styles.sideMenuItem,
-        title: getItemTitleWithOptionsButton(budgetMap.budgetTitle),
-        textTitle: budgetMap.budgetTitle,
-        key: getClientItemUrl(ResourceNameConstants.NOTE_RESOURCE_NAME, budgetMap.id),
-        pageId: budgetMap.id,
-      })
-    );
-
-    this.sideMenuBudgetItems = [...budgetItems];
-  }
 }
 
-export default new SideMenuStore();
+export default new SideMenuNoteStore();

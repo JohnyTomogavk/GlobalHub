@@ -6,7 +6,7 @@ import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { SideMenu } from '../layout/sideMenu/SideMenu';
 import styles from './App.module.scss';
 import { AppContent } from '../layout/content/AppContent';
-import CommonStore from '../../store/commonStore';
+import CommonStore from '../../store/uiConfigStore';
 import { observer } from 'mobx-react-lite';
 
 const { Content } = Layout;
