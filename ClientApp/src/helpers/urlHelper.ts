@@ -1,7 +1,5 @@
-import { API_BASE } from '../constants/apiConstants';
+export const getResourceUrl = (apiBasePath: string, resourcePath: string, entityId?: string): string =>
+  `${apiBasePath + resourcePath}${entityId ? '?id=' + entityId : ''}`;
 
-export const getResourceUrl = (resourcePath: string, entityId?: string): string =>
-  `${API_BASE + resourcePath}${entityId ? '?id=' + entityId : ''}`;
-
-export const getClientItemUrl = (resourceName: string, itemId?: string): string =>
+export const getClientItemUrl = (resourceName: string, itemId?: string | number): string =>
   itemId ? `${resourceName}/${itemId}` : resourceName;

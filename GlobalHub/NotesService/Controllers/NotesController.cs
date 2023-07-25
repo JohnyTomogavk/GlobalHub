@@ -25,13 +25,10 @@ public class NotesController : ControllerBase
     /// </summary>
     /// <returns>Dto that contains Id and Title for each menu item that available for current user</returns>
     [HttpGet]
-    public AvailableNotesDto GetNoteMap()
+    public IEnumerable<NoteMenuItem> GetNoteMap()
     {
         var notes = _notesRepository.GetNotesMap();
-        var noteMap = new AvailableNotesDto()
-        {
-            NoteMaps = notes.Select(note => new NoteMenuItem { Id = note.Id, Title = note.Title })
-        };
+        var noteMap = notes.Select(note => new NoteMenuItem { Id = note.Id, Title = note.Title });
 
         return noteMap;
     }
