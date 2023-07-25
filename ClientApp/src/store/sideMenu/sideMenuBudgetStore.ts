@@ -29,7 +29,7 @@ class SideMenuBudgetStore {
         className: styles.sideMenuItem,
         title: getItemTitleWithOptionsButton(budgetMap.budgetTitle),
         textTitle: budgetMap.budgetTitle,
-        key: getClientItemUrl(ResourceNameConstants.NOTE_RESOURCE_NAME, budgetMap.id),
+        key: getClientItemUrl(ResourceNameConstants.BUDGET_RESOURCE_NAME, budgetMap.id),
         pageId: budgetMap.id,
       })
     );
