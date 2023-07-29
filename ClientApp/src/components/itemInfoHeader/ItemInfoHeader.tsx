@@ -9,7 +9,6 @@ const { Text } = Typography;
 
 interface IItemInfoSubHeader {
   isLoading: boolean;
-  itemTitle?: string;
   lastEdited?: Date;
   onDeleteCallback: () => void;
   breadCrumbsItems: ({ title: string } | { title: JSX.Element })[];

@@ -12,37 +12,37 @@ import { NoteMap } from '../dto/sideMenu/noteMap';
 export const getNoteById = async (id: string): Promise<AxiosResponse<Note>> => {
   const resourceUrl = getResourceUrl(NOTES_API_BASE, apiConstants.GET_NOTE_BY_ID, id);
 
-  return GetRequest<Note, string>(resourceUrl);
+  return GetRequest<undefined, Note>(resourceUrl, undefined);
 };
 
 export const getNotesMap = async (): Promise<AxiosResponse<NoteMap[]>> => {
   const resourceUrl = getResourceUrl(NOTES_API_BASE, apiConstants.GET_NOTES_MAP);
 
-  return GetRequest<NoteMap[], undefined>(resourceUrl);
+  return GetRequest<undefined, NoteMap[]>(resourceUrl, undefined);
 };
 
 export const getNotesList = async (): Promise<AxiosResponse<Note[]>> => {
   const resourceUrl = getResourceUrl(NOTES_API_BASE, apiConstants.GET_NOTES_LIST);
 
-  return GetRequest<Note[], undefined>(resourceUrl);
+  return GetRequest<undefined, Note[]>(resourceUrl, undefined);
 };
 
 export const createNote = async (createDto: CreateNoteDto): Promise<AxiosResponse<Note>> => {
   const resourceUrl = getResourceUrl(NOTES_API_BASE, apiConstants.CREATE_NOTE);
 
-  return PostRequest<Note, CreateNoteDto>(resourceUrl, createDto);
+  return PostRequest<CreateNoteDto, Note>(resourceUrl, createDto);
 };
 
 export const updateNoteContent = async (id: string, body: UpdateNoteContentDto): Promise<AxiosResponse<Note>> => {
   const resourceUrl = getResourceUrl(NOTES_API_BASE, apiConstants.UPDATE_NOTE_CONTENT, id);
 
-  return PutRequest<Note, UpdateNoteContentDto>(resourceUrl, body);
+  return PutRequest<UpdateNoteContentDto, Note>(resourceUrl, body);
 };
 
 export const updateNoteTitle = async (id: string, noteTitleDto: UpdateNoteTitleDto): Promise<AxiosResponse<Note>> => {
   const resourceUrl = getResourceUrl(NOTES_API_BASE, apiConstants.UPDATE_NOTE_TITLE, id);
 
-  return PutRequest<Note, UpdateNoteTitleDto>(resourceUrl, noteTitleDto);
+  return PutRequest<UpdateNoteTitleDto, Note>(resourceUrl, noteTitleDto);
 };
 
 export const deleteNote = async (id: string): Promise<AxiosResponse<string>> => {
