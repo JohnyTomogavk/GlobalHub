@@ -7,4 +7,6 @@ public interface IBudgetRepository
     Task<IEnumerable<Budget?>> GetUserBudgetsAsync();
 
     Task<Budget?> GetBudgetByIdAsync(long id);
+
+    Task<Budget> AddBudget(Budget budget);
 }

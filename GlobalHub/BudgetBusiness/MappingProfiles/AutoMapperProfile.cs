@@ -12,5 +12,6 @@ public class AutoMapperProfile : Profile
         CreateMap<Budget, BudgetMap>();
         CreateMap<Budget, BudgetDto>();
         CreateMap<BudgetItem, BudgetItemDto>();
+        CreateMap<CreateBudgetDto, Budget>();
     }
 }
