@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Affix, ConfigProvider, Layout, theme } from 'antd';
 import { AppFooter } from '../layout/footer/Footer';
 import AppHeader from '../layout/header/Header';
@@ -8,11 +8,20 @@ import styles from './App.module.scss';
 import { AppContent } from '../layout/content/AppContent';
 import CommonStore from '../../store/uiConfigStore';
 import { observer } from 'mobx-react-lite';
+import { useNavigate } from 'react-router-dom';
+import { setUpAxiosExceptionInterceptor } from '../../config/axiosExceptionInterceptor';
 
 const { Content } = Layout;
 
 export const App = observer(() => {
   const { isDarkTheme } = CommonStore;
+  const navigate = useNavigate();
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  if (!isLoaded) {
+    setIsLoaded(true);
+    setUpAxiosExceptionInterceptor(navigate);
+  }
 
   return (
     <ConfigProvider

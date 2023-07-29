@@ -6,3 +6,5 @@ export const BUDGET_ROUTE = 'budgets/:id';
 export const DASHBOARD_ROUTE = 'dashboard';
 export const TASK_ROUTE = 'tasks/:id?';
 export const REPORTS_ROUTE = 'reports';
+export const OPERATION_FAILED_ROUTE = 'errorPage/:correlationId';
+export const NOT_FOUND_ROUTE = 'notFound';

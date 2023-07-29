@@ -1,4 +1,6 @@
+using Common;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using NotesService.Data.Repositories.Interfaces;
 using NotesService.Dtos;
 using NotesService.Entities;
@@ -25,12 +27,12 @@ public class NotesController : ControllerBase
     /// </summary>
     /// <returns>Dto that contains Id and Title for each menu item that available for current user</returns>
     [HttpGet]
-    public IEnumerable<NoteMenuItem> GetNoteMap()
+    public ActionResult<IEnumerable<NoteMenuItem>> GetNoteMap()
     {
         var notes = _notesRepository.GetNotesMap();
         var noteMap = notes.Select(note => new NoteMenuItem { Id = note.Id, Title = note.Title });
 
-        return noteMap;
+        return Ok(noteMap);
     }
 
     /// <summary>
@@ -38,11 +40,23 @@ public class NotesController : ControllerBase
     /// </summary>
     /// <returns>Set that contains all notes from database</returns>
     [HttpGet]
-    public Note GetNoteById(string id)
+    public ActionResult<Note> GetNoteById(string id)
     {
+        var isNoteIdValid = IsNoteIdValid(id);
+
+        if (!isNoteIdValid)
+        {
+            return BadRequest();
+        }
+
         var note = _notesRepository.GetById(id);
 
-        return note;
+        if (note == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(note);
     }
 
     // TODO: Add filtration by user id, when users will be implemented
@@ -51,11 +65,11 @@ public class NotesController : ControllerBase
     /// </summary>
     /// <returns>Notes, available for current user</returns>
     [HttpGet]
-    public IEnumerable<Note> GetNoteList()
+    public ActionResult<IEnumerable<Note>> GetNoteList()
     {
         var notes = _notesRepository.GetNoteList();
 
-        return notes;
+        return Ok(notes);
     }
 
     /// <summary>
@@ -63,13 +77,13 @@ public class NotesController : ControllerBase
     /// </summary>
     /// <param name="createNoteDto">Dto that contains data for the new note</param>
     [HttpPost]
-    public Note CreateNote(CreateNoteDto createNoteDto)
+    public ActionResult<Note> CreateNote(CreateNoteDto createNoteDto)
     {
         // TODO: Initialize other fields when according logic will be implemented
         var newNote = new Note { CreatedDate = DateTime.Now, Title = createNoteDto.Title };
         var createdNote = _notesRepository.Create(newNote);
 
-        return createdNote;
+        return StatusCode(StatusCodes.Status201Created, createdNote);
     }
 
     /// <summary>
@@ -79,13 +93,14 @@ public class NotesController : ControllerBase
     /// <param name="updateDto">Updated note's content</param>
     /// <returns>Updated note</returns>
     [HttpPut]
-    public Note UpdateNoteContent(string id, [FromBody] UpdateNoteContentDto updateDto)
+    public ActionResult<Note> UpdateNoteContent(string id, [FromBody] UpdateNoteContentDto updateDto)
     {
         var note = _notesRepository.GetById(id);
         note.RichTextContent = updateDto.Content;
         note.UpdatedDate = DateTime.Now;
+        var updatedNote = _notesRepository.Update(note);
 
-        return _notesRepository.Update(note);
+        return Ok(updatedNote);
     }
 
     /// <summary>
@@ -95,13 +110,14 @@ public class NotesController : ControllerBase
     /// <param name="updateNoteTitleDto">Updated note's title</param>
     /// <returns>Updated note</returns>
     [HttpPut]
-    public Note UpdateNoteTitle(string id, [FromBody] UpdateNoteTitleDto updateNoteTitleDto)
+    public ActionResult<Note> UpdateNoteTitle(string id, [FromBody] UpdateNoteTitleDto updateNoteTitleDto)
     {
         var note = _notesRepository.GetById(id);
         note.Title = updateNoteTitleDto.NewTitle;
         note.UpdatedDate = DateTime.Now;
+        var updatedNote = _notesRepository.Update(note);
 
-        return _notesRepository.Update(note);
+        return Ok(updatedNote);
     }
 
     /// <summary>
@@ -109,10 +125,12 @@ public class NotesController : ControllerBase
     /// </summary>
     /// <param name="id">Note's id</param>
     [HttpDelete]
-    public string DeleteNote(string id)
+    public ActionResult<string> DeleteNote(string id)
     {
         _notesRepository.DeleteById(id);
 
-        return id;
+        return Ok(id);
     }
+
+    private bool IsNoteIdValid(string noteId) => ObjectId.TryParse(noteId, out var _);
 }

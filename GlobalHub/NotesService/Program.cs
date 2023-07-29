@@ -1,4 +1,6 @@
 using Common;
+using Common.ExceptionHandling;
+using Common.Logging;
 using Microsoft.OpenApi.Models;
 using NotesService.Config;
 using NotesService.Constants;
@@ -9,6 +11,7 @@ using NotesService.Data.Repositories.Interfaces;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHttpContextAccessor();
 
 builder.Host.UseSerilog(SerilogExtensions.LoggerConfiguration);
 
@@ -18,6 +21,7 @@ builder.Services.Configure<NotesStoreConfig>(notesDbConfigSection);
 builder.Services.AddCors();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(action =>
 {
     action.SwaggerDoc("v1", new OpenApiInfo { Title = "Notes API", Version = "v1" });
@@ -36,11 +40,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("X-Correlation-id"));
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
