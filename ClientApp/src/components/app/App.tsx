@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Affix, ConfigProvider, Layout, theme } from 'antd';
 import { AppFooter } from '../layout/footer/Footer';
 import AppHeader from '../layout/header/Header';
