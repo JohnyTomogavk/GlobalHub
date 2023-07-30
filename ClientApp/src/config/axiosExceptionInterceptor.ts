@@ -4,11 +4,16 @@ import { NavigateFunction } from 'react-router/dist/lib/hooks';
 import { NOT_FOUND_ROUTE } from '../constants/routingConstants';
 import { OPERATION_FAILED_PAGE_RESOURCE } from '../constants/resourceConstants';
 import { notification } from 'antd';
+import { CustomAxiosConfig } from '../models/axios/CustomAxiosConfig';
 
 export const setUpAxiosExceptionInterceptor = (navigate: NavigateFunction): void => {
   axios.interceptors.response.use(
     (response) => response,
     (error) => {
+      const responseConfig = error.response.config as CustomAxiosConfig;
+
+      if (responseConfig?.skipGlobalErrorHandling) return error;
+
       if (error.response) {
         const correlation_id = error.response.headers[CORRELATION_ID_HEADER_NAME];
 
@@ -25,7 +30,7 @@ export const setUpAxiosExceptionInterceptor = (navigate: NavigateFunction): void
       } else {
         notification.error({
           message: 'Error occurred',
-          description: 'Cant access the server',
+          description: 'Cant access the server. Check your internet connection',
           placement: 'bottomRight',
         });
       }
