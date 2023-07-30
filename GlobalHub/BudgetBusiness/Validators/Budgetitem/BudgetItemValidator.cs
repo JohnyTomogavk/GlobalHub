@@ -2,20 +2,20 @@
 using BudgetDataLayer.Entities.Budget;
 using FluentValidation;
 
-namespace BudgetBusinessLayer.Validators;
+namespace BudgetBusinessLayer.Validators.Budgetitem;
 
 public class BudgetItemValidator : AbstractValidator<BudgetItem>
 {
     public BudgetItemValidator()
     {
         RuleFor(e => e.ItemTitle)
-            .NotEmpty()
+            .NotNull()
             .MaximumLength(BudgetConstants.MaxBudgetItemTitleLength);
 
         RuleFor(e => e.ItemDescription)
-            .NotEmpty()
+            .NotNull()
             .MaximumLength(BudgetConstants.MaxBudgetItemDescriptionLength);
 
-        RuleFor(e => e.BudgetOperationType).NotEqual(BudgetOperationType.Unknown);
+        RuleFor(e => e.BudgetOperationType).IsInEnum().NotEqual(BudgetOperationType.Unknown);
     }
 }

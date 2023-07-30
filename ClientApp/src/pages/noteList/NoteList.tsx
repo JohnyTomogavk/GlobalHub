@@ -11,7 +11,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { Note } from '../../models/notes/note';
 import SideMenuStore from '../../store/sideMenu/sideMenuNoteStore';
 
-interface NoteItem {
+interface NoteTableItem {
   id: string;
   title: JSX.Element;
   updatedDate: Date;
@@ -19,10 +19,10 @@ interface NoteItem {
 }
 
 export const NoteList = (): JSX.Element => {
-  const [notes, setNotes] = useState<NoteItem[]>([]);
+  const [notes, setNotes] = useState<NoteTableItem[]>([]);
   const { removeNoteFromSideMenu } = SideMenuStore;
 
-  const columns: ColumnsType<NoteItem> = [
+  const columns: ColumnsType<NoteTableItem> = [
     {
       title: 'Note title',
       dataIndex: 'title',
@@ -47,7 +47,7 @@ export const NoteList = (): JSX.Element => {
       title: '',
       align: 'center',
       width: '5%',
-      render: (_, item: NoteItem) => (
+      render: (_, item: NoteTableItem) => (
         <Button
           onClick={async (): Promise<void> => {
             const deletedIdResponse = await deleteNote(item.id);
@@ -75,7 +75,7 @@ export const NoteList = (): JSX.Element => {
           title: <Link to={`/${getClientItemUrl(ResourceConstants.NOTE_RESOURCE_NAME, item.id)}`}>{item.title}</Link>,
           updatedDate: new Date(item.updatedDate ?? item.createdDate),
           createdDate: new Date(item.createdDate),
-        } as NoteItem)
+        } as NoteTableItem)
     );
 
     setNotes(noteTableItems);
@@ -90,7 +90,7 @@ export const NoteList = (): JSX.Element => {
       size={'small'}
       columns={columns}
       dataSource={notes}
-      rowKey={(item: NoteItem): Key => item.id}
+      rowKey={(item: NoteTableItem): Key => item.id}
       pagination={false}
       bordered
     />

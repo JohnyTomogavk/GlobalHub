@@ -19,18 +19,31 @@ public class BudgetController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IEnumerable<BudgetMap>> GetBudgetsMap()
+    public async Task<ActionResult<IEnumerable<BudgetMap>>> GetBudgetsMap()
     {
         var userBudgetsMap = await _budgetService.GetUserBudgetsMapAsync();
 
-        return userBudgetsMap;
+        return Ok(userBudgetsMap);
     }
 
     [HttpGet]
-    public async Task<BudgetDto> GetBudgetById(long id)
+    public async Task<ActionResult<BudgetDto>> GetBudgetById(long id)
     {
         var userBudgetsMap = await _budgetService.GetBudgetByIdAsync(id);
 
-        return userBudgetsMap;
+        if (userBudgetsMap == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(userBudgetsMap);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<BudgetDto>> CreateNewBudget([FromBody] CreateBudgetDto newBudgetDto)
+    {
+        var createdBudget = await _budgetService.AddBudgetAsync(newBudgetDto);
+
+        return StatusCode(StatusCodes.Status201Created, createdBudget);
     }
 }

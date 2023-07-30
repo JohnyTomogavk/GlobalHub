@@ -33,7 +33,7 @@ public class NotesRepository : INotesRepository
 
     public Note GetById(string id)
     {
-        return _notesDbContext.Notes.FindSync(note => note.Id == id).First();
+        return _notesDbContext.Notes.FindSync(note => note.Id == id).SingleOrDefault();
     }
 
     public void DeleteById(string id)

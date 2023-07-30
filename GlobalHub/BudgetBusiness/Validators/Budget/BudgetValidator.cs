@@ -1,19 +1,18 @@
 ﻿using BudgetDataLayer.Constants;
-using BudgetDataLayer.Entities.Budget;
 using FluentValidation;
 
-namespace BudgetBusinessLayer.Validators;
+namespace BudgetBusinessLayer.Validators.Budget;
 
-public class BudgetValidator : AbstractValidator<Budget>
+public class BudgetValidator : AbstractValidator<BudgetDataLayer.Entities.Budget.Budget>
 {
     public BudgetValidator()
     {
         RuleFor(e => e.BudgetTitle)
-            .NotEmpty()
+            .NotNull()
             .MaximumLength(BudgetConstants.MaxBudgetTitleLength);
 
         RuleFor(e => e.BudgetDescription)
-            .NotEmpty()
+            .NotNull()
             .MaximumLength(BudgetConstants.MaxBudgetDescriptionLength);
     }
 }

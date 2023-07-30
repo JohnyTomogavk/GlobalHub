@@ -3,6 +3,7 @@ export const BUDGET_RESOURCE_NAME = 'budgets';
 export const TASK_RESOURCE_NAME = 'tasks';
 export const NOTE_RESOURCE_NAME = 'notes';
 export const REPORT_RESOURCE_NAME = 'reports';
+export const OPERATION_FAILED_PAGE_RESOURCE = 'errorPage';
 
 export const ResourceToBreadCrumbsTitleMapping = {
   [DASHBOARD_RESOURCE_NAME]: 'Dashboard',

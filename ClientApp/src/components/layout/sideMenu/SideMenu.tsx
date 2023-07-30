@@ -16,17 +16,18 @@ import { useTranslation } from 'react-i18next';
 import { Key } from 'antd/lib/table/interface';
 import { getClientItemUrl } from '../../../helpers/urlHelper';
 import * as ResourceNameConstants from '../../../constants/resourceConstants';
-import { NOTE_RESOURCE_NAME } from '../../../constants/resourceConstants';
+import { BUDGET_RESOURCE_NAME, NOTE_RESOURCE_NAME } from '../../../constants/resourceConstants';
 import styles from './SideMenu.module.scss';
 import { createNote, getNotesMap } from '../../../api/noteService';
 import { NOTE_TITLE_PLACEHOLDER } from '../../../constants/notesConstants';
 import { SideMenuItemModel } from '../../../models/shared/sideMenu/sideMenuItemModel';
 import { observer } from 'mobx-react-lite';
 import { getTopLevelItemTitleWithAddButton } from '../../../helpers/sideMenuHelper';
-import { getBudgetsMap } from '../../../api/budgetsService';
+import { createNewBudget, getBudgetsMap } from '../../../api/budgetsService';
 import SideMenuNoteStore from '../../../store/sideMenu/sideMenuNoteStore';
 import SideMenuCommonStore from '../../../store/sideMenu/sideMenuCommonStore';
 import SideMenuBudgetStore from '../../../store/sideMenu/sideMenuBudgetStore';
+import { BUDGET_DEFAULT_TITLE } from '../../../constants/budgetConstants';
 
 export const SideMenu = observer((): JSX.Element => {
   const { t } = useTranslation();
@@ -34,7 +35,7 @@ export const SideMenu = observer((): JSX.Element => {
   const location = useLocation();
   const { sideMenuNoteItems, addNewNoteToSideMenu, setNoteMapsItemsToSideMenu } = SideMenuNoteStore;
   const { selectedTreeKeys, changeSelectedMenuKey } = SideMenuCommonStore;
-  const { sideMenuBudgetItems, setBudgetMapsToSideMenu } = SideMenuBudgetStore;
+  const { sideMenuBudgetItems, setBudgetMapsToSideMenu, addBudgetToSideMenu } = SideMenuBudgetStore;
 
   const initializeActiveMenuItem = (currentPath: string): void => {
     const pathSegments = currentPath.split('/').filter((item) => item !== '');
@@ -84,8 +85,17 @@ export const SideMenu = observer((): JSX.Element => {
     },
     {
       className: styles.sideMenuItem,
-      title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.BUDGETS'), (e): void => {
-        // TODO: Navigate to budget page and implement logic of creation there
+      title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.BUDGETS'), async (e): Promise<void> => {
+        const newBudgetResponse = await createNewBudget({
+          budgetTitle: BUDGET_DEFAULT_TITLE,
+          createdDate: new Date(),
+        });
+        addBudgetToSideMenu(newBudgetResponse.data);
+        const newBudgetUrl = getClientItemUrl(BUDGET_RESOURCE_NAME, newBudgetResponse.data.id);
+        changeSelectedMenuKey([newBudgetUrl]);
+        navigation(newBudgetUrl, {
+          replace: true,
+        });
         e.stopPropagation();
       }),
       key: getClientItemUrl(ResourceNameConstants.BUDGET_RESOURCE_NAME),

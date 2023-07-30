@@ -1,15 +1,18 @@
-using BudgetBusinessLayer.Validators;
 using BudgetDataLayer.Constants;
 using BudgetDataLayer.Data;
 using BudgetBusinessLayer.MappingProfiles;
+using BudgetBusinessLayer.Validators.Budget;
 using BudgetService.Extensions;
 using Common;
+using Common.ExceptionHandling;
+using Common.Logging;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHttpContextAccessor();
 
 builder.Host.UseSerilog(SerilogExtensions.LoggerConfiguration);
 
@@ -41,7 +44,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("X-Correlation-id"));
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

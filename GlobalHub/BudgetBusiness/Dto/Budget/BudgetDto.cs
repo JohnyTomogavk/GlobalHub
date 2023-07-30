@@ -1,8 +1,9 @@
 ﻿using BudgetBusinessLayer.Dto.BudgetItem;
+using BudgetDataLayer.Interface;
 
 namespace BudgetBusinessLayer.Dto.Budget;
 
-public record BudgetDto
+public record BudgetDto : IHasDate
 {
     public long Id { get; init; }
 
@@ -11,4 +12,8 @@ public record BudgetDto
     public string BudgetDescription { get; init; }
 
     public ICollection<BudgetItemDto> BudgetItems { get; set; }
+
+    public DateTime CreatedDate { get; set; }
+
+    public DateTime? UpdatedDate { get; set; }
 }

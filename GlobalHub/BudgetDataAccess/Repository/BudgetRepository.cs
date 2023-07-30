@@ -26,4 +26,12 @@ public class BudgetRepository : IBudgetRepository
             .Include(b => b.BudgetItems)
             .FirstOrDefaultAsync(b => b.Id == id);
     }
+
+    public async Task<Budget> AddBudget(Budget budget)
+    {
+        var createdEntity = await _dbContext.Budgets.AddAsync(budget);
+        await _dbContext.SaveChangesAsync();
+
+        return createdEntity.Entity;
+    }
 }

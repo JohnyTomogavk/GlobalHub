@@ -19,6 +19,18 @@ class SideMenuBudgetStore {
     );
   }
 
+  addBudgetToSideMenu(item: BudgetMap): void {
+    const budgetItem = {
+      className: styles.sideMenuItem,
+      title: getItemTitleWithOptionsButton(item.budgetTitle),
+      textTitle: item.budgetTitle,
+      key: getClientItemUrl(ResourceNameConstants.BUDGET_RESOURCE_NAME, item.id),
+      pageId: item.id,
+    } as SideMenuItemModel;
+
+    this.sideMenuBudgetItems.push(budgetItem);
+  }
+
   setBudgetMapsToSideMenu(items: BudgetMap[] | undefined): void {
     if (!items) {
       return;
