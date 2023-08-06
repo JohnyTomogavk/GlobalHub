@@ -25,7 +25,7 @@ jobs:
     - name: Build
       run: |
         cd ClientApp
-        npm install
+        npm ci
         npx webpack
         npm run lint
         npm run lint:scss
