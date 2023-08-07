@@ -55,6 +55,9 @@ module.exports = {
     static: './dist',
     hot: true,
     historyApiFallback: true,
+    client: {
+      overlay: true,
+    },
   },
   module: {
     strictExportPresence: true,

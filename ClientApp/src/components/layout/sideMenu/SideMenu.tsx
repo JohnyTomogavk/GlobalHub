@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import Title from 'antd/es/typography/Title';
-import { Divider, Space, Tree } from 'antd';
+import { Divider, Space, theme, Tree } from 'antd';
 import {
   CheckOutlined,
   DashboardOutlined,
@@ -36,6 +36,10 @@ export const SideMenu = observer((): JSX.Element => {
   const { sideMenuNoteItems, addNewNoteToSideMenu, setNoteMapsItemsToSideMenu } = SideMenuNoteStore;
   const { selectedTreeKeys, changeSelectedMenuKey } = SideMenuCommonStore;
   const { sideMenuBudgetItems, setBudgetMapsToSideMenu, addBudgetToSideMenu } = SideMenuBudgetStore;
+
+  const {
+    token: { colorBgLayout },
+  } = theme.useToken();
 
   const initializeActiveMenuItem = (currentPath: string): void => {
     const pathSegments = currentPath.split('/').filter((item) => item !== '');
@@ -146,7 +150,14 @@ export const SideMenu = observer((): JSX.Element => {
   ];
 
   return (
-    <Sider width="100%" className={styles.siderContainer} theme="light">
+    <Sider
+      style={{
+        background: colorBgLayout,
+      }}
+      width="100%"
+      className={styles.siderContainer}
+      theme="light"
+    >
       <div className={styles.systemLogo}>
         <Link to="/">
           <Title className={styles.title} level={3}>
@@ -159,6 +170,9 @@ export const SideMenu = observer((): JSX.Element => {
       </div>
       <Divider className={styles.siderDivider} />
       <Tree
+        style={{
+          background: colorBgLayout,
+        }}
         switcherIcon={<DownOutlined />}
         showLine
         showIcon

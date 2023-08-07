@@ -1,4 +1,19 @@
 @mixin page-content-base {
-  margin: 0 16px;
-  padding: 24px;
+  padding: 0.5rem;
+}
+
+@mixin page-title-container {
+  min-height: 3.5rem;
+}
+
+@mixin entity-title {
+  margin: 0 auto;
+}
+
+@mixin form-field {
+  margin: 0 0 0.5rem;
+}
+
+@mixin field-label {
+  margin: 0;
 }
