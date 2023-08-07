@@ -6,6 +6,7 @@ using NotesService.Entities;
 
 namespace NotesService.Controllers;
 
+// TODO: Add auth service calls when it is implemented
 /// <summary>
 /// Controller that manages user's notes
 /// </summary>
