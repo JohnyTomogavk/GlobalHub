@@ -36,6 +36,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v3
+
       - uses: paulhatch/semantic-version@v5.0.2
         with:
           # The prefix to use to identify tags
