@@ -1,0 +1,41 @@
+diff a/.github/workflows/server-ci.yml b/.github/workflows/server-ci.yml	(rejected hunks)
+@@ -36,16 +36,39 @@
+      runs-on: ubuntu-latest
+  
+      steps:
+++<<<<<<< HEAD
+ +      - uses: actions/checkout@v3
+ +
+ +      - uses: paulhatch/semantic-version@v5.0.2
+ +        with:
+ +          tag_prefix: "v"
+ +          major_pattern: "(MAJOR)"
+ +          major_regexp_flags: ""
+ +          minor_pattern: "(MINOR)"
+ +          minor_regexp_flags: ""
+ +          version_format: "${major}.${minor}.${patch}"
+ +          bump_each_commit: false
+ +          search_commit_body: false
+++=======
++       - uses: paulhatch/semantic-version@v5.0.2
++         with:
++           # The prefix to use to identify tags
++           tag_prefix: "v"
++           # A string which, if present in a git commit, indicates that a change represents a
++           # major (breaking) change, supports regular expressions wrapped with '/'
++           major_pattern: "(MAJOR)"
++           # A string which indicates the flags used by the `major_pattern` regular expression. Supported flags: idgs
++           major_regexp_flags: ""
++           # Same as above except indicating a minor change, supports regular expressions wrapped with '/'
++           minor_pattern: "(MINOR)"
++           # A string which indicates the flags used by the `minor_pattern` regular expression. Supported flags: idgs
++           minor_regexp_flags: ""
++           # A string to determine the format of the version output
++           version_format: "${major}.${minor}.${patch}-prerelease${increment}"
++           # If this is set to true, *every* commit will be treated as a new version.
++           bump_each_commit: false
++           # If true, the body of commits will also be searched for major/minor patterns to determine the version type.
++           search_commit_body: false
++           # The output method used to generate list of users, 'csv' or 'json'.
+++>>>>>>> 0c1d6f3 (- add versioning to workflow.)
+            user_format_type: "csv"
