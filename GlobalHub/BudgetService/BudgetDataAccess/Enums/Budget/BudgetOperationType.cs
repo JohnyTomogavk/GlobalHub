@@ -1,8 +1,8 @@
-﻿namespace BudgetDataLayer.Entities.Budget;
+﻿namespace BudgetDataLayer.Enums.Budget;
 
 public enum BudgetOperationType
 {
     Unknown = 0,
     Incoming = 1,
-    Outcoming = 2,
+    Outgoing = 2,
 }
