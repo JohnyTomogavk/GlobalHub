@@ -13,5 +13,7 @@ public class Budget : BaseEntity, IHasDate
 
     public DateTime? UpdatedDate { get; set; }
 
+    public int PreserveFromIncomingPercent { get; set; }
+
     public virtual ICollection<BudgetItem> BudgetItems { get; set; } = new List<BudgetItem>();
 }

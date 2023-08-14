@@ -10,7 +10,7 @@ public class BudgetItem : BaseEntity, IHasDate
 
     public string ItemDescription { get; set; } = string.Empty;
 
-    public BudgetOperationType BudgetItemOperationType { get; set; }
+    public BudgetItemOperationType BudgetItemOperationType { get; set; }
 
     public BudgetItemRegularityType BudgetItemRegularityType { get; set; }
 
@@ -21,6 +21,8 @@ public class BudgetItem : BaseEntity, IHasDate
     public DateTime CreatedDate { get; set; }
 
     public DateTime? UpdatedDate { get; set; }
+
+    public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();
 
     public virtual Budget Budget { get; set; }
 }

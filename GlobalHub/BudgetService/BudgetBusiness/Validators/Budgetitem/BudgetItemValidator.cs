@@ -1,5 +1,6 @@
 ﻿using BudgetDataLayer.Constants;
 using BudgetDataLayer.Entities.Budget;
+using BudgetDataLayer.Enums.Budget;
 using FluentValidation;
 
 namespace BudgetBusinessLayer.Validators.Budgetitem;
@@ -16,6 +17,7 @@ public class BudgetItemValidator : AbstractValidator<BudgetItem>
             .NotNull()
             .MaximumLength(BudgetConstants.MaxBudgetItemDescriptionLength);
 
-        RuleFor(e => e.BudgetOperationType).IsInEnum().NotEqual(BudgetOperationType.Unknown);
+        RuleFor(e => e.BudgetItemOperationType).IsInEnum().NotEqual(BudgetItemOperationType.Unknown);
+        RuleFor(e => e.BudgetItemRegularityType).IsInEnum().NotEqual(BudgetItemRegularityType.Unknown);
     }
 }

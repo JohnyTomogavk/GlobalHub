@@ -14,5 +14,6 @@ public class BudgetItemConfiguration : BaseEntityTypeConfiguration<BudgetItem>
             .HasMaxLength(BudgetConstants.MaxBudgetItemTitleLength);
         builder.Property(budgetItem => budgetItem.ItemDescription).IsRequired()
             .HasMaxLength(BudgetConstants.MaxBudgetItemDescriptionLength);
+        builder.HasMany(budgetItem => budgetItem.Tags).WithMany(tags => tags.BudgetItems);
     }
 }

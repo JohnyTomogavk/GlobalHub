@@ -1,6 +1,6 @@
 ﻿namespace BudgetDataLayer.Enums.Budget;
 
-public enum BudgetOperationType
+public enum BudgetItemOperationType
 {
     Unknown = 0,
     Incoming = 1,
