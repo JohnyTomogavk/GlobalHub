@@ -1,7 +1,8 @@
 ﻿using BudgetsService.DataAccess.Entities.Base;
-using BudgetsService.DataAccess.Interface;
+using BudgetsService.DataAccess.Entities.Tags;
+using BudgetsService.Infrastructure.Interface;
 
-namespace BudgetsService.DataAccess.Entities.Budget;
+namespace BudgetsService.DataAccess.Entities.Budgets;
 
 public class Budget : BaseEntity, IHasDate
 {
@@ -15,5 +16,7 @@ public class Budget : BaseEntity, IHasDate
 
     public int PreserveFromIncomingPercent { get; set; }
 
-    public virtual ICollection<BudgetItem> BudgetItems { get; set; } = new List<BudgetItem>();
+    public virtual IEnumerable<BudgetItem> BudgetItems { get; set; } = new List<BudgetItem>();
+
+    public virtual IEnumerable<Tag> BudgetTags { get; set; } = new List<Tag>();
 }

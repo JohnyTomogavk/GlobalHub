@@ -1,8 +1,9 @@
 ﻿using BudgetsService.DataAccess.Entities.Base;
+using BudgetsService.DataAccess.Entities.Tags;
 using BudgetsService.DataAccess.Enums.Budget;
-using BudgetsService.DataAccess.Interface;
+using BudgetsService.Infrastructure.Interface;
 
-namespace BudgetsService.DataAccess.Entities.Budget;
+namespace BudgetsService.DataAccess.Entities.Budgets;
 
 public class BudgetItem : BaseEntity, IHasDate
 {
@@ -22,9 +23,9 @@ public class BudgetItem : BaseEntity, IHasDate
 
     public DateTime? UpdatedDate { get; set; }
 
-    public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();
+    public virtual IEnumerable<BudgetItemTag> BudgetItemTags { get; set; } = new List<BudgetItemTag>();
 
     public long BudgetId { get; set; }
-    
+
     public virtual Budget Budget { get; set; }
 }

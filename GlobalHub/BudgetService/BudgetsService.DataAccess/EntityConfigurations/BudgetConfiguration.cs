@@ -1,5 +1,5 @@
 ﻿using BudgetsService.DataAccess.Constants;
-using BudgetsService.DataAccess.Entities.Budget;
+using BudgetsService.DataAccess.Entities.Budgets;
 using BudgetsService.DataAccess.EntityConfigurations.Base;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,6 +15,8 @@ public class BudgetConfiguration : BaseEntityTypeConfiguration<Budget>
         builder.Property(budget => budget.BudgetDescription).IsRequired()
             .HasMaxLength(BudgetConstants.MaxBudgetDescriptionLength);
         builder.HasMany(t => t.BudgetItems).WithOne(t => t.Budget)
+            .HasForeignKey(t => t.BudgetId);
+        builder.HasMany(t => t.BudgetTags).WithOne(t => t.Budget)
             .HasForeignKey(t => t.BudgetId);
     }
 }

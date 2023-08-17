@@ -1,19 +1,27 @@
 ﻿using System.Reflection;
-using BudgetsService.DataAccess.Entities.Budget;
-using BudgetsService.DataAccess.Interface;
+using BudgetsService.DataAccess.Entities.Budgets;
+using BudgetsService.DataAccess.Entities.Tags;
+using BudgetsService.Infrastructure.Interface;
+using BudgetsService.Infrastructure.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace BudgetsService.DataAccess.Context;
 
 public class ApplicationDbContext : DbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    private readonly IDateTimeService _dateTimeService;
+
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IDateTimeService dateTimeService) :
+        base(options)
     {
+        _dateTimeService = dateTimeService;
     }
 
     public DbSet<Budget> Budgets { get; set; }
 
     public DbSet<BudgetItem> BudgetsItems { get; set; }
+
+    public DbSet<BudgetItemTag> BudgetItemTags { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -27,16 +35,16 @@ public class ApplicationDbContext : DbContext
             switch (entry.State)
             {
                 case EntityState.Added:
-                    entry.Entity.CreatedDate = DateTime.UtcNow;
+                    entry.Entity.CreatedDate = _dateTimeService.CurrentDate;
                     break;
                 case EntityState.Modified:
-                    entry.Entity.UpdatedDate = DateTime.UtcNow;
+                    entry.Entity.UpdatedDate = _dateTimeService.CurrentDate;
                     break;
                 default:
                     break;
             }
         }
-    
+
         return await base.SaveChangesAsync(cancellationToken);
     }
 }

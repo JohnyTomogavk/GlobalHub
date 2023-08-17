@@ -9,11 +9,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace BudgetDataLayer.Migrations
+namespace BudgetsService.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230815223202_AddTagsTablesAndUpdateBudgetItems")]
-    partial class AddTagsTablesAndUpdateBudgetItems
+    [Migration("20230817170154_AddTagRelatedtables")]
+    partial class AddTagRelatedtables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace BudgetDataLayer.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("BudgetDataLayer.Entities.Budget.Budget", b =>
+            modelBuilder.Entity("BudgetsService.DataAccess.Entities.Budgets.Budget", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -55,7 +55,7 @@ namespace BudgetDataLayer.Migrations
                     b.ToTable("Budgets");
                 });
 
-            modelBuilder.Entity("BudgetDataLayer.Entities.Budget.BudgetItem", b =>
+            modelBuilder.Entity("BudgetsService.DataAccess.Entities.Budgets.BudgetItem", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -89,6 +89,9 @@ namespace BudgetDataLayer.Migrations
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<long?>("TagId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -96,16 +99,44 @@ namespace BudgetDataLayer.Migrations
 
                     b.HasIndex("BudgetId");
 
+                    b.HasIndex("TagId");
+
                     b.ToTable("BudgetsItems");
                 });
 
-            modelBuilder.Entity("BudgetDataLayer.Entities.Budget.Tag", b =>
+            modelBuilder.Entity("BudgetsService.DataAccess.Entities.Tags.BudgetItemTag", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("BudgetItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TagId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BudgetItemId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("BudgetItemTags");
+                });
+
+            modelBuilder.Entity("BudgetsService.DataAccess.Entities.Tags.Tag", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("BudgetId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Color")
                         .IsRequired()
@@ -117,28 +148,49 @@ namespace BudgetDataLayer.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BudgetId");
+
                     b.ToTable("Tag");
                 });
 
-            modelBuilder.Entity("BudgetItemTag", b =>
+            modelBuilder.Entity("BudgetsService.DataAccess.Entities.Budgets.BudgetItem", b =>
                 {
-                    b.Property<long>("BudgetItemsId")
-                        .HasColumnType("bigint");
+                    b.HasOne("BudgetsService.DataAccess.Entities.Budgets.Budget", "Budget")
+                        .WithMany("BudgetItems")
+                        .HasForeignKey("BudgetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<long>("TagsId")
-                        .HasColumnType("bigint");
+                    b.HasOne("BudgetsService.DataAccess.Entities.Tags.Tag", null)
+                        .WithMany("BudgetItems")
+                        .HasForeignKey("TagId");
 
-                    b.HasKey("BudgetItemsId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("BudgetItemTag");
+                    b.Navigation("Budget");
                 });
 
-            modelBuilder.Entity("BudgetDataLayer.Entities.Budget.BudgetItem", b =>
+            modelBuilder.Entity("BudgetsService.DataAccess.Entities.Tags.BudgetItemTag", b =>
                 {
-                    b.HasOne("BudgetDataLayer.Entities.Budget.Budget", "Budget")
-                        .WithMany("BudgetItems")
+                    b.HasOne("BudgetsService.DataAccess.Entities.Budgets.BudgetItem", "BudgetItem")
+                        .WithMany("BudgetItemTags")
+                        .HasForeignKey("BudgetItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BudgetsService.DataAccess.Entities.Tags.Tag", "Tag")
+                        .WithMany()
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BudgetItem");
+
+                    b.Navigation("Tag");
+                });
+
+            modelBuilder.Entity("BudgetsService.DataAccess.Entities.Tags.Tag", b =>
+                {
+                    b.HasOne("BudgetsService.DataAccess.Entities.Budgets.Budget", "Budget")
+                        .WithMany("BudgetTags")
                         .HasForeignKey("BudgetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -146,22 +198,19 @@ namespace BudgetDataLayer.Migrations
                     b.Navigation("Budget");
                 });
 
-            modelBuilder.Entity("BudgetItemTag", b =>
+            modelBuilder.Entity("BudgetsService.DataAccess.Entities.Budgets.Budget", b =>
                 {
-                    b.HasOne("BudgetDataLayer.Entities.Budget.BudgetItem", null)
-                        .WithMany()
-                        .HasForeignKey("BudgetItemsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("BudgetItems");
 
-                    b.HasOne("BudgetDataLayer.Entities.Budget.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("BudgetTags");
                 });
 
-            modelBuilder.Entity("BudgetDataLayer.Entities.Budget.Budget", b =>
+            modelBuilder.Entity("BudgetsService.DataAccess.Entities.Budgets.BudgetItem", b =>
+                {
+                    b.Navigation("BudgetItemTags");
+                });
+
+            modelBuilder.Entity("BudgetsService.DataAccess.Entities.Tags.Tag", b =>
                 {
                     b.Navigation("BudgetItems");
                 });

@@ -1,4 +1,5 @@
-﻿using BudgetsService.Infrastructure.Models;
+﻿using BudgetsService.Infrastructure.Extensions;
+using BudgetsService.Infrastructure.Models;
 using BudgetsService.Infrastructure.Services.Interfaces;
 
 namespace BudgetsService.Infrastructure.Services;
@@ -9,8 +10,8 @@ public class DateTimeService : IDateTimeService
 
     public DateTimeRange GetDateTimeRangeByDate(DateTime date)
     {
-        var startRangeDate = new DateTime(date.Year, date.Month, 1);
-        var endRangeDate = startRangeDate.AddMonths(1).AddDays(-1);
+        var startRangeDate = new DateTime(date.Year, date.Month, 1).EnsureUtc();
+        var endRangeDate = startRangeDate.AddMonths(1).AddDays(-1).EnsureUtc();
 
         return new DateTimeRange(startRangeDate, endRangeDate);
     }
