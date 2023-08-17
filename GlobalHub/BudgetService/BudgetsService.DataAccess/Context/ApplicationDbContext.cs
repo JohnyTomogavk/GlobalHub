@@ -23,6 +23,8 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<BudgetItemTag> BudgetItemTags { get; set; }
 
+    public DbSet<Tag> Tags { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

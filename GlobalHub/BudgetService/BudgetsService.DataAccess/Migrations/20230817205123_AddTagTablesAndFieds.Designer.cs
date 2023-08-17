@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BudgetsService.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230817170154_AddTagRelatedtables")]
-    partial class AddTagRelatedtables
+    [Migration("20230817205123_AddTagTablesAndFieds")]
+    partial class AddTagTablesAndFieds
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,17 +89,12 @@ namespace BudgetsService.DataAccess.Migrations
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long?>("TagId")
-                        .HasColumnType("bigint");
-
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BudgetId");
-
-                    b.HasIndex("TagId");
 
                     b.ToTable("BudgetsItems");
                 });
@@ -150,7 +145,7 @@ namespace BudgetsService.DataAccess.Migrations
 
                     b.HasIndex("BudgetId");
 
-                    b.ToTable("Tag");
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("BudgetsService.DataAccess.Entities.Budgets.BudgetItem", b =>
@@ -160,10 +155,6 @@ namespace BudgetsService.DataAccess.Migrations
                         .HasForeignKey("BudgetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("BudgetsService.DataAccess.Entities.Tags.Tag", null)
-                        .WithMany("BudgetItems")
-                        .HasForeignKey("TagId");
 
                     b.Navigation("Budget");
                 });
@@ -177,7 +168,7 @@ namespace BudgetsService.DataAccess.Migrations
                         .IsRequired();
 
                     b.HasOne("BudgetsService.DataAccess.Entities.Tags.Tag", "Tag")
-                        .WithMany()
+                        .WithMany("BudgetItems")
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

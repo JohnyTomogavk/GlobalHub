@@ -13,5 +13,5 @@ public class Tag : BaseEntity
 
     public Budget Budget { get; set; }
 
-    public virtual IEnumerable<BudgetItem> BudgetItems { get; set; } = new List<BudgetItem>();
+    public virtual IEnumerable<BudgetItemTag> BudgetItems { get; set; } = new List<BudgetItemTag>();
 }

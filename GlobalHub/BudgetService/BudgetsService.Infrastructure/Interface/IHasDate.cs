@@ -1,4 +1,4 @@
-﻿namespace BudgetsService.DataAccess.Interface;
+﻿namespace BudgetsService.Infrastructure.Interface;
 
 public interface IHasDate
 {

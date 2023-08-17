@@ -6,17 +6,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BudgetsService.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class AddTagRelatedtables : Migration
+    public partial class AddTagTablesAndFieds : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<long>(
-                name: "TagId",
-                table: "BudgetsItems",
-                type: "bigint",
-                nullable: true);
-
             migrationBuilder.AddColumn<int>(
                 name: "PreserveFromIncomingPercent",
                 table: "Budgets",
@@ -25,7 +19,7 @@ namespace BudgetsService.DataAccess.Migrations
                 defaultValue: 0);
 
             migrationBuilder.CreateTable(
-                name: "Tag",
+                name: "Tags",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -36,9 +30,9 @@ namespace BudgetsService.DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tag", x => x.Id);
+                    table.PrimaryKey("PK_Tags", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tag_Budgets_BudgetId",
+                        name: "FK_Tags_Budgets_BudgetId",
                         column: x => x.BudgetId,
                         principalTable: "Budgets",
                         principalColumn: "Id",
@@ -64,17 +58,12 @@ namespace BudgetsService.DataAccess.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BudgetItemTags_Tag_TagId",
+                        name: "FK_BudgetItemTags_Tags_TagId",
                         column: x => x.TagId,
-                        principalTable: "Tag",
+                        principalTable: "Tags",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BudgetsItems_TagId",
-                table: "BudgetsItems",
-                column: "TagId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BudgetItemTags_BudgetItemId",
@@ -87,38 +76,19 @@ namespace BudgetsService.DataAccess.Migrations
                 column: "TagId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tag_BudgetId",
-                table: "Tag",
+                name: "IX_Tags_BudgetId",
+                table: "Tags",
                 column: "BudgetId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_BudgetsItems_Tag_TagId",
-                table: "BudgetsItems",
-                column: "TagId",
-                principalTable: "Tag",
-                principalColumn: "Id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_BudgetsItems_Tag_TagId",
-                table: "BudgetsItems");
-
             migrationBuilder.DropTable(
                 name: "BudgetItemTags");
 
             migrationBuilder.DropTable(
-                name: "Tag");
-
-            migrationBuilder.DropIndex(
-                name: "IX_BudgetsItems_TagId",
-                table: "BudgetsItems");
-
-            migrationBuilder.DropColumn(
-                name: "TagId",
-                table: "BudgetsItems");
+                name: "Tags");
 
             migrationBuilder.DropColumn(
                 name: "PreserveFromIncomingPercent",

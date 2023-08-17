@@ -1,5 +1,4 @@
-﻿using BudgetsService.DataAccess.Constants;
-using BudgetsService.DataAccess.Entities.Tags;
+﻿using BudgetsService.DataAccess.Entities.Tags;
 using BudgetsService.DataAccess.EntityConfigurations.Base;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
