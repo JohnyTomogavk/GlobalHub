@@ -1,7 +1,4 @@
-﻿using BudgetsService.DataAccess.Entities.Base;
-using BudgetsService.DataAccess.Entities.Budgets;
-
-namespace BudgetsService.DataAccess.Entities.Tags;
+﻿namespace BudgetsService.DataAccess.Entities.Tags;
 
 public class Tag : BaseEntity
 {

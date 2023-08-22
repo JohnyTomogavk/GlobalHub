@@ -1,7 +1,4 @@
-﻿using MongoDB.Driver;
-using NotesService.Entities;
-
-namespace NotesService.Data.DbContext.Interfaces;
+﻿namespace NotesService.Data.DbContext.Interfaces;
 
 public interface INotesDbContext
 {

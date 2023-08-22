@@ -1,9 +1,4 @@
-﻿using MongoDB.Driver;
-using NotesService.Data.DbContext.Interfaces;
-using NotesService.Data.Repositories.Interfaces;
-using NotesService.Entities;
-
-namespace NotesService.Data.Repositories;
+﻿namespace NotesService.Data.Repositories;
 
 public class NotesRepository : INotesRepository
 {

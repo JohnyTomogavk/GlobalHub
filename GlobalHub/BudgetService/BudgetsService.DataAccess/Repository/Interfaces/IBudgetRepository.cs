@@ -1,7 +1,4 @@
-﻿using System.Linq.Expressions;
-using BudgetsService.DataAccess.Entities.Budgets;
-
-namespace BudgetsService.DataAccess.Repository.Interfaces;
+﻿namespace BudgetsService.DataAccess.Repository.Interfaces;
 
 public interface IBudgetRepository
 {

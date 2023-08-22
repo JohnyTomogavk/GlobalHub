@@ -1,9 +1,4 @@
-﻿using BudgetsService.DataAccess.Context;
-using BudgetsService.DataAccess.Entities.Tags;
-using BudgetsService.DataAccess.Repository.Interfaces;
-using Microsoft.EntityFrameworkCore;
-
-namespace BudgetsService.DataAccess.Repository;
+﻿namespace BudgetsService.DataAccess.Repository;
 
 public class TagRepository : ITagRepository
 {

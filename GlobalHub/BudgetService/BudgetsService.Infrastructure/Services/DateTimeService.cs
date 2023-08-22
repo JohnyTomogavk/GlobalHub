@@ -1,8 +1,4 @@
-﻿using BudgetsService.Infrastructure.Extensions;
-using BudgetsService.Infrastructure.Models;
-using BudgetsService.Infrastructure.Services.Interfaces;
-
-namespace BudgetsService.Infrastructure.Services;
+﻿namespace BudgetsService.Infrastructure.Services;
 
 public class DateTimeService : IDateTimeService
 {

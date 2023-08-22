@@ -1,8 +1,4 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using NotesService.Constants;
-
-namespace NotesService.Entities;
+﻿namespace NotesService.Entities;
 
 /// <summary>
 /// Entity that represents user's note in Markdown format

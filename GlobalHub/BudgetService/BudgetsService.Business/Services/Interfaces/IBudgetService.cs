@@ -1,9 +1,4 @@
-﻿using BudgetBusinessLayer.Dto.Budget;
-using BudgetsService.Business.Dto.Budget;
-using BudgetsService.DataAccess.Entities.Budgets;
-using BudgetsService.Infrastructure.Models;
-
-namespace BudgetsService.Business.Services.Interfaces;
+﻿namespace BudgetsService.Business.Services.Interfaces;
 
 public interface IBudgetService
 {

@@ -1,6 +1,4 @@
-﻿using BudgetsService.DataAccess.Enums.Budget;
-
-namespace BudgetsService.Business.Dto.BudgetItems;
+﻿namespace BudgetsService.Business.Dto.BudgetItems;
 
 public record FilterModelDto
 {

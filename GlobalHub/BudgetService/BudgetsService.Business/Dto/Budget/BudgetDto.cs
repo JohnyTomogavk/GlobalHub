@@ -1,7 +1,4 @@
-﻿using BudgetsService.Business.Dto.BudgetItems;
-using BudgetsService.Infrastructure.Interface;
-
-namespace BudgetsService.Business.Dto.Budget;
+﻿namespace BudgetsService.Business.Dto.Budget;
 
 public record BudgetDto : IHasDate
 {

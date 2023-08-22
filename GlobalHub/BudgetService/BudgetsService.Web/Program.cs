@@ -1,15 +1,3 @@
-using BudgetsService.Business.MappingProfiles;
-using BudgetsService.Business.Validators.Budgets;
-using BudgetsService.DataAccess.Constants;
-using BudgetsService.DataAccess.Context;
-using BudgetsService.Web.Extensions;
-using Common.ExceptionHandling;
-using Common.Logging;
-using FluentValidation;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-using Serilog;
-
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 

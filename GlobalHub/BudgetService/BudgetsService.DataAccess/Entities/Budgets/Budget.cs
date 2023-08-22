@@ -1,8 +1,4 @@
-﻿using BudgetsService.DataAccess.Entities.Base;
-using BudgetsService.DataAccess.Entities.Tags;
-using BudgetsService.Infrastructure.Interface;
-
-namespace BudgetsService.DataAccess.Entities.Budgets;
+﻿namespace BudgetsService.DataAccess.Entities.Budgets;
 
 public class Budget : BaseEntity, IHasDate
 {

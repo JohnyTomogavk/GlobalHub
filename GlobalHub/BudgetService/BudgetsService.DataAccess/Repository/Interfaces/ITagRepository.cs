@@ -1,6 +1,4 @@
-﻿using BudgetsService.DataAccess.Entities.Tags;
-
-namespace BudgetsService.DataAccess.Repository.Interfaces;
+﻿namespace BudgetsService.DataAccess.Repository.Interfaces;
 
 public interface ITagRepository
 {

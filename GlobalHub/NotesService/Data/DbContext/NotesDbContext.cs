@@ -1,10 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using MongoDB.Driver;
-using NotesService.Config;
-using NotesService.Data.DbContext.Interfaces;
-using NotesService.Entities;
-
-namespace NotesService.Data.DbContext;
+﻿namespace NotesService.Data.DbContext;
 
 public class NotesDbContext : INotesDbContext
 {
