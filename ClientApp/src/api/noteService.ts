@@ -10,21 +10,23 @@ import { NOTES_API_BASE } from '../constants/apiConstants';
 import { NoteMap } from '../dto/sideMenu/noteMap';
 
 export const getNoteById = async (id: string): Promise<AxiosResponse<Note>> => {
-  const resourceUrl = getResourceUrl(NOTES_API_BASE, apiConstants.GET_NOTE_BY_ID, id);
+  const resourceUrl = getResourceUrl(NOTES_API_BASE, apiConstants.GET_NOTE_BY_ID);
 
-  return GetRequest<undefined, Note>(resourceUrl, undefined);
+  return GetRequest<Note>(resourceUrl, {
+    id: id,
+  });
 };
 
 export const getNotesMap = async (): Promise<AxiosResponse<NoteMap[]>> => {
   const resourceUrl = getResourceUrl(NOTES_API_BASE, apiConstants.GET_NOTES_MAP);
 
-  return GetRequest<undefined, NoteMap[]>(resourceUrl, undefined);
+  return GetRequest<NoteMap[]>(resourceUrl);
 };
 
 export const getNotesList = async (): Promise<AxiosResponse<Note[]>> => {
   const resourceUrl = getResourceUrl(NOTES_API_BASE, apiConstants.GET_NOTES_LIST);
 
-  return GetRequest<undefined, Note[]>(resourceUrl, undefined);
+  return GetRequest<Note[]>(resourceUrl);
 };
 
 export const createNote = async (createDto: CreateNoteDto): Promise<AxiosResponse<Note>> => {

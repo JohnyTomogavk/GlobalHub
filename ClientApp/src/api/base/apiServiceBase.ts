@@ -1,14 +1,14 @@
 import axios, { AxiosResponse } from 'axios';
 import { CustomAxiosConfig } from '../../models/axios/CustomAxiosConfig';
 
-export const GetRequest = async <TParam, TResponse>(
+export const GetRequest = async <TResponse>(
   url: string,
-  queryParams: TParam,
+  queryParams?: object,
   config?: CustomAxiosConfig
 ): Promise<AxiosResponse<TResponse>> =>
   axios.get(url, {
     params: {
-      ...queryParams,
+      ...(queryParams ?? {}),
     },
     ...config,
   });
