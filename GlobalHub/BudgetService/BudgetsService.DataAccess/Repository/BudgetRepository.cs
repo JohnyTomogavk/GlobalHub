@@ -37,4 +37,13 @@ public class BudgetRepository : IBudgetRepository
 
         return createdEntity.Entity;
     }
+
+    public async Task<long> DeleteById(long id)
+    {
+        var budget = await _dbContext.Budgets.FirstOrDefaultAsync(budget => budget.Id == id);
+        var removedEntity = _dbContext.Budgets.Remove(budget);
+        await _dbContext.SaveChangesAsync();
+
+        return removedEntity.Entity.Id;
+    }
 }

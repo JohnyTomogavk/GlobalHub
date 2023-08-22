@@ -10,4 +10,5 @@ public interface IBudgetRepository
     Task<Budget?> GetBudgetByIdWithIncludeAsync(long id, params Expression<Func<Budget, object>>[] includes);
 
     Task<Budget> AddBudget(Budget budget);
+    Task<long> DeleteById(long id);
 }

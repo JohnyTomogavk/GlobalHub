@@ -13,4 +13,6 @@ public interface IBudgetService
     Task<BudgetDto> AddBudgetAsync(CreateBudgetDto createBudgetDto);
 
     Task<BudgetAnalyticDto> GetBudgetAnalytic(long budgetId, DateTimeRange dateRange);
+
+    Task<long> DeleteBudgetById(long id);
 }

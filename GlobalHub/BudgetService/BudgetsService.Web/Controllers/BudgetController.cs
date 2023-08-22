@@ -60,4 +60,12 @@ public class BudgetController : ControllerBase
 
         return Ok(analyticDto);
     }
+
+    [HttpDelete]
+    public async Task<ActionResult<long>> DeleteBudgetById(long budgetId)
+    {
+        var deletedId = await _budgetService.DeleteBudgetById(budgetId);
+
+        return Ok(deletedId);
+    }
 }

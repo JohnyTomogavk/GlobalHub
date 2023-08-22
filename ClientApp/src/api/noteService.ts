@@ -48,7 +48,7 @@ export const updateNoteTitle = async (id: string, noteTitleDto: UpdateNoteTitleD
 };
 
 export const deleteNote = async (id: string): Promise<AxiosResponse<string>> => {
-  const resourceUrl = getResourceUrl(NOTES_API_BASE, apiConstants.DELETE_NOTE, id);
+  const resourceUrl = getResourceUrl(NOTES_API_BASE, apiConstants.DELETE_NOTE);
 
-  return DeleteRequest<string, string>(resourceUrl, id);
+  return DeleteRequest<object, string>(resourceUrl, { id: id });
 };
