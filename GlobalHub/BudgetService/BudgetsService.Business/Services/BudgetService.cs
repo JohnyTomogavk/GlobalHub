@@ -67,7 +67,7 @@ public class BudgetService : IBudgetService
         return analyticDto;
     }
 
-    public async Task<long> DeleteBudgetById(long id)
+    public async Task<Budget> DeleteBudgetById(long id)
     {
         return await _budgetRepository.DeleteById(id);
     }

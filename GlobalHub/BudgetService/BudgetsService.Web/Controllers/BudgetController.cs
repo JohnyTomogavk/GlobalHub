@@ -66,6 +66,11 @@ public class BudgetController : ControllerBase
     {
         var deletedId = await _budgetService.DeleteBudgetById(budgetId);
 
+        if (deletedId == null)
+        {
+            return NoContent();
+        }
+
         return Ok(deletedId);
     }
 }
