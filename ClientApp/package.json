@@ -63,7 +63,9 @@
     "webpack-dev-server": "^4.13.2"
   },
   "dependencies": {
+    "@ant-design/graphs": "^1.4.0",
     "@ant-design/icons": "^5.0.1",
+    "@ant-design/plots": "^1.2.5",
     "antd": "^5.4.2",
     "axios": "^1.4.0",
     "editorjs-text-alignment-blocktune": "^1.0.3",
@@ -73,6 +75,7 @@
     "mobx": "^6.9.0",
     "mobx-react-lite": "^3.4.3",
     "react": "^18.2.0",
+    "react-countup": "^6.4.2",
     "react-dom": "^18.2.0",
     "react-i18next": "^12.2.2",
     "react-resizable-panels": "^0.0.41",

@@ -1,3 +1,7 @@
+html {
+  scrollbar-gutter: stable;
+}
+
 @mixin page-content-base {
   padding: 0.5rem;
 }
@@ -8,12 +12,4 @@
 
 @mixin entity-title {
   margin: 0 auto;
-}
-
-@mixin form-field {
-  margin: 0 0 0.5rem;
-}
-
-@mixin field-label {
-  margin: 0;
 }

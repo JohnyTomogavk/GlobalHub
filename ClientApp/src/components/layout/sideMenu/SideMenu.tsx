@@ -92,7 +92,6 @@ export const SideMenu = observer((): JSX.Element => {
       title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.BUDGETS'), async (e): Promise<void> => {
         const newBudgetResponse = await createNewBudget({
           budgetTitle: BUDGET_DEFAULT_TITLE,
-          createdDate: new Date(),
         });
         addBudgetToSideMenu(newBudgetResponse.data);
         const newBudgetUrl = getClientItemUrl(BUDGET_RESOURCE_NAME, newBudgetResponse.data.id);
