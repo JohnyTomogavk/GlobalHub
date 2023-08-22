@@ -20,6 +20,7 @@ import { getBreadCrumbsItemsByLocation } from '../../helpers/breadCrumbsHelper';
 import { BreadCrumbItem } from '../../models/breadCrumbs/breadCrumbItem';
 import SideMenuNoteStore from '../../store/sideMenu/sideMenuNoteStore';
 import SideMenuCommonStore from '../../store/sideMenu/sideMenuCommonStore';
+import { theme } from 'antd';
 
 export const NotesComponent = observer((): JSX.Element => {
   const { id } = useParams();
@@ -33,6 +34,10 @@ export const NotesComponent = observer((): JSX.Element => {
   const noteRef = useRef(note);
   const { renameNoteInSideMenu, removeNoteFromSideMenu, getSideMenuItemByRoutingKey } = SideMenuNoteStore;
   const { changeSelectedMenuKey } = SideMenuCommonStore;
+
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
 
   const onEditorContentChange = async (api: API): Promise<void> => {
     const data = await api.saver.save();
@@ -96,7 +101,11 @@ export const NotesComponent = observer((): JSX.Element => {
   }, [location, note]);
 
   return (
-    <>
+    <div
+      style={{
+        background: colorBgContainer,
+      }}
+    >
       <ItemInfoSubHeader
         onDeleteCallback={onItemDelete}
         breadCrumbsItems={breadCrumbsItems}
@@ -128,6 +137,6 @@ export const NotesComponent = observer((): JSX.Element => {
           [note?.id]
         )}
       </div>
-    </>
+    </div>
   );
 });

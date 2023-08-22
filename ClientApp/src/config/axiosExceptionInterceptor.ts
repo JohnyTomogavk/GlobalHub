@@ -1,4 +1,4 @@
-import axios, { HttpStatusCode } from 'axios';
+import axios, { AxiosError, HttpStatusCode } from 'axios';
 import { CORRELATION_ID_HEADER_NAME } from '../constants/requestConstants';
 import { NavigateFunction } from 'react-router/dist/lib/hooks';
 import { NOT_FOUND_ROUTE } from '../constants/routingConstants';
@@ -9,8 +9,8 @@ import { CustomAxiosConfig } from '../models/axios/CustomAxiosConfig';
 export const setUpAxiosExceptionInterceptor = (navigate: NavigateFunction): void => {
   axios.interceptors.response.use(
     (response) => response,
-    (error) => {
-      const responseConfig = error.response.config as CustomAxiosConfig;
+    (error: AxiosError) => {
+      const responseConfig = error.request.config as CustomAxiosConfig;
 
       if (responseConfig?.skipGlobalErrorHandling) return error;
 

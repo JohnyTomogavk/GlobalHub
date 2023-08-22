@@ -5,7 +5,7 @@ import styles from './tasks.module.scss';
 const { Text } = Typography;
 export const TasksComponent = (): JSX.Element => (
   <>
-    <div className={styles.content}>
+    <div className={styles.pageContent}>
       {Array.from({ length: 100 }, (_, index) => (
         <React.Fragment key={index}>
           <Text>

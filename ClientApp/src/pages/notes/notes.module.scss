@@ -3,12 +3,15 @@
 .pageContent {
   @include page-content-base;
 
+  min-height: calc(100vh - 9rem);
+
   .noteTitleContainer {
-    min-height: 3rem;
+    @include page-title-container
   }
 
   .noteTitle {
+    @include entity-title;
+
     max-width: 650px;
-    margin: 0 auto;
   }
 }

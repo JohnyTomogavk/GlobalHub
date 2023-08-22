@@ -2,4 +2,20 @@
 
 .pageContent {
   @include page-content-base;
+
+  .budgetInfoCard {
+    height: 100%;
+  }
+
+  .budgetTitle {
+    margin: 0;
+  }
+
+  .budgetRow {
+    margin-bottom: 0.5rem;
+  }
+
+  .budgetDescriptionFormField{
+    margin-bottom: 0;
+  }
 }

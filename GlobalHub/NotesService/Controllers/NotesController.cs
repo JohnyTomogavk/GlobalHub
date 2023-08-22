@@ -1,4 +1,3 @@
-using Common;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using NotesService.Data.Repositories.Interfaces;
