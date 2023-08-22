@@ -1,5 +1,5 @@
 ﻿using BudgetsService.DataAccess.Context;
-using BudgetsService.DataAccess.Entities.Budget;
+using BudgetsService.DataAccess.Entities.Budgets;
 using BudgetsService.DataAccess.Repository.Interfaces;
 using BudgetsService.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
@@ -15,11 +15,12 @@ public class BudgetItemRepository : IBudgetItemRepository
         _dbContext = dbContext;
     }
 
-    public async Task<ICollection<BudgetItem>> GetBudgetItemsByIdAndPeriod(long budgetId, DateTimeRange datePeriod)
+    public IQueryable<BudgetItem> GetBudgetItemsByIdAndPeriodAsIQueryable(long budgetId,
+        DateTimeRange datePeriod)
     {
-        return await _dbContext.BudgetsItems.Where(item =>
-                item.BudgetId == budgetId && item.PaymentDate >= datePeriod.StartRangeDate &&
-                item.PaymentDate <= datePeriod.EndRangeDate)
-            .ToListAsync();
+        return _dbContext.BudgetsItems
+            .Include(item => item.BudgetItemTags)
+            .Where(item =>
+                item.BudgetId == budgetId);
     }
 }

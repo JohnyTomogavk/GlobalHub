@@ -1,8 +1,7 @@
-﻿using BudgetsService.DataAccess.Entities.Budget;
-using BudgetsService.DataAccess.Enums.Budget;
-using BudgetsService.DataAccess.Interface;
+﻿using BudgetsService.DataAccess.Enums.Budget;
+using BudgetsService.Infrastructure.Interface;
 
-namespace BudgetsService.Business.Dto.BudgetItem;
+namespace BudgetsService.Business.Dto.BudgetItems;
 
 public record BudgetItemDto : IHasDate
 {
@@ -20,7 +19,7 @@ public record BudgetItemDto : IHasDate
 
     public DateTime PaymentDate { get; set; }
 
-    public ICollection<Tag> Tags { get; set; }
+    public IEnumerable<long> TagIds { get; set; }
 
     public DateTime CreatedDate { get; set; }
 

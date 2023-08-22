@@ -15,8 +15,10 @@ public class BudgetItem : BaseEntity, IHasDate
 
     public BudgetItemRegularityType BudgetItemRegularityType { get; set; }
 
+    // TODO: Rename to OperationCost
     public decimal BudgetOperationCost { get; set; }
 
+    // TODO: Rename to operation date // maybe optional
     public DateTime PaymentDate { get; set; }
 
     public DateTime CreatedDate { get; set; }

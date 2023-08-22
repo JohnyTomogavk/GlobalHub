@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using BudgetsService.DataAccess.Entities.Budget;
+using BudgetsService.DataAccess.Entities.Budgets;
 
 namespace BudgetsService.DataAccess.Repository.Interfaces;
 

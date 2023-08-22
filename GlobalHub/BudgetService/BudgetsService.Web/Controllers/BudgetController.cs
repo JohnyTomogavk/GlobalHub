@@ -1,6 +1,7 @@
 using BudgetBusinessLayer.Dto.Budget;
 using BudgetsService.Business.Dto.Budget;
 using BudgetsService.Business.Services.Interfaces;
+using BudgetsService.Infrastructure.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetsService.Web.Controllers;
@@ -13,10 +14,12 @@ namespace BudgetsService.Web.Controllers;
 public class BudgetController : ControllerBase
 {
     private readonly IBudgetService _budgetService;
+    private readonly IDateTimeService _dateTimeService;
 
-    public BudgetController(IBudgetService budgetService)
+    public BudgetController(IBudgetService budgetService, IDateTimeService dateTimeService)
     {
         _budgetService = budgetService;
+        _dateTimeService = dateTimeService;
     }
 
     [HttpGet]
@@ -49,8 +52,12 @@ public class BudgetController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<BudgetAnalyticDto>> GetCurrentBudgetState(long budgetId, DateTime requestedDate)
+    public async Task<ActionResult<BudgetAnalyticDto>> GetBudgetAnalyticForCurrentMonth(long id)
     {
-        return Ok();
+        var currentDate = _dateTimeService.CurrentDate;
+        var currentMonthDateRange = _dateTimeService.GetDateTimeRangeByDate(currentDate);
+        var analyticDto = await _budgetService.GetBudgetAnalytic(id, currentMonthDateRange);
+
+        return Ok(analyticDto);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 using BudgetsService.DataAccess.Context;
-using BudgetsService.DataAccess.Entities.Budget;
+using BudgetsService.DataAccess.Entities.Budgets;
 using BudgetsService.DataAccess.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 

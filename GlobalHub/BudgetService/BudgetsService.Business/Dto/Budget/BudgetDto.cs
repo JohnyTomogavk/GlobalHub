@@ -1,5 +1,5 @@
-﻿using BudgetsService.Business.Dto.BudgetItem;
-using BudgetsService.DataAccess.Interface;
+﻿using BudgetsService.Business.Dto.BudgetItems;
+using BudgetsService.Infrastructure.Interface;
 
 namespace BudgetsService.Business.Dto.Budget;
 
@@ -11,7 +11,7 @@ public record BudgetDto : IHasDate
 
     public string BudgetDescription { get; init; }
 
-    public ICollection<BudgetItemDto> BudgetItems { get; set; }
+    public IEnumerable<BudgetItemDto> BudgetItems { get; set; }
 
     public int PreserveFromIncomingPercent { get; set; }
 

@@ -1,9 +1,10 @@
-﻿using BudgetsService.DataAccess.Entities.Budget;
+﻿using BudgetsService.Business.Dto.BudgetItems;
 using BudgetsService.Infrastructure.Models;
 
 namespace BudgetsService.Business.Services.Interfaces;
 
 public interface IBudgetItemService
 {
-    public Task<ICollection<BudgetItem>> GetBudgetItemsByBudgetId(long id, DateTimeRange datePeriod);
+    public Task<BudgetItemPaginatedResponse> GetBudgetItemsByBudgetId(long id, DateTimeRange datePeriod,
+        BudgetItemsQueryOptions queryOptions);
 }

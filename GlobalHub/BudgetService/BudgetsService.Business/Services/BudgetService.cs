@@ -2,9 +2,11 @@
 using BudgetBusinessLayer.Dto.Budget;
 using BudgetsService.Business.Dto.Budget;
 using BudgetsService.Business.Services.Interfaces;
-using BudgetsService.DataAccess.Entities.Budget;
+using BudgetsService.DataAccess.Entities.Budgets;
+using BudgetsService.DataAccess.Enums.Budget;
 using BudgetsService.DataAccess.Repository.Interfaces;
-using BudgetsService.Infrastructure.Services.Interfaces;
+using BudgetsService.Infrastructure.Extensions;
+using BudgetsService.Infrastructure.Models;
 using FluentValidation;
 
 namespace BudgetsService.Business.Services;
@@ -12,21 +14,15 @@ namespace BudgetsService.Business.Services;
 public class BudgetService : IBudgetService
 {
     private readonly IBudgetRepository _budgetRepository;
-    private readonly IBudgetItemRepository _budgetItemRepository;
-    private readonly IDateTimeService _dateTimeService;
     private readonly IMapper _mapper;
     private readonly IValidator<Budget> _budgetValidator;
 
     public BudgetService(
         IBudgetRepository budgetRepository,
-        IBudgetItemRepository budgetItemRepository,
-        IDateTimeService dateTimeService,
         IMapper mapper,
         IValidator<Budget> budgetValidator)
     {
         _budgetRepository = budgetRepository;
-        _budgetItemRepository = budgetItemRepository;
-        _dateTimeService = dateTimeService;
         _mapper = mapper;
         _budgetValidator = budgetValidator;
     }
@@ -63,13 +59,53 @@ public class BudgetService : IBudgetService
         return budgetDto;
     }
 
-    public async Task<BudgetAnalyticDto> GetBudgetAnalytic(long budgetId, DateTime requestedDate)
+    public async Task<BudgetAnalyticDto> GetBudgetAnalytic(long budgetId, DateTimeRange dateRange)
     {
-        var currentDatePeriod = _dateTimeService.GetDateTimeRangeByDate(requestedDate);
-        // var budgetItems = await _budgetItemRepository.GetBudgetItemsByIdAndPeriod(budgetId, currentDatePeriod);
+        var budget = await _budgetRepository.GetBudgetByIdWithIncludeAsync(budgetId, budget => budget.BudgetItems);
+        var analyticDto = GetBudgetAnalytic(budget);
 
-        var budgetAnalytic = new BudgetAnalyticDto { };
+        return analyticDto;
+    }
 
-        return budgetAnalytic;
+    private BudgetAnalyticDto GetBudgetAnalytic(Budget budget)
+    {
+        var analyticDto = new BudgetAnalyticDto
+        {
+            IrregularExpenses = budget.BudgetItems
+                .Where(item => item.BudgetItemRegularityType == BudgetItemRegularityType.Irregular)
+                .Sum(item => item.BudgetOperationCost),
+            RegularExpenses = budget.BudgetItems
+                .Where(item => item.BudgetItemRegularityType == BudgetItemRegularityType.Regular)
+                .Sum(item => item.BudgetOperationCost),
+            MoneyPreserved = budget.BudgetItems
+                .Where(item => item.BudgetItemOperationType == BudgetItemOperationType.Incoming)
+                .Sum(item => item.BudgetOperationCost) * budget.PreserveFromIncomingPercent / 100,
+            MoneyLeft = budget.BudgetItems
+                .Where(item => item.BudgetItemOperationType == BudgetItemOperationType.Incoming)
+                .Sum(item => item.BudgetOperationCost) - budget.BudgetItems
+                .Where(item => item.BudgetItemOperationType == BudgetItemOperationType.Outgoing)
+                .Sum(item => item.BudgetOperationCost),
+            AverageDailyExpenses = GetAverageDailyExpenses(budget),
+            ExpensesMedian = budget.BudgetItems
+                .Where(item => item.BudgetItemOperationType == BudgetItemOperationType.Outgoing)
+                .Select(item => item.BudgetOperationCost).ToArray().GetMedianValue(),
+        };
+
+        return analyticDto;
+    }
+
+    private static decimal GetAverageDailyExpenses(Budget budget)
+    {
+        decimal avgDailyExpenses = 0;
+
+        if (budget.BudgetItems.Any(item => item.BudgetItemOperationType == BudgetItemOperationType.Outgoing))
+        {
+            avgDailyExpenses = budget.BudgetItems
+                .GroupBy(item => item.PaymentDate.Date)
+                .Average(dailyExpenses =>
+                    dailyExpenses.Average(dailySpentItem => dailySpentItem.BudgetOperationCost));
+        }
+
+        return avgDailyExpenses;
     }
 }

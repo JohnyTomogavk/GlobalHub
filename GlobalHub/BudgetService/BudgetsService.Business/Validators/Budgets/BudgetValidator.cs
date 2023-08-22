@@ -1,5 +1,5 @@
 ﻿using BudgetsService.DataAccess.Constants;
-using BudgetsService.DataAccess.Entities.Budget;
+using BudgetsService.DataAccess.Entities.Budgets;
 using FluentValidation;
 
 namespace BudgetsService.Business.Validators.Budgets;
