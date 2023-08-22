@@ -1,4 +1,4 @@
-﻿namespace BudgetBusinessLayer.Dto.Budget;
+﻿namespace BudgetsService.Business.Dto.Budget;
 
 public record BudgetMap
 {

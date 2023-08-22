@@ -1,15 +1,4 @@
-﻿using AutoMapper;
-using BudgetBusinessLayer.Dto.Budget;
-using BudgetsService.Business.Dto.Budget;
-using BudgetsService.Business.Services.Interfaces;
-using BudgetsService.DataAccess.Entities.Budgets;
-using BudgetsService.DataAccess.Enums.Budget;
-using BudgetsService.DataAccess.Repository.Interfaces;
-using BudgetsService.Infrastructure.Extensions;
-using BudgetsService.Infrastructure.Models;
-using FluentValidation;
-
-namespace BudgetsService.Business.Services;
+﻿namespace BudgetsService.Business.Services;
 
 public class BudgetService : IBudgetService
 {
@@ -65,6 +54,11 @@ public class BudgetService : IBudgetService
         var analyticDto = GetBudgetAnalytic(budget);
 
         return analyticDto;
+    }
+
+    public async Task<Budget> DeleteBudgetById(long id)
+    {
+        return await _budgetRepository.DeleteById(id);
     }
 
     private BudgetAnalyticDto GetBudgetAnalytic(Budget budget)

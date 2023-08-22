@@ -1,8 +1,4 @@
-﻿using BudgetsService.DataAccess.Constants;
-using BudgetsService.DataAccess.Entities.Budgets;
-using FluentValidation;
-
-namespace BudgetsService.Business.Validators.Budgets;
+﻿namespace BudgetsService.Business.Validators.Budgets;
 
 public class BudgetValidator : AbstractValidator<Budget>
 {

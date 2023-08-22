@@ -1,10 +1,4 @@
-﻿using System.Linq.Expressions;
-using BudgetsService.DataAccess.Context;
-using BudgetsService.DataAccess.Entities.Budgets;
-using BudgetsService.DataAccess.Repository.Interfaces;
-using Microsoft.EntityFrameworkCore;
-
-namespace BudgetsService.DataAccess.Repository;
+﻿namespace BudgetsService.DataAccess.Repository;
 
 public class BudgetRepository : IBudgetRepository
 {
@@ -36,5 +30,14 @@ public class BudgetRepository : IBudgetRepository
         await _dbContext.SaveChangesAsync();
 
         return createdEntity.Entity;
+    }
+
+    public async Task<Budget> DeleteById(long id)
+    {
+        var budget = await _dbContext.Budgets.FirstOrDefaultAsync(budget => budget.Id == id);
+        var removedEntity = _dbContext.Budgets.Remove(budget).Entity;
+        await _dbContext.SaveChangesAsync();
+
+        return removedEntity;
     }
 }

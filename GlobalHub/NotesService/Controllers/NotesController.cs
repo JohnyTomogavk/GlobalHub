@@ -1,9 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-using MongoDB.Bson;
-using NotesService.Data.Repositories.Interfaces;
-using NotesService.Dtos;
-using NotesService.Entities;
-
 namespace NotesService.Controllers;
 
 /// <summary>

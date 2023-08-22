@@ -1,7 +1,4 @@
-﻿using BudgetsService.Business.Dto.BudgetItems;
-using BudgetsService.Infrastructure.Models;
-
-namespace BudgetsService.Business.Services.Interfaces;
+﻿namespace BudgetsService.Business.Services.Interfaces;
 
 public interface IBudgetItemService
 {

@@ -1,9 +1,3 @@
-using BudgetBusinessLayer.Dto.Budget;
-using BudgetsService.Business.Dto.Budget;
-using BudgetsService.Business.Services.Interfaces;
-using BudgetsService.Infrastructure.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-
 namespace BudgetsService.Web.Controllers;
 
 /// <summary>
@@ -59,5 +53,18 @@ public class BudgetController : ControllerBase
         var analyticDto = await _budgetService.GetBudgetAnalytic(id, currentMonthDateRange);
 
         return Ok(analyticDto);
+    }
+
+    [HttpDelete]
+    public async Task<ActionResult<long>> DeleteBudgetById(long budgetId)
+    {
+        var deletedId = await _budgetService.DeleteBudgetById(budgetId);
+
+        if (deletedId == null)
+        {
+            return NoContent();
+        }
+
+        return Ok(deletedId);
     }
 }

@@ -1,12 +1,4 @@
-﻿using AutoMapper;
-using BudgetsService.Business.Dto.BudgetItems;
-using BudgetsService.Business.Services.Interfaces;
-using BudgetsService.DataAccess.Entities.Budgets;
-using BudgetsService.DataAccess.Entities.Tags;
-using BudgetsService.DataAccess.Enums.Budget;
-using BudgetsService.DataAccess.Repository.Interfaces;
-using BudgetsService.Infrastructure.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace BudgetsService.Business.Services;
 

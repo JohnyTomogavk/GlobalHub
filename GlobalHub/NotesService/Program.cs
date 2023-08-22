@@ -1,15 +1,3 @@
-using Common;
-using Common.ExceptionHandling;
-using Common.Logging;
-using Microsoft.OpenApi.Models;
-using NotesService.Config;
-using NotesService.Constants;
-using NotesService.Data.DbContext;
-using NotesService.Data.DbContext.Interfaces;
-using NotesService.Data.Repositories;
-using NotesService.Data.Repositories.Interfaces;
-using Serilog;
-
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 

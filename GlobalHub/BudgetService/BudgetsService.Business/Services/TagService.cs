@@ -1,9 +1,4 @@
-﻿using AutoMapper;
-using BudgetsService.Business.Dto.Tag;
-using BudgetsService.Business.Services.Interfaces;
-using BudgetsService.DataAccess.Repository.Interfaces;
-
-namespace BudgetsService.Business.Services;
+﻿namespace BudgetsService.Business.Services;
 
 public class TagService : ITagService
 {

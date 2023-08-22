@@ -1,11 +1,4 @@
-﻿using System.Reflection;
-using BudgetsService.DataAccess.Entities.Budgets;
-using BudgetsService.DataAccess.Entities.Tags;
-using BudgetsService.Infrastructure.Interface;
-using BudgetsService.Infrastructure.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
-
-namespace BudgetsService.DataAccess.Context;
+﻿namespace BudgetsService.DataAccess.Context;
 
 public class ApplicationDbContext : DbContext
 {

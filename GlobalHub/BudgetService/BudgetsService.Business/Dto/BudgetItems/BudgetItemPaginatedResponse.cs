@@ -1,6 +1,4 @@
-﻿using BudgetsService.DataAccess.Entities.Budgets;
-
-namespace BudgetsService.Business.Dto.BudgetItems;
+﻿namespace BudgetsService.Business.Dto.BudgetItems;
 
 public record BudgetItemPaginatedResponse
 {

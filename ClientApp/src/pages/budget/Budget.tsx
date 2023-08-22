@@ -1,7 +1,7 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import { Button, Card, Col, Collapse, Form, Progress, Result, Row, Space, Statistic, Tooltip, Typography } from 'antd';
 import styles from './budjet.module.scss';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getBudgetAnalyticForCurrentMonthById, getBudgetById } from '../../api/budgetsService';
 import { toNumber } from 'lodash';
 import { BudgetDto } from '../../dto/budgets/budgetDto';
@@ -17,6 +17,8 @@ import { BudgetItemsTable } from './budgetItemsTable/BudgetItemsTable';
 import { DistributionByDaysChart } from './analyticCharts/DistributionByDaysChart';
 import { BalanceOnLimitsByTagsChart } from './analyticCharts/BalanceOnLimitsByTagsChart';
 import { ExpensesByTagsChart } from './analyticCharts/ExpensesByTagsChart';
+import { deleteBudgetById } from '../../api/budgetItemService';
+import { BUDGET_LIST_ROUTE } from '../../constants/routingConstants';
 
 const { Text } = Typography;
 
@@ -27,6 +29,7 @@ export const BudgetComponent = (): JSX.Element => {
   const [budgetDto, setBudgetDto] = useState<BudgetDto | undefined>();
   const [budgetAnalyticData, setBudgetAnalyticData] = useState<BudgetAnalyticDto | undefined>();
   const [budgetTags, setBudgetTags] = useState<TagDto[] | undefined>(undefined);
+  const navigate = useNavigate();
 
   const loadBudgetData = async (budgetId: number): Promise<void> => {
     const [{ data: budget }, { data: budgetAnalytic }, { data: tags }] = await Promise.all([
@@ -50,8 +53,12 @@ export const BudgetComponent = (): JSX.Element => {
   return (
     <>
       <ItemInfoSubHeader
-        onDeleteCallback={(): void => {
-          // TOOD: Implement delete functionality
+        onDeleteCallback={async (): Promise<void> => {
+          if (!id) return;
+
+          await deleteBudgetById(toNumber(id));
+          navigate(`/${BUDGET_LIST_ROUTE}`);
+          // TODO: Remove from side menu
         }}
         breadCrumbsItems={[{ title: 'Budgets' }, { title: 'Budget 2' }]}
         lastEdited={budgetDto?.updatedDate ?? budgetDto?.createdDate}

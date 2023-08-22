@@ -1,5 +1,4 @@
-﻿using BudgetsService.DataAccess.Entities.Budgets;
-using BudgetsService.Infrastructure.Models;
+﻿using BudgetsService.Infrastructure.Models;
 
 namespace BudgetsService.DataAccess.Repository.Interfaces;
 

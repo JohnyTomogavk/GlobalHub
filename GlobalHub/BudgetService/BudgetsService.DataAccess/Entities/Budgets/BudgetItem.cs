@@ -1,9 +1,4 @@
-﻿using BudgetsService.DataAccess.Entities.Base;
-using BudgetsService.DataAccess.Entities.Tags;
-using BudgetsService.DataAccess.Enums.Budget;
-using BudgetsService.Infrastructure.Interface;
-
-namespace BudgetsService.DataAccess.Entities.Budgets;
+﻿namespace BudgetsService.DataAccess.Entities.Budgets;
 
 public class BudgetItem : BaseEntity, IHasDate
 {

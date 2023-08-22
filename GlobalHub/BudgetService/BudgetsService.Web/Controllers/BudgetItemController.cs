@@ -1,9 +1,4 @@
-﻿using BudgetsService.Business.Dto.BudgetItems;
-using BudgetsService.Business.Services.Interfaces;
-using BudgetsService.Infrastructure.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-
-namespace BudgetsService.Web.Controllers;
+﻿namespace BudgetsService.Web.Controllers;
 
 /// <summary>
 /// Controller that manages budget items

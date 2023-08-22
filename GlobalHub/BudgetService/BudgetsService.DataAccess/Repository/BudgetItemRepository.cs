@@ -1,8 +1,4 @@
-﻿using BudgetsService.DataAccess.Context;
-using BudgetsService.DataAccess.Entities.Budgets;
-using BudgetsService.DataAccess.Repository.Interfaces;
-using BudgetsService.Infrastructure.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using BudgetsService.Infrastructure.Models;
 
 namespace BudgetsService.DataAccess.Repository;
 

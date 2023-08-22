@@ -1,6 +1,4 @@
-﻿using BudgetsService.Infrastructure.Models;
-
-namespace BudgetsService.Infrastructure.Services.Interfaces;
+﻿namespace BudgetsService.Infrastructure.Services.Interfaces;
 
 public interface IDateTimeService
 {

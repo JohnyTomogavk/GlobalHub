@@ -1,8 +1,4 @@
-﻿using BudgetBusinessLayer.Dto.Budget;
-using BudgetsService.Business.Dto.Budget;
-using BudgetsService.Infrastructure.Models;
-
-namespace BudgetsService.Business.Services.Interfaces;
+﻿namespace BudgetsService.Business.Services.Interfaces;
 
 public interface IBudgetService
 {
@@ -13,4 +9,6 @@ public interface IBudgetService
     Task<BudgetDto> AddBudgetAsync(CreateBudgetDto createBudgetDto);
 
     Task<BudgetAnalyticDto> GetBudgetAnalytic(long budgetId, DateTimeRange dateRange);
+
+    Task<Budget> DeleteBudgetById(long id);
 }

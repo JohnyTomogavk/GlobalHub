@@ -1,11 +1,4 @@
-﻿using BudgetsService.Business.Services;
-using BudgetsService.Business.Services.Interfaces;
-using BudgetsService.DataAccess.Repository;
-using BudgetsService.DataAccess.Repository.Interfaces;
-using BudgetsService.Infrastructure.Services;
-using BudgetsService.Infrastructure.Services.Interfaces;
-
-namespace BudgetsService.Web.Extensions;
+﻿namespace BudgetsService.Web.Extensions;
 
 public static class ServiceCollectionExtension
 {

@@ -33,10 +33,12 @@ export const PutRequest = async <TBody, TResponse>(
 
 export const DeleteRequest = async <TParam, TResponse>(
   url: string,
-  queryParam: TParam,
+  queryParams: TParam,
   config?: CustomAxiosConfig
 ): Promise<AxiosResponse<TResponse>> =>
   axios.delete(url, {
-    data: queryParam,
+    params: {
+      ...queryParams,
+    },
     ...config,
   });

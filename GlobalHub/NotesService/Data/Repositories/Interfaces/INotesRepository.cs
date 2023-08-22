@@ -1,6 +1,4 @@
-﻿using NotesService.Entities;
-
-namespace NotesService.Data.Repositories.Interfaces;
+﻿namespace NotesService.Data.Repositories.Interfaces;
 
 public interface INotesRepository
 {
