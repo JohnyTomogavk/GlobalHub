@@ -61,6 +61,16 @@ public class BudgetService : IBudgetService
         return await _budgetRepository.DeleteById(id);
     }
 
+    public async Task UpdateBudgetTitle(long budgetId, string title)
+    {
+        await _budgetRepository.UpdateBudgetTitle(budgetId, title);
+    }
+
+    public async Task UpdateBudgetDescription(long budgetId, string description)
+    {
+        await _budgetRepository.UpdateBudgetDescription(budgetId, description);
+    }
+
     private BudgetAnalyticDto GetBudgetAnalytic(Budget budget)
     {
         var analyticDto = new BudgetAnalyticDto

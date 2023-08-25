@@ -2,7 +2,12 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { Button, Card, Col, Collapse, Form, Progress, Result, Row, Space, Statistic, Tooltip, Typography } from 'antd';
 import styles from './budjet.module.scss';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getBudgetAnalyticForCurrentMonthById, getBudgetById } from '../../api/budgetsService';
+import {
+  getBudgetAnalyticForCurrentMonthById,
+  getBudgetById,
+  updateBudgetDescription,
+  updateBudgetTitle,
+} from '../../api/budgetsService';
 import { toNumber } from 'lodash';
 import { BudgetDto } from '../../dto/budgets/budgetDto';
 import CountUp from 'react-countup';
@@ -19,6 +24,7 @@ import { BalanceOnLimitsByTagsChart } from './analyticCharts/BalanceOnLimitsByTa
 import { ExpensesByTagsChart } from './analyticCharts/ExpensesByTagsChart';
 import { deleteBudgetById } from '../../api/budgetItemService';
 import { BUDGET_LIST_ROUTE } from '../../constants/routingConstants';
+import { HttpStatusCode } from 'axios';
 
 const { Text } = Typography;
 
@@ -50,6 +56,38 @@ export const BudgetComponent = (): JSX.Element => {
     loadBudgetData(budgetId);
   }, [id]);
 
+  const onBudgetTitleUpdate = async (title: string): Promise<void> => {
+    if (!id) return;
+
+    const response = await updateBudgetTitle(toNumber(id), title);
+    if (response.status === HttpStatusCode.Ok) {
+      setBudgetDto((oldValue) => {
+        if (!oldValue) return undefined;
+
+        return {
+          ...oldValue,
+          budgetTitle: title,
+        };
+      });
+    }
+  };
+
+  const onBudgetDescriptionUpdate = async (description: string): Promise<void> => {
+    if (!id) return;
+
+    const response = await updateBudgetDescription(toNumber(id), description);
+    if (response.status === HttpStatusCode.Ok) {
+      setBudgetDto((oldValue) => {
+        if (!oldValue) return undefined;
+
+        return {
+          ...oldValue,
+          budgetDescription: description,
+        };
+      });
+    }
+  };
+
   return (
     <>
       <ItemInfoSubHeader
@@ -74,16 +112,7 @@ export const BudgetComponent = (): JSX.Element => {
                   <Paragraph
                     editable={{
                       onChange: (updatedTitle: string): void => {
-                        setBudgetDto((oldValue) => {
-                          if (!oldValue) return undefined;
-
-                          return {
-                            ...oldValue,
-                            budgetTitle: updatedTitle,
-                          };
-                        });
-
-                        // TODO: Implement title update
+                        onBudgetTitleUpdate(updatedTitle);
                       },
                     }}
                   >
@@ -96,18 +125,7 @@ export const BudgetComponent = (): JSX.Element => {
                 >
                   <Paragraph
                     editable={{
-                      onChange: (updatedDescription: string): void => {
-                        setBudgetDto((oldValue) => {
-                          if (!oldValue) return undefined;
-
-                          return {
-                            ...oldValue,
-                            budgetDescription: updatedDescription,
-                          };
-                        });
-
-                        // TODO: Implement description update
-                      },
+                      onChange: (updatedDescription: string) => onBudgetDescriptionUpdate(updatedDescription),
                     }}
                   >
                     {budgetDto?.budgetDescription}

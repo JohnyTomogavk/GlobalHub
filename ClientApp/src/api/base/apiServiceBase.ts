@@ -6,7 +6,7 @@ export const GetRequest = async <TResponse>(
   queryParams?: object,
   config?: CustomAxiosConfig
 ): Promise<AxiosResponse<TResponse>> =>
-  axios.get(url, {
+  axios.get<TResponse>(url, {
     params: {
       ...(queryParams ?? {}),
     },
@@ -18,7 +18,7 @@ export const PostRequest = async <TBody, TResponse>(
   body: TBody,
   config?: CustomAxiosConfig
 ): Promise<AxiosResponse<TResponse>> =>
-  axios.post(url, body, {
+  axios.post<TResponse>(url, body, {
     ...config,
   });
 
@@ -27,7 +27,7 @@ export const PutRequest = async <TBody, TResponse>(
   body: TBody,
   config?: CustomAxiosConfig
 ): Promise<AxiosResponse<TResponse>> =>
-  axios.put(url, body, {
+  axios.put<TResponse>(url, body, {
     ...config,
   });
 
@@ -36,7 +36,7 @@ export const DeleteRequest = async <TParam, TResponse>(
   queryParams: TParam,
   config?: CustomAxiosConfig
 ): Promise<AxiosResponse<TResponse>> =>
-  axios.delete(url, {
+  axios.delete<TResponse>(url, {
     params: {
       ...queryParams,
     },
