@@ -1,4 +1,4 @@
-import { GetRequest, PostRequest } from './base/apiServiceBase';
+import { GetRequest, PostRequest, PutRequest } from './base/apiServiceBase';
 import { AxiosResponse } from 'axios';
 import { getResourceUrl } from '../helpers/urlHelper';
 import * as apiConstants from '../constants/apiConstants';
@@ -36,4 +36,36 @@ export const getBudgetAnalyticForCurrentMonthById = async (
   return GetRequest<BudgetAnalyticDto>(resourceUrl, {
     id: budgetId,
   });
+};
+
+export const updateBudgetTitle = async (budgetId: number, title: string): Promise<AxiosResponse> => {
+  const resourceUrl = getResourceUrl(BUDGETS_API_BASE, apiConstants.UPDATE_BUDGET_TITLE);
+
+  return PutRequest<object, void>(
+    resourceUrl,
+    {
+      title: title,
+    },
+    {
+      params: {
+        budgetId: budgetId,
+      },
+    }
+  );
+};
+
+export const updateBudgetDescription = async (budgetId: number, description: string): Promise<AxiosResponse> => {
+  const resourceUrl = getResourceUrl(BUDGETS_API_BASE, apiConstants.UPDATE_BUDGET_DESCRIPTION);
+
+  return PutRequest<object, void>(
+    resourceUrl,
+    {
+      description: description,
+    },
+    {
+      params: {
+        budgetId: budgetId,
+      },
+    }
+  );
 };

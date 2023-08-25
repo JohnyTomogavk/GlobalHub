@@ -40,4 +40,20 @@ public class BudgetRepository : IBudgetRepository
 
         return removedEntity;
     }
+
+    public async Task UpdateBudgetTitle(long budgetId, string title)
+    {
+        var budget = await _dbContext.Budgets.FirstOrDefaultAsync(budget => budget.Id == budgetId);
+        budget.BudgetTitle = title;
+        _dbContext.Update(budget);
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task UpdateBudgetDescription(long budgetId, string description)
+    {
+        var budget = await _dbContext.Budgets.FirstOrDefaultAsync(budget => budget.Id == budgetId);
+        budget.BudgetTitle = description;
+        _dbContext.Update(budget);
+        await _dbContext.SaveChangesAsync();
+    }
 }

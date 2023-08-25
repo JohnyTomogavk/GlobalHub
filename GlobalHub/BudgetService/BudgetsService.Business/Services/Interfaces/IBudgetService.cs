@@ -11,4 +11,8 @@ public interface IBudgetService
     Task<BudgetAnalyticDto> GetBudgetAnalytic(long budgetId, DateTimeRange dateRange);
 
     Task<Budget> DeleteBudgetById(long id);
+
+    Task UpdateBudgetTitle(long budgetId, string title);
+
+    Task UpdateBudgetDescription(long budgetId, string description);
 }

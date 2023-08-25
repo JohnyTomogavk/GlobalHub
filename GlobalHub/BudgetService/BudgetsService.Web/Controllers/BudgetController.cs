@@ -67,4 +67,21 @@ public class BudgetController : ControllerBase
 
         return Ok(deletedId);
     }
+
+    [HttpPut]
+    public async Task<ActionResult> UpdateBudgetTitle(long budgetId, [FromBody] BudgetTitleUpdateDto titleDto)
+    {
+        await _budgetService.UpdateBudgetTitle(budgetId, titleDto.Title);
+
+        return Ok();
+    }
+
+    [HttpPut]
+    public async Task<ActionResult> UpdateBudgetDescription(long budgetId,
+        [FromBody] BudgetDescriptionUpdateDto descriptionUpdateDto)
+    {
+        await _budgetService.UpdateBudgetDescription(budgetId, descriptionUpdateDto.Description);
+
+        return Ok();
+    }
 }
