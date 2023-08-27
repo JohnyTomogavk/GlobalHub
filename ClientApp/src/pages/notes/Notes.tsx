@@ -5,7 +5,7 @@ import { ItemInfoSubHeader } from '../../components/itemInfoHeader/ItemInfoHeade
 import styles from './notes.module.scss';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { deleteNote, getNoteById, updateNoteContent, updateNoteTitle } from '../../api/noteService';
-import { Note } from '../../models/notes/note';
+import { Note } from '../../entities/notes/note';
 import {
   EDITOR_ON_CHANGE_DEBOUNCE,
   NOTE_DEFAULT_CONTENT,

@@ -6,7 +6,7 @@ import { getItemTitleWithOptionsButton } from '../../helpers/sideMenuHelper';
 import { getClientItemUrl } from '../../helpers/urlHelper';
 import * as ResourceNameConstants from '../../constants/resourceConstants';
 import { NoteMap } from '../../dto/sideMenu/noteMap';
-import { Note } from '../../models/notes/note';
+import { Note } from '../../entities/notes/note';
 
 class SideMenuNoteStore {
   sideMenuNoteItems: SideMenuItemModel[] = [];
