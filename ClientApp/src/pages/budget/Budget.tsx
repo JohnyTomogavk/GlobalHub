@@ -152,7 +152,7 @@ export const BudgetComponent = (): JSX.Element => {
                     precision={2}
                   />
                   <Statistic
-                    title="Expenses"
+                    title="Irregular Expenses"
                     suffix={'BYN'}
                     value={budgetAnalyticData?.irregularExpenses}
                     formatter={countUpFormatter}
