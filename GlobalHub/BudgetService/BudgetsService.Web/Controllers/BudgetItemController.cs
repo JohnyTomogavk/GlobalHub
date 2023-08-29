@@ -27,4 +27,14 @@ public class BudgetItemController : ControllerBase
 
         return Ok(budgetItems);
     }
+
+    [HttpPost]
+    public async Task<ActionResult<BudgetItemDto>> CreateBudgetItem(BudgetItemCreateDto createDto)
+    {
+        var createdBudgetItemDto = await _budgetItemService.CreateBudgetItem(createDto);
+        var updatedBudgetItem =
+            await _budgetItemService.UpdateBudgetItemTags(createdBudgetItemDto.Id, createDto.TagIds);
+
+        return updatedBudgetItem;
+    }
 }

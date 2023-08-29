@@ -11,5 +11,6 @@ public class AutoMapperProfile : Profile
                 memberOptions.MapFrom(src => src.BudgetItemTags.Select(budgetItemTag => budgetItemTag.TagId)));
         CreateMap<CreateBudgetDto, Budget>();
         CreateMap<Tag, TagDto>();
+        CreateMap<BudgetItemCreateDto, BudgetItem>();
     }
 }

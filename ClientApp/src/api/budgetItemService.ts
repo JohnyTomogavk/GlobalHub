@@ -1,10 +1,12 @@
 import { AxiosResponse } from 'axios';
 import { getResourceUrl } from '../helpers/urlHelper';
-import { BUDGETS_API_BASE } from '../constants/apiConstants';
+import { BUDGETS_API_BASE, CREATE_BUDGET_ITEM } from '../constants/apiConstants';
 import * as apiConstants from '../constants/apiConstants';
-import { DeleteRequest, PutRequest } from './base/apiServiceBase';
+import { DeleteRequest, PostRequest, PutRequest } from './base/apiServiceBase';
 import { BudgetItemsRequestDto } from '../dto/budgetItems/budgetItemsRequestDto';
 import { BudgetItemsPaginatedResponseDto } from '../dto/budgetItems/budgetItemsPaginatedResponseDto';
+import { BudgetItemCreateDto } from '../dto/budgetItems/budgetItemCreateDto';
+import { BudgetItemDto } from '../dto/budgets/budgetItemDto';
 
 export const getBudgetItemsWithFiltersById = async (
   budgetId: number,
@@ -21,4 +23,10 @@ export const deleteBudgetById = async (budgetId: number): Promise<AxiosResponse<
   return DeleteRequest<object, number>(resourceUrl, {
     budgetId: budgetId,
   });
+};
+
+export const createBudgetItem = async (createDto: BudgetItemCreateDto): Promise<AxiosResponse<BudgetItemDto>> => {
+  const resourceUrl = getResourceUrl(BUDGETS_API_BASE, apiConstants.CREATE_BUDGET_ITEM);
+
+  return PostRequest<BudgetItemCreateDto, BudgetItemDto>(resourceUrl, createDto);
 };

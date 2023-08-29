@@ -6,11 +6,14 @@ public class BudgetItemService : IBudgetItemService
 {
     private readonly IBudgetItemRepository _budgetItemRepository;
     private readonly IMapper _mapper;
+    private readonly IValidator<BudgetItemCreateDto> _createDtoValidator;
 
-    public BudgetItemService(IBudgetItemRepository budgetItemRepository, IMapper mapper)
+    public BudgetItemService(IBudgetItemRepository budgetItemRepository, IMapper mapper,
+        IValidator<BudgetItemCreateDto> createDtoValidator)
     {
         _budgetItemRepository = budgetItemRepository;
         _mapper = mapper;
+        _createDtoValidator = createDtoValidator;
     }
 
     public async Task<BudgetItemPaginatedResponse> GetBudgetItemsByBudgetId(long id, DateTimeRange datePeriod,
@@ -47,6 +50,32 @@ public class BudgetItemService : IBudgetItemService
         };
 
         return responseDto;
+    }
+
+    public async Task<BudgetItemDto> CreateBudgetItem(BudgetItemCreateDto createDto)
+    {
+        var validationResult = await _createDtoValidator.ValidateAsync(createDto);
+
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+
+        var createModel = _mapper.Map<BudgetItem>(createDto);
+        var createdBudgetItem = await _budgetItemRepository.CreateBudgetItem(createModel);
+        var createdBudgetItemDto = _mapper.Map<BudgetItemDto>(createdBudgetItem);
+
+        return createdBudgetItemDto;
+    }
+
+    public async Task<BudgetItemDto> UpdateBudgetItemTags(long budgetItemId, IEnumerable<long> tagsIds)
+    {
+        var budgetItemTags = tagsIds.Select(tagId => new BudgetItemTag { BudgetItemId = budgetItemId, TagId = tagId })
+            .ToList();
+        var updatedBudgetItem = await _budgetItemRepository.UpdateBudgetItemTags(budgetItemId, budgetItemTags);
+        var mappedEntity = _mapper.Map<BudgetItemDto>(updatedBudgetItem);
+
+        return mappedEntity;
     }
 
     private IQueryable<BudgetItem> ApplySort(IQueryable<BudgetItem> budgetItems, string orderByColumn,

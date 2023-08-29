@@ -19,4 +19,22 @@ public class BudgetItemRepository : IBudgetItemRepository
             .Where(item =>
                 item.BudgetId == budgetId);
     }
+
+    public async Task<BudgetItem> CreateBudgetItem(BudgetItem createModel)
+    {
+        var createdBudgetItem = (await _dbContext.BudgetsItems.AddAsync(createModel)).Entity;
+        await _dbContext.SaveChangesAsync();
+
+        return createdBudgetItem;
+    }
+
+    public async Task<BudgetItem> UpdateBudgetItemTags(long budgetItemId,
+        IEnumerable<BudgetItemTag> budgetItemTags)
+    {
+        var budgetItem = await _dbContext.BudgetsItems.FirstOrDefaultAsync(item => item.Id == budgetItemId);
+        budgetItem.BudgetItemTags = budgetItemTags;
+        await _dbContext.SaveChangesAsync();
+
+        return budgetItem;
+    }
 }
