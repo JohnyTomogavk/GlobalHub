@@ -22,7 +22,7 @@ public class BudgetItemService : IBudgetItemService
         var budgetItemsQueryExpression = _budgetItemRepository.GetBudgetItemsByIdAndPeriodAsIQueryable(id, datePeriod);
         budgetItemsQueryExpression = ApplyFilters(budgetItemsQueryExpression, queryOptions.FilterModelDto);
         budgetItemsQueryExpression =
-            ApplySort(budgetItemsQueryExpression, queryOptions.SortColumn, queryOptions.SortByAscending);
+            budgetItemsQueryExpression.ApplySort(queryOptions.SortColumn, queryOptions.SortByAscending);
 
         var aggregationMetrics = new
         {
@@ -35,7 +35,7 @@ public class BudgetItemService : IBudgetItemService
                 .Sum(item => item.BudgetOperationCost),
         };
 
-        budgetItemsQueryExpression = ApplyPagination(budgetItemsQueryExpression, queryOptions.ItemsPerPageCount,
+        budgetItemsQueryExpression = budgetItemsQueryExpression.ApplyPagination(queryOptions.ItemsPerPageCount,
             queryOptions.PageNumber);
 
         var budgetItems = await budgetItemsQueryExpression.ToListAsync();
@@ -78,26 +78,8 @@ public class BudgetItemService : IBudgetItemService
         return mappedEntity;
     }
 
-    private IQueryable<BudgetItem> ApplySort(IQueryable<BudgetItem> budgetItems, string orderByColumn,
-        bool sortByAscending)
-    {
-        if (string.IsNullOrEmpty(orderByColumn))
-        {
-            return budgetItems;
-        }
 
-        return sortByAscending
-            ? budgetItems.OrderBy(item => EF.Property<string>(item, orderByColumn))
-            : budgetItems.OrderByDescending(item => EF.Property<string>(item, orderByColumn));
-    }
-
-    private IQueryable<BudgetItem> ApplyPagination(IQueryable<BudgetItem> budgetItems, int itemsCountPerPage,
-        int pageNumber)
-    {
-        return budgetItems.Skip(pageNumber * itemsCountPerPage).Take(itemsCountPerPage);
-    }
-
-    private IQueryable<BudgetItem> ApplyFilters(IQueryable<BudgetItem> budgetItems, FilterModelDto filterModel)
+    private static IQueryable<BudgetItem> ApplyFilters(IQueryable<BudgetItem> budgetItems, FilterModelDto filterModel)
     {
         if (filterModel == null)
         {
