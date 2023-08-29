@@ -13,3 +13,8 @@ html {
 @mixin entity-title {
   margin: 0 auto;
 }
+
+.loader {
+  display: flex;
+  justify-content: center;
+}

@@ -1,24 +1,29 @@
 import { TagDto } from '../../dto/tags/tagDto';
-import { Select, Tag } from 'antd';
+import { Button, Divider, Input, InputRef, Select, Space, Tag } from 'antd';
 import { CustomTagProps } from 'rc-select/lib/BaseSelect';
-import React from 'react';
-import FormItem from 'antd/lib/form/FormItem';
+import React, { ReactElement, useRef } from 'react';
+import { PlusOutlined } from '@ant-design/icons';
 
 interface TagSelectorProps {
-  formItemName: string;
-  formItemLabel: string;
   tags: TagDto[];
-  onTagSelected?: (tagIds: number[]) => void;
+  isTagCreatorEnabled?: boolean;
 }
 
-export const TagSelector = (props: TagSelectorProps): JSX.Element => (
-  <FormItem name={props.formItemName} label={props.formItemLabel}>
+export const TagSelector = (props: TagSelectorProps): JSX.Element => {
+  const { tags, isTagCreatorEnabled, ...defaultProps } = props;
+  const inputRef = useRef<InputRef>(null);
+
+  const addNewTag = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>): void => {
+    e.preventDefault();
+    const newTagName = inputRef.current?.input?.value;
+    console.log(newTagName);
+    // TODO: Implement API call
+    inputRef.current?.focus();
+  };
+
+  return (
     <Select
-      onChange={(selectedTagIds: number[]): void => {
-        if (props?.onTagSelected) {
-          props.onTagSelected(selectedTagIds);
-        }
-      }}
+      allowClear
       mode="multiple"
       tagRender={(tagProps: CustomTagProps): JSX.Element => {
         const { label, value: tagId, closable, onClose } = tagProps;
@@ -28,7 +33,7 @@ export const TagSelector = (props: TagSelectorProps): JSX.Element => (
           event.stopPropagation();
         };
 
-        const tagColor = props.tags.filter((tag) => tag.id === tagId)[0].color;
+        const tagColor = tags.filter((tag) => tag.id === tagId)[0].color;
 
         return (
           <Tag
@@ -45,11 +50,28 @@ export const TagSelector = (props: TagSelectorProps): JSX.Element => (
       placeholder={'Find tags'}
       style={{ width: '100%' }}
       options={[
-        ...(props.tags.map((tagDto: TagDto) => ({
+        ...(tags.map((tagDto: TagDto) => ({
           value: tagDto.id,
           label: tagDto.label,
         })) ?? []),
       ]}
+      dropdownRender={(menu: ReactElement): ReactElement =>
+        isTagCreatorEnabled ? (
+          <>
+            {menu}
+            <Divider style={{ margin: '8px 0' }} />
+            <Space style={{ padding: '0 8px 4px' }}>
+              <Input ref={inputRef} placeholder="New tag name" />
+              <Button onClick={addNewTag} type="text" icon={<PlusOutlined />}>
+                Add
+              </Button>
+            </Space>
+          </>
+        ) : (
+          menu
+        )
+      }
+      {...defaultProps}
     />
-  </FormItem>
-);
+  );
+};
