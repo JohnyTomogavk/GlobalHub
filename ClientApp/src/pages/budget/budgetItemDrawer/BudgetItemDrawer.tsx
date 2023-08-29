@@ -35,7 +35,10 @@ export const BudgetItemDrawer = ({
   const [isLoading, setIsLoading] = useState(true);
 
   const submitForm = (): void => {
-    const budgetItemModel = budgetItemForm.getFieldsValue();
+    const budgetItemModel = {
+      ...initFormValues,
+      ...budgetItemForm.getFieldsValue(),
+    };
 
     if (onSubmitCallback) {
       onSubmitCallback(budgetItemModel);

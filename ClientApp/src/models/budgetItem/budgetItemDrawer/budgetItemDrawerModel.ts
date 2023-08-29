@@ -8,4 +8,5 @@ export interface BudgetItemDrawerModel {
   operationCost: string;
   operationType: BudgetItemOperationType;
   tagIds: number[];
+  budgetItemId?: number;
 }
