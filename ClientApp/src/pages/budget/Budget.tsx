@@ -88,6 +88,14 @@ export const BudgetComponent = (): JSX.Element => {
     }
   };
 
+  const fetchAnalitycData = async (): Promise<void> => {
+    if (!id) return;
+
+    const { data: analyticData } = await getBudgetAnalyticForCurrentMonthById(toNumber(id));
+
+    setBudgetAnalyticData(analyticData);
+  };
+
   return (
     <>
       <ItemInfoSubHeader
@@ -152,7 +160,7 @@ export const BudgetComponent = (): JSX.Element => {
                     precision={2}
                   />
                   <Statistic
-                    title="Expenses"
+                    title="Irregular Expenses"
                     suffix={'BYN'}
                     value={budgetAnalyticData?.irregularExpenses}
                     formatter={countUpFormatter}
@@ -280,7 +288,11 @@ export const BudgetComponent = (): JSX.Element => {
         <Row className={styles.budgetRow}>
           <Col flex={'auto'}>
             <Card size={'small'} title="Budget items">
-              <BudgetItemsTable budgetTags={budgetTags ?? []} budgetId={toNumber(id)} />
+              <BudgetItemsTable
+                triggerAnalitycStatsRecalculation={fetchAnalitycData}
+                budgetTags={budgetTags ?? []}
+                budgetId={toNumber(id)}
+              />
             </Card>
           </Col>
         </Row>

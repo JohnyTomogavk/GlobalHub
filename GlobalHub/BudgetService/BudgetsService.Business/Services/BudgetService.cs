@@ -73,22 +73,35 @@ public class BudgetService : IBudgetService
 
     private BudgetAnalyticDto GetBudgetAnalytic(Budget budget)
     {
+        decimal moneyPreserved = budget.BudgetItems
+            .Where(item => item.BudgetItemOperationType == BudgetItemOperationType.Incoming)
+            .Sum(item => item.BudgetOperationCost) * budget.PreserveFromIncomingPercent / 100;
+
         var analyticDto = new BudgetAnalyticDto
         {
             IrregularExpenses = budget.BudgetItems
-                .Where(item => item.BudgetItemRegularityType == BudgetItemRegularityType.Irregular)
+                .Where(item =>
+                    item is
+                    {
+                        BudgetItemRegularityType: BudgetItemRegularityType.Irregular,
+                        BudgetItemOperationType: BudgetItemOperationType.Outgoing
+                    })
                 .Sum(item => item.BudgetOperationCost),
             RegularExpenses = budget.BudgetItems
-                .Where(item => item.BudgetItemRegularityType == BudgetItemRegularityType.Regular)
+                .Where(item =>
+                    item is
+                    {
+                        BudgetItemRegularityType: BudgetItemRegularityType.Regular,
+                        BudgetItemOperationType: BudgetItemOperationType.Outgoing
+                    })
                 .Sum(item => item.BudgetOperationCost),
-            MoneyPreserved = budget.BudgetItems
-                .Where(item => item.BudgetItemOperationType == BudgetItemOperationType.Incoming)
-                .Sum(item => item.BudgetOperationCost) * budget.PreserveFromIncomingPercent / 100,
+            MoneyPreserved = moneyPreserved,
             MoneyLeft = budget.BudgetItems
-                .Where(item => item.BudgetItemOperationType == BudgetItemOperationType.Incoming)
-                .Sum(item => item.BudgetOperationCost) - budget.BudgetItems
-                .Where(item => item.BudgetItemOperationType == BudgetItemOperationType.Outgoing)
-                .Sum(item => item.BudgetOperationCost),
+                            .Where(item => item.BudgetItemOperationType == BudgetItemOperationType.Incoming)
+                            .Sum(item => item.BudgetOperationCost) -
+                        budget.BudgetItems
+                            .Where(item => item.BudgetItemOperationType == BudgetItemOperationType.Outgoing)
+                            .Sum(item => item.BudgetOperationCost) - moneyPreserved,
             AverageDailyExpenses = GetAverageDailyExpenses(budget),
             ExpensesMedian = budget.BudgetItems
                 .Where(item => item.BudgetItemOperationType == BudgetItemOperationType.Outgoing)

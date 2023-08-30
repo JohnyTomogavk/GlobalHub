@@ -6,6 +6,8 @@ import { OPERATION_FAILED_PAGE_RESOURCE } from '../constants/resourceConstants';
 import { notification } from 'antd';
 import { CustomAxiosConfig } from '../models/axios/CustomAxiosConfig';
 
+let errorCaptured = false;
+
 export const setUpAxiosExceptionInterceptor = (navigate: NavigateFunction): void => {
   axios.interceptors.response.use(
     (response) => response,
@@ -27,11 +29,16 @@ export const setUpAxiosExceptionInterceptor = (navigate: NavigateFunction): void
           default:
             break;
         }
-      } else {
+      } else if (!errorCaptured) {
+        errorCaptured = true;
+
         notification.error({
           message: 'Error occurred',
           description: 'Cant access the server. Check your internet connection',
           placement: 'bottomRight',
+          onClose: (): void => {
+            errorCaptured = false;
+          },
         });
       }
 

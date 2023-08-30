@@ -52,7 +52,7 @@ public class BudgetRepository : IBudgetRepository
     public async Task UpdateBudgetDescription(long budgetId, string description)
     {
         var budget = await _dbContext.Budgets.FirstOrDefaultAsync(budget => budget.Id == budgetId);
-        budget.BudgetTitle = description;
+        budget.BudgetDescription = description;
         _dbContext.Update(budget);
         await _dbContext.SaveChangesAsync();
     }

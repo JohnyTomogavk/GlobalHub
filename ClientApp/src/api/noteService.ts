@@ -1,5 +1,5 @@
 import { DeleteRequest, GetRequest, PostRequest, PutRequest } from './base/apiServiceBase';
-import { Note } from '../models/notes/note';
+import { Note } from '../entities/notes/note';
 import { AxiosResponse } from 'axios';
 import { getResourceUrl } from '../helpers/urlHelper';
 import * as apiConstants from '../constants/apiConstants';

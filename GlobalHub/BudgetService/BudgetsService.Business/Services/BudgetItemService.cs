@@ -6,11 +6,14 @@ public class BudgetItemService : IBudgetItemService
 {
     private readonly IBudgetItemRepository _budgetItemRepository;
     private readonly IMapper _mapper;
+    private readonly IValidator<BudgetItemCreateDto> _createDtoValidator;
 
-    public BudgetItemService(IBudgetItemRepository budgetItemRepository, IMapper mapper)
+    public BudgetItemService(IBudgetItemRepository budgetItemRepository, IMapper mapper,
+        IValidator<BudgetItemCreateDto> createDtoValidator)
     {
         _budgetItemRepository = budgetItemRepository;
         _mapper = mapper;
+        _createDtoValidator = createDtoValidator;
     }
 
     public async Task<BudgetItemPaginatedResponse> GetBudgetItemsByBudgetId(long id, DateTimeRange datePeriod,
@@ -19,7 +22,7 @@ public class BudgetItemService : IBudgetItemService
         var budgetItemsQueryExpression = _budgetItemRepository.GetBudgetItemsByIdAndPeriodAsIQueryable(id, datePeriod);
         budgetItemsQueryExpression = ApplyFilters(budgetItemsQueryExpression, queryOptions.FilterModelDto);
         budgetItemsQueryExpression =
-            ApplySort(budgetItemsQueryExpression, queryOptions.SortColumn, queryOptions.SortByAscending);
+            budgetItemsQueryExpression.ApplySort(queryOptions.SortColumn, queryOptions.SortByAscending);
 
         var aggregationMetrics = new
         {
@@ -32,7 +35,7 @@ public class BudgetItemService : IBudgetItemService
                 .Sum(item => item.BudgetOperationCost),
         };
 
-        budgetItemsQueryExpression = ApplyPagination(budgetItemsQueryExpression, queryOptions.ItemsPerPageCount,
+        budgetItemsQueryExpression = budgetItemsQueryExpression.ApplyPagination(queryOptions.ItemsPerPageCount,
             queryOptions.PageNumber);
 
         var budgetItems = await budgetItemsQueryExpression.ToListAsync();
@@ -49,26 +52,43 @@ public class BudgetItemService : IBudgetItemService
         return responseDto;
     }
 
-    private IQueryable<BudgetItem> ApplySort(IQueryable<BudgetItem> budgetItems, string orderByColumn,
-        bool sortByAscending)
+    public async Task<BudgetItemDto> CreateBudgetItem(BudgetItemCreateDto createDto)
     {
-        if (string.IsNullOrEmpty(orderByColumn))
+        var validationResult = await _createDtoValidator.ValidateAsync(createDto);
+
+        if (!validationResult.IsValid)
         {
-            return budgetItems;
+            throw new ValidationException(validationResult.Errors);
         }
 
-        return sortByAscending
-            ? budgetItems.OrderBy(item => EF.Property<string>(item, orderByColumn))
-            : budgetItems.OrderByDescending(item => EF.Property<string>(item, orderByColumn));
+        var createModel = _mapper.Map<BudgetItem>(createDto);
+        var createdBudgetItem = await _budgetItemRepository.CreateBudgetItem(createModel);
+        var createdBudgetItemDto = _mapper.Map<BudgetItemDto>(createdBudgetItem);
+
+        return createdBudgetItemDto;
     }
 
-    private IQueryable<BudgetItem> ApplyPagination(IQueryable<BudgetItem> budgetItems, int itemsCountPerPage,
-        int pageNumber)
+    public async Task<BudgetItemDto> UpdateBudgetItemTags(long budgetItemId, IEnumerable<long> tagsIds)
     {
-        return budgetItems.Skip(pageNumber * itemsCountPerPage).Take(itemsCountPerPage);
+        var budgetItemTags = tagsIds.Select(tagId => new BudgetItemTag { BudgetItemId = budgetItemId, TagId = tagId })
+            .ToList();
+        var updatedBudgetItem = await _budgetItemRepository.UpdateBudgetItemTags(budgetItemId, budgetItemTags);
+        var mappedEntity = _mapper.Map<BudgetItemDto>(updatedBudgetItem);
+
+        return mappedEntity;
     }
 
-    private IQueryable<BudgetItem> ApplyFilters(IQueryable<BudgetItem> budgetItems, FilterModelDto filterModel)
+    public async Task<BudgetItemDto> UpdateBudgetItem(BudgetItemUpdateDto updateDto)
+    {
+        var budgetItem = await _budgetItemRepository.GetBudgetItemById(updateDto.Id);
+        var entityToUpdate = _mapper.Map<BudgetItemUpdateDto, BudgetItem>(updateDto, budgetItem);
+        var updateEntity = await _budgetItemRepository.UpdateBudgetItem(entityToUpdate);
+        var mappedEntity = _mapper.Map<BudgetItemDto>(updateEntity);
+
+        return mappedEntity;
+    }
+
+    private static IQueryable<BudgetItem> ApplyFilters(IQueryable<BudgetItem> budgetItems, FilterModelDto filterModel)
     {
         if (filterModel == null)
         {

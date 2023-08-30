@@ -22,6 +22,8 @@ export const UPDATE_BUDGET_DESCRIPTION = '/Budget/UpdateBudgetDescription';
 
 // Constants related to budget items
 export const GET_BUDGET_ITEMS_BY_BUDGET_ID = '/BudgetItem/GetBudgetItemsByBudgetId';
+export const CREATE_BUDGET_ITEM = '/BudgetItem/CreateBudgetItem';
+export const UPDATE_BUDGET_ITEM = '/BudgetItem/UpdateBudgetItem';
 
-// Constants related to budget items
+// Constants related to tags
 export const GET_BUDGET_TAGS_BY_ID = '/Tag/GetBudgetTagsByBudgetId';
