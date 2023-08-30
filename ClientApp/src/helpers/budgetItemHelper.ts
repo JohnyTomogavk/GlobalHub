@@ -25,8 +25,8 @@ export const drawerModelToBudgetItemCreateDto = (
   itemDescription: drawerModel.description,
   budgetItemOperationType: drawerModel.operationType,
   budgetItemRegularityType: BudgetItemRegularityType.Irregular,
-  budgetOperationCost: drawerModel.operationCost,
-  paymentDate: drawerModel.operationDate.toDate(),
+  operationCost: drawerModel.operationCost,
+  operationDate: drawerModel.operationDate.toDate(),
   tagIds: drawerModel.tagIds,
 });
 
@@ -41,8 +41,8 @@ export const drawerModelToBudgetItemUpdateDto = (
   itemDescription: drawerModel.description,
   budgetItemOperationType: drawerModel.operationType,
   budgetItemRegularityType: BudgetItemRegularityType.Irregular,
-  budgetOperationCost: drawerModel.operationCost,
-  paymentDate: drawerModel.operationDate.toDate(),
+  operationCost: drawerModel.operationCost,
+  operationDate: drawerModel.operationDate.toDate(),
   tagIds: drawerModel.tagIds,
 });
 
@@ -51,7 +51,7 @@ export const budgetItemDtoToTableEntry = (budgetItemDto: BudgetItemDto): BudgetI
   title: budgetItemDto.itemTitle,
   description: budgetItemDto.itemDescription,
   operationType: budgetItemDto.budgetItemOperationType,
-  operationCost: budgetItemDto.budgetOperationCost.toFixed(1).toString(),
+  operationCost: budgetItemDto.operationCost.toFixed(1).toString(),
   tagIds: budgetItemDto.tagIds,
-  operationDate: new Date(budgetItemDto.paymentDate),
+  operationDate: new Date(budgetItemDto.operationDate),
 });

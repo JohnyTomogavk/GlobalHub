@@ -12,9 +12,9 @@ public record BudgetItemDto : IHasDate
 
     public BudgetItemRegularityType BudgetItemRegularityType { get; init; }
 
-    public decimal BudgetOperationCost { get; init; }
+    public decimal OperationCost { get; init; }
 
-    public DateTime PaymentDate { get; set; }
+    public DateTime OperationDate { get; set; }
 
     public IEnumerable<long> TagIds { get; set; }
 

@@ -6,7 +6,7 @@ public class BudgetItemBaseValidator<T> : AbstractValidator<T>
     public BudgetItemBaseValidator()
     {
         RuleFor(item => item.ItemTitle).NotEmpty();
-        RuleFor(item => item.BudgetOperationCost).GreaterThanOrEqualTo(0);
+        RuleFor(item => item.OperationCost).GreaterThanOrEqualTo(0);
         RuleFor(item => item.BudgetItemRegularityType).NotEqual(BudgetItemRegularityType.Unknown);
         RuleFor(item => item.BudgetItemOperationType).NotEqual(BudgetItemOperationType.Unknown);
     }

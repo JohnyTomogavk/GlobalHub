@@ -141,7 +141,7 @@ export const BudgetItemsTable = ({
     {
       title: 'Operation Cost',
       dataIndex: 'operationCost',
-      key: 'BudgetOperationCost',
+      key: 'OperationCost',
       sorter: true,
     },
     {
@@ -167,7 +167,7 @@ export const BudgetItemsTable = ({
     {
       title: 'Operation Date',
       dataIndex: 'operationDate',
-      key: 'PaymentDate',
+      key: 'OperationDate',
       render: (data: Date) => data.toLocaleString(),
       sorter: true,
     },

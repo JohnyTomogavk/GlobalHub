@@ -7,7 +7,7 @@ export interface BudgetItemCreateDto {
   itemDescription: string;
   budgetItemOperationType: BudgetItemOperationType;
   budgetItemRegularityType: BudgetItemRegularityType;
-  budgetOperationCost: string;
-  paymentDate: Date;
+  operationCost: string;
+  operationDate: Date;
   tagIds: number[];
 }

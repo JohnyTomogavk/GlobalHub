@@ -31,10 +31,10 @@ public class BudgetItemService : IBudgetItemService
             ItemsCount = budgetItemsQueryExpression.Count(),
             TotalExpenses = budgetItemsQueryExpression
                 .Where(item => item.BudgetItemOperationType == BudgetItemOperationType.Outgoing)
-                .Sum(item => item.BudgetOperationCost),
+                .Sum(item => item.OperationCost),
             TotalIncoming = budgetItemsQueryExpression
                 .Where(item => item.BudgetItemOperationType == BudgetItemOperationType.Incoming)
-                .Sum(item => item.BudgetOperationCost),
+                .Sum(item => item.OperationCost),
         };
 
         budgetItemsQueryExpression = budgetItemsQueryExpression.ApplyPagination(queryOptions.ItemsPerPageCount,
@@ -118,7 +118,7 @@ public class BudgetItemService : IBudgetItemService
         if (filterModel.StartDateRange != null && filterModel.EndDateRange != null)
         {
             budgetItems = budgetItems.Where(item =>
-                item.PaymentDate >= filterModel.StartDateRange && item.PaymentDate <= filterModel.EndDateRange);
+                item.OperationDate >= filterModel.StartDateRange && item.OperationDate <= filterModel.EndDateRange);
         }
 
         if (filterModel.TagIds != null && filterModel.TagIds.Any())

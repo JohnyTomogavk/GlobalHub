@@ -4,17 +4,15 @@ public class BudgetItem : BaseEntity, IHasDate
 {
     public string ItemTitle { get; set; } = string.Empty;
 
-    public string ItemDescription { get; set; } = string.Empty;
+    public string? ItemDescription { get; set; } = string.Empty;
 
     public BudgetItemOperationType BudgetItemOperationType { get; set; }
 
     public BudgetItemRegularityType BudgetItemRegularityType { get; set; }
 
-    // TODO: Rename to OperationCost
-    public decimal BudgetOperationCost { get; set; }
+    public decimal OperationCost { get; set; }
 
-    // TODO: Rename to operation date // maybe optional
-    public DateTime PaymentDate { get; set; }
+    public DateTime OperationDate { get; set; }
 
     public DateTime CreatedDate { get; set; }
 
