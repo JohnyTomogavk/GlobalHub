@@ -1,4 +1,4 @@
-﻿namespace BudgetsService.Business.Validators.Budgetitem;
+﻿namespace BudgetsService.Business.Validators.BudgetItems;
 
 public class BudgetItemValidator : AbstractValidator<BudgetItem>
 {

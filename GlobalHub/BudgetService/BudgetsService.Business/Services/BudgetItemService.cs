@@ -7,13 +7,15 @@ public class BudgetItemService : IBudgetItemService
     private readonly IBudgetItemRepository _budgetItemRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<BudgetItemCreateDto> _createDtoValidator;
+    private readonly IValidator<BudgetItemUpdateDto> _updateDtoValidator;
 
     public BudgetItemService(IBudgetItemRepository budgetItemRepository, IMapper mapper,
-        IValidator<BudgetItemCreateDto> createDtoValidator)
+        IValidator<BudgetItemCreateDto> createDtoValidator, IValidator<BudgetItemUpdateDto> updateDtoValidator)
     {
         _budgetItemRepository = budgetItemRepository;
         _mapper = mapper;
         _createDtoValidator = createDtoValidator;
+        _updateDtoValidator = updateDtoValidator;
     }
 
     public async Task<BudgetItemPaginatedResponse> GetBudgetItemsByBudgetId(long id, DateTimeRange datePeriod,
@@ -80,6 +82,13 @@ public class BudgetItemService : IBudgetItemService
 
     public async Task<BudgetItemDto> UpdateBudgetItem(BudgetItemUpdateDto updateDto)
     {
+        var validationResult = await _updateDtoValidator.ValidateAsync(updateDto);
+
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+
         var budgetItem = await _budgetItemRepository.GetBudgetItemById(updateDto.Id);
         var entityToUpdate = _mapper.Map<BudgetItemUpdateDto, BudgetItem>(updateDto, budgetItem);
         var updateEntity = await _budgetItemRepository.UpdateBudgetItem(entityToUpdate);
