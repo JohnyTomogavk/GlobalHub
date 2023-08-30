@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { BudgetItemCreateDto } from '../dto/budgetItems/budgetItemCreateDto';
 import { BudgetItemRegularityType } from '../enums/budgetItemRegularityType';
 import { BudgetItemDto } from '../dto/budgets/budgetItemDto';
+import { BudgetItemUpdateDto } from '../dto/budgetItems/budgetItemUpdateDto';
 
 export const budgetItemTableEntryToDrawerModel = (tableEntry: BudgetItemTableEntry): BudgetItemDrawerModel => ({
   budgetItemId: tableEntry.key,
@@ -19,6 +20,22 @@ export const drawerModelToBudgetItemCreateDto = (
   drawerModel: BudgetItemDrawerModel,
   budgetId: number
 ): BudgetItemCreateDto => ({
+  budgetId: budgetId,
+  itemTitle: drawerModel.title,
+  itemDescription: drawerModel.description,
+  budgetItemOperationType: drawerModel.operationType,
+  budgetItemRegularityType: BudgetItemRegularityType.Irregular,
+  budgetOperationCost: drawerModel.operationCost,
+  paymentDate: drawerModel.operationDate.toDate(),
+  tagIds: drawerModel.tagIds,
+});
+
+export const drawerModelToBudgetItemUpdateDto = (
+  drawerModel: BudgetItemDrawerModel,
+  budgetId: number,
+  budgetItemId: number
+): BudgetItemUpdateDto => ({
+  id: budgetItemId,
   budgetId: budgetId,
   itemTitle: drawerModel.title,
   itemDescription: drawerModel.description,

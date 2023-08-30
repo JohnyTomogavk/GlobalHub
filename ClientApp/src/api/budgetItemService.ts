@@ -1,12 +1,13 @@
 import { AxiosResponse } from 'axios';
 import { getResourceUrl } from '../helpers/urlHelper';
-import { BUDGETS_API_BASE, CREATE_BUDGET_ITEM } from '../constants/apiConstants';
+import { BUDGETS_API_BASE } from '../constants/apiConstants';
 import * as apiConstants from '../constants/apiConstants';
 import { DeleteRequest, PostRequest, PutRequest } from './base/apiServiceBase';
 import { BudgetItemsRequestDto } from '../dto/budgetItems/budgetItemsRequestDto';
 import { BudgetItemsPaginatedResponseDto } from '../dto/budgetItems/budgetItemsPaginatedResponseDto';
 import { BudgetItemCreateDto } from '../dto/budgetItems/budgetItemCreateDto';
 import { BudgetItemDto } from '../dto/budgets/budgetItemDto';
+import { BudgetItemUpdateDto } from '../dto/budgetItems/budgetItemUpdateDto';
 
 export const getBudgetItemsWithFiltersById = async (
   budgetId: number,
@@ -29,4 +30,10 @@ export const createBudgetItem = async (createDto: BudgetItemCreateDto): Promise<
   const resourceUrl = getResourceUrl(BUDGETS_API_BASE, apiConstants.CREATE_BUDGET_ITEM);
 
   return PostRequest<BudgetItemCreateDto, BudgetItemDto>(resourceUrl, createDto);
+};
+
+export const updateBudgetItem = async (updateDto: BudgetItemUpdateDto): Promise<AxiosResponse<BudgetItemDto>> => {
+  const resourceUrl = getResourceUrl(BUDGETS_API_BASE, apiConstants.UPDATE_BUDGET_ITEM);
+
+  return PutRequest<BudgetItemUpdateDto, BudgetItemDto>(resourceUrl, updateDto);
 };

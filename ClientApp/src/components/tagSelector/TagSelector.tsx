@@ -15,9 +15,8 @@ export const TagSelector = (props: TagSelectorProps): JSX.Element => {
 
   const addNewTag = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>): void => {
     e.preventDefault();
-    const newTagName = inputRef.current?.input?.value;
-    console.log(newTagName);
-    // TODO: Implement API call
+    // TODO: Implement logic of adding new tag using the tag name below
+    // const newTagName = inputRef.current?.input?.value;
     inputRef.current?.focus();
   };
 

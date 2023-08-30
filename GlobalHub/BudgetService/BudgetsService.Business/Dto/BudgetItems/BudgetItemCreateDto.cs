@@ -16,5 +16,5 @@ public record BudgetItemCreateDto
 
     public IEnumerable<long> TagIds { get; init; } = new List<long>();
 
-    public long BudgetId { get; set; }
+    public long BudgetId { get; init; }
 }

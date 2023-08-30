@@ -78,6 +78,15 @@ public class BudgetItemService : IBudgetItemService
         return mappedEntity;
     }
 
+    public async Task<BudgetItemDto> UpdateBudgetItem(BudgetItemUpdateDto updateDto)
+    {
+        var budgetItem = await _budgetItemRepository.GetBudgetItemById(updateDto.Id);
+        var entityToUpdate = _mapper.Map<BudgetItemUpdateDto, BudgetItem>(updateDto, budgetItem);
+        var updateEntity = await _budgetItemRepository.UpdateBudgetItem(entityToUpdate);
+        var mappedEntity = _mapper.Map<BudgetItemDto>(updateEntity);
+
+        return mappedEntity;
+    }
 
     private static IQueryable<BudgetItem> ApplyFilters(IQueryable<BudgetItem> budgetItems, FilterModelDto filterModel)
     {

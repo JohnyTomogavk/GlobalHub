@@ -35,6 +35,15 @@ public class BudgetItemController : ControllerBase
         var updatedBudgetItem =
             await _budgetItemService.UpdateBudgetItemTags(createdBudgetItemDto.Id, createDto.TagIds);
 
-        return updatedBudgetItem;
+        return StatusCode(StatusCodes.Status201Created, updatedBudgetItem);
+    }
+
+    [HttpPut]
+    public async Task<ActionResult<BudgetItemDto>> UpdateBudgetItem(BudgetItemUpdateDto updateDto)
+    {
+        await _budgetItemService.UpdateBudgetItem(updateDto);
+        var updatedBudgetItem = await _budgetItemService.UpdateBudgetItemTags(updateDto.Id, updateDto.TagIds);
+
+        return Ok(updatedBudgetItem);
     }
 }

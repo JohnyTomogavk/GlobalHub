@@ -8,4 +8,6 @@ public interface IBudgetItemService
     Task<BudgetItemDto> CreateBudgetItem(BudgetItemCreateDto createDto);
 
     Task<BudgetItemDto> UpdateBudgetItemTags(long budgetItemId, IEnumerable<long> tagsIds);
+
+    Task<BudgetItemDto> UpdateBudgetItem(BudgetItemUpdateDto updateDto);
 }

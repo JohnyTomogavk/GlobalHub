@@ -9,7 +9,7 @@ import { TagDto } from '../../../dto/tags/tagDto';
 import { BudgetItemOperationType, BudgetItemOperationTypeTitle } from '../../../enums/budgetItemOperationType';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import { isArray, toNumber } from 'lodash';
-import { createBudgetItem, getBudgetItemsWithFiltersById } from '../../../api/budgetItemService';
+import { createBudgetItem, getBudgetItemsWithFiltersById, updateBudgetItem } from '../../../api/budgetItemService';
 import { BudgetItemsRequestDto } from '../../../dto/budgetItems/budgetItemsRequestDto';
 import { BudgetItemsPaginatedResponseDto } from '../../../dto/budgetItems/budgetItemsPaginatedResponseDto';
 import { BudgetItemDto } from '../../../dto/budgets/budgetItemDto';
@@ -22,6 +22,7 @@ import {
   budgetItemDtoToTableEntry,
   budgetItemTableEntryToDrawerModel,
   drawerModelToBudgetItemCreateDto,
+  drawerModelToBudgetItemUpdateDto,
 } from '../../../helpers/budgetItemHelper';
 
 const { Text } = Typography;
@@ -257,7 +258,19 @@ export const BudgetItemsTable = ({
 
   const onBudgetItemFormSubmit = async (data: BudgetItemDrawerModel): Promise<void> => {
     if (data.budgetItemId) {
-      // TODO: Call update
+      const updateDto = drawerModelToBudgetItemUpdateDto(data, budgetId, data.budgetItemId);
+      const { data: updatedBudgetItem } = await updateBudgetItem(updateDto);
+      const tableEntry = budgetItemDtoToTableEntry(updatedBudgetItem);
+
+      setBudgetItemsTableEntries((prevState) => [
+        ...prevState.map((item) => {
+          if (item.key === tableEntry.key) {
+            return tableEntry;
+          }
+
+          return item;
+        }),
+      ]);
     } else {
       const createDto = drawerModelToBudgetItemCreateDto(data, budgetId);
       const { data: createdBudgetItem } = await createBudgetItem(createDto);
