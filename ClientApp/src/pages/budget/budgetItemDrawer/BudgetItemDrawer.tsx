@@ -9,6 +9,7 @@ import { BudgetItemDrawerModel } from '../../../models/budgetItem/budgetItemDraw
 import { useForm } from 'antd/lib/form/Form';
 import { LoadingOutlined } from '@ant-design/icons';
 import styles from '../../../styles.module.scss';
+import { tagSelectorValidator } from '../../../validators/tagSelectorValidators';
 
 const { Text } = Typography;
 
@@ -157,7 +158,13 @@ export const BudgetItemDrawer = ({
             />
           </Form.Item>
           <Form.Item
-            rules={[{ required: true, message: 'You have not selected any tags', warningOnly: true }]}
+            rules={[
+              {
+                message: 'You have not selected any tags',
+                warningOnly: true,
+                validator: (_, values) => tagSelectorValidator(values),
+              },
+            ]}
             name={'tagIds'}
             tooltip={'Tags help to classify your expenses and perform analytic on them'}
             label={'Tags'}
