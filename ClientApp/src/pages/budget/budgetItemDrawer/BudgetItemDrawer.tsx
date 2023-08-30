@@ -34,7 +34,21 @@ export const BudgetItemDrawer = ({
   const [budgetItemForm] = useForm<BudgetItemDrawerModel>();
   const [isLoading, setIsLoading] = useState(true);
 
-  const submitForm = (): void => {
+  const isFormValid = async (): Promise<boolean> => {
+    try {
+      await budgetItemForm.validateFields();
+
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const submitForm = async (): Promise<void> => {
+    const isValid = await isFormValid();
+
+    if (!isValid) return;
+
     const budgetItemModel = {
       ...initFormValues,
       ...budgetItemForm.getFieldsValue(),
@@ -70,7 +84,6 @@ export const BudgetItemDrawer = ({
 
   return (
     <Drawer
-      destroyOnClose
       title={title}
       onClose={onFormClose}
       afterOpenChange={onAfterOpenChange}
@@ -79,7 +92,7 @@ export const BudgetItemDrawer = ({
         !isDisabled ? (
           <Space align={'end'}>
             <Button onClick={onFormClose}>Cancel</Button>
-            <Button onClick={submitForm} type="primary">
+            <Button onClick={submitForm} disabled={false} type="primary">
               Submit
             </Button>
           </Space>
@@ -99,17 +112,25 @@ export const BudgetItemDrawer = ({
           layout="vertical"
           name={'BudgetItemForm'}
         >
-          <Form.Item name={'title'} label={'Title'}>
+          <Form.Item rules={[{ required: true, message: 'Budget Item title required' }]} name={'title'} label={'Title'}>
             <Input placeholder={'Title'} />
           </Form.Item>
-          <Form.Item name={'operationDate'} label={'Operation Date'}>
+          <Form.Item
+            rules={[{ required: true, message: 'Operation Date is required' }]}
+            name={'operationDate'}
+            label={'Operation Date'}
+          >
             <DatePicker
               style={{
                 width: '100%',
               }}
             />
           </Form.Item>
-          <Form.Item name={'operationCost'} label={'Operation Cost'}>
+          <Form.Item
+            rules={[{ required: true, message: 'Operation Cost is required' }]}
+            name={'operationCost'}
+            label={'Operation Cost'}
+          >
             <InputNumber
               addonBefore={<Text>BYN</Text>}
               size={'small'}
@@ -121,7 +142,11 @@ export const BudgetItemDrawer = ({
               disabled={isDisabled}
             />
           </Form.Item>
-          <Form.Item name={'operationType'} label={'Operation Type'}>
+          <Form.Item
+            rules={[{ required: true, message: 'Operation type is required' }]}
+            name={'operationType'}
+            label={'Operation Type'}
+          >
             <Select
               allowClear
               placeholder={'Select operation type'}
@@ -131,7 +156,12 @@ export const BudgetItemDrawer = ({
               ]}
             />
           </Form.Item>
-          <Form.Item name={'tagIds'} label={'Tags'}>
+          <Form.Item
+            rules={[{ required: true, message: 'You have not selected any tags', warningOnly: true }]}
+            name={'tagIds'}
+            tooltip={'Tags help to classify your expenses and perform analytic on them'}
+            label={'Tags'}
+          >
             <TagSelector isTagCreatorEnabled={true} tags={budgetItemTags ?? []} />
           </Form.Item>
           <Form.Item name={'description'} label={'Description'}>
