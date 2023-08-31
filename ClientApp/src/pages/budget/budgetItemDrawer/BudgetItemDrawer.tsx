@@ -10,6 +10,7 @@ import { useForm } from 'antd/lib/form/Form';
 import { LoadingOutlined } from '@ant-design/icons';
 import styles from '../../../styles.module.scss';
 import { tagSelectorValidator } from '../../../validators/tagSelectorValidators';
+import dayjs from 'dayjs';
 
 const { Text } = Typography;
 
@@ -34,6 +35,8 @@ export const BudgetItemDrawer = ({
 }: BudgetItemDrawerProps): JSX.Element => {
   const [budgetItemForm] = useForm<BudgetItemDrawerModel>();
   const [isLoading, setIsLoading] = useState(true);
+
+  const todayDate = dayjs(new Date());
 
   const isFormValid = async (): Promise<boolean> => {
     try {
@@ -93,7 +96,7 @@ export const BudgetItemDrawer = ({
         !isDisabled ? (
           <Space align={'end'}>
             <Button onClick={onFormClose}>Cancel</Button>
-            <Button onClick={submitForm} disabled={false} type="primary">
+            <Button onClick={submitForm} type="primary">
               Submit
             </Button>
           </Space>
@@ -118,6 +121,7 @@ export const BudgetItemDrawer = ({
           </Form.Item>
           <Form.Item
             rules={[{ required: true, message: 'Operation Date is required' }]}
+            initialValue={todayDate}
             name={'operationDate'}
             label={'Operation Date'}
           >

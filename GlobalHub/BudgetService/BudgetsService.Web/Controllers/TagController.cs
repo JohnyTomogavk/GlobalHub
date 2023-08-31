@@ -21,4 +21,12 @@ public class TagController : ControllerBase
 
         return Ok(tags);
     }
+
+    [HttpGet]
+    public async Task<ActionResult<TagDto>> CreateNewTag(TagCreateDto newTagDto)
+    {
+        var createdTag = await _tagService.CreateNewTag(newTagDto);
+
+        return Ok(createdTag);
+    }
 }
