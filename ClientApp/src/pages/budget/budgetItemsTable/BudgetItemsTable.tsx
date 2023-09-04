@@ -24,6 +24,7 @@ import {
   drawerModelToBudgetItemCreateDto,
   drawerModelToBudgetItemUpdateDto,
 } from '../../../helpers/budgetItemHelper';
+import { NewTagFormModel } from '../../../models/tags/newTagFormModel';
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -37,6 +38,7 @@ interface BudgetItemsPaginationConfig {
 interface BudgetItemTableProps {
   budgetId: number;
   budgetTags: TagDto[];
+  onNewTagAdded: (newTag: TagDto) => void;
   triggerAnalitycStatsRecalculation: () => Promise<void>;
 }
 
@@ -44,6 +46,7 @@ export const BudgetItemsTable = ({
   budgetId,
   budgetTags,
   triggerAnalitycStatsRecalculation,
+  onNewTagAdded,
 }: BudgetItemTableProps): JSX.Element => {
   const [budgetItemsTableEntries, setBudgetItemsTableEntries] = useState<BudgetItemTableEntry[]>([]);
   const [filtersForm] = useForm<BudgetItemsFiltersModel>();
@@ -356,7 +359,7 @@ export const BudgetItemsTable = ({
           <Table.Summary fixed>
             <Table.Summary.Row>
               <Table.Summary.Cell index={0} colSpan={6}>
-                <Button size={'small'} block icon={<PlusOutlined />} onClick={onBudgetItemCreateClick}>
+                <Button size={'small'} block type={'dashed'} icon={<PlusOutlined />} onClick={onBudgetItemCreateClick}>
                   Add new item
                 </Button>
               </Table.Summary.Cell>
@@ -396,6 +399,8 @@ export const BudgetItemsTable = ({
         title={budgetItemDrawerConfig.title}
         onSubmitCallback={onBudgetItemFormSubmit}
         budgetItemTags={budgetTags}
+        budgetId={budgetId}
+        onNewTagAdded={onNewTagAdded}
         onFormCloseCallback={onBudgetItemDrawerClose}
         isDrawerOpened={budgetItemDrawerConfig.isDrawerOpened}
         initFormValues={budgetItemDrawerConfig.initFormValues}

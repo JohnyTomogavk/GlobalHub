@@ -1,7 +1,7 @@
 import { Button, DatePicker, Drawer, Form, Input, Select, Space, Spin, Typography } from 'antd';
 import { InputNumber } from 'antd/lib';
 import { BudgetItemOperationType } from '../../../enums/budgetItemOperationType';
-import { TagSelector } from '../../../components/tagSelector/TagSelector';
+import { NewTagData, TagSelector } from '../../../components/tagSelector/TagSelector';
 import TextArea from 'antd/lib/input/TextArea';
 import React, { useState } from 'react';
 import { TagDto } from '../../../dto/tags/tagDto';
@@ -11,6 +11,8 @@ import { LoadingOutlined } from '@ant-design/icons';
 import styles from '../../../styles.module.scss';
 import { tagSelectorValidator } from '../../../validators/tagSelectorValidators';
 import dayjs from 'dayjs';
+import { NewTagFormModel } from '../../../models/tags/newTagFormModel';
+import { createBudgetTag } from '../../../api/tagService';
 
 const { Text } = Typography;
 
@@ -19,9 +21,11 @@ interface BudgetItemDrawerProps {
   onFormCloseCallback: () => void;
   isDrawerOpened: boolean;
   budgetItemTags: TagDto[];
+  onNewTagAdded: (newTag: TagDto) => void;
   isDisabled?: boolean;
   onSubmitCallback?: (budgetItemModel: BudgetItemDrawerModel) => void;
   initFormValues?: BudgetItemDrawerModel;
+  budgetId: number;
 }
 
 export const BudgetItemDrawer = ({
@@ -29,9 +33,11 @@ export const BudgetItemDrawer = ({
   onFormCloseCallback,
   isDrawerOpened,
   budgetItemTags,
+  onNewTagAdded,
   onSubmitCallback,
   isDisabled,
   initFormValues,
+  budgetId,
 }: BudgetItemDrawerProps): JSX.Element => {
   const [budgetItemForm] = useForm<BudgetItemDrawerModel>();
   const [isLoading, setIsLoading] = useState(true);
@@ -84,6 +90,16 @@ export const BudgetItemDrawer = ({
     }
 
     setIsLoading(false);
+  };
+
+  const onNewTagCreate = async (tagData: NewTagData): Promise<void> => {
+    const { data: createdTag } = await createBudgetTag({
+      budgetId: budgetId,
+      label: tagData.label,
+      color: tagData.color,
+    });
+
+    onNewTagAdded(createdTag);
   };
 
   return (
@@ -173,7 +189,11 @@ export const BudgetItemDrawer = ({
             tooltip={'Tags help to classify your expenses and perform analytic on them'}
             label={'Tags'}
           >
-            <TagSelector isTagCreatorEnabled={true} tags={budgetItemTags ?? []} />
+            <TagSelector
+              onNewTagCreate={onNewTagCreate}
+              isTagCreatorEnabled={!isDisabled}
+              tags={budgetItemTags ?? []}
+            />
           </Form.Item>
           <Form.Item name={'description'} label={'Description'}>
             <TextArea rows={3} disabled={isDisabled} placeholder={'Description'} />

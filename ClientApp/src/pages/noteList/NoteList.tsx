@@ -75,7 +75,7 @@ export const NoteList = (): JSX.Element => {
           title: <Link to={`/${getClientItemUrl(ResourceConstants.NOTE_RESOURCE_NAME, item.id)}`}>{item.title}</Link>,
           updatedDate: new Date(item.updatedDate ?? item.createdDate),
           createdDate: new Date(item.createdDate),
-        } as NoteTableItem)
+        }) as NoteTableItem
     );
 
     setNotes(noteTableItems);
