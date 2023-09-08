@@ -6,5 +6,5 @@ public record TagCreateDto
 
     public string Label { get; init; }
 
-    public string Color { get; init; }
+    public TagColor Color { get; init; }
 }

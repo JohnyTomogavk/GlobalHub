@@ -20,4 +20,10 @@
       <ProjectReference Include="..\BudgetsService.Infrastructure\BudgetsService.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Migrations\20230907193621_ChangeTagColorColumnTypeToInteger.sql">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

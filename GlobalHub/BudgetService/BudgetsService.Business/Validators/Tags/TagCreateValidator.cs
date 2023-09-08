@@ -4,7 +4,7 @@ public class TagCreateValidator : AbstractValidator<TagCreateDto>
 {
     public TagCreateValidator()
     {
-        RuleFor(createTagDto => createTagDto.Color).NotEmpty();
+        RuleFor(createTagDto => createTagDto.Color).IsInEnum();
         RuleFor(createTagDto => createTagDto.Label).NotEmpty();
     }
 }

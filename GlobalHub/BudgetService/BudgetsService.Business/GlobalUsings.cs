@@ -9,6 +9,7 @@ global using BudgetsService.DataAccess.Constants;
 global using BudgetsService.DataAccess.Entities.Budgets;
 global using BudgetsService.DataAccess.Entities.Tags;
 global using BudgetsService.DataAccess.Enums.Budget;
+global using BudgetsService.DataAccess.Enums.Tags;
 global using BudgetsService.DataAccess.Repository.Interfaces;
 global using BudgetsService.Infrastructure.Extensions;
 global using BudgetsService.Infrastructure.Interface;
