@@ -24,7 +24,7 @@ import {
   drawerModelToBudgetItemCreateDto,
   drawerModelToBudgetItemUpdateDto,
 } from '../../../helpers/budgetItemHelper';
-import { NewTagFormModel } from '../../../models/tags/newTagFormModel';
+import { ColorValues, TagColor } from '../../../enums/tagColor';
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -155,10 +155,11 @@ export const BudgetItemsTable = ({
         <>
           {tagIds.map((tagId: number) => {
             const tagDto = budgetTags.filter((dto: TagDto) => dto.id === tagId)[0];
+            const color = ColorValues[tagDto?.color ?? TagColor.Default];
 
             return (
               tagDto && (
-                <Tag color={tagDto.color} key={tagDto.id}>
+                <Tag color={color} key={tagDto.id}>
                   {tagDto.label}
                 </Tag>
               )

@@ -1,18 +1,18 @@
 import { Button, DatePicker, Drawer, Form, Input, Select, Space, Spin, Typography } from 'antd';
 import { InputNumber } from 'antd/lib';
 import { BudgetItemOperationType } from '../../../enums/budgetItemOperationType';
-import { NewTagData, TagSelector } from '../../../components/tagSelector/TagSelector';
+import { TagSelector } from '../../../components/tagSelector/TagSelector';
 import TextArea from 'antd/lib/input/TextArea';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TagDto } from '../../../dto/tags/tagDto';
 import { BudgetItemDrawerModel } from '../../../models/budgetItem/budgetItemDrawer/budgetItemDrawerModel';
-import { useForm } from 'antd/lib/form/Form';
+import { useForm, useWatch } from 'antd/lib/form/Form';
 import { LoadingOutlined } from '@ant-design/icons';
 import styles from '../../../styles.module.scss';
 import { tagSelectorValidator } from '../../../validators/tagSelectorValidators';
 import dayjs from 'dayjs';
-import { NewTagFormModel } from '../../../models/tags/newTagFormModel';
 import { createBudgetTag } from '../../../api/tagService';
+import { TagColor } from '../../../enums/tagColor';
 
 const { Text } = Typography;
 
@@ -41,6 +41,7 @@ export const BudgetItemDrawer = ({
 }: BudgetItemDrawerProps): JSX.Element => {
   const [budgetItemForm] = useForm<BudgetItemDrawerModel>();
   const [isLoading, setIsLoading] = useState(true);
+  const selectedTagsWatcher = useWatch('selectedTags', budgetItemForm);
 
   const todayDate = dayjs(new Date());
 
@@ -92,14 +93,39 @@ export const BudgetItemDrawer = ({
     setIsLoading(false);
   };
 
-  const onNewTagCreate = async (tagData: NewTagData): Promise<void> => {
+  const createNewTag = async (tagLabel: string): Promise<TagDto> => {
     const { data: createdTag } = await createBudgetTag({
       budgetId: budgetId,
-      label: tagData.label,
-      color: tagData.color,
+      label: tagLabel,
+      color: TagColor.Default,
     });
 
     onNewTagAdded(createdTag);
+
+    return createdTag;
+  };
+
+  useEffect(() => {
+    const selectedTags = budgetItemForm.getFieldsValue().selectedTags ?? [];
+    const newTagLabel = selectedTags.filter((tag) => typeof tag === 'string')[0] as string;
+
+    if (!newTagLabel) return;
+
+    createNewTag(newTagLabel).then((createdTag) => {
+      const selectedTagIds = selectedTags.map((tag) => {
+        if (typeof tag === 'string' && tag === createdTag.label) {
+          return createdTag.id;
+        }
+
+        return tag;
+      });
+
+      budgetItemForm.setFieldValue('selectedTags', selectedTagIds);
+    });
+  }, [selectedTagsWatcher]);
+
+  const onTagEdit = async (tagData: TagDto): Promise<void> => {
+    // TODO: Handle edit
   };
 
   return (
@@ -185,15 +211,11 @@ export const BudgetItemDrawer = ({
                 validator: (_, values) => tagSelectorValidator(values),
               },
             ]}
-            name={'tagIds'}
+            name={'selectedTags'}
             tooltip={'Tags help to classify your expenses and perform analytic on them'}
             label={'Tags'}
           >
-            <TagSelector
-              onNewTagCreate={onNewTagCreate}
-              isTagCreatorEnabled={!isDisabled}
-              tags={budgetItemTags ?? []}
-            />
+            <TagSelector onTagEdit={onTagEdit} isTagCreatorEnabled={!isDisabled} tags={budgetItemTags ?? []} />
           </Form.Item>
           <Form.Item name={'description'} label={'Description'}>
             <TextArea rows={3} disabled={isDisabled} placeholder={'Description'} />
