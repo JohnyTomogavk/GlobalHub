@@ -36,4 +36,18 @@ public class TagService : ITagService
 
         return tagDto;
     }
+
+    public async Task<TagDto> UpdateTag(TagDto tagDto)
+    {
+        var tag = await _tagRepository.GetTagById(tagDto.Id);
+        var updatedTag = _mapper.Map(tagDto, tag);
+        var updateTag = await _tagRepository.UpdateTag(updatedTag);
+
+        return _mapper.Map<TagDto>(updateTag);
+    }
+
+    public async Task<long> DeleteTag(long tagId)
+    {
+        return await _tagRepository.DeleteById(tagId);
+    }
 }

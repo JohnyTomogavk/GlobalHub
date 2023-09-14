@@ -29,7 +29,7 @@ export const ColorValues = {
 };
 
 export const ColorLabels = {
-  [TagColor.Default]: 'Unknown',
+  [TagColor.Default]: 'Default',
   [TagColor.Red]: 'Red',
   [TagColor.Magenta]: 'Magenta',
   [TagColor.Volcano]: 'Bolcano',

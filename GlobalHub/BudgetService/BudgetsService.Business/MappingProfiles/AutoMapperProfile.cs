@@ -10,7 +10,7 @@ public class AutoMapperProfile : Profile
             memberOptions =>
                 memberOptions.MapFrom(src => src.BudgetItemTags.Select(budgetItemTag => budgetItemTag.TagId)));
         CreateMap<CreateBudgetDto, Budget>();
-        CreateMap<Tag, TagDto>();
+        CreateMap<Tag, TagDto>().ReverseMap();
         CreateMap<BudgetItemCreateDto, BudgetItem>();
         CreateMap<TagCreateDto, Tag>();
     }

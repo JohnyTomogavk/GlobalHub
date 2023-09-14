@@ -293,8 +293,9 @@ export const BudgetComponent = (): JSX.Element => {
           <Col flex={'auto'}>
             <Card size={'small'} title="Budget items">
               <BudgetItemsTable
+                setBudgetTags={setBudgetTags}
                 onNewTagAdded={onNewTagAdded}
-                triggerAnalitycStatsRecalculation={fetchAnalitycData}
+                triggerAnalyticStatsRecalculation={fetchAnalitycData}
                 budgetTags={budgetTags ?? []}
                 budgetId={toNumber(id)}
               />

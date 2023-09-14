@@ -6,11 +6,11 @@ import { getEnumValues } from '../../helpers/enumHelper';
 
 const { Text } = Typography;
 const Option = Select.Option;
-
-// interface ITagColorSelectorProps {}
-
-export const ColorSelector = (props: {}): JSX.Element => (
+export const ColorSelector = ({ ...props }): JSX.Element => (
   <Select
+    style={{
+      width: '100%',
+    }}
     getPopupContainer={(triggerNode: HTMLElement): HTMLElement => triggerNode.parentElement ?? document.body}
     {...props}
   >
@@ -19,7 +19,7 @@ export const ColorSelector = (props: {}): JSX.Element => (
       const tagColor = ColorValues[colorValue as TagColor];
 
       return (
-        <Option key={colorValue}>
+        <Option key={colorValue} value={colorValue}>
           <Space>
             <FontColorsOutlined
               style={{

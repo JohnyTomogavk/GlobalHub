@@ -11,8 +11,9 @@ import { LoadingOutlined } from '@ant-design/icons';
 import styles from '../../../styles.module.scss';
 import { tagSelectorValidator } from '../../../validators/tagSelectorValidators';
 import dayjs from 'dayjs';
-import { createBudgetTag } from '../../../api/tagService';
+import { createBudgetTag, deleteTag, updateBudgetTag } from '../../../api/tagService';
 import { TagColor } from '../../../enums/tagColor';
+import { toNumber } from 'lodash';
 
 const { Text } = Typography;
 
@@ -26,6 +27,8 @@ interface BudgetItemDrawerProps {
   onSubmitCallback?: (budgetItemModel: BudgetItemDrawerModel) => void;
   initFormValues?: BudgetItemDrawerModel;
   budgetId: number;
+  setBudgetTags: (value: ((prevState: TagDto[]) => TagDto[]) | TagDto[]) => void;
+  onTagRemoved: (removedTagId: number) => void;
 }
 
 export const BudgetItemDrawer = ({
@@ -38,6 +41,8 @@ export const BudgetItemDrawer = ({
   isDisabled,
   initFormValues,
   budgetId,
+  setBudgetTags,
+  onTagRemoved,
 }: BudgetItemDrawerProps): JSX.Element => {
   const [budgetItemForm] = useForm<BudgetItemDrawerModel>();
   const [isLoading, setIsLoading] = useState(true);
@@ -105,27 +110,42 @@ export const BudgetItemDrawer = ({
     return createdTag;
   };
 
-  useEffect(() => {
-    const selectedTags = budgetItemForm.getFieldsValue().selectedTags ?? [];
+  const handleJustCreatedTag = async (selectedTags: (number | string)[]): Promise<void> => {
     const newTagLabel = selectedTags.filter((tag) => typeof tag === 'string')[0] as string;
 
     if (!newTagLabel) return;
 
-    createNewTag(newTagLabel).then((createdTag) => {
-      const selectedTagIds = selectedTags.map((tag) => {
-        if (typeof tag === 'string' && tag === createdTag.label) {
-          return createdTag.id;
-        }
+    const createdTag = await createNewTag(newTagLabel);
 
-        return tag;
-      });
+    const selectedTagIds = selectedTags.map((tag) => {
+      if (typeof tag === 'string' && tag === createdTag.label) {
+        return createdTag.id;
+      }
 
-      budgetItemForm.setFieldValue('selectedTags', selectedTagIds);
+      return tag;
     });
+
+    budgetItemForm.setFieldValue('selectedTags', selectedTagIds);
+  };
+
+  useEffect(() => {
+    const selectedTags = budgetItemForm.getFieldsValue().selectedTags ?? [];
+
+    handleJustCreatedTag(selectedTags);
   }, [selectedTagsWatcher]);
 
   const onTagEdit = async (tagData: TagDto): Promise<void> => {
-    // TODO: Handle edit
+    const { data: updatedTag } = await updateBudgetTag(tagData);
+    setBudgetTags((prevState) => prevState.map((tag) => (tag.id === updatedTag.id ? updatedTag : tag)));
+  };
+
+  const onTagDelete = async (tagId: number): Promise<void> => {
+    const { data: removedTagId } = await deleteTag(tagId);
+    setBudgetTags((prevState) => prevState.filter((tag) => tag.id !== removedTagId));
+    const selectedTags = budgetItemForm.getFieldsValue().selectedTags ?? [];
+    const newSelectedTagsValues = selectedTags.filter((tag) => typeof tag === 'number' && tag !== removedTagId);
+    budgetItemForm.setFieldValue('selectedTags', newSelectedTagsValues);
+    onTagRemoved(removedTagId);
   };
 
   return (
@@ -136,12 +156,9 @@ export const BudgetItemDrawer = ({
       open={isDrawerOpened}
       extra={
         !isDisabled ? (
-          <Space align={'end'}>
-            <Button onClick={onFormClose}>Cancel</Button>
-            <Button onClick={submitForm} type="primary">
-              Submit
-            </Button>
-          </Space>
+          <Button size={'small'} onClick={submitForm} type="primary">
+            Submit
+          </Button>
         ) : (
           <></>
         )
@@ -215,7 +232,12 @@ export const BudgetItemDrawer = ({
             tooltip={'Tags help to classify your expenses and perform analytic on them'}
             label={'Tags'}
           >
-            <TagSelector onTagEdit={onTagEdit} isTagCreatorEnabled={!isDisabled} tags={budgetItemTags ?? []} />
+            <TagSelector
+              onTagUpdated={onTagEdit}
+              onTagDelete={onTagDelete}
+              isTagCreatorEnabled={!isDisabled}
+              tags={budgetItemTags ?? []}
+            />
           </Form.Item>
           <Form.Item name={'description'} label={'Description'}>
             <TextArea rows={3} disabled={isDisabled} placeholder={'Description'} />

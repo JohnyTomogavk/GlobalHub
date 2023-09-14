@@ -39,14 +39,16 @@ interface BudgetItemTableProps {
   budgetId: number;
   budgetTags: TagDto[];
   onNewTagAdded: (newTag: TagDto) => void;
-  triggerAnalitycStatsRecalculation: () => Promise<void>;
+  triggerAnalyticStatsRecalculation: () => Promise<void>;
+  setBudgetTags: (value: ((prevState: TagDto[]) => TagDto[]) | TagDto[]) => void;
 }
 
 export const BudgetItemsTable = ({
   budgetId,
   budgetTags,
-  triggerAnalitycStatsRecalculation,
+  triggerAnalyticStatsRecalculation,
   onNewTagAdded,
+  setBudgetTags,
 }: BudgetItemTableProps): JSX.Element => {
   const [budgetItemsTableEntries, setBudgetItemsTableEntries] = useState<BudgetItemTableEntry[]>([]);
   const [filtersForm] = useForm<BudgetItemsFiltersModel>();
@@ -283,7 +285,7 @@ export const BudgetItemsTable = ({
       setBudgetItemsTableEntries((prevState) => [...prevState, tableEntry]);
     }
 
-    await triggerAnalitycStatsRecalculation();
+    await triggerAnalyticStatsRecalculation();
   };
 
   const onBudgetItemDrawerClose = (): void => {
@@ -292,6 +294,15 @@ export const BudgetItemsTable = ({
       isDrawerOpened: false,
       initFormValues: undefined,
     }));
+  };
+
+  const onTagRemoved = (removedTagId: number): void => {
+    setBudgetItemsTableEntries((prevState) =>
+      prevState.map((budgetItemTableEntry) => ({
+        ...budgetItemTableEntry,
+        tagIds: budgetItemTableEntry.tagIds.filter((id) => id !== removedTagId),
+      }))
+    );
   };
 
   return (
@@ -406,6 +417,8 @@ export const BudgetItemsTable = ({
         isDrawerOpened={budgetItemDrawerConfig.isDrawerOpened}
         initFormValues={budgetItemDrawerConfig.initFormValues}
         isDisabled={budgetItemDrawerConfig.isFormDisabled}
+        setBudgetTags={setBudgetTags}
+        onTagRemoved={onTagRemoved}
       />
     </>
   );
