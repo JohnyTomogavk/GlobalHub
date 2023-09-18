@@ -27,3 +27,6 @@ export const UPDATE_BUDGET_ITEM = '/BudgetItem/UpdateBudgetItem';
 
 // Constants related to tags
 export const GET_BUDGET_TAGS_BY_ID = '/Tag/GetBudgetTagsByBudgetId';
+export const CREATE_TAG = '/Tag/CreateNewTag';
+export const UPDATE_TAG = '/Tag/UpdateTag';
+export const DELETE_TAG = '/Tag/DeleteTag';

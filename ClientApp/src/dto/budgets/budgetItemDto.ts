@@ -8,7 +8,7 @@ export interface BudgetItemDto extends IHasDate {
   itemDescription: string;
   budgetItemOperationType: BudgetItemOperationType;
   budgetItemRegularityType: BudgetItemRegularityType;
-  budgetOperationCost: number;
-  paymentDate: Date;
+  operationCost: number;
+  operationDate: Date;
   tagIds: number[];
 }

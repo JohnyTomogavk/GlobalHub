@@ -1,10 +1,12 @@
-﻿namespace BudgetsService.DataAccess.Entities.Tags;
+﻿using BudgetsService.DataAccess.Enums.Tags;
+
+namespace BudgetsService.DataAccess.Entities.Tags;
 
 public class Tag : BaseEntity
 {
     public string Label { get; set; }
 
-    public string Color { get; set; }
+    public TagColor Color { get; set; }
 
     public long BudgetId { get; set; }
 

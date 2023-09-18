@@ -1,14 +1,18 @@
-import { Button, DatePicker, Drawer, Form, Input, Select, Space, Spin, Typography } from 'antd';
+import { Button, DatePicker, Drawer, Form, Input, Select, Spin, Typography } from 'antd';
 import { InputNumber } from 'antd/lib';
 import { BudgetItemOperationType } from '../../../enums/budgetItemOperationType';
 import { TagSelector } from '../../../components/tagSelector/TagSelector';
 import TextArea from 'antd/lib/input/TextArea';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TagDto } from '../../../dto/tags/tagDto';
 import { BudgetItemDrawerModel } from '../../../models/budgetItem/budgetItemDrawer/budgetItemDrawerModel';
-import { useForm } from 'antd/lib/form/Form';
+import { useForm, useWatch } from 'antd/lib/form/Form';
 import { LoadingOutlined } from '@ant-design/icons';
 import styles from '../../../styles.module.scss';
+import { tagSelectorValidator } from '../../../validators/tagSelectorValidators';
+import dayjs from 'dayjs';
+import { createBudgetTag, deleteTag, updateBudgetTag } from '../../../api/tagService';
+import { TagColor } from '../../../enums/tagColor';
 
 const { Text } = Typography;
 
@@ -17,9 +21,13 @@ interface BudgetItemDrawerProps {
   onFormCloseCallback: () => void;
   isDrawerOpened: boolean;
   budgetItemTags: TagDto[];
+  onNewTagAdded: (newTag: TagDto) => void;
   isDisabled?: boolean;
   onSubmitCallback?: (budgetItemModel: BudgetItemDrawerModel) => void;
   initFormValues?: BudgetItemDrawerModel;
+  budgetId: number;
+  setBudgetTags: (value: ((prevState: TagDto[]) => TagDto[]) | TagDto[]) => void;
+  onTagRemoved: (removedTagId: number) => void;
 }
 
 export const BudgetItemDrawer = ({
@@ -27,14 +35,35 @@ export const BudgetItemDrawer = ({
   onFormCloseCallback,
   isDrawerOpened,
   budgetItemTags,
+  onNewTagAdded,
   onSubmitCallback,
   isDisabled,
   initFormValues,
+  budgetId,
+  setBudgetTags,
+  onTagRemoved,
 }: BudgetItemDrawerProps): JSX.Element => {
   const [budgetItemForm] = useForm<BudgetItemDrawerModel>();
   const [isLoading, setIsLoading] = useState(true);
+  const selectedTagsWatcher = useWatch('selectedTags', budgetItemForm);
 
-  const submitForm = (): void => {
+  const todayDate = dayjs(new Date());
+
+  const isFormValid = async (): Promise<boolean> => {
+    try {
+      await budgetItemForm.validateFields();
+
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const submitForm = async (): Promise<void> => {
+    const isValid = await isFormValid();
+
+    if (!isValid) return;
+
     const budgetItemModel = {
       ...initFormValues,
       ...budgetItemForm.getFieldsValue(),
@@ -68,21 +97,70 @@ export const BudgetItemDrawer = ({
     setIsLoading(false);
   };
 
+  const createNewTag = async (tagLabel: string): Promise<TagDto> => {
+    const { data: createdTag } = await createBudgetTag({
+      budgetId: budgetId,
+      label: tagLabel,
+      color: TagColor.Default,
+    });
+
+    onNewTagAdded(createdTag);
+
+    return createdTag;
+  };
+
+  const handleJustCreatedTag = async (selectedTags: (number | string)[]): Promise<void> => {
+    const newTagLabel = selectedTags.filter((tag) => typeof tag === 'string')[0] as string;
+
+    if (!newTagLabel) return;
+
+    const createdTag = await createNewTag(newTagLabel);
+
+    const selectedTagIds = selectedTags.map((tag) => {
+      if (typeof tag === 'string' && tag === createdTag.label) {
+        return createdTag.id;
+      }
+
+      return tag;
+    });
+
+    budgetItemForm.setFieldValue('selectedTags', selectedTagIds);
+  };
+
+  useEffect(() => {
+    const selectedTags = budgetItemForm.getFieldsValue().selectedTags ?? [];
+
+    handleJustCreatedTag(selectedTags);
+  }, [selectedTagsWatcher]);
+
+  const onTagEdit = async (tagData: TagDto): Promise<void> => {
+    const { data: updatedTag } = await updateBudgetTag(tagData);
+    setBudgetTags((prevState) => prevState.map((tag) => (tag.id === updatedTag.id ? updatedTag : tag)));
+  };
+
+  const onTagDelete = async (tagId: number): Promise<void> => {
+    const { data: removedTagId } = await deleteTag(tagId);
+    setBudgetTags((prevState) => prevState.filter((tag) => tag.id !== removedTagId));
+    const selectedTags = budgetItemForm.getFieldsValue().selectedTags ?? [];
+    const newSelectedTagsValues = selectedTags.filter((tag) => typeof tag === 'number' && tag !== removedTagId);
+
+    // TODO: Refactor with nameof function
+    // TODO: Check another places with such kind of operation
+    budgetItemForm.setFieldValue('selectedTags', newSelectedTagsValues);
+    onTagRemoved(removedTagId);
+  };
+
   return (
     <Drawer
-      destroyOnClose
       title={title}
       onClose={onFormClose}
       afterOpenChange={onAfterOpenChange}
       open={isDrawerOpened}
       extra={
         !isDisabled ? (
-          <Space align={'end'}>
-            <Button onClick={onFormClose}>Cancel</Button>
-            <Button onClick={submitForm} type="primary">
-              Submit
-            </Button>
-          </Space>
+          <Button size={'small'} onClick={submitForm} type="primary">
+            Submit
+          </Button>
         ) : (
           <></>
         )
@@ -99,17 +177,26 @@ export const BudgetItemDrawer = ({
           layout="vertical"
           name={'BudgetItemForm'}
         >
-          <Form.Item name={'title'} label={'Title'}>
+          <Form.Item rules={[{ required: true, message: 'Budget Item title required' }]} name={'title'} label={'Title'}>
             <Input placeholder={'Title'} />
           </Form.Item>
-          <Form.Item name={'operationDate'} label={'Operation Date'}>
+          <Form.Item
+            rules={[{ required: true, message: 'Operation Date is required' }]}
+            initialValue={todayDate}
+            name={'operationDate'}
+            label={'Operation Date'}
+          >
             <DatePicker
               style={{
                 width: '100%',
               }}
             />
           </Form.Item>
-          <Form.Item name={'operationCost'} label={'Operation Cost'}>
+          <Form.Item
+            rules={[{ required: true, message: 'Operation Cost is required' }]}
+            name={'operationCost'}
+            label={'Operation Cost'}
+          >
             <InputNumber
               addonBefore={<Text>BYN</Text>}
               size={'small'}
@@ -121,7 +208,11 @@ export const BudgetItemDrawer = ({
               disabled={isDisabled}
             />
           </Form.Item>
-          <Form.Item name={'operationType'} label={'Operation Type'}>
+          <Form.Item
+            rules={[{ required: true, message: 'Operation type is required' }]}
+            name={'operationType'}
+            label={'Operation Type'}
+          >
             <Select
               allowClear
               placeholder={'Select operation type'}
@@ -131,8 +222,24 @@ export const BudgetItemDrawer = ({
               ]}
             />
           </Form.Item>
-          <Form.Item name={'tagIds'} label={'Tags'}>
-            <TagSelector isTagCreatorEnabled={true} tags={budgetItemTags ?? []} />
+          <Form.Item
+            rules={[
+              {
+                message: 'You have not selected any tags',
+                warningOnly: true,
+                validator: (_, values) => tagSelectorValidator(values),
+              },
+            ]}
+            name={'selectedTags'}
+            tooltip={'Tags help to classify your expenses and perform analytic on them'}
+            label={'Tags'}
+          >
+            <TagSelector
+              onTagUpdated={onTagEdit}
+              onTagDelete={onTagDelete}
+              isTagCreatorEnabled={!isDisabled}
+              tags={budgetItemTags ?? []}
+            />
           </Form.Item>
           <Form.Item name={'description'} label={'Description'}>
             <TextArea rows={3} disabled={isDisabled} placeholder={'Description'} />

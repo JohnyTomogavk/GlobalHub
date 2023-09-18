@@ -1,76 +1,173 @@
 import { TagDto } from '../../dto/tags/tagDto';
-import { Button, Divider, Input, InputRef, Select, Space, Tag } from 'antd';
+import { Button, Col, Drawer, Form, Input, Popconfirm, Row, Select, Tag, Typography } from 'antd';
 import { CustomTagProps } from 'rc-select/lib/BaseSelect';
-import React, { ReactElement, useRef } from 'react';
-import { PlusOutlined } from '@ant-design/icons';
+import React, { ReactElement, useState } from 'react';
+
+import { useForm } from 'antd/lib/form/Form';
+import styles from './tagSelector.module.scss';
+import { TagFormModel } from '../../models/tags/tagFormModel';
+import { MoreOutlined } from '@ant-design/icons';
+import { ColorSelector } from '../colorSelector/ColorSelector';
+import { ColorValues, TagColor } from '../../enums/tagColor';
+import { isEqual } from 'lodash';
 
 interface TagSelectorProps {
   tags: TagDto[];
   isTagCreatorEnabled?: boolean;
+  onTagUpdated?: (tagData: TagDto) => Promise<void>;
+  onTagDelete?: (tagId: number) => Promise<void>;
 }
 
-export const TagSelector = (props: TagSelectorProps): JSX.Element => {
-  const { tags, isTagCreatorEnabled, ...defaultProps } = props;
-  const inputRef = useRef<InputRef>(null);
+const Option = Select.Option;
+const { Text } = Typography;
 
-  const addNewTag = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>): void => {
-    e.preventDefault();
-    // TODO: Implement logic of adding new tag using the tag name below
-    // const newTagName = inputRef.current?.input?.value;
-    inputRef.current?.focus();
+const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>): void => {
+  event.preventDefault();
+  event.stopPropagation();
+};
+
+export const TagSelector = ({
+  tags,
+  isTagCreatorEnabled,
+  onTagUpdated,
+  onTagDelete,
+  ...defaultProps
+}: TagSelectorProps): JSX.Element => {
+  const [tagEditForm] = useForm<TagFormModel>();
+  const [isTagEditDrawerOpened, setIsTagEditDrawerOpened] = useState(false);
+  const defaultTagColor = ColorValues[TagColor.Default];
+
+  const handleTagEditDrawerClose = async (): Promise<void> => {
+    if (!onTagUpdated) {
+      return;
+    }
+
+    const tagFormModel = tagEditForm.getFieldsValue();
+    const updatedTagModel = { ...tagFormModel };
+    const initTagModel = tags.filter((tag) => tag.id === tagFormModel.id)[0];
+
+    if (!isEqual(initTagModel, updatedTagModel)) {
+      await onTagUpdated(updatedTagModel);
+    }
+  };
+
+  const onTagEditDrawerSubmit = async (): Promise<void> => {
+    await handleTagEditDrawerClose();
+
+    setIsTagEditDrawerOpened(false);
+  };
+
+  const onTagEditDrawerCancel = async (): Promise<void> => {
+    setIsTagEditDrawerOpened(false);
+  };
+
+  const onTagDeleteConfirm = async (): Promise<void> => {
+    if (onTagDelete) {
+      const tagIdToDelete = tagEditForm.getFieldValue('id') as number;
+      await onTagDelete(tagIdToDelete);
+    }
+
+    setIsTagEditDrawerOpened(false);
   };
 
   return (
-    <Select
-      allowClear
-      mode="multiple"
-      tagRender={(tagProps: CustomTagProps): JSX.Element => {
-        const { label, value: tagId, closable, onClose } = tagProps;
+    <>
+      <Drawer
+        title={'Edit tag'}
+        width={300}
+        open={isTagEditDrawerOpened}
+        onClose={onTagEditDrawerCancel}
+        extra={
+          <Button size={'small'} onClick={onTagEditDrawerSubmit} type="primary">
+            Submit
+          </Button>
+        }
+      >
+        <Form form={tagEditForm} size={'small'} layout={'vertical'}>
+          <Form.Item hidden={true} name={'id'} />
+          <Form.Item label={'Tag label'} name={'label'}>
+            <Input placeholder={'Tag label'} />
+          </Form.Item>
+          <Form.Item label={'Tag color'} name={'color'}>
+            <ColorSelector />
+          </Form.Item>
+        </Form>
+        <Popconfirm
+          title="Delete the tag"
+          description="Are you sure to delete this tag?"
+          placement={'bottom'}
+          onConfirm={onTagDeleteConfirm}
+        >
+          <Button block danger>
+            Delete
+          </Button>
+        </Popconfirm>
+      </Drawer>
+      <Select
+        allowClear
+        mode={isTagCreatorEnabled ? 'tags' : 'multiple'}
+        tagRender={(tagProps: CustomTagProps): ReactElement => {
+          const isTagJustCreated = typeof tagProps.value === 'string';
 
-        const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>): void => {
-          event.preventDefault();
-          event.stopPropagation();
-        };
+          const { value: tagId, closable, onClose } = tagProps;
 
-        const tagColor = tags.filter((tag) => tag.id === tagId)[0].color;
+          const tagDto = tags.filter((tag) => tag.id === tagId)[0];
 
-        return (
-          <Tag
-            color={tagColor}
-            closable={closable}
-            onClose={onClose}
-            onMouseDown={onPreventMouseDown}
-            style={{ marginRight: 3 }}
-          >
-            {label}
-          </Tag>
-        );
-      }}
-      placeholder={'Find tags'}
-      style={{ width: '100%' }}
-      options={[
-        ...(tags.map((tagDto: TagDto) => ({
-          value: tagDto.id,
-          label: tagDto.label,
-        })) ?? []),
-      ]}
-      dropdownRender={(menu: ReactElement): ReactElement =>
-        isTagCreatorEnabled ? (
-          <>
-            {menu}
-            <Divider style={{ margin: '8px 0' }} />
-            <Space style={{ padding: '0 8px 4px' }}>
-              <Input ref={inputRef} placeholder="New tag name" />
-              <Button onClick={addNewTag} type="text" icon={<PlusOutlined />}>
-                Add
-              </Button>
-            </Space>
-          </>
-        ) : (
-          menu
-        )
-      }
-      {...defaultProps}
-    />
+          if (!tagDto) return <></>;
+
+          const tagColor = isTagJustCreated ? defaultTagColor : ColorValues[tagDto.color];
+          const tagLabel = isTagJustCreated ? tagProps.label : tagDto.label;
+
+          return (
+            <Tag
+              onMouseDown={onPreventMouseDown}
+              color={tagColor}
+              closable={closable}
+              onClose={onClose}
+              className={styles.selectedTag}
+            >
+              {tagLabel}
+            </Tag>
+          );
+        }}
+        placeholder={'Find tags'}
+        menuItemSelectedIcon={null}
+        {...defaultProps}
+      >
+        {tags.map((tag: TagDto) => (
+          <Option key={tag.id} value={tag.id}>
+            <Row>
+              <Col flex={'auto'}>
+                <Text>{tag.label}</Text>
+              </Col>
+              <Col>
+                {isTagCreatorEnabled ? (
+                  <div>
+                    <Button
+                      type={'text'}
+                      icon={<MoreOutlined />}
+                      onClick={(event: React.MouseEvent<HTMLElement>): void => {
+                        event.stopPropagation();
+
+                        const tagModel = tags.filter((tagDto) => tagDto.id == tag.id)[0];
+                        tagEditForm.setFieldsValue({
+                          id: tag.id,
+                          label: tagModel.label,
+                          color: tagModel.color,
+                        });
+
+                        setIsTagEditDrawerOpened(true);
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </Col>
+            </Row>
+          </Option>
+        ))}
+      </Select>
+    </>
   );
 };

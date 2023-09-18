@@ -1,8 +1,8 @@
 ﻿namespace BudgetsService.Business.Dto.Tag;
 
-public record TagDto
+public record TagCreateDto
 {
-    public long Id { get; init; }
+    public long BudgetId { get; init; }
 
     public string Label { get; init; }
 

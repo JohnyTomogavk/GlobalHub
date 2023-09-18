@@ -2,5 +2,13 @@
 
 public interface ITagRepository
 {
-    public Task<IEnumerable<Tag>> GetTagsByBudgetId(long budgetId);
+    Task<IEnumerable<Tag>> GetTagsByBudgetId(long budgetId);
+
+    Task<Tag> CreateNewTag(Tag newTag);
+
+    Task<Tag> UpdateTag(Tag tag);
+
+    Task<Tag> GetTagById(long tagId);
+
+    Task<long> DeleteById(long tagId);
 }

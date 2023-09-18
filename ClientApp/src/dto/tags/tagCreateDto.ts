@@ -1,7 +1,7 @@
 import { TagColor } from '../../enums/tagColor';
 
-export interface TagDto {
-  id: number;
+export interface TagCreateDto {
+  budgetId: number;
   label: string;
   color: TagColor;
 }

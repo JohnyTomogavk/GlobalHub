@@ -13,7 +13,7 @@ export const budgetItemTableEntryToDrawerModel = (tableEntry: BudgetItemTableEnt
   operationCost: tableEntry.operationCost,
   operationDate: dayjs(tableEntry.operationDate),
   operationType: tableEntry.operationType,
-  tagIds: tableEntry.tagIds,
+  selectedTags: tableEntry.tagIds,
 });
 
 export const drawerModelToBudgetItemCreateDto = (
@@ -25,9 +25,9 @@ export const drawerModelToBudgetItemCreateDto = (
   itemDescription: drawerModel.description,
   budgetItemOperationType: drawerModel.operationType,
   budgetItemRegularityType: BudgetItemRegularityType.Irregular,
-  budgetOperationCost: drawerModel.operationCost,
-  paymentDate: drawerModel.operationDate.toDate(),
-  tagIds: drawerModel.tagIds,
+  operationCost: drawerModel.operationCost,
+  operationDate: drawerModel.operationDate.toDate(),
+  tagIds: drawerModel.selectedTags.filter((tag) => typeof tag === 'number').map((tag) => tag as number),
 });
 
 export const drawerModelToBudgetItemUpdateDto = (
@@ -41,9 +41,9 @@ export const drawerModelToBudgetItemUpdateDto = (
   itemDescription: drawerModel.description,
   budgetItemOperationType: drawerModel.operationType,
   budgetItemRegularityType: BudgetItemRegularityType.Irregular,
-  budgetOperationCost: drawerModel.operationCost,
-  paymentDate: drawerModel.operationDate.toDate(),
-  tagIds: drawerModel.tagIds,
+  operationCost: drawerModel.operationCost,
+  operationDate: drawerModel.operationDate.toDate(),
+  tagIds: drawerModel.selectedTags.filter((tag) => typeof tag === 'number').map((tag) => tag as number),
 });
 
 export const budgetItemDtoToTableEntry = (budgetItemDto: BudgetItemDto): BudgetItemTableEntry => ({
@@ -51,7 +51,7 @@ export const budgetItemDtoToTableEntry = (budgetItemDto: BudgetItemDto): BudgetI
   title: budgetItemDto.itemTitle,
   description: budgetItemDto.itemDescription,
   operationType: budgetItemDto.budgetItemOperationType,
-  operationCost: budgetItemDto.budgetOperationCost.toFixed(1).toString(),
+  operationCost: budgetItemDto.operationCost.toFixed(1).toString(),
   tagIds: budgetItemDto.tagIds,
-  operationDate: new Date(budgetItemDto.paymentDate),
+  operationDate: new Date(budgetItemDto.operationDate),
 });

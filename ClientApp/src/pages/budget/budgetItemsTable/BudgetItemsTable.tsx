@@ -24,6 +24,7 @@ import {
   drawerModelToBudgetItemCreateDto,
   drawerModelToBudgetItemUpdateDto,
 } from '../../../helpers/budgetItemHelper';
+import { ColorValues, TagColor } from '../../../enums/tagColor';
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -37,13 +38,20 @@ interface BudgetItemsPaginationConfig {
 interface BudgetItemTableProps {
   budgetId: number;
   budgetTags: TagDto[];
-  triggerAnalitycStatsRecalculation: () => Promise<void>;
+  onNewTagAdded: (newTag: TagDto) => void;
+  triggerAnalyticStatsRecalculation: () => Promise<void>;
+  setBudgetTags: (value: ((prevState: TagDto[]) => TagDto[]) | TagDto[]) => void;
 }
+
+// eslint-disable-next-line no-magic-numbers
+const tablePageSizeOptions = [5, 10, 20, 50, 100];
 
 export const BudgetItemsTable = ({
   budgetId,
   budgetTags,
-  triggerAnalitycStatsRecalculation,
+  triggerAnalyticStatsRecalculation,
+  onNewTagAdded,
+  setBudgetTags,
 }: BudgetItemTableProps): JSX.Element => {
   const [budgetItemsTableEntries, setBudgetItemsTableEntries] = useState<BudgetItemTableEntry[]>([]);
   const [filtersForm] = useForm<BudgetItemsFiltersModel>();
@@ -117,9 +125,6 @@ export const BudgetItemsTable = ({
     }));
   };
 
-  // eslint-disable-next-line no-magic-numbers
-  const tablePageSizeOptions = [5, 10, 20, 50, 100];
-
   const columns: ColumnsType<BudgetItemTableEntry> = [
     {
       title: 'Title',
@@ -141,7 +146,7 @@ export const BudgetItemsTable = ({
     {
       title: 'Operation Cost',
       dataIndex: 'operationCost',
-      key: 'BudgetOperationCost',
+      key: 'OperationCost',
       sorter: true,
     },
     {
@@ -152,10 +157,11 @@ export const BudgetItemsTable = ({
         <>
           {tagIds.map((tagId: number) => {
             const tagDto = budgetTags.filter((dto: TagDto) => dto.id === tagId)[0];
+            const color = ColorValues[tagDto?.color ?? TagColor.Default];
 
             return (
               tagDto && (
-                <Tag color={tagDto.color} key={tagDto.id}>
+                <Tag color={color} key={tagDto.id}>
                   {tagDto.label}
                 </Tag>
               )
@@ -167,7 +173,7 @@ export const BudgetItemsTable = ({
     {
       title: 'Operation Date',
       dataIndex: 'operationDate',
-      key: 'PaymentDate',
+      key: 'OperationDate',
       render: (data: Date) => data.toLocaleString(),
       sorter: true,
     },
@@ -252,34 +258,26 @@ export const BudgetItemsTable = ({
     initializeBudgetItemsTable(budgetItemsResponse);
   };
 
+  const fetchTableAggregationData = async (): Promise<void> => {
+    const requestDto = getBudgetItemRequestDto();
+    const { data: budgetItemsResponse } = await getBudgetItemsWithFiltersById(toNumber(budgetId), requestDto);
+    initializeBudgetItemsTable(budgetItemsResponse);
+  };
+
   useEffect(() => {
     loadBudgetItems();
   }, [budgetId]);
 
-  const onBudgetItemFormSubmit = async (data: BudgetItemDrawerModel): Promise<void> => {
-    if (data.budgetItemId) {
-      const updateDto = drawerModelToBudgetItemUpdateDto(data, budgetId, data.budgetItemId);
-      const { data: updatedBudgetItem } = await updateBudgetItem(updateDto);
-      const tableEntry = budgetItemDtoToTableEntry(updatedBudgetItem);
-
-      setBudgetItemsTableEntries((prevState) => [
-        ...prevState.map((item) => {
-          if (item.key === tableEntry.key) {
-            return tableEntry;
-          }
-
-          return item;
-        }),
-      ]);
+  const onBudgetItemFormSubmit = async (submittedData: BudgetItemDrawerModel): Promise<void> => {
+    if (submittedData.budgetItemId) {
+      const updateDto = drawerModelToBudgetItemUpdateDto(submittedData, budgetId, submittedData.budgetItemId);
+      await updateBudgetItem(updateDto);
     } else {
-      const createDto = drawerModelToBudgetItemCreateDto(data, budgetId);
-      const { data: createdBudgetItem } = await createBudgetItem(createDto);
-      const tableEntry = budgetItemDtoToTableEntry(createdBudgetItem);
-
-      setBudgetItemsTableEntries((prevState) => [...prevState, tableEntry]);
+      const createDto = drawerModelToBudgetItemCreateDto(submittedData, budgetId);
+      await createBudgetItem(createDto);
     }
 
-    await triggerAnalitycStatsRecalculation();
+    await Promise.all([fetchTableAggregationData(), triggerAnalyticStatsRecalculation()]);
   };
 
   const onBudgetItemDrawerClose = (): void => {
@@ -288,6 +286,15 @@ export const BudgetItemsTable = ({
       isDrawerOpened: false,
       initFormValues: undefined,
     }));
+  };
+
+  const onTagRemoved = (removedTagId: number): void => {
+    setBudgetItemsTableEntries((prevState) =>
+      prevState.map((budgetItemTableEntry) => ({
+        ...budgetItemTableEntry,
+        tagIds: budgetItemTableEntry.tagIds.filter((id) => id !== removedTagId),
+      }))
+    );
   };
 
   return (
@@ -356,7 +363,7 @@ export const BudgetItemsTable = ({
           <Table.Summary fixed>
             <Table.Summary.Row>
               <Table.Summary.Cell index={0} colSpan={6}>
-                <Button size={'small'} block icon={<PlusOutlined />} onClick={onBudgetItemCreateClick}>
+                <Button size={'small'} block type={'dashed'} icon={<PlusOutlined />} onClick={onBudgetItemCreateClick}>
                   Add new item
                 </Button>
               </Table.Summary.Cell>
@@ -396,10 +403,14 @@ export const BudgetItemsTable = ({
         title={budgetItemDrawerConfig.title}
         onSubmitCallback={onBudgetItemFormSubmit}
         budgetItemTags={budgetTags}
+        budgetId={budgetId}
+        onNewTagAdded={onNewTagAdded}
         onFormCloseCallback={onBudgetItemDrawerClose}
         isDrawerOpened={budgetItemDrawerConfig.isDrawerOpened}
         initFormValues={budgetItemDrawerConfig.initFormValues}
         isDisabled={budgetItemDrawerConfig.isFormDisabled}
+        setBudgetTags={setBudgetTags}
+        onTagRemoved={onTagRemoved}
       />
     </>
   );

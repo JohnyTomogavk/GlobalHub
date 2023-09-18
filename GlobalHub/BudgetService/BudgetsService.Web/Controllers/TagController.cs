@@ -21,4 +21,28 @@ public class TagController : ControllerBase
 
         return Ok(tags);
     }
+
+    [HttpPost]
+    public async Task<ActionResult<TagDto>> CreateNewTag(TagCreateDto newTagDto)
+    {
+        var createdTag = await _tagService.CreateNewTag(newTagDto);
+
+        return StatusCode(StatusCodes.Status201Created, createdTag);
+    }
+
+    [HttpPut]
+    public async Task<ActionResult<TagDto>> UpdateTag(TagDto tagDto)
+    {
+        var updatedTag = await _tagService.UpdateTag(tagDto);
+
+        return Ok(updatedTag);
+    }
+
+    [HttpDelete]
+    public async Task<ActionResult<long>> DeleteTag(long tagId)
+    {
+        var deletedTagId = await _tagService.DeleteTag(tagId);
+
+        return Ok(deletedTagId);
+    }
 }

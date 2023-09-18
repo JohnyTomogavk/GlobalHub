@@ -10,9 +10,9 @@ public record BudgetItemCreateDto
 
     public BudgetItemRegularityType BudgetItemRegularityType { get; init; }
 
-    public decimal BudgetOperationCost { get; init; }
+    public decimal OperationCost { get; init; }
 
-    public DateTime PaymentDate { get; init; }
+    public DateTime OperationDate { get; init; }
 
     public IEnumerable<long> TagIds { get; init; } = new List<long>();
 

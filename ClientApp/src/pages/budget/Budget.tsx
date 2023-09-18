@@ -34,7 +34,7 @@ export const BudgetComponent = (): JSX.Element => {
   const { id } = useParams();
   const [budgetDto, setBudgetDto] = useState<BudgetDto | undefined>();
   const [budgetAnalyticData, setBudgetAnalyticData] = useState<BudgetAnalyticDto | undefined>();
-  const [budgetTags, setBudgetTags] = useState<TagDto[] | undefined>(undefined);
+  const [budgetTags, setBudgetTags] = useState<TagDto[]>([]);
   const navigate = useNavigate();
 
   const loadBudgetData = async (budgetId: number): Promise<void> => {
@@ -88,12 +88,15 @@ export const BudgetComponent = (): JSX.Element => {
     }
   };
 
-  const fetchAnalitycData = async (): Promise<void> => {
+  const fetchAnalyticData = async (): Promise<void> => {
     if (!id) return;
 
     const { data: analyticData } = await getBudgetAnalyticForCurrentMonthById(toNumber(id));
-
     setBudgetAnalyticData(analyticData);
+  };
+
+  const onNewTagAdded = (newTag: TagDto): void => {
+    setBudgetTags((tags) => [...tags, newTag]);
   };
 
   return (
@@ -289,7 +292,9 @@ export const BudgetComponent = (): JSX.Element => {
           <Col flex={'auto'}>
             <Card size={'small'} title="Budget items">
               <BudgetItemsTable
-                triggerAnalitycStatsRecalculation={fetchAnalitycData}
+                setBudgetTags={setBudgetTags}
+                onNewTagAdded={onNewTagAdded}
+                triggerAnalyticStatsRecalculation={fetchAnalyticData}
                 budgetTags={budgetTags ?? []}
                 budgetId={toNumber(id)}
               />

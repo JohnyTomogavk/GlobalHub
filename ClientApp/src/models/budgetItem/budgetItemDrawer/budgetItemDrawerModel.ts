@@ -7,6 +7,6 @@ export interface BudgetItemDrawerModel {
   operationDate: dayjs.Dayjs;
   operationCost: string;
   operationType: BudgetItemOperationType;
-  tagIds: number[];
+  selectedTags: (number | string)[];
   budgetItemId?: number;
 }

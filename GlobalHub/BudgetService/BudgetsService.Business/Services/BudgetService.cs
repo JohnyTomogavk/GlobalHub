@@ -75,7 +75,7 @@ public class BudgetService : IBudgetService
     {
         decimal moneyPreserved = budget.BudgetItems
             .Where(item => item.BudgetItemOperationType == BudgetItemOperationType.Incoming)
-            .Sum(item => item.BudgetOperationCost) * budget.PreserveFromIncomingPercent / 100;
+            .Sum(item => item.OperationCost) * budget.PreserveFromIncomingPercent / 100;
 
         var analyticDto = new BudgetAnalyticDto
         {
@@ -86,7 +86,7 @@ public class BudgetService : IBudgetService
                         BudgetItemRegularityType: BudgetItemRegularityType.Irregular,
                         BudgetItemOperationType: BudgetItemOperationType.Outgoing
                     })
-                .Sum(item => item.BudgetOperationCost),
+                .Sum(item => item.OperationCost),
             RegularExpenses = budget.BudgetItems
                 .Where(item =>
                     item is
@@ -94,18 +94,18 @@ public class BudgetService : IBudgetService
                         BudgetItemRegularityType: BudgetItemRegularityType.Regular,
                         BudgetItemOperationType: BudgetItemOperationType.Outgoing
                     })
-                .Sum(item => item.BudgetOperationCost),
+                .Sum(item => item.OperationCost),
             MoneyPreserved = moneyPreserved,
             MoneyLeft = budget.BudgetItems
                             .Where(item => item.BudgetItemOperationType == BudgetItemOperationType.Incoming)
-                            .Sum(item => item.BudgetOperationCost) -
+                            .Sum(item => item.OperationCost) -
                         budget.BudgetItems
                             .Where(item => item.BudgetItemOperationType == BudgetItemOperationType.Outgoing)
-                            .Sum(item => item.BudgetOperationCost) - moneyPreserved,
+                            .Sum(item => item.OperationCost) - moneyPreserved,
             AverageDailyExpenses = GetAverageDailyExpenses(budget),
             ExpensesMedian = budget.BudgetItems
                 .Where(item => item.BudgetItemOperationType == BudgetItemOperationType.Outgoing)
-                .Select(item => item.BudgetOperationCost).ToArray().GetMedianValue(),
+                .Select(item => item.OperationCost).ToArray().GetMedianValue(),
         };
 
         return analyticDto;
@@ -118,9 +118,9 @@ public class BudgetService : IBudgetService
         if (budget.BudgetItems.Any(item => item.BudgetItemOperationType == BudgetItemOperationType.Outgoing))
         {
             avgDailyExpenses = budget.BudgetItems
-                .GroupBy(item => item.PaymentDate.Date)
+                .GroupBy(item => item.OperationDate.Date)
                 .Average(dailyExpenses =>
-                    dailyExpenses.Average(dailySpentItem => dailySpentItem.BudgetOperationCost));
+                    dailyExpenses.Average(dailySpentItem => dailySpentItem.OperationCost));
         }
 
         return avgDailyExpenses;
