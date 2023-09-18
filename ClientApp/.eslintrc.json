@@ -72,6 +72,7 @@
       {
         "ignoreArrayIndexes": true,
         "ignore": [
+          -1,
           0,
           1
         ]

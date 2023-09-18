@@ -1,4 +1,18 @@
-import { Button, Col, Collapse, DatePicker, Form, Input, Row, Select, Space, Table, Tag, Typography } from 'antd';
+import {
+  Button,
+  Col,
+  Collapse,
+  DatePicker,
+  Form,
+  Input,
+  Row,
+  Select,
+  Space,
+  Table,
+  Tag,
+  TimeRangePickerProps,
+  Typography,
+} from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { BudgetItemsFiltersModel } from '../../../models/budgetItem/filterForm/budgetItemsFiltersModel';
 import React, { ReactNode, useEffect, useState } from 'react';
@@ -25,6 +39,8 @@ import {
   drawerModelToBudgetItemUpdateDto,
 } from '../../../helpers/budgetItemHelper';
 import { ColorValues, TagColor } from '../../../enums/tagColor';
+import dayjs from 'dayjs';
+import { nameof } from '../../../helpers/objectHelper';
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -45,6 +61,14 @@ interface BudgetItemTableProps {
 
 // eslint-disable-next-line no-magic-numbers
 const tablePageSizeOptions = [5, 10, 20, 50, 100];
+
+const countOfDaysInWeek = 7;
+
+const dateRangePickerPresets: TimeRangePickerProps['presets'] = [
+  { label: 'Last month', value: [dayjs().date(1).add(-1, 'months'), dayjs().date(1).add(-1, 'days')] },
+  { label: 'This month', value: [dayjs().date(1), dayjs().date(1).add(1, 'months').add(-1, 'days')] },
+  { label: 'Last 7 Days', value: [dayjs().add(-countOfDaysInWeek, 'days'), dayjs()] },
+];
 
 export const BudgetItemsTable = ({
   budgetId,
@@ -306,25 +330,29 @@ export const BudgetItemsTable = ({
             label: 'Filters',
             forceRender: true,
             children: (
-              <Form form={filtersForm} size={'small'} layout="horizontal" name={'BudgetItemsFilters'} title="Filters">
+              <Form form={filtersForm} size={'small'} layout="horizontal" title="Filters">
                 <Row>
                   <Col span={8} offset={2}>
-                    <Form.Item name={'budgetItemTitle'} label={'By title'}>
+                    <Form.Item name={nameof<BudgetItemsFiltersModel>('budgetItemTitle')} label={'By title'}>
                       <Input placeholder="Input title" />
                     </Form.Item>
-                    <Form.Item name={'budgetTagIds'} label={'By tags'}>
+                    <Form.Item name={nameof<BudgetItemsFiltersModel>('budgetTagIds')} label={'By tags'}>
                       <TagSelector tags={budgetTags} />
                     </Form.Item>
                   </Col>
                   <Col span={8} offset={4}>
-                    <Form.Item name={'budgetItemDateRange'} label={'By date'}>
+                    <Form.Item name={nameof<BudgetItemsFiltersModel>('budgetItemDateRange')} label={'By date'}>
                       <RangePicker
+                        presets={dateRangePickerPresets}
                         style={{
                           width: '100%',
                         }}
                       />
                     </Form.Item>
-                    <Form.Item name={'budgetItemOperationType'} label={'By operation type'}>
+                    <Form.Item
+                      name={nameof<BudgetItemsFiltersModel>('budgetItemOperationType')}
+                      label={'By operation type'}
+                    >
                       <Select
                         allowClear
                         placeholder={'Select operation type'}
