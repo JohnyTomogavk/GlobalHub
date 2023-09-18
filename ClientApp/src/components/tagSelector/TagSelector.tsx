@@ -10,6 +10,7 @@ import { MoreOutlined } from '@ant-design/icons';
 import { ColorSelector } from '../colorSelector/ColorSelector';
 import { ColorValues, TagColor } from '../../enums/tagColor';
 import { isEqual } from 'lodash';
+import { nameof } from '../../helpers/objectHelper';
 
 interface TagSelectorProps {
   tags: TagDto[];
@@ -84,11 +85,11 @@ export const TagSelector = ({
         }
       >
         <Form form={tagEditForm} size={'small'} layout={'vertical'}>
-          <Form.Item hidden={true} name={'id'} />
-          <Form.Item label={'Tag label'} name={'label'}>
+          <Form.Item hidden={true} name={nameof<TagFormModel>('id')} />
+          <Form.Item label={'Tag label'} name={nameof<TagFormModel>('label')}>
             <Input placeholder={'Tag label'} />
           </Form.Item>
-          <Form.Item label={'Tag color'} name={'color'}>
+          <Form.Item label={'Tag color'} name={nameof<TagFormModel>('color')}>
             <ColorSelector />
           </Form.Item>
         </Form>

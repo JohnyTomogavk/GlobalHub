@@ -40,6 +40,7 @@ import {
 } from '../../../helpers/budgetItemHelper';
 import { ColorValues, TagColor } from '../../../enums/tagColor';
 import dayjs from 'dayjs';
+import { nameof } from '../../../helpers/objectHelper';
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -329,18 +330,18 @@ export const BudgetItemsTable = ({
             label: 'Filters',
             forceRender: true,
             children: (
-              <Form form={filtersForm} size={'small'} layout="horizontal" name={'BudgetItemsFilters'} title="Filters">
+              <Form form={filtersForm} size={'small'} layout="horizontal" title="Filters">
                 <Row>
                   <Col span={8} offset={2}>
-                    <Form.Item name={'budgetItemTitle'} label={'By title'}>
+                    <Form.Item name={nameof<BudgetItemsFiltersModel>('budgetItemTitle')} label={'By title'}>
                       <Input placeholder="Input title" />
                     </Form.Item>
-                    <Form.Item name={'budgetTagIds'} label={'By tags'}>
+                    <Form.Item name={nameof<BudgetItemsFiltersModel>('budgetTagIds')} label={'By tags'}>
                       <TagSelector tags={budgetTags} />
                     </Form.Item>
                   </Col>
                   <Col span={8} offset={4}>
-                    <Form.Item name={'budgetItemDateRange'} label={'By date'}>
+                    <Form.Item name={nameof<BudgetItemsFiltersModel>('budgetItemDateRange')} label={'By date'}>
                       <RangePicker
                         presets={dateRangePickerPresets}
                         style={{
@@ -348,7 +349,10 @@ export const BudgetItemsTable = ({
                         }}
                       />
                     </Form.Item>
-                    <Form.Item name={'budgetItemOperationType'} label={'By operation type'}>
+                    <Form.Item
+                      name={nameof<BudgetItemsFiltersModel>('budgetItemOperationType')}
+                      label={'By operation type'}
+                    >
                       <Select
                         allowClear
                         placeholder={'Select operation type'}

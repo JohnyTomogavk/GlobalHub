@@ -174,15 +174,18 @@ export const BudgetItemDrawer = ({
           size={'small'}
           disabled={isDisabled}
           layout="vertical"
-          name={'BudgetItemForm'}
         >
-          <Form.Item rules={[{ required: true, message: 'Budget Item title required' }]} name={'title'} label={'Title'}>
+          <Form.Item
+            rules={[{ required: true, message: 'Budget Item title required' }]}
+            name={nameof<BudgetItemDrawerModel>('title')}
+            label={'Title'}
+          >
             <Input placeholder={'Title'} />
           </Form.Item>
           <Form.Item
             rules={[{ required: true, message: 'Operation Date is required' }]}
             initialValue={todayDate}
-            name={'operationDate'}
+            name={nameof<BudgetItemDrawerModel>('operationDate')}
             label={'Operation Date'}
           >
             <DatePicker
@@ -193,7 +196,7 @@ export const BudgetItemDrawer = ({
           </Form.Item>
           <Form.Item
             rules={[{ required: true, message: 'Operation Cost is required' }]}
-            name={'operationCost'}
+            name={nameof<BudgetItemDrawerModel>('operationCost')}
             label={'Operation Cost'}
           >
             <InputNumber
@@ -209,7 +212,7 @@ export const BudgetItemDrawer = ({
           </Form.Item>
           <Form.Item
             rules={[{ required: true, message: 'Operation type is required' }]}
-            name={'operationType'}
+            name={nameof<BudgetItemDrawerModel>('operationType')}
             label={'Operation Type'}
           >
             <Select
@@ -229,7 +232,7 @@ export const BudgetItemDrawer = ({
                 validator: (_, values) => tagSelectorValidator(values),
               },
             ]}
-            name={'selectedTags'}
+            name={nameof<BudgetItemDrawerModel>('selectedTags')}
             tooltip={'Tags help to classify your expenses and perform analytic on them'}
             label={'Tags'}
           >
@@ -240,7 +243,7 @@ export const BudgetItemDrawer = ({
               tags={budgetItemTags ?? []}
             />
           </Form.Item>
-          <Form.Item name={'description'} label={'Description'}>
+          <Form.Item name={nameof<BudgetItemDrawerModel>('description')} label={'Description'}>
             <TextArea rows={3} disabled={isDisabled} placeholder={'Description'} />
           </Form.Item>
         </Form>
