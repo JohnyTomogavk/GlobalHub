@@ -17,7 +17,7 @@ public class BudgetItemController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult<IEnumerable<BudgetItemDto>>> GetBudgetItemsByBudgetId(long id,
+    public async Task<ActionResult<BudgetItemPaginatedResponse>> GetBudgetItemsByBudgetId(long id,
         [FromBody] BudgetItemsQueryOptions? budgetItemsQueryOptions)
     {
         var currentDate = _dateTimeService.CurrentDate;

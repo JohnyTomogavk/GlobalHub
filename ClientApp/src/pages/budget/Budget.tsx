@@ -88,11 +88,10 @@ export const BudgetComponent = (): JSX.Element => {
     }
   };
 
-  const fetchAnalitycData = async (): Promise<void> => {
+  const fetchAnalyticData = async (): Promise<void> => {
     if (!id) return;
 
     const { data: analyticData } = await getBudgetAnalyticForCurrentMonthById(toNumber(id));
-
     setBudgetAnalyticData(analyticData);
   };
 
@@ -295,7 +294,7 @@ export const BudgetComponent = (): JSX.Element => {
               <BudgetItemsTable
                 setBudgetTags={setBudgetTags}
                 onNewTagAdded={onNewTagAdded}
-                triggerAnalyticStatsRecalculation={fetchAnalitycData}
+                triggerAnalyticStatsRecalculation={fetchAnalyticData}
                 budgetTags={budgetTags ?? []}
                 budgetId={toNumber(id)}
               />

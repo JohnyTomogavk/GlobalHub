@@ -1,12 +1,11 @@
 import { TagDto } from '../../dto/tags/tagDto';
-import { Button, Col, Drawer, Form, Input, Popconfirm, Popover, Row, Select, Space, Tag, Typography } from 'antd';
+import { Button, Col, Drawer, Form, Input, Popconfirm, Row, Select, Tag, Typography } from 'antd';
 import { CustomTagProps } from 'rc-select/lib/BaseSelect';
 import React, { ReactElement, useState } from 'react';
 
 import { useForm } from 'antd/lib/form/Form';
 import styles from './tagSelector.module.scss';
 import { TagFormModel } from '../../models/tags/tagFormModel';
-import FormItem from 'antd/lib/form/FormItem';
 import { MoreOutlined } from '@ant-design/icons';
 import { ColorSelector } from '../colorSelector/ColorSelector';
 import { ColorValues, TagColor } from '../../enums/tagColor';
@@ -20,7 +19,6 @@ interface TagSelectorProps {
 }
 
 const Option = Select.Option;
-
 const { Text } = Typography;
 
 const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>): void => {

@@ -1,4 +1,4 @@
-import { Button, DatePicker, Drawer, Form, Input, Select, Space, Spin, Typography } from 'antd';
+import { Button, DatePicker, Drawer, Form, Input, Select, Spin, Typography } from 'antd';
 import { InputNumber } from 'antd/lib';
 import { BudgetItemOperationType } from '../../../enums/budgetItemOperationType';
 import { TagSelector } from '../../../components/tagSelector/TagSelector';
@@ -13,7 +13,6 @@ import { tagSelectorValidator } from '../../../validators/tagSelectorValidators'
 import dayjs from 'dayjs';
 import { createBudgetTag, deleteTag, updateBudgetTag } from '../../../api/tagService';
 import { TagColor } from '../../../enums/tagColor';
-import { toNumber } from 'lodash';
 
 const { Text } = Typography;
 
@@ -144,6 +143,9 @@ export const BudgetItemDrawer = ({
     setBudgetTags((prevState) => prevState.filter((tag) => tag.id !== removedTagId));
     const selectedTags = budgetItemForm.getFieldsValue().selectedTags ?? [];
     const newSelectedTagsValues = selectedTags.filter((tag) => typeof tag === 'number' && tag !== removedTagId);
+
+    // TODO: Refactor with nameof function
+    // TODO: Check another places with such kind of operation
     budgetItemForm.setFieldValue('selectedTags', newSelectedTagsValues);
     onTagRemoved(removedTagId);
   };

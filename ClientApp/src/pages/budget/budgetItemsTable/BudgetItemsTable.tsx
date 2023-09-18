@@ -43,6 +43,9 @@ interface BudgetItemTableProps {
   setBudgetTags: (value: ((prevState: TagDto[]) => TagDto[]) | TagDto[]) => void;
 }
 
+// eslint-disable-next-line no-magic-numbers
+const tablePageSizeOptions = [5, 10, 20, 50, 100];
+
 export const BudgetItemsTable = ({
   budgetId,
   budgetTags,
@@ -121,9 +124,6 @@ export const BudgetItemsTable = ({
       initFormValues: drawerModel,
     }));
   };
-
-  // eslint-disable-next-line no-magic-numbers
-  const tablePageSizeOptions = [5, 10, 20, 50, 100];
 
   const columns: ColumnsType<BudgetItemTableEntry> = [
     {
@@ -258,34 +258,26 @@ export const BudgetItemsTable = ({
     initializeBudgetItemsTable(budgetItemsResponse);
   };
 
+  const fetchTableAggregationData = async (): Promise<void> => {
+    const requestDto = getBudgetItemRequestDto();
+    const { data: budgetItemsResponse } = await getBudgetItemsWithFiltersById(toNumber(budgetId), requestDto);
+    initializeBudgetItemsTable(budgetItemsResponse);
+  };
+
   useEffect(() => {
     loadBudgetItems();
   }, [budgetId]);
 
-  const onBudgetItemFormSubmit = async (data: BudgetItemDrawerModel): Promise<void> => {
-    if (data.budgetItemId) {
-      const updateDto = drawerModelToBudgetItemUpdateDto(data, budgetId, data.budgetItemId);
-      const { data: updatedBudgetItem } = await updateBudgetItem(updateDto);
-      const tableEntry = budgetItemDtoToTableEntry(updatedBudgetItem);
-
-      setBudgetItemsTableEntries((prevState) => [
-        ...prevState.map((item) => {
-          if (item.key === tableEntry.key) {
-            return tableEntry;
-          }
-
-          return item;
-        }),
-      ]);
+  const onBudgetItemFormSubmit = async (submittedData: BudgetItemDrawerModel): Promise<void> => {
+    if (submittedData.budgetItemId) {
+      const updateDto = drawerModelToBudgetItemUpdateDto(submittedData, budgetId, submittedData.budgetItemId);
+      await updateBudgetItem(updateDto);
     } else {
-      const createDto = drawerModelToBudgetItemCreateDto(data, budgetId);
-      const { data: createdBudgetItem } = await createBudgetItem(createDto);
-      const tableEntry = budgetItemDtoToTableEntry(createdBudgetItem);
-
-      setBudgetItemsTableEntries((prevState) => [...prevState, tableEntry]);
+      const createDto = drawerModelToBudgetItemCreateDto(submittedData, budgetId);
+      await createBudgetItem(createDto);
     }
 
-    await triggerAnalyticStatsRecalculation();
+    await Promise.all([fetchTableAggregationData(), triggerAnalyticStatsRecalculation()]);
   };
 
   const onBudgetItemDrawerClose = (): void => {
