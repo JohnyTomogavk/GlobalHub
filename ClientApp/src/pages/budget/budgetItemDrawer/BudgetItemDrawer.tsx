@@ -13,6 +13,7 @@ import { tagSelectorValidator } from '../../../validators/tagSelectorValidators'
 import dayjs from 'dayjs';
 import { createBudgetTag, deleteTag, updateBudgetTag } from '../../../api/tagService';
 import { TagColor } from '../../../enums/tagColor';
+import { nameof } from '../../../helpers/objectHelper';
 
 const { Text } = Typography;
 
@@ -124,7 +125,7 @@ export const BudgetItemDrawer = ({
       return tag;
     });
 
-    budgetItemForm.setFieldValue('selectedTags', selectedTagIds);
+    budgetItemForm.setFieldValue(nameof<BudgetItemDrawerModel>('selectedTags'), selectedTagIds);
   };
 
   useEffect(() => {
@@ -144,9 +145,7 @@ export const BudgetItemDrawer = ({
     const selectedTags = budgetItemForm.getFieldsValue().selectedTags ?? [];
     const newSelectedTagsValues = selectedTags.filter((tag) => typeof tag === 'number' && tag !== removedTagId);
 
-    // TODO: Refactor with nameof function
-    // TODO: Check another places with such kind of operation
-    budgetItemForm.setFieldValue('selectedTags', newSelectedTagsValues);
+    budgetItemForm.setFieldValue(nameof<BudgetItemDrawerModel>('selectedTags'), newSelectedTagsValues);
     onTagRemoved(removedTagId);
   };
 

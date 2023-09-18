@@ -1,4 +1,18 @@
-import { Button, Col, Collapse, DatePicker, Form, Input, Row, Select, Space, Table, Tag, Typography } from 'antd';
+import {
+  Button,
+  Col,
+  Collapse,
+  DatePicker,
+  Form,
+  Input,
+  Row,
+  Select,
+  Space,
+  Table,
+  Tag,
+  TimeRangePickerProps,
+  Typography,
+} from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { BudgetItemsFiltersModel } from '../../../models/budgetItem/filterForm/budgetItemsFiltersModel';
 import React, { ReactNode, useEffect, useState } from 'react';
@@ -25,6 +39,7 @@ import {
   drawerModelToBudgetItemUpdateDto,
 } from '../../../helpers/budgetItemHelper';
 import { ColorValues, TagColor } from '../../../enums/tagColor';
+import dayjs from 'dayjs';
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -45,6 +60,14 @@ interface BudgetItemTableProps {
 
 // eslint-disable-next-line no-magic-numbers
 const tablePageSizeOptions = [5, 10, 20, 50, 100];
+
+const countOfDaysInWeek = 7;
+
+const dateRangePickerPresets: TimeRangePickerProps['presets'] = [
+  { label: 'Last month', value: [dayjs().date(1).add(-1, 'months'), dayjs().date(1).add(-1, 'days')] },
+  { label: 'This month', value: [dayjs().date(1), dayjs().date(1).add(1, 'months').add(-1, 'days')] },
+  { label: 'Last 7 Days', value: [dayjs().add(-countOfDaysInWeek, 'days'), dayjs()] },
+];
 
 export const BudgetItemsTable = ({
   budgetId,
@@ -319,6 +342,7 @@ export const BudgetItemsTable = ({
                   <Col span={8} offset={4}>
                     <Form.Item name={'budgetItemDateRange'} label={'By date'}>
                       <RangePicker
+                        presets={dateRangePickerPresets}
                         style={{
                           width: '100%',
                         }}
