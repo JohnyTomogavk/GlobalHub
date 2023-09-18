@@ -24,18 +24,15 @@ import { SideMenuItemModel } from '../../../models/shared/sideMenu/sideMenuItemM
 import { observer } from 'mobx-react-lite';
 import { getTopLevelItemTitleWithAddButton } from '../../../helpers/sideMenuHelper';
 import { createNewBudget, getBudgetsMap } from '../../../api/budgetsService';
-import SideMenuNoteStore from '../../../store/sideMenu/sideMenuNoteStore';
-import SideMenuCommonStore from '../../../store/sideMenu/sideMenuCommonStore';
-import SideMenuBudgetStore from '../../../store/sideMenu/sideMenuBudgetStore';
 import { BUDGET_DEFAULT_TITLE } from '../../../constants/budgetConstants';
+import SideMenuIndexStore from '../../../store/sideMenu/sideMenuIndexStore';
+
+const { notesStore, budgetStore, commonSideMenuStore } = SideMenuIndexStore;
 
 export const SideMenu = observer((): JSX.Element => {
   const { t } = useTranslation();
   const navigation = useNavigate();
   const location = useLocation();
-  const { sideMenuNoteItems, addNewNoteToSideMenu, setNoteMapsItemsToSideMenu } = SideMenuNoteStore;
-  const { selectedTreeKeys, changeSelectedMenuKey } = SideMenuCommonStore;
-  const { sideMenuBudgetItems, setBudgetMapsToSideMenu, addBudgetToSideMenu } = SideMenuBudgetStore;
 
   const {
     token: { colorBgLayout },
@@ -45,22 +42,22 @@ export const SideMenu = observer((): JSX.Element => {
     const pathSegments = currentPath.split('/').filter((item) => item !== '');
 
     if (pathSegments.length === 1) {
-      changeSelectedMenuKey([pathSegments[0]]);
+      commonSideMenuStore.changeSelectedMenuKey([pathSegments[0]]);
     } else {
-      changeSelectedMenuKey([pathSegments.join('/')]);
+      commonSideMenuStore.changeSelectedMenuKey([pathSegments.join('/')]);
     }
   };
 
   const fetchNotesMap = async (): Promise<void> => {
     const notesMapResponse = await getNotesMap();
 
-    setNoteMapsItemsToSideMenu(notesMapResponse.data);
+    notesStore.setNoteMapsItemsToSideMenu(notesMapResponse.data);
   };
 
   const fetchBudgetsMap = async (): Promise<void> => {
     const budgetsMapResponse = await getBudgetsMap();
 
-    setBudgetMapsToSideMenu(budgetsMapResponse.data);
+    budgetStore.setBudgetMapsToSideMenu(budgetsMapResponse.data);
   };
 
   useEffect(() => {
@@ -74,7 +71,7 @@ export const SideMenu = observer((): JSX.Element => {
 
   const onPageSelected = (keys: Key[]): void => {
     if (keys.length === 0) return;
-    changeSelectedMenuKey(keys);
+    commonSideMenuStore.changeSelectedMenuKey(keys);
     navigation(keys[0]?.toString() ?? '/');
   };
 
@@ -93,9 +90,9 @@ export const SideMenu = observer((): JSX.Element => {
         const newBudgetResponse = await createNewBudget({
           budgetTitle: BUDGET_DEFAULT_TITLE,
         });
-        addBudgetToSideMenu(newBudgetResponse.data);
+        budgetStore.addBudgetToSideMenu(newBudgetResponse.data);
         const newBudgetUrl = getClientItemUrl(BUDGET_RESOURCE_NAME, newBudgetResponse.data.id);
-        changeSelectedMenuKey([newBudgetUrl]);
+        commonSideMenuStore.changeSelectedMenuKey([newBudgetUrl]);
         navigation(newBudgetUrl, {
           replace: true,
         });
@@ -105,7 +102,7 @@ export const SideMenu = observer((): JSX.Element => {
       icon: <DollarOutlined />,
       isLeaf: false,
       pageId: ResourceNameConstants.BUDGET_RESOURCE_NAME,
-      children: sideMenuBudgetItems,
+      children: budgetStore.sideMenuBudgetItems,
     },
     {
       className: styles.sideMenuItem,
@@ -114,8 +111,8 @@ export const SideMenu = observer((): JSX.Element => {
           title: NOTE_TITLE_PLACEHOLDER,
         });
         const newNoteUrl = getClientItemUrl(NOTE_RESOURCE_NAME, newNoteResponse.data.id);
-        addNewNoteToSideMenu(newNoteResponse.data);
-        changeSelectedMenuKey([newNoteUrl]);
+        notesStore.addNewNoteToSideMenu(newNoteResponse.data);
+        commonSideMenuStore.changeSelectedMenuKey([newNoteUrl]);
         navigation(newNoteUrl, {
           replace: true,
         });
@@ -124,7 +121,7 @@ export const SideMenu = observer((): JSX.Element => {
       key: getClientItemUrl(ResourceNameConstants.NOTE_RESOURCE_NAME),
       icon: <ReadOutlined />,
       pageId: ResourceNameConstants.NOTE_RESOURCE_NAME,
-      children: sideMenuNoteItems,
+      children: notesStore.sideMenuNoteItems,
     },
     {
       className: styles.sideMenuItem,
@@ -177,7 +174,7 @@ export const SideMenu = observer((): JSX.Element => {
         showIcon
         onSelect={onPageSelected}
         defaultExpandAll
-        selectedKeys={selectedTreeKeys}
+        selectedKeys={commonSideMenuStore.selectedTreeKeys}
         rootClassName={styles.sideMenuTree}
         blockNode
         treeData={menuData}

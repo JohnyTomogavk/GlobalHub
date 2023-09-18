@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Note } from '../../entities/notes/note';
 import SideMenuStore from '../../store/sideMenu/sideMenuNoteStore';
+import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
 
 interface NoteTableItem {
   id: string;
@@ -20,7 +21,7 @@ interface NoteTableItem {
 
 export const NoteList = (): JSX.Element => {
   const [notes, setNotes] = useState<NoteTableItem[]>([]);
-  const { removeNoteFromSideMenu } = SideMenuStore;
+  const { notesStore } = SideMenuIndexStore;
 
   const columns: ColumnsType<NoteTableItem> = [
     {
@@ -56,7 +57,7 @@ export const NoteList = (): JSX.Element => {
 
               return prev;
             });
-            removeNoteFromSideMenu(deletedIdResponse.data);
+            notesStore.removeNoteFromSideMenu(deletedIdResponse.data);
           }}
           danger
           icon={<DeleteOutlined />}

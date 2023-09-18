@@ -50,4 +50,4 @@ class SideMenuBudgetStore {
   }
 }
 
-export default new SideMenuBudgetStore();
+export default SideMenuBudgetStore;

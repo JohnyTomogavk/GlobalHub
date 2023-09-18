@@ -70,4 +70,4 @@ class SideMenuNoteStore {
   }
 }
 
-export default new SideMenuNoteStore();
+export default SideMenuNoteStore;
