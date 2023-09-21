@@ -1,7 +1,7 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import { Button, Card, Col, Collapse, Form, Progress, Result, Row, Space, Statistic, Tooltip, Typography } from 'antd';
 import styles from './budjet.module.scss';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   getBudgetAnalyticForCurrentMonthById,
   getBudgetById,
@@ -25,17 +25,25 @@ import { ExpensesByTagsChart } from './analyticCharts/ExpensesByTagsChart';
 import { deleteBudgetById } from '../../api/budgetItemService';
 import { BUDGET_LIST_ROUTE } from '../../constants/routingConstants';
 import { HttpStatusCode } from 'axios';
+import { observer } from 'mobx-react-lite';
+import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
+import { BreadCrumbItem } from '../../models/breadCrumbs/breadCrumbItem';
+import { getBreadCrumbsItemsByLocation } from '../../helpers/breadCrumbsHelper';
 
 const { Text } = Typography;
 
 const countUpFormatter = (value: valueType): ReactNode => <CountUp end={+value} separator="," />;
 
-export const BudgetComponent = (): JSX.Element => {
+const { budgetStore, getSideMenuItemByRoutingPath } = SideMenuIndexStore;
+
+export const BudgetComponent = observer((): JSX.Element => {
   const { id } = useParams();
   const [budgetDto, setBudgetDto] = useState<BudgetDto | undefined>();
   const [budgetAnalyticData, setBudgetAnalyticData] = useState<BudgetAnalyticDto | undefined>();
   const [budgetTags, setBudgetTags] = useState<TagDto[]>([]);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [breadCrumbsItems, setBreadCrumbsItems] = useState<BreadCrumbItem[]>([]);
 
   const loadBudgetData = async (budgetId: number): Promise<void> => {
     const [{ data: budget }, { data: budgetAnalytic }, { data: tags }] = await Promise.all([
@@ -56,10 +64,17 @@ export const BudgetComponent = (): JSX.Element => {
     loadBudgetData(budgetId);
   }, [id]);
 
+  useEffect(() => {
+    const items = getBreadCrumbsItemsByLocation(location.pathname, getSideMenuItemByRoutingPath);
+    setBreadCrumbsItems(items);
+  }, [location, budgetStore.sideMenuBudgetItems]);
+
   const onBudgetTitleUpdate = async (title: string): Promise<void> => {
     if (!id) return;
 
-    const response = await updateBudgetTitle(toNumber(id), title);
+    const parsedId = toNumber(id);
+
+    const response = await updateBudgetTitle(parsedId, title);
     if (response.status === HttpStatusCode.Ok) {
       setBudgetDto((oldValue) => {
         if (!oldValue) return undefined;
@@ -69,6 +84,8 @@ export const BudgetComponent = (): JSX.Element => {
           budgetTitle: title,
         };
       });
+
+      budgetStore.renameBudget(parsedId, title);
     }
   };
 
@@ -105,11 +122,15 @@ export const BudgetComponent = (): JSX.Element => {
         onDeleteCallback={async (): Promise<void> => {
           if (!id) return;
 
-          await deleteBudgetById(toNumber(id));
-          navigate(`/${BUDGET_LIST_ROUTE}`);
-          // TODO: Remove from side menu
+          const parsedId = toNumber(id);
+          const { status } = await deleteBudgetById(parsedId);
+
+          if (status === HttpStatusCode.Ok) {
+            navigate(`/${BUDGET_LIST_ROUTE}`);
+            budgetStore.removeBudget(parsedId);
+          }
         }}
-        breadCrumbsItems={[{ title: 'Budgets' }, { title: 'Budget 2' }]}
+        breadCrumbsItems={breadCrumbsItems}
         lastEdited={budgetDto?.updatedDate ?? budgetDto?.createdDate}
         isLoading={false}
       />
@@ -304,4 +325,4 @@ export const BudgetComponent = (): JSX.Element => {
       </div>
     </>
   );
-};
+});

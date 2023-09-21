@@ -13,14 +13,14 @@ import {
 } from '../../constants/notesConstants';
 import Title from 'antd/es/typography/Title';
 import { RichTextEditor } from '../../components/richTextEditor/RichTextEditor';
-import { getItemTitleWithOptionsButton } from '../../helpers/sideMenuHelper';
 import * as RoutingConstants from '../../constants/routingConstants';
 import { observer } from 'mobx-react-lite';
 import { getBreadCrumbsItemsByLocation } from '../../helpers/breadCrumbsHelper';
 import { BreadCrumbItem } from '../../models/breadCrumbs/breadCrumbItem';
-import SideMenuNoteStore from '../../store/sideMenu/sideMenuNoteStore';
-import SideMenuCommonStore from '../../store/sideMenu/sideMenuCommonStore';
 import { theme } from 'antd';
+import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
+
+const { notesStore, commonSideMenuStore, getSideMenuItemByRoutingPath } = SideMenuIndexStore;
 
 export const NotesComponent = observer((): JSX.Element => {
   const { id } = useParams();
@@ -32,8 +32,6 @@ export const NotesComponent = observer((): JSX.Element => {
 
   const [note, setNote] = useState<Note | undefined>(undefined);
   const noteRef = useRef(note);
-  const { renameNoteInSideMenu, removeNoteFromSideMenu, getSideMenuItemByRoutingKey } = SideMenuNoteStore;
-  const { changeSelectedMenuKey } = SideMenuCommonStore;
 
   const {
     token: { colorBgContainer },
@@ -55,19 +53,11 @@ export const NotesComponent = observer((): JSX.Element => {
     if (note === undefined) return;
 
     const newTitle = changedTitle.length !== 0 ? changedTitle : NOTE_TITLE_PLACEHOLDER;
-
-    setNote({
-      ...note,
-      title: newTitle,
-    });
-
+    setNote({ ...note, title: newTitle });
     setLoading(true);
-    const { data } = await updateNoteTitle(note.id, {
-      newTitle: newTitle,
-    });
-
+    const { data } = await updateNoteTitle(note.id, { newTitle: newTitle });
     setNote(data);
-    renameNoteInSideMenu(data.id, getItemTitleWithOptionsButton(data.title));
+    notesStore.renameNoteInSideMenu(data.id, data.title);
     setLoading(false);
   };
 
@@ -77,8 +67,8 @@ export const NotesComponent = observer((): JSX.Element => {
     if (note?.id === undefined) return;
 
     const deletedNoteIdResponse = await deleteNote(note.id);
-    removeNoteFromSideMenu(deletedNoteIdResponse.data);
-    changeSelectedMenuKey([RoutingConstants.NOTE_LIST_ROUTE]);
+    notesStore.removeNoteFromSideMenu(deletedNoteIdResponse.data);
+    commonSideMenuStore.changeSelectedMenuKey([RoutingConstants.NOTE_LIST_ROUTE]);
     navigate(`/${RoutingConstants.NOTE_LIST_ROUTE}`);
   };
 
@@ -95,10 +85,9 @@ export const NotesComponent = observer((): JSX.Element => {
   }, [id]);
 
   useEffect(() => {
-    if (!note || !location) return;
-    const items = getBreadCrumbsItemsByLocation(location.pathname, getSideMenuItemByRoutingKey);
+    const items = getBreadCrumbsItemsByLocation(location.pathname, getSideMenuItemByRoutingPath);
     setBreadCrumbsItems(items);
-  }, [location, note]);
+  }, [location, notesStore.sideMenuNoteItems]);
 
   return (
     <div

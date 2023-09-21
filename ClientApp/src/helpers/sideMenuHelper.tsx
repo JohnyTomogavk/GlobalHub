@@ -3,8 +3,7 @@ import styles from '../components/layout/sideMenu/SideMenu.module.scss';
 import { Button } from 'antd';
 import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
 
-// TODO: Consider possiblity to extract these functions to separate component
-export const getTopLevelItemTitleWithAddButton = (title: string, onClick?: MouseEventHandler): JSX.Element => (
+export const getTopLevelItemTitle = (title: string, onClick?: MouseEventHandler): JSX.Element => (
   <span className={[styles.sideMenuItemTitleContainer, styles.topLevelItem].join(' ')}>
     <span className={styles.itemTitle}>{title}</span>
     {onClick && (
@@ -13,12 +12,13 @@ export const getTopLevelItemTitleWithAddButton = (title: string, onClick?: Mouse
   </span>
 );
 
-export const getItemTitleWithOptionsButton = (title: string): JSX.Element => (
+export const getSecondaryLevelItemTitle = (title: string): JSX.Element => (
   <span className={styles.sideMenuItemTitleContainer}>
     <span className={styles.itemTitle}>{title}</span>
     <Button
       className={styles.sideMenuActionButton}
       onClick={(e): void => {
+        // TODO: Open popover with options
         e.stopPropagation();
       }}
       size={'small'}

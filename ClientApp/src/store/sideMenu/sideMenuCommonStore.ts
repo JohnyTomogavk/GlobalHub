@@ -19,4 +19,4 @@ class SideMenuCommonStore {
   }
 }
 
-export default new SideMenuCommonStore();
+export default SideMenuCommonStore;
