@@ -9,7 +9,6 @@ import { deleteNote, getNotesList } from '../../api/noteService';
 import { Link } from 'react-router-dom';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Note } from '../../entities/notes/note';
-import SideMenuStore from '../../store/sideMenu/sideMenuNoteStore';
 import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
 
 interface NoteTableItem {

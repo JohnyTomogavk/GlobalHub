@@ -4,6 +4,7 @@ import React from 'react';
 import styles from './itemInfoHeader.module.scss';
 import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
 import ReactTimeAgo from 'react-time-ago';
+import { BreadCrumbItem } from '../../models/breadCrumbs/breadCrumbItem';
 
 const { Text } = Typography;
 
@@ -11,7 +12,7 @@ interface IItemInfoSubHeader {
   isLoading: boolean;
   lastEdited?: Date;
   onDeleteCallback: () => void;
-  breadCrumbsItems: ({ title: string } | { title: JSX.Element })[];
+  breadCrumbsItems: BreadCrumbItem[];
 }
 
 export const ItemInfoSubHeader = (props: IItemInfoSubHeader): JSX.Element => {

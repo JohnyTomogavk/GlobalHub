@@ -22,7 +22,7 @@ import { createNote, getNotesMap } from '../../../api/noteService';
 import { NOTE_TITLE_PLACEHOLDER } from '../../../constants/notesConstants';
 import { SideMenuItemModel } from '../../../models/shared/sideMenu/sideMenuItemModel';
 import { observer } from 'mobx-react-lite';
-import { getTopLevelItemTitleWithAddButton } from '../../../helpers/sideMenuHelper';
+import { getTopLevelItemTitle } from '../../../helpers/sideMenuHelper';
 import { createNewBudget, getBudgetsMap } from '../../../api/budgetsService';
 import { BUDGET_DEFAULT_TITLE } from '../../../constants/budgetConstants';
 import SideMenuIndexStore from '../../../store/sideMenu/sideMenuIndexStore';
@@ -75,9 +75,31 @@ export const SideMenu = observer((): JSX.Element => {
     navigation(keys[0]?.toString() ?? '/');
   };
 
+  const onBudgetItemCreateClick = async (e: React.MouseEvent): Promise<void> => {
+    const newBudgetResponse = await createNewBudget({
+      budgetTitle: BUDGET_DEFAULT_TITLE,
+    });
+    budgetStore.addBudgetToSideMenu(newBudgetResponse.data);
+    const newBudgetUrl = getClientItemUrl(BUDGET_RESOURCE_NAME, newBudgetResponse.data.id);
+    commonSideMenuStore.changeSelectedMenuKey([newBudgetUrl]);
+    navigation(newBudgetUrl);
+    e.stopPropagation();
+  };
+
+  const onNoteCreateClick = async (e: React.MouseEvent): Promise<void> => {
+    const newNoteResponse = await createNote({
+      title: NOTE_TITLE_PLACEHOLDER,
+    });
+    const newNoteUrl = getClientItemUrl(NOTE_RESOURCE_NAME, newNoteResponse.data.id);
+    notesStore.addNewNoteToSideMenu(newNoteResponse.data);
+    commonSideMenuStore.changeSelectedMenuKey([newNoteUrl]);
+    navigation(newNoteUrl);
+    e.stopPropagation();
+  };
+
   const menuData: SideMenuItemModel[] = [
     {
-      title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.DASHBOARD')),
+      title: getTopLevelItemTitle(t('SIDE_MENU.DASHBOARD')),
       key: ResourceNameConstants.DASHBOARD_RESOURCE_NAME,
       icon: <DashboardOutlined />,
       switcherIcon: <></>,
@@ -86,18 +108,7 @@ export const SideMenu = observer((): JSX.Element => {
     },
     {
       className: styles.sideMenuItem,
-      title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.BUDGETS'), async (e): Promise<void> => {
-        const newBudgetResponse = await createNewBudget({
-          budgetTitle: BUDGET_DEFAULT_TITLE,
-        });
-        budgetStore.addBudgetToSideMenu(newBudgetResponse.data);
-        const newBudgetUrl = getClientItemUrl(BUDGET_RESOURCE_NAME, newBudgetResponse.data.id);
-        commonSideMenuStore.changeSelectedMenuKey([newBudgetUrl]);
-        navigation(newBudgetUrl, {
-          replace: true,
-        });
-        e.stopPropagation();
-      }),
+      title: getTopLevelItemTitle(t('SIDE_MENU.BUDGETS'), onBudgetItemCreateClick),
       key: getClientItemUrl(ResourceNameConstants.BUDGET_RESOURCE_NAME),
       icon: <DollarOutlined />,
       isLeaf: false,
@@ -106,26 +117,16 @@ export const SideMenu = observer((): JSX.Element => {
     },
     {
       className: styles.sideMenuItem,
-      title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.NOTES'), async (e): Promise<void> => {
-        const newNoteResponse = await createNote({
-          title: NOTE_TITLE_PLACEHOLDER,
-        });
-        const newNoteUrl = getClientItemUrl(NOTE_RESOURCE_NAME, newNoteResponse.data.id);
-        notesStore.addNewNoteToSideMenu(newNoteResponse.data);
-        commonSideMenuStore.changeSelectedMenuKey([newNoteUrl]);
-        navigation(newNoteUrl, {
-          replace: true,
-        });
-        e.stopPropagation();
-      }),
+      title: getTopLevelItemTitle(t('SIDE_MENU.NOTES'), onNoteCreateClick),
       key: getClientItemUrl(ResourceNameConstants.NOTE_RESOURCE_NAME),
       icon: <ReadOutlined />,
+      isLeaf: false,
       pageId: ResourceNameConstants.NOTE_RESOURCE_NAME,
       children: notesStore.sideMenuNoteItems,
     },
     {
       className: styles.sideMenuItem,
-      title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.TASKS'), (e): void => {
+      title: getTopLevelItemTitle(t('SIDE_MENU.TASKS'), (e): void => {
         // TODO: Navigate to tasks page and implement logic of creation there
         e.stopPropagation();
       }),
@@ -136,7 +137,7 @@ export const SideMenu = observer((): JSX.Element => {
       children: [],
     },
     {
-      title: getTopLevelItemTitleWithAddButton(t('SIDE_MENU.REPORTS')),
+      title: getTopLevelItemTitle(t('SIDE_MENU.REPORTS')),
       key: getClientItemUrl(ResourceNameConstants.REPORT_RESOURCE_NAME),
       icon: <PieChartOutlined />,
       isLeaf: false,
@@ -152,7 +153,6 @@ export const SideMenu = observer((): JSX.Element => {
       }}
       width="100%"
       className={styles.siderContainer}
-      theme="light"
     >
       <div className={styles.systemLogo}>
         <Link to="/">

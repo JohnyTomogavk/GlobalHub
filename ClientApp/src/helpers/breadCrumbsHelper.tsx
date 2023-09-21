@@ -4,30 +4,28 @@ import { SideMenuItemModel } from '../models/shared/sideMenu/sideMenuItemModel';
 import { BreadCrumbItem } from '../models/breadCrumbs/breadCrumbItem';
 import { Link } from 'react-router-dom';
 
-type BreadCrumbsItem = { title: string } | { title: JSX.Element };
-
+// TODO: Extract to custom hook
 export const getBreadCrumbsItemsByLocation = (
   path: string,
-  getSideMenuItemByRoutingKey: (key: string) => SideMenuItemModel | undefined
-): BreadCrumbsItem[] => {
-  const pathSegments = location.pathname.split('/').filter((segment) => segment);
-
+  getSideMenuItemByRoutingPath: (routingPath: string) => SideMenuItemModel | undefined
+): BreadCrumbItem[] => {
+  const pathSegments = path.split('/').filter((segment) => segment);
   const items: BreadCrumbItem[] = [];
 
   while (pathSegments.length !== 0) {
-    const pageRoutingKey = pathSegments.join('/');
-    let pageTitle = getSideMenuItemByRoutingKey(pageRoutingKey)?.textTitle;
+    const routingPath = pathSegments.join('/');
+    let pageTitle = getSideMenuItemByRoutingPath(routingPath)?.textTitle;
 
     if (!pageTitle) {
-      pageTitle = ResourceToBreadCrumbsTitleMapping[pageRoutingKey as keyof typeof ResourceToBreadCrumbsTitleMapping];
+      pageTitle = ResourceToBreadCrumbsTitleMapping[routingPath as keyof typeof ResourceToBreadCrumbsTitleMapping];
     }
 
-    items.push({
-      title: <Link to={`/${pageRoutingKey}`}>{pageTitle}</Link>,
+    items.unshift({
+      title: <Link to={`/${routingPath}`}>{pageTitle}</Link>,
     });
 
     pathSegments.pop();
   }
 
-  return items.reverse();
+  return items;
 };
