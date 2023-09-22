@@ -1,6 +1,4 @@
-﻿using BudgetsService.Infrastructure.Models;
-
-namespace BudgetsService.DataAccess.Repository.Interfaces;
+﻿namespace BudgetsService.DataAccess.Repository.Interfaces;
 
 public interface IBudgetItemRepository
 {
@@ -13,4 +11,6 @@ public interface IBudgetItemRepository
     Task<BudgetItem?> GetBudgetItemById(long budgetItemId);
 
     Task<BudgetItem> UpdateBudgetItem(BudgetItem entityToUpdate);
+
+    Task DeleteBudgetItemAsync(BudgetItem budgetItem);
 }

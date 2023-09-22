@@ -15,3 +15,4 @@ global using BudgetsService.Infrastructure.Extensions;
 global using BudgetsService.Infrastructure.Interface;
 global using BudgetsService.Infrastructure.Models;
 global using FluentValidation;
+global using Microsoft.EntityFrameworkCore;

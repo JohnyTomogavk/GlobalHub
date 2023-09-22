@@ -18,14 +18,6 @@ export const getBudgetItemsWithFiltersById = async (
   return PutRequest<BudgetItemsRequestDto, BudgetItemsPaginatedResponseDto>(resourceUrl, budgetItemsRequestDto);
 };
 
-export const deleteBudgetById = async (budgetId: number): Promise<AxiosResponse<number>> => {
-  const resourceUrl = getResourceUrl(BUDGETS_API_BASE, apiConstants.DELETE_BUDGET_BY_ID);
-
-  return DeleteRequest<object, number>(resourceUrl, {
-    budgetId: budgetId,
-  });
-};
-
 export const createBudgetItem = async (createDto: BudgetItemCreateDto): Promise<AxiosResponse<BudgetItemDto>> => {
   const resourceUrl = getResourceUrl(BUDGETS_API_BASE, apiConstants.CREATE_BUDGET_ITEM);
 
@@ -36,4 +28,12 @@ export const updateBudgetItem = async (updateDto: BudgetItemUpdateDto): Promise<
   const resourceUrl = getResourceUrl(BUDGETS_API_BASE, apiConstants.UPDATE_BUDGET_ITEM);
 
   return PutRequest<BudgetItemUpdateDto, BudgetItemDto>(resourceUrl, updateDto);
+};
+
+export const deleteBudgetItemById = async (budgetItemId: number): Promise<AxiosResponse<number>> => {
+  const resourceUrl = getResourceUrl(BUDGETS_API_BASE, apiConstants.DELETE_BUDGET_ITEM_BY_ID);
+
+  return DeleteRequest<object, number>(resourceUrl, {
+    budgetItemId: budgetItemId,
+  });
 };
