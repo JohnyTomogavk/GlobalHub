@@ -1,4 +1,4 @@
-import { GetRequest, PostRequest, PutRequest } from './base/apiServiceBase';
+import { DeleteRequest, GetRequest, PostRequest, PutRequest } from './base/apiServiceBase';
 import { AxiosResponse } from 'axios';
 import { getResourceUrl } from '../helpers/urlHelper';
 import * as apiConstants from '../constants/apiConstants';
@@ -68,4 +68,12 @@ export const updateBudgetDescription = async (budgetId: number, description: str
       },
     }
   );
+};
+
+export const deleteBudgetById = async (budgetId: number): Promise<AxiosResponse<number>> => {
+  const resourceUrl = getResourceUrl(BUDGETS_API_BASE, apiConstants.DELETE_BUDGET_BY_ID);
+
+  return DeleteRequest<object, number>(resourceUrl, {
+    budgetId: budgetId,
+  });
 };

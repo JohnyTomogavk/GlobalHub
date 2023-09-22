@@ -10,4 +10,6 @@ public interface IBudgetItemService
     Task<BudgetItemDto> UpdateBudgetItemTags(long budgetItemId, IEnumerable<long> tagsIds);
 
     Task<BudgetItemDto> UpdateBudgetItem(BudgetItemUpdateDto updateDto);
+
+    Task DeleteBudgetItem(long budgetItemId);
 }

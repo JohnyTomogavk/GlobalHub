@@ -5,6 +5,8 @@ import {
   DatePicker,
   Form,
   Input,
+  Popconfirm,
+  Popover,
   Row,
   Select,
   Space,
@@ -23,7 +25,12 @@ import { TagDto } from '../../../dto/tags/tagDto';
 import { BudgetItemOperationType, BudgetItemOperationTypeTitle } from '../../../enums/budgetItemOperationType';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import { isArray, toNumber } from 'lodash';
-import { createBudgetItem, getBudgetItemsWithFiltersById, updateBudgetItem } from '../../../api/budgetItemService';
+import {
+  createBudgetItem,
+  deleteBudgetItemById,
+  getBudgetItemsWithFiltersById,
+  updateBudgetItem,
+} from '../../../api/budgetItemService';
 import { BudgetItemsRequestDto } from '../../../dto/budgetItems/budgetItemsRequestDto';
 import { BudgetItemsPaginatedResponseDto } from '../../../dto/budgetItems/budgetItemsPaginatedResponseDto';
 import { BudgetItemDto } from '../../../dto/budgets/budgetItemDto';
@@ -41,6 +48,7 @@ import {
 import { ColorValues, TagColor } from '../../../enums/tagColor';
 import dayjs from 'dayjs';
 import { nameof } from '../../../helpers/objectHelper';
+import { HttpStatusCode } from 'axios';
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -149,6 +157,15 @@ export const BudgetItemsTable = ({
     }));
   };
 
+  const onBudgetItemDeleteButtonClick = async (record: BudgetItemTableEntry): Promise<void> => {
+    const { status } = await deleteBudgetItemById(record.key);
+
+    if (status !== HttpStatusCode.Ok) return;
+
+    setBudgetItemsTableEntries((prevState) => prevState.filter((entry) => entry.key !== record.key));
+    await triggerAnalyticStatsRecalculation();
+  };
+
   const columns: ColumnsType<BudgetItemTableEntry> = [
     {
       title: 'Title',
@@ -205,10 +222,21 @@ export const BudgetItemsTable = ({
       title: 'Action',
       key: 'action',
       render: (_, record: BudgetItemTableEntry): ReactNode => (
-        <Space size="middle">
-          <a onClick={(): void => onBudgetItemEditButtonClick(record)}>Edit</a>
-          <a>Delete</a>
-        </Space>
+        <>
+          <Button type={'link'} onClick={(): void => onBudgetItemEditButtonClick(record)}>
+            Edit
+          </Button>
+          <Popconfirm
+            onConfirm={(): Promise<void> => onBudgetItemDeleteButtonClick(record)}
+            title={'Delete budget item'}
+            description={'Sure to delete budget item?'}
+            placement={'bottomRight'}
+          >
+            <Button type={'link'} danger>
+              Delete
+            </Button>
+          </Popconfirm>
+        </>
       ),
     },
   ];

@@ -46,4 +46,12 @@ public class BudgetItemController : ControllerBase
 
         return Ok(updatedBudgetItem);
     }
+
+    [HttpDelete]
+    public async Task<ActionResult> DeleteBudgetItem(long budgetItemId)
+    {
+        await _budgetItemService.DeleteBudgetItem(budgetItemId);
+
+        return Ok();
+    }
 }

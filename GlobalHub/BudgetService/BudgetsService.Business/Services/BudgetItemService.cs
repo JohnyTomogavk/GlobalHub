@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace BudgetsService.Business.Services;
+﻿namespace BudgetsService.Business.Services;
 
 public class BudgetItemService : IBudgetItemService
 {
@@ -95,6 +93,18 @@ public class BudgetItemService : IBudgetItemService
         var mappedEntity = _mapper.Map<BudgetItemDto>(updateEntity);
 
         return mappedEntity;
+    }
+
+    public async Task DeleteBudgetItem(long budgetItemId)
+    {
+        var budgetItem = await _budgetItemRepository.GetBudgetItemById(budgetItemId);
+
+        if (budgetItem == null)
+        {
+            throw new InvalidOperationException("Budget Item not found");
+        }
+
+        await _budgetItemRepository.DeleteBudgetItemAsync(budgetItem);
     }
 
     private static IQueryable<BudgetItem> ApplyFilters(IQueryable<BudgetItem> budgetItems, FilterModelDto filterModel)

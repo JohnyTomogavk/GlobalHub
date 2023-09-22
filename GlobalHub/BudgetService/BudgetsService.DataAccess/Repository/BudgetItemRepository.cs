@@ -1,6 +1,4 @@
-﻿using BudgetsService.Infrastructure.Models;
-
-namespace BudgetsService.DataAccess.Repository;
+﻿namespace BudgetsService.DataAccess.Repository;
 
 public class BudgetItemRepository : IBudgetItemRepository
 {
@@ -50,5 +48,11 @@ public class BudgetItemRepository : IBudgetItemRepository
         await _dbContext.SaveChangesAsync();
 
         return updateEntity;
+    }
+
+    public async Task DeleteBudgetItemAsync(BudgetItem budgetItem)
+    {
+        _dbContext.Remove(budgetItem);
+        await _dbContext.SaveChangesAsync();
     }
 }

@@ -3,6 +3,7 @@ import { Button, Card, Col, Collapse, Form, Progress, Result, Row, Space, Statis
 import styles from './budjet.module.scss';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
+  deleteBudgetById,
   getBudgetAnalyticForCurrentMonthById,
   getBudgetById,
   updateBudgetDescription,
@@ -22,7 +23,6 @@ import { BudgetItemsTable } from './budgetItemsTable/BudgetItemsTable';
 import { DistributionByDaysChart } from './analyticCharts/DistributionByDaysChart';
 import { BalanceOnLimitsByTagsChart } from './analyticCharts/BalanceOnLimitsByTagsChart';
 import { ExpensesByTagsChart } from './analyticCharts/ExpensesByTagsChart';
-import { deleteBudgetById } from '../../api/budgetItemService';
 import { BUDGET_LIST_ROUTE } from '../../constants/routingConstants';
 import { HttpStatusCode } from 'axios';
 import { observer } from 'mobx-react-lite';
