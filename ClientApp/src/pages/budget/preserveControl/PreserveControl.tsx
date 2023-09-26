@@ -9,6 +9,8 @@ interface PreserveControlProps {
 }
 
 const preservePercentChangeStep = 5;
+const maxPercentValue = 100;
+const minPercentValue = 0;
 
 export const PreserveControl = ({
   preserveFromIncomingPercent,
@@ -22,7 +24,25 @@ export const PreserveControl = ({
   }, [preserveFromIncomingPercent, isValueEditable]);
 
   const onPercentSave = async (): Promise<void> => {
-    await onValueUpdated(editablePercentValue);
+    if (preserveFromIncomingPercent !== editablePercentValue) {
+      await onValueUpdated(editablePercentValue);
+    }
+  };
+
+  const onValueIncrease = (): void => {
+    setEditablePercentValue((prevState) => {
+      const newValue = prevState + preservePercentChangeStep;
+
+      return newValue > maxPercentValue ? maxPercentValue : newValue;
+    });
+  };
+
+  const onValueDecrease = (): void => {
+    setEditablePercentValue((prevState) => {
+      const newValue = prevState - preservePercentChangeStep;
+
+      return newValue < minPercentValue ? minPercentValue : newValue;
+    });
   };
 
   return (
@@ -32,14 +52,8 @@ export const PreserveControl = ({
       </Tooltip>
       {isValueEditable ? (
         <Button.Group>
-          <Button
-            icon={<MinusOutlined />}
-            onClick={(): void => setEditablePercentValue((prevState) => prevState - preservePercentChangeStep)}
-          />
-          <Button
-            icon={<PlusOutlined />}
-            onClick={(): void => setEditablePercentValue((prevState) => prevState + preservePercentChangeStep)}
-          />
+          <Button icon={<MinusOutlined />} onClick={onValueDecrease} />
+          <Button icon={<PlusOutlined />} onClick={onValueIncrease} />
           <Button type={'primary'} icon={<SaveOutlined />} onClick={onPercentSave}>
             Save
           </Button>
