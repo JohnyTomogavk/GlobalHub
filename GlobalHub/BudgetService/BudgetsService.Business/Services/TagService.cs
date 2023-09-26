@@ -1,4 +1,6 @@
-﻿namespace BudgetsService.Business.Services;
+﻿using ValidationException = FluentValidation.ValidationException;
+
+namespace BudgetsService.Business.Services;
 
 public class TagService : ITagService
 {

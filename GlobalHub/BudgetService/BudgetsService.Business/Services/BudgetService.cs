@@ -1,19 +1,24 @@
-﻿namespace BudgetsService.Business.Services;
+﻿using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
+
+namespace BudgetsService.Business.Services;
 
 public class BudgetService : IBudgetService
 {
     private readonly IBudgetRepository _budgetRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<Budget> _budgetValidator;
+    private readonly IValidator<UpdateBudgetPreservePercentDto> _preservePercentDto;
 
     public BudgetService(
         IBudgetRepository budgetRepository,
         IMapper mapper,
-        IValidator<Budget> budgetValidator)
+        IValidator<Budget> budgetValidator,
+        IValidator<UpdateBudgetPreservePercentDto> preservePercentDto)
     {
         _budgetRepository = budgetRepository;
         _mapper = mapper;
         _budgetValidator = budgetValidator;
+        _preservePercentDto = preservePercentDto;
     }
 
     public async Task<IEnumerable<BudgetMap>> GetUserBudgetsMapAsync()
@@ -71,14 +76,36 @@ public class BudgetService : IBudgetService
         await _budgetRepository.UpdateBudgetDescription(budgetId, description);
     }
 
+    public async Task<Budget> UpdatePreservePercent(long budgetId, UpdateBudgetPreservePercentDto dto)
+    {
+        var validationResult = await this._preservePercentDto.ValidateAsync(dto);
+
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException("Budget Preserve Percent is not valid");
+        }
+
+        var budget = await _budgetRepository.GetBudgetByIdWithIncludeAsync(budgetId);
+
+        if (budget == null)
+        {
+            throw new InvalidOperationException("Budget is not found");
+        }
+
+        budget.PreserveFromIncomingPercent = dto.PreservePercent;
+        return await _budgetRepository.UpdateBudget(budget);
+    }
+
     private BudgetAnalyticDto GetBudgetAnalytic(Budget budget)
     {
+        // TODO: Current month filter
         decimal moneyPreserved = budget.BudgetItems
             .Where(item => item.BudgetItemOperationType == BudgetItemOperationType.Incoming)
             .Sum(item => item.OperationCost) * budget.PreserveFromIncomingPercent / 100;
 
         var analyticDto = new BudgetAnalyticDto
         {
+            // TODO: Current month filter
             IrregularExpenses = budget.BudgetItems
                 .Where(item =>
                     item is
@@ -87,6 +114,7 @@ public class BudgetService : IBudgetService
                         BudgetItemOperationType: BudgetItemOperationType.Outgoing
                     })
                 .Sum(item => item.OperationCost),
+            // TODO: Current month filter
             RegularExpenses = budget.BudgetItems
                 .Where(item =>
                     item is
@@ -115,6 +143,7 @@ public class BudgetService : IBudgetService
     {
         decimal avgDailyExpenses = 0;
 
+        // TODO: Current month filter
         if (budget.BudgetItems.Any(item => item.BudgetItemOperationType == BudgetItemOperationType.Outgoing))
         {
             avgDailyExpenses = budget.BudgetItems

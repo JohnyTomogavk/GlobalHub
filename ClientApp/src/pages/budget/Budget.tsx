@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useState } from 'react';
-import { Button, Card, Col, Collapse, Form, Progress, Result, Row, Space, Statistic, Tooltip, Typography } from 'antd';
+import { Button, Card, Col, Collapse, Form, Result, Row, Space, Statistic, Typography } from 'antd';
 import styles from './budjet.module.scss';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
@@ -8,12 +8,13 @@ import {
   getBudgetById,
   updateBudgetDescription,
   updateBudgetTitle,
+  updatePreservePercent,
 } from '../../api/budgetsService';
 import { toNumber } from 'lodash';
 import { BudgetDto } from '../../dto/budgets/budgetDto';
 import CountUp from 'react-countup';
 import { valueType } from 'antd/es/statistic/utils';
-import { EditOutlined, MinusOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
+import { EditOutlined } from '@ant-design/icons';
 import { ItemInfoSubHeader } from '../../components/itemInfoHeader/ItemInfoHeader';
 import Paragraph from 'antd/es/typography/Paragraph';
 import { BudgetAnalyticDto } from '../../dto/budgets/budgetAnalyticDto';
@@ -29,6 +30,7 @@ import { observer } from 'mobx-react-lite';
 import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
 import { BreadCrumbItem } from '../../models/breadCrumbs/breadCrumbItem';
 import { getBreadCrumbsItemsByLocation } from '../../helpers/breadCrumbsHelper';
+import { PreserveControl } from './preserveControl/PreserveControl';
 
 const { Text } = Typography;
 
@@ -41,6 +43,7 @@ export const BudgetComponent = observer((): JSX.Element => {
   const [budgetDto, setBudgetDto] = useState<BudgetDto | undefined>();
   const [budgetAnalyticData, setBudgetAnalyticData] = useState<BudgetAnalyticDto | undefined>();
   const [budgetTags, setBudgetTags] = useState<TagDto[]>([]);
+  const [isPreservePercentEditable, setIsPreservePercentEditable] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const [breadCrumbsItems, setBreadCrumbsItems] = useState<BreadCrumbItem[]>([]);
@@ -114,6 +117,23 @@ export const BudgetComponent = observer((): JSX.Element => {
 
   const onNewTagAdded = (newTag: TagDto): void => {
     setBudgetTags((tags) => [...tags, newTag]);
+  };
+
+  const onPreservePercentEditClick = (): void => {
+    setIsPreservePercentEditable((prevState) => !prevState);
+  };
+
+  const opPreservePercentUpdate = async (newPercentValue: number): Promise<void> => {
+    if (!id) return;
+
+    const { data: updatedBudget, status } = await updatePreservePercent(toNumber(id), newPercentValue);
+
+    if (status === HttpStatusCode.Ok) {
+      setBudgetDto(updatedBudget);
+      await fetchAnalyticData();
+    }
+
+    setIsPreservePercentEditable(false);
   };
 
   return (
@@ -243,18 +263,13 @@ export const BudgetComponent = observer((): JSX.Element => {
                 height: '100%',
               }}
               title={'Preserve'}
-              extra={<Button size={'small'} icon={<EditOutlined />} />}
+              extra={<Button onClick={onPreservePercentEditClick} size={'small'} icon={<EditOutlined />} />}
             >
-              <Space direction="vertical" align="center">
-                <Tooltip title="Preserved from incoming">
-                  <Progress type="dashboard" percent={budgetDto?.preserveFromIncomingPercent} />
-                </Tooltip>
-                <Button.Group>
-                  <Button icon={<MinusOutlined />} />
-                  <Button icon={<PlusOutlined />} />
-                  <Button icon={<SaveOutlined />}>Save</Button>
-                </Button.Group>
-              </Space>
+              <PreserveControl
+                preserveFromIncomingPercent={budgetDto?.preserveFromIncomingPercent ?? 0}
+                isValueEditable={isPreservePercentEditable}
+                onValueUpdated={opPreservePercentUpdate}
+              />
             </Card>
           </Col>
           <Col flex={'auto'}>

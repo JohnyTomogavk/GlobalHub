@@ -46,7 +46,7 @@ public class BudgetController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<BudgetAnalyticDto>> GetBudgetAnalyticForCurrentMonth(long id)
+    public async Task<ActionResult<BudgetAnalyticDto>> GetBudgetAnalyticForDateRange(long id)
     {
         var currentDate = _dateTimeService.CurrentDate;
         var currentMonthDateRange = _dateTimeService.GetDateTimeRangeByDate(currentDate);
@@ -83,5 +83,14 @@ public class BudgetController : ControllerBase
         await _budgetService.UpdateBudgetDescription(budgetId, descriptionUpdateDto.Description);
 
         return Ok();
+    }
+
+    [HttpPut]
+    public async Task<ActionResult<Budget>> UpdateBudgetPreservePercent(long budgetId,
+        UpdateBudgetPreservePercentDto updateBudgetPreservePercentDto)
+    {
+        var budget = await _budgetService.UpdatePreservePercent(budgetId, updateBudgetPreservePercentDto);
+
+        return Ok(budget);
     }
 }

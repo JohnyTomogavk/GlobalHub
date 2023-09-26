@@ -15,4 +15,6 @@ public interface IBudgetService
     Task UpdateBudgetTitle(long budgetId, string title);
 
     Task UpdateBudgetDescription(long budgetId, string description);
+
+    Task<Budget> UpdatePreservePercent(long budgetId, UpdateBudgetPreservePercentDto dto);
 }

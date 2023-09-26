@@ -13,4 +13,6 @@ public interface IBudgetRepository
     Task UpdateBudgetTitle(long budgetId, string title);
 
     Task UpdateBudgetDescription(long budgetId, string description);
+
+    Task<Budget> UpdateBudget(Budget budget);
 }

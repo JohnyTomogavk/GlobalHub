@@ -72,8 +72,8 @@ const tablePageSizeOptions = [5, 10, 20, 50, 100];
 const countOfDaysInWeek = 7;
 
 const dateRangePickerPresets: TimeRangePickerProps['presets'] = [
-  { label: 'Last month', value: [dayjs().date(1).add(-1, 'months'), dayjs().date(1).add(-1, 'days')] },
   { label: 'This month', value: [dayjs().date(1), dayjs().date(1).add(1, 'months').add(-1, 'days')] },
+  { label: 'Last month', value: [dayjs().date(1).add(-1, 'months'), dayjs().date(1).add(-1, 'days')] },
   { label: 'Last 7 Days', value: [dayjs().add(-countOfDaysInWeek, 'days'), dayjs()] },
 ];
 
@@ -309,12 +309,6 @@ export const BudgetItemsTable = ({
     initializeBudgetItemsTable(budgetItemsResponse);
   };
 
-  const fetchTableAggregationData = async (): Promise<void> => {
-    const requestDto = getBudgetItemRequestDto();
-    const { data: budgetItemsResponse } = await getBudgetItemsWithFiltersById(toNumber(budgetId), requestDto);
-    initializeBudgetItemsTable(budgetItemsResponse);
-  };
-
   useEffect(() => {
     loadBudgetItems();
   }, [budgetId]);
@@ -328,7 +322,7 @@ export const BudgetItemsTable = ({
       await createBudgetItem(createDto);
     }
 
-    await Promise.all([fetchTableAggregationData(), triggerAnalyticStatsRecalculation()]);
+    await Promise.all([loadBudgetItems(), triggerAnalyticStatsRecalculation()]);
   };
 
   const onBudgetItemDrawerClose = (): void => {
@@ -368,7 +362,11 @@ export const BudgetItemsTable = ({
                     </Form.Item>
                   </Col>
                   <Col span={8} offset={4}>
-                    <Form.Item name={nameof<BudgetItemsFiltersModel>('budgetItemDateRange')} label={'By date'}>
+                    <Form.Item
+                      name={nameof<BudgetItemsFiltersModel>('budgetItemDateRange')}
+                      initialValue={dateRangePickerPresets[0].value}
+                      label={'By date'}
+                    >
                       <RangePicker
                         presets={dateRangePickerPresets}
                         style={{

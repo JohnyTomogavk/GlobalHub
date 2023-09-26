@@ -77,3 +77,19 @@ export const deleteBudgetById = async (budgetId: number): Promise<AxiosResponse<
     budgetId: budgetId,
   });
 };
+
+export const updatePreservePercent = async (budgetId: number, newPercentValue: number): Promise<AxiosResponse> => {
+  const resourceUrl = getResourceUrl(BUDGETS_API_BASE, apiConstants.UPDATE_BUDGET_PRESERVE_PERCENT);
+
+  return PutRequest<object, undefined>(
+    resourceUrl,
+    {
+      preservePercent: newPercentValue,
+    },
+    {
+      params: {
+        budgetId: budgetId,
+      },
+    }
+  );
+};

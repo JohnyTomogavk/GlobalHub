@@ -15,10 +15,11 @@ export const DELETE_NOTE = '/Notes/DeleteNote';
 export const GET_BUDGETS_MAP = '/Budget/GetBudgetsMap';
 export const GET_BUDGET_BY_ID = '/Budget/GetBudgetById';
 export const CREATE_BUDGET = '/Budget/CreateNewBudget';
-export const GET_BUDGETS_ANALYTIC_FOR_CURRENT_MONTH = '/Budget/GetBudgetAnalyticForCurrentMonth';
+export const GET_BUDGETS_ANALYTIC_FOR_CURRENT_MONTH = '/Budget/GetBudgetAnalyticForDateRange';
 export const DELETE_BUDGET_BY_ID = '/Budget/DeleteBudgetById';
 export const UPDATE_BUDGET_TITLE = '/Budget/UpdateBudgetTitle';
 export const UPDATE_BUDGET_DESCRIPTION = '/Budget/UpdateBudgetDescription';
+export const UPDATE_BUDGET_PRESERVE_PERCENT = '/Budget/UpdateBudgetPreservePercent';
 
 // Constants related to budget items
 export const GET_BUDGET_ITEMS_BY_BUDGET_ID = '/BudgetItem/GetBudgetItemsByBudgetId';
