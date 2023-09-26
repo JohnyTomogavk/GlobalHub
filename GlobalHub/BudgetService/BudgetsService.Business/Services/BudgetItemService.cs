@@ -1,4 +1,6 @@
-﻿namespace BudgetsService.Business.Services;
+﻿using ValidationException = FluentValidation.ValidationException;
+
+namespace BudgetsService.Business.Services;
 
 public class BudgetItemService : IBudgetItemService
 {
@@ -39,11 +41,11 @@ public class BudgetItemService : IBudgetItemService
             queryOptions.PageNumber);
 
         var budgetItems = await budgetItemsQueryExpression.ToListAsync();
-        var budgetItemsDto = _mapper.Map<IEnumerable<BudgetItemDto>>(budgetItems);
+        var mappedBudgetItems = _mapper.Map<IEnumerable<BudgetItemDto>>(budgetItems);
 
         var responseDto = new BudgetItemPaginatedResponse()
         {
-            BudgetItems = budgetItemsDto,
+            BudgetItems = mappedBudgetItems,
             TotalItems = aggregationMetrics.ItemsCount,
             TotalExpenses = aggregationMetrics.TotalExpenses,
             TotalIncoming = aggregationMetrics.TotalIncoming

@@ -84,4 +84,13 @@ public class BudgetController : ControllerBase
 
         return Ok();
     }
+
+    [HttpPut]
+    public async Task<ActionResult<Budget>> UpdateBudgetPreservePercent(long budgetId,
+        UpdateBudgetPreservePercentDto updateBudgetPreservePercentDto)
+    {
+        var budget = await _budgetService.UpdatePreservePercent(budgetId, updateBudgetPreservePercentDto);
+
+        return Ok(budget);
+    }
 }

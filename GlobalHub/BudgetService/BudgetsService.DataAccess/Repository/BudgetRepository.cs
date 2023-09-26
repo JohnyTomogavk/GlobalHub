@@ -56,4 +56,12 @@ public class BudgetRepository : IBudgetRepository
         _dbContext.Update(budget);
         await _dbContext.SaveChangesAsync();
     }
+
+    public async Task<Budget> UpdateBudget(Budget budget)
+    {
+        var updatedBudget = _dbContext.Budgets.Update(budget).Entity;
+        await _dbContext.SaveChangesAsync();
+
+        return updatedBudget;
+    }
 }

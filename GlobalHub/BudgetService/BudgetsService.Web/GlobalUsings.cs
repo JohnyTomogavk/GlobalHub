@@ -9,6 +9,7 @@ global using BudgetsService.Business.Services.Interfaces;
 global using BudgetsService.Business.Validators.Budgets;
 global using BudgetsService.DataAccess.Constants;
 global using BudgetsService.DataAccess.Context;
+global using BudgetsService.DataAccess.Entities.Budgets;
 global using BudgetsService.DataAccess.Repository;
 global using BudgetsService.DataAccess.Repository.Interfaces;
 global using BudgetsService.Infrastructure.Services;

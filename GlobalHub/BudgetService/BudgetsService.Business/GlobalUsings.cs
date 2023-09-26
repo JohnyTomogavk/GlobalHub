@@ -1,5 +1,6 @@
 ﻿// Global using directives
 
+global using System.ComponentModel.DataAnnotations;
 global using AutoMapper;
 global using BudgetsService.Business.Dto.Budget;
 global using BudgetsService.Business.Dto.BudgetItems;
