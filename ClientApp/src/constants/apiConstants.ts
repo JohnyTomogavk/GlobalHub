@@ -19,6 +19,7 @@ export const GET_BUDGETS_ANALYTIC_FOR_CURRENT_MONTH = '/Budget/GetBudgetAnalytic
 export const DELETE_BUDGET_BY_ID = '/Budget/DeleteBudgetById';
 export const UPDATE_BUDGET_TITLE = '/Budget/UpdateBudgetTitle';
 export const UPDATE_BUDGET_DESCRIPTION = '/Budget/UpdateBudgetDescription';
+export const UPDATE_BUDGET_PRESERVE_PERCENT = '/Budget/UpdateBudgetPreservePercent';
 
 // Constants related to budget items
 export const GET_BUDGET_ITEMS_BY_BUDGET_ID = '/BudgetItem/GetBudgetItemsByBudgetId';

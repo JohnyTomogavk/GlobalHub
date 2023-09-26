@@ -3,7 +3,7 @@ import { AxiosResponse } from 'axios';
 import { getResourceUrl } from '../helpers/urlHelper';
 import * as apiConstants from '../constants/apiConstants';
 import { BudgetMap } from '../dto/sideMenu/budgetMap';
-import { BUDGETS_API_BASE } from '../constants/apiConstants';
+import { BUDGETS_API_BASE, UPDATE_BUDGET_PRESERVE_PERCENT } from '../constants/apiConstants';
 import { CreateBudgetDto } from '../dto/budgets/createBudgetDto';
 import { BudgetDto } from '../dto/budgets/budgetDto';
 import { BudgetAnalyticDto } from '../dto/budgets/budgetAnalyticDto';
@@ -76,4 +76,20 @@ export const deleteBudgetById = async (budgetId: number): Promise<AxiosResponse<
   return DeleteRequest<object, number>(resourceUrl, {
     budgetId: budgetId,
   });
+};
+
+export const updatePreservePercent = async (budgetId: number, newPercentValue: number): Promise<AxiosResponse> => {
+  const resourceUrl = getResourceUrl(BUDGETS_API_BASE, apiConstants.UPDATE_BUDGET_PRESERVE_PERCENT);
+
+  return PutRequest<object, undefined>(
+    resourceUrl,
+    {
+      preservePercent: newPercentValue,
+    },
+    {
+      params: {
+        budgetId: budgetId,
+      },
+    }
+  );
 };
