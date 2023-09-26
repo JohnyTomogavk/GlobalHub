@@ -1,6 +1,4 @@
-﻿using ValidationException = FluentValidation.ValidationException;
-
-namespace BudgetsService.Business.Services;
+﻿namespace BudgetsService.Business.Services;
 
 public class BudgetItemService : IBudgetItemService
 {
