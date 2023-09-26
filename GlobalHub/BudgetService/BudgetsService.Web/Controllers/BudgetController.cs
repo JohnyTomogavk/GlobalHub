@@ -46,7 +46,7 @@ public class BudgetController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<BudgetAnalyticDto>> GetBudgetAnalyticForCurrentMonth(long id)
+    public async Task<ActionResult<BudgetAnalyticDto>> GetBudgetAnalyticForDateRange(long id)
     {
         var currentDate = _dateTimeService.CurrentDate;
         var currentMonthDateRange = _dateTimeService.GetDateTimeRangeByDate(currentDate);
