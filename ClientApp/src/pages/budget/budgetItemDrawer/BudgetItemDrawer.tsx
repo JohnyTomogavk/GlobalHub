@@ -46,7 +46,7 @@ export const BudgetItemDrawer = ({
 }: BudgetItemDrawerProps): JSX.Element => {
   const [budgetItemForm] = useForm<BudgetItemDrawerModel>();
   const [isLoading, setIsLoading] = useState(true);
-  const selectedTagsWatcher = useWatch('selectedTags', budgetItemForm);
+  const selectedTagsWatcher = useWatch(nameof<BudgetItemDrawerModel>('selectedTags'), budgetItemForm);
 
   const todayDate = dayjs(new Date());
 

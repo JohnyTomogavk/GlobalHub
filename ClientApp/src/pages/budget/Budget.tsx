@@ -28,17 +28,15 @@ import { BUDGET_LIST_ROUTE } from '../../constants/routingConstants';
 import { HttpStatusCode } from 'axios';
 import { observer } from 'mobx-react-lite';
 import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
-import { BreadCrumbItem } from '../../models/breadCrumbs/breadCrumbItem';
-import { getBreadCrumbsItemsByLocation } from '../../helpers/breadCrumbsHelper';
 import { PreserveControl } from './preserveControl/PreserveControl';
+import useBreadcrumbs from '../../hooks/useBreadcrumbs';
 
 const { Text } = Typography;
 
 const countUpFormatter = (value: valueType): ReactNode => <CountUp end={+value} separator="," />;
 
-const { budgetStore, getSideMenuItemByRoutingPath } = SideMenuIndexStore;
-
 export const BudgetComponent = observer((): JSX.Element => {
+  const { budgetStore, sideMenuItems } = SideMenuIndexStore;
   const { id } = useParams();
   const [budgetDto, setBudgetDto] = useState<BudgetDto | undefined>();
   const [budgetAnalyticData, setBudgetAnalyticData] = useState<BudgetAnalyticDto | undefined>();
@@ -46,7 +44,7 @@ export const BudgetComponent = observer((): JSX.Element => {
   const [isPreservePercentEditable, setIsPreservePercentEditable] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const [breadCrumbsItems, setBreadCrumbsItems] = useState<BreadCrumbItem[]>([]);
+  const breadCrumbsItems = useBreadcrumbs(location.pathname, sideMenuItems);
 
   const loadBudgetData = async (budgetId: number): Promise<void> => {
     const [{ data: budget }, { data: budgetAnalytic }, { data: tags }] = await Promise.all([
@@ -66,11 +64,6 @@ export const BudgetComponent = observer((): JSX.Element => {
     const budgetId = toNumber(id);
     loadBudgetData(budgetId);
   }, [id]);
-
-  useEffect(() => {
-    const items = getBreadCrumbsItemsByLocation(location.pathname, getSideMenuItemByRoutingPath);
-    setBreadCrumbsItems(items);
-  }, [location, budgetStore.sideMenuBudgetItems]);
 
   const onBudgetTitleUpdate = async (title: string): Promise<void> => {
     if (!id) return;
@@ -151,7 +144,8 @@ export const BudgetComponent = observer((): JSX.Element => {
           }
         }}
         breadCrumbsItems={breadCrumbsItems}
-        lastEdited={budgetDto?.updatedDate ?? budgetDto?.createdDate}
+        editedAt={budgetDto?.updatedDate}
+        createdAt={budgetDto?.createdDate ?? new Date()}
         isLoading={false}
       />
       <div className={styles.pageContent}>
@@ -236,7 +230,7 @@ export const BudgetComponent = observer((): JSX.Element => {
               style={{
                 height: '100%',
               }}
-              title={'Budget analytic'}
+              title={'Operations analytic'}
             >
               <Space direction={'vertical'}>
                 <Statistic
