@@ -15,20 +15,19 @@ import Title from 'antd/es/typography/Title';
 import { RichTextEditor } from '../../components/richTextEditor/RichTextEditor';
 import * as RoutingConstants from '../../constants/routingConstants';
 import { observer } from 'mobx-react-lite';
-import { getBreadCrumbsItemsByLocation } from '../../helpers/breadCrumbsHelper';
-import { BreadCrumbItem } from '../../models/breadCrumbs/breadCrumbItem';
 import { theme } from 'antd';
 import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
-
-const { notesStore, commonSideMenuStore, getSideMenuItemByRoutingPath } = SideMenuIndexStore;
+import useBreadcrumbs from '../../hooks/useBreadcrumbs';
 
 export const NotesComponent = observer((): JSX.Element => {
+  const { notesStore, commonSideMenuStore, sideMenuItems } = SideMenuIndexStore;
+
   const { id } = useParams();
   const location = useLocation();
 
   const [isLoading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
-  const [breadCrumbsItems, setBreadCrumbsItems] = useState<BreadCrumbItem[]>([]);
+  const breadCrumbsItems = useBreadcrumbs(location.pathname, sideMenuItems);
 
   const [note, setNote] = useState<Note | undefined>(undefined);
   const noteRef = useRef(note);
@@ -83,11 +82,6 @@ export const NotesComponent = observer((): JSX.Element => {
   useEffect((): void => {
     loadNote();
   }, [id]);
-
-  useEffect(() => {
-    const items = getBreadCrumbsItemsByLocation(location.pathname, getSideMenuItemByRoutingPath);
-    setBreadCrumbsItems(items);
-  }, [location, notesStore.sideMenuNoteItems]);
 
   return (
     <div

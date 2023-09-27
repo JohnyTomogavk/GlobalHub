@@ -26,10 +26,6 @@ class SideMenuIndexStore {
   get sideMenuItems(): SideMenuItemModel[] {
     return [...this.notesStore.sideMenuNoteItems, ...this.budgetStore.sideMenuBudgetItems];
   }
-
-  getSideMenuItemByRoutingPath(routingPath: string): SideMenuItemModel | undefined {
-    return this.sideMenuItems.find((item) => item.key === routingPath);
-  }
 }
 
 export default new SideMenuIndexStore();

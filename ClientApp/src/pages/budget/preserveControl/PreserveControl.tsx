@@ -1,4 +1,4 @@
-import { Button, Progress, Space, Tooltip, Typography } from 'antd';
+import { Button, Progress, Space, Tooltip } from 'antd';
 import { MinusOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 
