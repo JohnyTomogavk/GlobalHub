@@ -151,7 +151,8 @@ export const BudgetComponent = observer((): JSX.Element => {
           }
         }}
         breadCrumbsItems={breadCrumbsItems}
-        lastEdited={budgetDto?.updatedDate ?? budgetDto?.createdDate}
+        editedAt={budgetDto?.updatedDate}
+        createdAt={budgetDto?.createdDate ?? new Date()}
         isLoading={false}
       />
       <div className={styles.pageContent}>

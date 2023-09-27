@@ -98,7 +98,8 @@ export const NotesComponent = observer((): JSX.Element => {
       <ItemInfoSubHeader
         onDeleteCallback={onItemDelete}
         breadCrumbsItems={breadCrumbsItems}
-        lastEdited={note?.updatedDate ?? note?.createdDate}
+        editedAt={note?.updatedDate}
+        createdAt={note?.createdDate ?? new Date()}
         isLoading={isLoading}
       />
       <div className={styles.pageContent}>

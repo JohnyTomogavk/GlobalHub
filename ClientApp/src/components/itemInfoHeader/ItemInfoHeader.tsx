@@ -1,5 +1,5 @@
 import { Header } from 'antd/es/layout/layout';
-import { Affix, Breadcrumb, Button, Space, Spin, theme, Typography } from 'antd';
+import { Affix, Breadcrumb, Button, Space, Spin, theme, Tooltip, Typography } from 'antd';
 import React from 'react';
 import styles from './itemInfoHeader.module.scss';
 import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -10,7 +10,8 @@ const { Text } = Typography;
 
 interface IItemInfoSubHeader {
   isLoading: boolean;
-  lastEdited?: Date;
+  editedAt?: Date;
+  createdAt: Date;
   onDeleteCallback: () => void;
   breadCrumbsItems: BreadCrumbItem[];
 }
@@ -30,23 +31,45 @@ export const ItemInfoSubHeader = (props: IItemInfoSubHeader): JSX.Element => {
       >
         <Breadcrumb items={props.breadCrumbsItems}></Breadcrumb>
         <Space>
-          <Text className={styles.itemSaveStatus} type={'secondary'}>
-            {props.isLoading ? (
-              <Space>
-                <Spin size={'small'} indicator={<LoadingOutlined spin />} />
-                Saving
+          <Tooltip
+            placement={'bottom'}
+            title={
+              <Space direction={'vertical'}>
+                <Space>
+                  <span>Created</span>
+                  <ReactTimeAgo date={props.createdAt} timeStyle={'round-minute'} locale={'en'} tooltip={false} />
+                </Space>
+                <Space>
+                  <span>Updated</span>
+                  <ReactTimeAgo
+                    date={props.editedAt ? new Date(props.editedAt) : props.createdAt}
+                    timeStyle={'round-minute'}
+                    locale={'en'}
+                    tooltip={false}
+                  />
+                </Space>
               </Space>
-            ) : (
-              <>
-                <span>Edited </span>
-                <ReactTimeAgo
-                  date={props.lastEdited ? new Date(props.lastEdited) : new Date()}
-                  timeStyle={'round-minute'}
-                  locale={'en'}
-                />
-              </>
-            )}
-          </Text>
+            }
+          >
+            <Text className={styles.itemSaveStatus} type={'secondary'}>
+              {props.isLoading ? (
+                <Space>
+                  <Spin size={'small'} indicator={<LoadingOutlined spin />} />
+                  Saving
+                </Space>
+              ) : (
+                <>
+                  <span>Edited </span>
+                  <ReactTimeAgo
+                    date={props.editedAt ? new Date(props.editedAt) : props.createdAt}
+                    timeStyle={'round-minute'}
+                    locale={'en'}
+                    tooltip={false}
+                  />
+                </>
+              )}
+            </Text>
+          </Tooltip>
           <Button
             title={'Remove item'}
             onClick={props.onDeleteCallback}
