@@ -1,4 +1,4 @@
-import { Button, Progress, Space, Tooltip } from 'antd';
+import { Button, Progress, Space, Tooltip, Typography } from 'antd';
 import { MinusOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 
@@ -48,7 +48,13 @@ export const PreserveControl = ({
   return (
     <Space direction="vertical" align="center">
       <Tooltip placement={'right'} title="Preserved from incoming">
-        <Progress type="dashboard" percent={isValueEditable ? editablePercentValue : preserveFromIncomingPercent} />
+        <Progress
+          type="circle"
+          success={{
+            percent: -1,
+          }}
+          percent={isValueEditable ? editablePercentValue : preserveFromIncomingPercent}
+        />
       </Tooltip>
       {isValueEditable ? (
         <Button.Group>

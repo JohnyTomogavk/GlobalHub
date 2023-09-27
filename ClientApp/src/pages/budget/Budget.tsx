@@ -236,7 +236,7 @@ export const BudgetComponent = observer((): JSX.Element => {
               style={{
                 height: '100%',
               }}
-              title={'Budget analytic'}
+              title={'Operations analytic'}
             >
               <Space direction={'vertical'}>
                 <Statistic

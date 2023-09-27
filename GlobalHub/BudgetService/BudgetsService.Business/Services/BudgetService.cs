@@ -142,11 +142,14 @@ public class BudgetService : IBudgetService
 
     private static decimal GetAverageDailyExpenses(BudgetItem[] budgetItems)
     {
+        var expenses = budgetItems.Where(budgetItem =>
+            budgetItem.BudgetItemOperationType == BudgetItemOperationType.Outgoing).ToList();
+
         decimal avgDailyExpenses = 0;
 
-        if (budgetItems.Any(item => item.BudgetItemOperationType == BudgetItemOperationType.Outgoing))
+        if (expenses.Any())
         {
-            avgDailyExpenses = budgetItems
+            avgDailyExpenses = expenses
                 .GroupBy(item => item.OperationDate.Date)
                 .Average(dailyExpenses =>
                     dailyExpenses.Average(dailySpentItem => dailySpentItem.OperationCost));
