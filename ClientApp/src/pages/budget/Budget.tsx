@@ -151,7 +151,7 @@ export const BudgetComponent = observer((): JSX.Element => {
       <div className={styles.pageContent}>
         {/* eslint-disable-next-line no-magic-numbers */}
         <Row className={styles.budgetRow} gutter={[8, 8]}>
-          <Col span={10}>
+          <Col span={6}>
             <Card size={'small'} className={styles.budgetInfoCard} title="Budget info">
               <Form layout={'vertical'} size={'small'}>
                 <Form.Item className={styles.budgetDescriptionFormField} label={<Text strong>Budget title:</Text>}>

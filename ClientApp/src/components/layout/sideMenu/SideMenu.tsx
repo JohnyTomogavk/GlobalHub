@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Title from 'antd/es/typography/Title';
-import { Divider, Space, theme, Tree } from 'antd';
+import { Divider, Space, Spin, theme, Tree } from 'antd';
 import {
   CheckOutlined,
   DashboardOutlined,
   DollarOutlined,
   DownOutlined,
   GlobalOutlined,
+  LoadingOutlined,
   PieChartOutlined,
   ReadOutlined,
 } from '@ant-design/icons';
@@ -27,12 +28,37 @@ import { createNewBudget, getBudgetsMap } from '../../../api/budgetsService';
 import { BUDGET_DEFAULT_TITLE } from '../../../constants/budgetConstants';
 import SideMenuIndexStore from '../../../store/sideMenu/sideMenuIndexStore';
 
-const { notesStore, budgetStore, commonSideMenuStore } = SideMenuIndexStore;
+interface SideMenuItemsLoadingState {
+  isNotesLoaded: boolean;
+  isBudgetsLoaded: boolean;
+  isTasksLoaded: boolean;
+}
+
+const getLoaderNode = (key: Key): SideMenuItemModel => ({
+  pageId: -1,
+  key: `${key}-loader-node`,
+  title: (
+    <Space>
+      <Spin size={'small'} indicator={<LoadingOutlined spin />} />
+      Loading
+    </Space>
+  ),
+  selectable: false,
+  isLeaf: true,
+});
 
 export const SideMenu = observer((): JSX.Element => {
+  const { notesStore, budgetStore, commonSideMenuStore } = SideMenuIndexStore;
   const { t } = useTranslation();
   const navigation = useNavigate();
   const location = useLocation();
+  const [{ isNotesLoaded, isTasksLoaded, isBudgetsLoaded }, setItemsLoadingState] = useState<SideMenuItemsLoadingState>(
+    {
+      isNotesLoaded: false,
+      isBudgetsLoaded: false,
+      isTasksLoaded: false,
+    }
+  );
 
   const {
     token: { colorBgLayout },
@@ -52,12 +78,20 @@ export const SideMenu = observer((): JSX.Element => {
     const notesMapResponse = await getNotesMap();
 
     notesStore.setNoteMapsItemsToSideMenu(notesMapResponse.data);
+    setItemsLoadingState((prevState) => ({
+      ...prevState,
+      isNotesLoaded: true,
+    }));
   };
 
   const fetchBudgetsMap = async (): Promise<void> => {
     const budgetsMapResponse = await getBudgetsMap();
 
     budgetStore.setBudgetMapsToSideMenu(budgetsMapResponse.data);
+    setItemsLoadingState((prevState) => ({
+      ...prevState,
+      isBudgetsLoaded: true,
+    }));
   };
 
   useEffect(() => {
@@ -113,7 +147,9 @@ export const SideMenu = observer((): JSX.Element => {
       icon: <DollarOutlined />,
       isLeaf: false,
       pageId: ResourceNameConstants.BUDGET_RESOURCE_NAME,
-      children: budgetStore.sideMenuBudgetItems,
+      children: isBudgetsLoaded
+        ? budgetStore.sideMenuBudgetItems
+        : [getLoaderNode(ResourceNameConstants.BUDGET_RESOURCE_NAME)],
     },
     {
       className: styles.sideMenuItem,
@@ -122,7 +158,9 @@ export const SideMenu = observer((): JSX.Element => {
       icon: <ReadOutlined />,
       isLeaf: false,
       pageId: ResourceNameConstants.NOTE_RESOURCE_NAME,
-      children: notesStore.sideMenuNoteItems,
+      children: isNotesLoaded
+        ? notesStore.sideMenuNoteItems
+        : [getLoaderNode(ResourceNameConstants.NOTE_RESOURCE_NAME)],
     },
     {
       className: styles.sideMenuItem,
@@ -134,7 +172,7 @@ export const SideMenu = observer((): JSX.Element => {
       icon: <CheckOutlined />,
       pageId: ResourceNameConstants.TASK_RESOURCE_NAME,
       isLeaf: false,
-      children: [],
+      children: isTasksLoaded ? [] : [getLoaderNode(ResourceNameConstants.TASK_RESOURCE_NAME)],
     },
     {
       title: getTopLevelItemTitle(t('SIDE_MENU.REPORTS')),
