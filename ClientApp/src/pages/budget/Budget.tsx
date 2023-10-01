@@ -272,6 +272,7 @@ export const BudgetComponent = observer((): JSX.Element => {
               style={{
                 height: '100%',
               }}
+              extra={<Button size={'small'}>Set limits</Button>}
               title={'Current budget status'}
             >
               <Result
@@ -279,7 +280,7 @@ export const BudgetComponent = observer((): JSX.Element => {
                   padding: 0,
                 }}
                 status="success"
-                subTitle="You are on track with your limits"
+                subTitle="You are on track with your limits. No attention needed"
               />
             </Card>
           </Col>
@@ -296,7 +297,7 @@ export const BudgetComponent = observer((): JSX.Element => {
                     children: (
                       <Row gutter={8}>
                         <Col span={15}>
-                          <Card extra={<Button>Update limits</Button>} size={'small'} title="Budget limits by tags">
+                          <Card size={'small'} title="Budget limits by tags">
                             <BalanceOnLimitsByTagsChart />
                           </Card>
                         </Col>
