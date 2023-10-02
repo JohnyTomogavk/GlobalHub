@@ -273,7 +273,7 @@ export const BudgetComponent = observer((): JSX.Element => {
                 height: '100%',
               }}
               extra={<Button size={'small'}>Set limits</Button>}
-              title={'Current budget status'}
+              title={'Current limits status'}
             >
               <Result
                 style={{

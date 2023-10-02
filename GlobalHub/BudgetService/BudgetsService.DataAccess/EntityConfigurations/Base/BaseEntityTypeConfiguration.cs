@@ -1,9 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace BudgetsService.DataAccess.EntityConfigurations.Base;
+﻿namespace BudgetsService.DataAccess.EntityConfigurations.Base;
 
 public class BaseEntityTypeConfiguration<T> : IEntityTypeConfiguration<T>
-    where T: BaseEntity
+    where T : BaseEntity
 {
     public void Configure(EntityTypeBuilder<T> builder)
     {

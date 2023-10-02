@@ -18,6 +18,8 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<Tag> Tags { get; set; }
 
+    public DbSet<TagLimit> TagLimits { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

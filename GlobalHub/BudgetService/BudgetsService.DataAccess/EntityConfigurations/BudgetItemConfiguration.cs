@@ -1,8 +1,4 @@
-﻿using BudgetsService.DataAccess.Constants;
-using BudgetsService.DataAccess.EntityConfigurations.Base;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace BudgetsService.DataAccess.EntityConfigurations;
+﻿namespace BudgetsService.DataAccess.EntityConfigurations;
 
 public class BudgetItemConfiguration : BaseEntityTypeConfiguration<BudgetItem>
 {
