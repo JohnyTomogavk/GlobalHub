@@ -10,7 +10,7 @@ public class Tag : BaseEntity
 
     public virtual Budget Budget { get; set; }
 
-    public virtual TagLimit TagLimit { get; set; }
+    public virtual TagLimit? TagLimit { get; set; }
 
     public virtual IEnumerable<BudgetItemTag> BudgetItems { get; set; } = new List<BudgetItemTag>();
 }

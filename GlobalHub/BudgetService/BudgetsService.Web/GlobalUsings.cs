@@ -3,6 +3,7 @@
 global using BudgetsService.Business.Dto.Budget;
 global using BudgetsService.Business.Dto.BudgetItems;
 global using BudgetsService.Business.Dto.Tag;
+global using BudgetsService.Business.Dto.TagLimit;
 global using BudgetsService.Business.MappingProfiles;
 global using BudgetsService.Business.Services;
 global using BudgetsService.Business.Services.Interfaces;

@@ -7,6 +7,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddScoped<IBudgetRepository, BudgetRepository>();
         serviceCollection.AddScoped<IBudgetItemRepository, BudgetItemRepository>();
         serviceCollection.AddScoped<ITagRepository, TagRepository>();
+        serviceCollection.AddScoped<ITagLimitRepository, TagLimitRepository>();
 
         return serviceCollection;
     }
@@ -16,6 +17,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddScoped<IBudgetService, BudgetService>();
         serviceCollection.AddScoped<IBudgetItemService, BudgetItemService>();
         serviceCollection.AddScoped<ITagService, TagService>();
+        serviceCollection.AddScoped<ITagLimitService, TagLimitService>();
         serviceCollection.AddScoped<IDateTimeService, DateTimeService>();
 
         return serviceCollection;
