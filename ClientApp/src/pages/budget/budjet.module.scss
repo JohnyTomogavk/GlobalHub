@@ -1,10 +1,14 @@
 @use "src/styles.module" as *;
 
+@mixin base-card {
+  height: 100%;
+}
+
 .pageContent {
   @include page-content-base;
 
   .budgetInfoCard {
-    height: 100%;
+    @include base-card;
   }
 
   .budgetTitle {
@@ -18,4 +22,25 @@
   .budgetDescriptionFormField{
     margin-bottom: 0;
   }
+}
+
+.card {
+  @include base-card;
+}
+
+.preserveControlCard {
+  @include base-card;
+}
+
+.tagLimitWarningsList {
+  max-height: 200px;
+  overflow-y: auto  ;
+}
+
+.tagLimitsResult {
+  padding: 0;
+}
+
+.tagLimitsBlockDivider {
+  @include base-card;
 }

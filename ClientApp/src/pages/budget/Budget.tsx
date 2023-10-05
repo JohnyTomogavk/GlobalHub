@@ -275,13 +275,7 @@ export const BudgetComponent = observer((): JSX.Element => {
             </Card>
           </Col>
           <Col flex={'auto'}>
-            <Card
-              size={'small'}
-              style={{
-                height: '100%',
-              }}
-              title="Current month balance state"
-            >
+            <Card size={'small'} title="Current month balance state" className={styles.card}>
               <Space size={'large'}>
                 <Space direction={'vertical'}>
                   <Statistic
@@ -319,13 +313,7 @@ export const BudgetComponent = observer((): JSX.Element => {
             </Card>
           </Col>
           <Col flex={'auto'}>
-            <Card
-              size={'small'}
-              style={{
-                height: '100%',
-              }}
-              title={'Operations analytic'}
-            >
+            <Card size={'small'} title={'Operations analytic'} className={styles.card}>
               <Space direction={'vertical'}>
                 <Statistic
                   value={budgetAnalyticData?.averageDailyExpenses}
@@ -347,9 +335,7 @@ export const BudgetComponent = observer((): JSX.Element => {
           <Col>
             <Card
               size={'small'}
-              style={{
-                height: '100%',
-              }}
+              className={styles.preserveControlCard}
               title={'Preserve'}
               extra={<Button onClick={onPreservePercentEditClick} size={'small'} icon={<EditOutlined />} />}
             >
@@ -366,13 +352,7 @@ export const BudgetComponent = observer((): JSX.Element => {
                 {tagLimitsStatuses.length ? (
                   <>
                     <Col flex={'auto'}>
-                      <List
-                        style={{
-                          height: '200px',
-                          overflowY: 'auto',
-                        }}
-                        size={'small'}
-                      >
+                      <List className={styles.tagLimitWarningsList} size={'small'}>
                         {tagLimitsStatuses.map((tagLimitStatus) => {
                           const tagLabel = tagLimitStatus.getTagLabel();
 
@@ -405,12 +385,7 @@ export const BudgetComponent = observer((): JSX.Element => {
                       </List>
                     </Col>
                     <Col>
-                      <Divider
-                        type={'vertical'}
-                        style={{
-                          height: '100%',
-                        }}
-                      />
+                      <Divider className={styles.tagLimitsBlockDivider} type={'vertical'} />
                     </Col>
                   </>
                 ) : (
@@ -419,9 +394,7 @@ export const BudgetComponent = observer((): JSX.Element => {
                 {/* eslint-disable-next-line no-magic-numbers */}
                 <Col span={!tagLimitsStatuses.length ? 24 : 6}>
                   <Result
-                    style={{
-                      padding: 0,
-                    }}
+                    className={styles.tagLimitsResult}
                     status={tagLimitsStatuses.length ? 'warning' : 'success'}
                     title={tagLimitsStatuses.length ? 'Attention needed' : 'No attention needed'}
                     subTitle={tagLimitsResultTitle}
