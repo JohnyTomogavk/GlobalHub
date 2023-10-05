@@ -103,16 +103,13 @@ export const BudgetComponent = observer((): JSX.Element => {
     setBudgetTags(tags);
   };
 
-  const handleReachedExpenseLimits = (
-    expensesSumsByTags: ExpenseOperationsSumDto[],
-    tagLimitsDtos: TagLimitDto[]
-  ): void => {
-    if (!tagLimitsDtos.length) return;
+  const handleReachedExpenseLimits = (): void => {
+    if (!tagLimits.length) return;
 
     let tagLimitsData: TagLimitStatus[] = [];
 
-    expensesSumsByTags.map((expenseOperationsSum) => {
-      const limitForSum = tagLimitsDtos.find((limit) => limit.id === expenseOperationsSum.tagId);
+    expenseSumsGroupedByTags.map((expenseOperationsSum) => {
+      const limitForSum = tagLimits.find((limit) => limit.id === expenseOperationsSum.tagId);
 
       if (!limitForSum) return;
 
@@ -156,7 +153,7 @@ export const BudgetComponent = observer((): JSX.Element => {
   }, [id]);
 
   useEffect(() => {
-    handleReachedExpenseLimits(expenseSumsGroupedByTags, tagLimits);
+    handleReachedExpenseLimits();
   }, [budgetTags, expenseSumsGroupedByTags, tagLimits]);
 
   const onBudgetTitleUpdate = async (title: string): Promise<void> => {
