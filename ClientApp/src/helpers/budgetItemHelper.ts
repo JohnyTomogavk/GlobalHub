@@ -51,7 +51,7 @@ export const budgetItemDtoToTableEntry = (budgetItemDto: BudgetItemDto): BudgetI
   title: budgetItemDto.itemTitle,
   description: budgetItemDto.itemDescription,
   operationType: budgetItemDto.budgetItemOperationType,
-  operationCost: budgetItemDto.operationCost.toFixed(1).toString(),
+  operationCost: budgetItemDto.operationCost.toFixed(2).toString(),
   tagIds: budgetItemDto.tagIds,
   operationDate: new Date(budgetItemDto.operationDate),
 });

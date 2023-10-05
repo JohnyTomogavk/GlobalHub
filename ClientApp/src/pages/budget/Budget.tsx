@@ -1,5 +1,19 @@
 import React, { ReactNode, useEffect, useState } from 'react';
-import { Button, Card, Col, Collapse, Form, Result, Row, Space, Statistic, Typography } from 'antd';
+import {
+  Button,
+  Card,
+  Col,
+  Collapse,
+  Divider,
+  Form,
+  List,
+  Progress,
+  Result,
+  Row,
+  Space,
+  Statistic,
+  Typography,
+} from 'antd';
 import styles from './budjet.module.scss';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
@@ -30,23 +44,54 @@ import { observer } from 'mobx-react-lite';
 import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
 import { PreserveControl } from './preserveControl/PreserveControl';
 import useBreadcrumbs from '../../hooks/useBreadcrumbs';
+import { TagLimitDto } from '../../dto/tagLimit/tagLimitDto';
+import { getTagLimits } from '../../api/tagLimitsService';
+import { getExpensesSumsGroupedByTags } from '../../api/budgetItemService';
+import { ExpenseOperationsSumDto } from '../../dto/budgetItems/expenseOperationsSumDto';
+import { CURRENCY_PRECISION } from '../../constants/budgetConstants';
 
 const { Text } = Typography;
 
-const countUpFormatter = (value: valueType): ReactNode => <CountUp end={+value} separator="," />;
+const countUpFormatter = (value: valueType): ReactNode => <CountUp decimals={2} end={+value} />;
+
+const CONVERT_TO_PERCENT_RATIO = 100;
+
+interface TagLimitStatus {
+  tagId: number;
+  getTagLabel: () => string;
+  operationSumLimit: number;
+  currentOperationsSum: number;
+  hasLimitBeenReached: boolean;
+  limitAchievementPercent: number;
+}
 
 export const BudgetComponent = observer((): JSX.Element => {
   const { budgetStore, sideMenuItems } = SideMenuIndexStore;
+
   const { id } = useParams();
+  const budgetId = toNumber(id);
+
   const [budgetDto, setBudgetDto] = useState<BudgetDto | undefined>();
   const [budgetAnalyticData, setBudgetAnalyticData] = useState<BudgetAnalyticDto | undefined>();
   const [budgetTags, setBudgetTags] = useState<TagDto[]>([]);
   const [isPreservePercentEditable, setIsPreservePercentEditable] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
   const breadCrumbsItems = useBreadcrumbs(location.pathname, sideMenuItems);
 
-  const loadBudgetData = async (budgetId: number): Promise<void> => {
+  const [tagLimits, setTagLimits] = useState<TagLimitDto[]>([]);
+  const [expenseSumsGroupedByTags, setExpenseSumsGroupedByTags] = useState<ExpenseOperationsSumDto[]>([]);
+  const [tagLimitsStatuses, setTagLimitsStatuses] = useState<TagLimitStatus[]>([]);
+
+  const tagLimitsResultTitle =
+    tagLimitsStatuses.length === 0
+      ? 'You are on track with your limits'
+      : `Some of tags have reached their limits on expenses: ${tagLimitsStatuses
+          .map((limitStatus) => limitStatus.getTagLabel())
+          .join(', ')}`;
+
+  const loadBudgetData = async (): Promise<void> => {
     const [{ data: budget }, { data: budgetAnalytic }, { data: tags }] = await Promise.all([
       getBudgetById(budgetId),
       getBudgetAnalyticForCurrentMonthById(budgetId),
@@ -58,12 +103,61 @@ export const BudgetComponent = observer((): JSX.Element => {
     setBudgetTags(tags);
   };
 
-  useEffect(() => {
-    if (!id) return;
+  const handleReachedExpenseLimits = (
+    expensesSumsByTags: ExpenseOperationsSumDto[],
+    tagLimitsDtos: TagLimitDto[]
+  ): void => {
+    if (!tagLimitsDtos.length) return;
 
-    const budgetId = toNumber(id);
-    loadBudgetData(budgetId);
+    let tagLimitsData: TagLimitStatus[] = [];
+
+    expensesSumsByTags.map((expenseOperationsSum) => {
+      const limitForSum = tagLimitsDtos.find((limit) => limit.id === expenseOperationsSum.tagId);
+
+      if (!limitForSum) return;
+
+      const hasLimitBeenReached = expenseOperationsSum.operationsSum >= limitForSum.maxExpenseOperationsSum;
+      const limitAchievementRatio = expenseOperationsSum.operationsSum / limitForSum.maxExpenseOperationsSum;
+
+      const getTagLabel = (): string =>
+        budgetTags.find((tag) => tag.id === expenseOperationsSum.tagId)?.label ?? 'Unknown';
+
+      tagLimitsData.push({
+        tagId: expenseOperationsSum.tagId,
+        getTagLabel: getTagLabel,
+        hasLimitBeenReached: hasLimitBeenReached,
+        operationSumLimit: limitForSum.maxExpenseOperationsSum,
+        currentOperationsSum: expenseOperationsSum.operationsSum,
+        limitAchievementPercent: limitAchievementRatio * CONVERT_TO_PERCENT_RATIO,
+      });
+    });
+
+    tagLimitsData = tagLimitsData.sort((a, b) => b.limitAchievementPercent - a.limitAchievementPercent);
+    setTagLimitsStatuses(tagLimitsData);
+  };
+
+  const loadTagLimitsData = async (): Promise<void> => {
+    const [{ data: tagLimitsDtos }, { data: expSumsGroupedByTags }] = await Promise.all([
+      getTagLimits(budgetId),
+      getExpensesSumsGroupedByTags(budgetId),
+    ]);
+
+    setTagLimits(tagLimitsDtos);
+    setExpenseSumsGroupedByTags(expSumsGroupedByTags);
+  };
+
+  useEffect(() => {
+    loadTagLimitsData();
+    loadBudgetData();
+
+    return () => {
+      setTagLimitsStatuses([]);
+    };
   }, [id]);
+
+  useEffect(() => {
+    handleReachedExpenseLimits(expenseSumsGroupedByTags, tagLimits);
+  }, [budgetTags, expenseSumsGroupedByTags, tagLimits]);
 
   const onBudgetTitleUpdate = async (title: string): Promise<void> => {
     if (!id) return;
@@ -267,21 +361,73 @@ export const BudgetComponent = observer((): JSX.Element => {
             </Card>
           </Col>
           <Col flex={'auto'}>
-            <Card
-              size={'small'}
-              style={{
-                height: '100%',
-              }}
-              extra={<Button size={'small'}>Set limits</Button>}
-              title={'Current limits status'}
-            >
-              <Result
-                style={{
-                  padding: 0,
-                }}
-                status="success"
-                subTitle="You are on track with your limits. No attention needed"
-              />
+            <Card size={'small'} title={'Current limits status'}>
+              <Row>
+                {tagLimitsStatuses.length ? (
+                  <>
+                    <Col flex={'auto'}>
+                      <List
+                        style={{
+                          height: '200px',
+                          overflowY: 'auto',
+                        }}
+                        size={'small'}
+                      >
+                        {tagLimitsStatuses.map((tagLimitStatus) => {
+                          const tagLabel = tagLimitStatus.getTagLabel();
+
+                          return (
+                            <List.Item key={tagLimitStatus.tagId} title={tagLabel}>
+                              <Col span={4}>
+                                <Text>{tagLabel}</Text>
+                              </Col>
+                              <Col span={8}>
+                                <Progress
+                                  strokeColor={tagLimitStatus.hasLimitBeenReached ? 'orange' : 'normal'}
+                                  size={'small'}
+                                  success={{
+                                    percent: -1,
+                                  }}
+                                  format={(): ReactNode => `${tagLimitStatus.limitAchievementPercent.toFixed(1)}%`}
+                                  percent={tagLimitStatus.limitAchievementPercent}
+                                  type={'line'}
+                                />
+                              </Col>
+                              <Col span={5}>
+                                <Text>
+                                  {`${tagLimitStatus.currentOperationsSum.toFixed(CURRENCY_PRECISION)}
+                                  / ${tagLimitStatus.operationSumLimit?.toFixed(CURRENCY_PRECISION)} BYN`}
+                                </Text>
+                              </Col>
+                            </List.Item>
+                          );
+                        })}
+                      </List>
+                    </Col>
+                    <Col>
+                      <Divider
+                        type={'vertical'}
+                        style={{
+                          height: '100%',
+                        }}
+                      />
+                    </Col>
+                  </>
+                ) : (
+                  <></>
+                )}
+                {/* eslint-disable-next-line no-magic-numbers */}
+                <Col span={!tagLimitsStatuses.length ? 24 : 6}>
+                  <Result
+                    style={{
+                      padding: 0,
+                    }}
+                    status={tagLimitsStatuses.length ? 'warning' : 'success'}
+                    title={tagLimitsStatuses.length ? 'Attention needed' : 'No attention needed'}
+                    subTitle={tagLimitsResultTitle}
+                  />
+                </Col>
+              </Row>
             </Card>
           </Col>
         </Row>
