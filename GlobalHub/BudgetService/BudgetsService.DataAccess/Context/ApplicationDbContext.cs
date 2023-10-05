@@ -12,7 +12,7 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<Budget> Budgets { get; set; }
 
-    public DbSet<BudgetItem?> BudgetsItems { get; set; }
+    public DbSet<BudgetItem> BudgetsItems { get; set; }
 
     public DbSet<BudgetItemTag> BudgetItemTags { get; set; }
 

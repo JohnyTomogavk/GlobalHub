@@ -5,6 +5,6 @@ public class TagLimitsValidator : AbstractValidator<TagLimitsUpdateDto>
     public TagLimitsValidator()
     {
         RuleForEach(dto => dto.TagLimitDtos)
-            .ChildRules(t => t.RuleFor(dto => dto.MaxExpenseOperationsSum).InclusiveBetween(0, 100));
+            .ChildRules(t => t.RuleFor(dto => dto.MaxExpenseOperationsSum).GreaterThan(0));
     }
 }

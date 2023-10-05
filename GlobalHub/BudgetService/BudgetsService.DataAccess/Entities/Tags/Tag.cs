@@ -12,5 +12,5 @@ public class Tag : BaseEntity
 
     public virtual TagLimit? TagLimit { get; set; }
 
-    public virtual IEnumerable<BudgetItemTag> BudgetItems { get; set; } = new List<BudgetItemTag>();
+    public virtual IEnumerable<BudgetItemTag> BudgetItemTags { get; set; } = new List<BudgetItemTag>();
 }
