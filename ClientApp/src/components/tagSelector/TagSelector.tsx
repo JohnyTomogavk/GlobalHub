@@ -15,7 +15,6 @@ import { nameof } from '../../helpers/objectHelper';
 interface TagSelectorProps {
   tags: TagDto[];
   isTagCreatorEnabled?: boolean;
-  isSingleSelectionMode?: boolean;
   onTagUpdated?: (tagData: TagDto) => Promise<void>;
   onTagDelete?: (tagId: number) => Promise<void>;
 }
@@ -33,7 +32,6 @@ export const TagSelector = ({
   isTagCreatorEnabled,
   onTagUpdated,
   onTagDelete,
-  isSingleSelectionMode,
   ...defaultProps
 }: TagSelectorProps): JSX.Element => {
   const [tagEditForm] = useForm<TagFormModel>();
@@ -108,7 +106,7 @@ export const TagSelector = ({
       </Drawer>
       <Select
         allowClear
-        mode={isSingleSelectionMode === true ? undefined : isTagCreatorEnabled ? 'tags' : 'multiple'}
+        mode={isTagCreatorEnabled ? 'tags' : 'multiple'}
         tagRender={(tagProps: CustomTagProps): ReactElement => {
           const isTagJustCreated = typeof tagProps.value === 'string';
 
