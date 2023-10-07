@@ -2,7 +2,7 @@
 
 public interface ITagLimitService
 {
-    Task UpdateBudgetTagLimits(long budgetId, TagLimitsUpdateDto limitsUpdateDto);
+    Task UpdateBudgetTagLimits(long budgetId, IEnumerable<TagLimitDto> limitsUpdateDtos);
 
     Task<IEnumerable<TagLimitDto>> GetTagLimits(long budgetId);
 }

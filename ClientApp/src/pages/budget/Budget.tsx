@@ -45,10 +45,11 @@ import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
 import { PreserveControl } from './preserveControl/PreserveControl';
 import useBreadcrumbs from '../../hooks/useBreadcrumbs';
 import { TagLimitDto } from '../../dto/tagLimit/tagLimitDto';
-import { getTagLimits } from '../../api/tagLimitsService';
+import { getTagLimits, updateTagLimits } from '../../api/tagLimitsService';
 import { getExpensesSumsGroupedByTags } from '../../api/budgetItemService';
 import { ExpenseOperationsSumDto } from '../../dto/budgetItems/expenseOperationsSumDto';
 import { CURRENCY_PRECISION } from '../../constants/budgetConstants';
+import { TagLimitsDrawer } from './tagLimitsDrawer/TagLimitsDrawer';
 
 const { Text } = Typography;
 
@@ -83,6 +84,7 @@ export const BudgetComponent = observer((): JSX.Element => {
   const [tagLimits, setTagLimits] = useState<TagLimitDto[]>([]);
   const [expenseSumsGroupedByTags, setExpenseSumsGroupedByTags] = useState<ExpenseOperationsSumDto[]>([]);
   const [tagLimitsStatuses, setTagLimitsStatuses] = useState<TagLimitStatus[]>([]);
+  const [isTagLimitsDrawerOpened, setIsTagLimitsDrawerOpened] = useState<boolean>(false);
 
   const tagLimitsResultTitle =
     tagLimitsStatuses.length === 0
@@ -220,6 +222,19 @@ export const BudgetComponent = observer((): JSX.Element => {
     setIsPreservePercentEditable(false);
   };
 
+  const onTagLimitsDrawerClose = (): void => {
+    setIsTagLimitsDrawerOpened(false);
+  };
+
+  const onTagLimitsDrawerSubmit = async (updatedTagLimits: TagLimitDto[]): Promise<void> => {
+    const { status } = await updateTagLimits(budgetId, updatedTagLimits);
+
+    if (status === HttpStatusCode.Ok) {
+      setIsTagLimitsDrawerOpened(false);
+      await loadTagLimitsData();
+    }
+  };
+
   return (
     <>
       <ItemInfoSubHeader
@@ -242,7 +257,7 @@ export const BudgetComponent = observer((): JSX.Element => {
       <div className={styles.pageContent}>
         {/* eslint-disable-next-line no-magic-numbers */}
         <Row className={styles.budgetRow} gutter={[8, 8]}>
-          <Col span={6}>
+          <Col span={8}>
             <Card size={'small'} className={styles.budgetInfoCard} title="Budget info">
               <Form layout={'vertical'} size={'small'}>
                 <Form.Item className={styles.budgetDescriptionFormField} label={<Text strong>Budget title:</Text>}>
@@ -344,7 +359,15 @@ export const BudgetComponent = observer((): JSX.Element => {
             </Card>
           </Col>
           <Col flex={'auto'}>
-            <Card size={'small'} title={'Current limits status'}>
+            <Card
+              size={'small'}
+              title={'Current limits status'}
+              extra={
+                <Button onClick={(): void => setIsTagLimitsDrawerOpened(true)} size={'small'}>
+                  Update limits
+                </Button>
+              }
+            >
               <Row>
                 {tagLimitsStatuses.length ? (
                   <>
@@ -398,6 +421,13 @@ export const BudgetComponent = observer((): JSX.Element => {
                   />
                 </Col>
               </Row>
+              <TagLimitsDrawer
+                open={isTagLimitsDrawerOpened}
+                initialTagLimitsData={tagLimits}
+                budgetTags={budgetTags}
+                onClose={onTagLimitsDrawerClose}
+                onSubmit={onTagLimitsDrawerSubmit}
+              />
             </Card>
           </Col>
         </Row>

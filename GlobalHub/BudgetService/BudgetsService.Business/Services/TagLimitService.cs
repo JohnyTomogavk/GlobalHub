@@ -2,17 +2,17 @@
 
 public class TagLimitService : ITagLimitService
 {
-    private readonly IValidator<TagLimitsUpdateDto> _tagLimitsUpdateDto;
+    private readonly IValidator<IEnumerable<TagLimitDto>> _tagLimitsUpdateValidator;
     private readonly IBudgetRepository _budgetRepository;
     private readonly ITagLimitRepository _tagLimitRepository;
     private readonly IMapper _mapper;
 
-    public TagLimitService(IValidator<TagLimitsUpdateDto> tagLimitsUpdateDto,
+    public TagLimitService(IValidator<IEnumerable<TagLimitDto>> tagLimitsUpdateValidator,
         IBudgetRepository budgetRepository,
         ITagLimitRepository tagLimitRepository,
         IMapper mapper)
     {
-        _tagLimitsUpdateDto = tagLimitsUpdateDto;
+        _tagLimitsUpdateValidator = tagLimitsUpdateValidator;
         _budgetRepository = budgetRepository;
         _tagLimitRepository = tagLimitRepository;
         _mapper = mapper;
@@ -25,16 +25,16 @@ public class TagLimitService : ITagLimitService
         return _mapper.Map<IEnumerable<TagLimitDto>>(tagLimits);
     }
 
-    public async Task UpdateBudgetTagLimits(long budgetId, TagLimitsUpdateDto limitsUpdateDto)
+    public async Task UpdateBudgetTagLimits(long budgetId, IEnumerable<TagLimitDto> limitsUpdateDtos)
     {
-        var validationResult = await _tagLimitsUpdateDto.ValidateAsync(limitsUpdateDto);
+        var validationResult = await _tagLimitsUpdateValidator.ValidateAsync(limitsUpdateDtos);
 
         if (!validationResult.IsValid)
         {
             throw new ValidationException(validationResult.Errors);
         }
 
-        var tagLimits = _mapper.Map<IEnumerable<TagLimit>>(limitsUpdateDto.TagLimitDtos);
+        var tagLimits = _mapper.Map<IEnumerable<TagLimit>>(limitsUpdateDtos);
         var budget = await _budgetRepository.GetBudgetByIdWithTagLimits(budgetId);
 
         if (budget == null)

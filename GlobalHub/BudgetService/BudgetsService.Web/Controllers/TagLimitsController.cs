@@ -25,9 +25,9 @@ public class TagLimitsController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult> UpdateBudgetTagLimits(long budgetId, TagLimitsUpdateDto updateTagLimitDto)
+    public async Task<ActionResult> UpdateBudgetTagLimits(long budgetId, IEnumerable<TagLimitDto> tagLimitDtos)
     {
-        await _tagLimitService.UpdateBudgetTagLimits(budgetId, updateTagLimitDto);
+        await _tagLimitService.UpdateBudgetTagLimits(budgetId, tagLimitDtos);
 
         return StatusCode(StatusCodes.Status200OK);
     }

@@ -36,3 +36,4 @@ export const DELETE_TAG = '/Tag/DeleteTag';
 
 // Constants related to tag limits
 export const GET_TAG_LIMITS = '/TagLimits/GetTagLimits';
+export const UPDATE_BUDGET_TAG_LIMITS = '/TagLimits/UpdateBudgetTagLimits';
