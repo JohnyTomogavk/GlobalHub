@@ -472,6 +472,7 @@ export const BudgetComponent = observer((): JSX.Element => {
                 setBudgetTags={setBudgetTags}
                 onNewTagAdded={onNewTagAdded}
                 triggerAnalyticStatsRecalculation={fetchAnalyticData}
+                triggerTagLimitsDataLoading={loadTagLimitsData}
                 budgetTags={budgetTags ?? []}
                 budgetId={toNumber(id)}
               />

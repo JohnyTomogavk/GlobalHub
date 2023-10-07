@@ -63,6 +63,7 @@ interface BudgetItemTableProps {
   budgetTags: TagDto[];
   onNewTagAdded: (newTag: TagDto) => void;
   triggerAnalyticStatsRecalculation: () => Promise<void>;
+  triggerTagLimitsDataLoading: () => Promise<void>;
   setBudgetTags: (value: ((prevState: TagDto[]) => TagDto[]) | TagDto[]) => void;
 }
 
@@ -87,6 +88,7 @@ export const BudgetItemsTable = ({
   budgetId,
   budgetTags,
   triggerAnalyticStatsRecalculation,
+  triggerTagLimitsDataLoading,
   onNewTagAdded,
   setBudgetTags,
 }: BudgetItemTableProps): JSX.Element => {
@@ -168,7 +170,7 @@ export const BudgetItemsTable = ({
     if (status !== HttpStatusCode.Ok) return;
 
     setBudgetItemsTableEntries((prevState) => prevState.filter((entry) => entry.key !== record.key));
-    await triggerAnalyticStatsRecalculation();
+    await Promise.all([triggerAnalyticStatsRecalculation(), triggerTagLimitsDataLoading()]);
   };
 
   const columns: ColumnsType<BudgetItemTableEntry> = [
@@ -328,7 +330,7 @@ export const BudgetItemsTable = ({
       await createBudgetItem(createDto);
     }
 
-    await Promise.all([loadBudgetItems(), triggerAnalyticStatsRecalculation()]);
+    await Promise.all([loadBudgetItems(), triggerAnalyticStatsRecalculation(), triggerTagLimitsDataLoading()]);
   };
 
   const onBudgetItemDrawerClose = (): void => {
