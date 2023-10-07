@@ -1,8 +1,7 @@
-import { Button, Col, Drawer, Form, Row, Spin } from 'antd';
+import { Button, Col, Drawer, Form, Row, Select, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { TagLimitDto } from '../../../dto/tagLimit/tagLimitDto';
 import { useForm, useWatch } from 'antd/lib/form/Form';
-import { TagSelector } from '../../../components/tagSelector/TagSelector';
 import { FormListFieldData, InputNumber } from 'antd/lib';
 import { LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { nameof } from '../../../helpers/objectHelper';
@@ -30,9 +29,10 @@ export const TagLimitsDrawer = ({
   budgetTags,
 }: TagLimitsDrawerProps): JSX.Element => {
   const [limitsForm] = useForm<TagLimitsFormModel>();
-  const [selectableTags, setSelectableTags] = useState(budgetTags);
+  const [selectableTags, setSelectableTags] = useState<TagDto[]>(budgetTags);
   const [isLoading, setIsLoading] = useState(true);
   const limitFormWatcher = useWatch(nameof<TagLimitsFormModel>('items'), limitsForm);
+  const tagSelectOptions = selectableTags.map((dto: TagDto) => ({ value: dto.id, label: dto.label }));
 
   const isFormValid = async (): Promise<boolean> => {
     try {
@@ -102,48 +102,46 @@ export const TagLimitsDrawer = ({
       {isLoading ? (
         <Spin className={styles.loader} indicator={<LoadingOutlined />} />
       ) : (
-        <Form
-          form={limitsForm}
-          initialValues={{
-            items: [],
-          }}
-          layout={'horizontal'}
-        >
+        <Form form={limitsForm} layout={'horizontal'}>
           <Form.List name={nameof<TagLimitsFormModel>('items')}>
             {(fields, { add, remove }, { errors }): JSX.Element => (
-              <Form.Item validateDebounce={1000} noStyle>
-                {fields?.map(({ key, name, ...restField }: FormListFieldData) => (
-                  <>
-                    <Form.Item noStyle key={key} {...restField}>
-                      <Row>
-                        <Col flex={'auto'}>
-                          <Form.Item
-                            rules={[{ required: true, message: 'Tag required' }]}
-                            name={[name, nameof<TagLimitDto>('id')]}
-                          >
-                            <TagSelector tags={selectableTags} isSingleSelectionMode={true} />
-                          </Form.Item>
-                        </Col>
-                        <Col offset={1}>
-                          <Form.Item
-                            rules={[{ required: true, message: 'Limit required' }]}
-                            name={[name, nameof<TagLimitDto>('maxExpenseOperationsSum')]}
-                          >
-                            <InputNumber min={0.1} precision={2} placeholder={'Limit'} />
-                          </Form.Item>
-                        </Col>
-                        <Col offset={1}>
-                          <Button onClick={(): void => remove(name)} danger icon={<MinusOutlined />} />
-                        </Col>
-                      </Row>
-                    </Form.Item>
-                  </>
+              <>
+                {fields.map(({ key, name, ...restField }: FormListFieldData) => (
+                  <Form.Item noStyle key={key} {...restField}>
+                    <Row>
+                      <Col flex={'auto'}>
+                        <Form.Item
+                          rules={[{ required: true, message: 'Tag required' }]}
+                          name={[name, nameof<TagLimitDto>('id')]}
+                          {...restField}
+                        >
+                          <Select options={tagSelectOptions} placeholder={'Tag to limit'} allowClear />
+                        </Form.Item>
+                      </Col>
+                      <Col offset={1}>
+                        <Form.Item
+                          rules={[{ required: true, message: 'Limit required' }]}
+                          name={[name, nameof<TagLimitDto>('maxExpenseOperationsSum')]}
+                          {...restField}
+                        >
+                          <InputNumber min={0.1} precision={2} placeholder={'Limit'} />
+                        </Form.Item>
+                      </Col>
+                      <Col offset={1}>
+                        <Button
+                          onClick={(): void => remove(name)}
+                          danger
+                          icon={<MinusOutlined />}
+                        />
+                      </Col>
+                    </Row>
+                  </Form.Item>
                 ))}
                 <Form.ErrorList errors={errors} />
                 <Button block onClick={add} icon={<PlusOutlined />}>
                   Create new limit
                 </Button>
-              </Form.Item>
+              </>
             )}
           </Form.List>
         </Form>
