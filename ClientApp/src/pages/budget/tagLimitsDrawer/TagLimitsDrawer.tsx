@@ -7,7 +7,7 @@ import { LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons'
 import { nameof } from '../../../helpers/objectHelper';
 import { TagDto } from '../../../dto/tags/tagDto';
 import styles from '../../../styles.module.scss';
-import { isArray, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 
 interface TagLimitsDrawerProps {
   open: boolean;
@@ -44,16 +44,10 @@ export const TagLimitsDrawer = ({
     }
   };
 
-  const getItemsFromForm = (): TagLimitDto[] => {
-    const formValues = limitsForm?.getFieldsValue().items;
-
-    return isArray(formValues) ? formValues : [];
-  };
-
   useEffect(() => {
-    const formValues = getItemsFromForm();
+    const formValues = limitsForm.getFieldsValue().items;
 
-    const selectedTagIds = formValues.map((tagLimit) => tagLimit.id);
+    const selectedTagIds = formValues?.map((tagLimit) => tagLimit.id) ?? [];
     setSelectableTags(budgetTags.filter((tagDto) => !selectedTagIds.includes(tagDto.id)));
   }, [limitFormWatcher, budgetTags]);
 
@@ -62,13 +56,13 @@ export const TagLimitsDrawer = ({
 
     if (!formValidationResult) return;
 
-    const formValues = getItemsFromForm();
-
+    const formValues = limitsForm.getFieldsValue().items;
     const updatedLimits = formValues.map(
       (tagLimitData) =>
         ({ id: tagLimitData.id, maxExpenseOperationsSum: tagLimitData.maxExpenseOperationsSum }) as TagLimitDto
     );
 
+    // TODO: Move check to parent component and call onSubmit in dependence on validness of the form
     if (!isEqual(updatedLimits, initialTagLimitsData)) {
       await onSubmit(updatedLimits);
     }

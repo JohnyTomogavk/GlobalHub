@@ -97,6 +97,10 @@ export const SideMenu = observer((): JSX.Element => {
   useEffect(() => {
     fetchNotesMap();
     fetchBudgetsMap();
+    setItemsLoadingState((prevState) => ({
+      ...prevState,
+      isTasksLoaded: true,
+    }));
   }, []);
 
   useEffect(() => {
