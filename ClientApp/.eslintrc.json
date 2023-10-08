@@ -80,15 +80,6 @@
     ],
     "@typescript-eslint/explicit-function-return-type": "error",
     "no-console": "error",
-    "operator-linebreak": [
-      "error",
-      "before",
-      {
-        "overrides": {
-          "=": "after"
-        }
-      }
-    ],
     "spaced-comment": [
       "error",
       "always",

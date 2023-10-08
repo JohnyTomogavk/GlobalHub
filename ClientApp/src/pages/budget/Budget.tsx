@@ -5,6 +5,7 @@ import {
   Col,
   Collapse,
   Divider,
+  Empty,
   Form,
   List,
   Progress,
@@ -36,7 +37,7 @@ import { TagDto } from '../../dto/tags/tagDto';
 import { getBudgetTags } from '../../api/tagService';
 import { BudgetItemsTable } from './budgetItemsTable/BudgetItemsTable';
 import { DistributionByDaysChart } from './analyticCharts/DistributionByDaysChart';
-import { BalanceOnLimitsByTagsChart } from './analyticCharts/BalanceOnLimitsByTagsChart';
+import { TagLimitsStateBulletChart } from './analyticCharts/TagLimitsStateBulletChart';
 import { ExpensesByTagsChart } from './analyticCharts/ExpensesByTagsChart';
 import { BUDGET_LIST_ROUTE } from '../../constants/routingConstants';
 import { HttpStatusCode } from 'axios';
@@ -48,7 +49,10 @@ import { TagLimitDto } from '../../dto/tagLimit/tagLimitDto';
 import { getTagLimits, updateTagLimits } from '../../api/tagLimitsService';
 import { getExpensesSumsGroupedByTags } from '../../api/budgetItemService';
 import { ExpenseOperationsSumDto } from '../../dto/budgetItems/expenseOperationsSumDto';
-import { CURRENCY_PRECISION } from '../../constants/budgetConstants';
+import {
+  CURRENCY_PRECISION,
+  PERCENT_LEFT_BEFORE_REACHING_TAG_LIMIT_TO_SHOW_WARNING,
+} from '../../constants/budgetConstants';
 import { TagLimitsDrawer } from './tagLimitsDrawer/TagLimitsDrawer';
 
 const { Text } = Typography;
@@ -86,6 +90,10 @@ export const BudgetComponent = observer((): JSX.Element => {
   const [tagLimitsStatuses, setTagLimitsStatuses] = useState<TagLimitStatus[]>([]);
   const [isTagLimitsDrawerOpened, setIsTagLimitsDrawerOpened] = useState<boolean>(false);
 
+  const notEmptyExpenseSumsGroupedByTags: ExpenseOperationsSumDto[] = expenseSumsGroupedByTags.filter(
+    (operationSum: ExpenseOperationsSumDto): boolean => operationSum.operationsSum !== 0
+  );
+
   const tagLimitsResultTitle =
     tagLimitsStatuses.length === 0
       ? 'You are on track with your limits'
@@ -105,23 +113,35 @@ export const BudgetComponent = observer((): JSX.Element => {
     setBudgetTags(tags);
   };
 
-  const handleReachedExpenseLimits = (): void => {
+  const handleExpenseLimits = (): void => {
     if (!tagLimits.length) return;
 
-    let tagLimitsData: TagLimitStatus[] = [];
+    let tagLimitsWarnings: TagLimitStatus[] = [];
 
     expenseSumsGroupedByTags.map((expenseOperationsSum) => {
       const limitForSum = tagLimits.find((limit) => limit.id === expenseOperationsSum.tagId);
 
       if (!limitForSum) return;
 
-      const hasLimitBeenReached = expenseOperationsSum.operationsSum >= limitForSum.maxExpenseOperationsSum;
+      let hasLimitBeenReached: boolean;
+
+      if (expenseOperationsSum.operationsSum >= limitForSum.maxExpenseOperationsSum) {
+        hasLimitBeenReached = true;
+      } else if (
+        expenseOperationsSum.operationsSum * (1 + PERCENT_LEFT_BEFORE_REACHING_TAG_LIMIT_TO_SHOW_WARNING) >=
+        limitForSum.maxExpenseOperationsSum
+      ) {
+        hasLimitBeenReached = false;
+      } else {
+        return;
+      }
+
       const limitAchievementRatio = expenseOperationsSum.operationsSum / limitForSum.maxExpenseOperationsSum;
 
       const getTagLabel = (): string =>
         budgetTags.find((tag) => tag.id === expenseOperationsSum.tagId)?.label ?? 'Unknown';
 
-      tagLimitsData.push({
+      tagLimitsWarnings.push({
         tagId: expenseOperationsSum.tagId,
         getTagLabel: getTagLabel,
         hasLimitBeenReached: hasLimitBeenReached,
@@ -131,18 +151,16 @@ export const BudgetComponent = observer((): JSX.Element => {
       });
     });
 
-    tagLimitsData = tagLimitsData.sort((a, b) => b.limitAchievementPercent - a.limitAchievementPercent);
-    setTagLimitsStatuses(tagLimitsData);
+    tagLimitsWarnings = tagLimitsWarnings.sort((a, b) => b.limitAchievementPercent - a.limitAchievementPercent);
+    setTagLimitsStatuses(tagLimitsWarnings);
   };
 
   const loadTagLimitsData = async (): Promise<void> => {
-    const [{ data: tagLimitsDtos }, { data: expSumsGroupedByTags }] = await Promise.all([
-      getTagLimits(budgetId),
-      getExpensesSumsGroupedByTags(budgetId),
-    ]);
+    const [{ data: tagLimitsDtos, status: tagLimitsStatus }, { data: expSumsGroupedByTags, status: expSumsStatus }] =
+      await Promise.all([getTagLimits(budgetId), getExpensesSumsGroupedByTags(budgetId)]);
 
-    setTagLimits(tagLimitsDtos);
-    setExpenseSumsGroupedByTags(expSumsGroupedByTags);
+    setTagLimits(tagLimitsStatus === HttpStatusCode.Ok ? tagLimitsDtos : []);
+    setExpenseSumsGroupedByTags(expSumsStatus === HttpStatusCode.Ok ? expSumsGroupedByTags : []);
   };
 
   useEffect(() => {
@@ -155,7 +173,7 @@ export const BudgetComponent = observer((): JSX.Element => {
   }, [id]);
 
   useEffect(() => {
-    handleReachedExpenseLimits();
+    handleExpenseLimits();
   }, [budgetTags, expenseSumsGroupedByTags, tagLimits]);
 
   const onBudgetTitleUpdate = async (title: string): Promise<void> => {
@@ -435,24 +453,39 @@ export const BudgetComponent = observer((): JSX.Element => {
           <Col span={24}>
             <Card size={'small'} title="Analytic charts">
               <Collapse
+                destroyInactivePanel={false}
                 size={'small'}
                 items={[
                   {
                     key: 1,
                     label: 'Analytic by tags',
-                    children: (
-                      <Row gutter={8}>
-                        <Col span={15}>
+                    children: budgetTags.length ? (
+                      // eslint-disable-next-line no-magic-numbers
+                      <Row gutter={[8, 8]}>
+                        <Col flex={'auto'}>
                           <Card size={'small'} title="Budget limits by tags">
-                            <BalanceOnLimitsByTagsChart />
+                            <TagLimitsStateBulletChart
+                              tags={budgetTags}
+                              expensesByTagSums={expenseSumsGroupedByTags}
+                              tagLimitsData={tagLimits}
+                            />
                           </Card>
                         </Col>
-                        <Col span={9}>
-                          <Card size={'small'} title="Expenses by tags">
-                            <ExpensesByTagsChart tags={budgetTags} tagExpensesSums={expenseSumsGroupedByTags} />
-                          </Card>
-                        </Col>
+                        {notEmptyExpenseSumsGroupedByTags.length ? (
+                          <Col flex={'auto'}>
+                            <Card size={'small'} title="Expenses by tags">
+                              <ExpensesByTagsChart
+                                tags={budgetTags}
+                                tagExpensesSums={notEmptyExpenseSumsGroupedByTags}
+                              />
+                            </Card>
+                          </Col>
+                        ) : (
+                          <></>
+                        )}
                       </Row>
+                    ) : (
+                      <Empty description={'Cant perform analytic on tags because there are no tags created'} />
                     ),
                   },
                   {

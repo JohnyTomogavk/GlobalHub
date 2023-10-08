@@ -47,16 +47,14 @@ interface TagChartEntry {
 }
 
 export const ExpensesByTagsChart = ({ tags, tagExpensesSums }: ExpensesByTagsChartProps): JSX.Element => {
-  const data: TagChartEntry[] = tagExpensesSums
-    .filter((operationSum) => operationSum.operationsSum !== 0)
-    .map((tagExpensesSum) => {
-      const tagLabel = tags.find((tagDto) => tagDto.id === tagExpensesSum.tagId)?.label ?? 'Unknown';
+  const data: TagChartEntry[] = tagExpensesSums.map((tagExpensesSum) => {
+    const tagLabel = tags.find((tagDto) => tagDto.id === tagExpensesSum.tagId)?.label ?? 'Unknown';
 
-      return {
-        type: tagLabel,
-        value: tagExpensesSum.operationsSum,
-      };
-    });
+    return {
+      type: tagLabel,
+      value: tagExpensesSum.operationsSum,
+    };
+  });
 
   return <Pie {...spendsByTagsChartConfig} data={data} />;
 };
