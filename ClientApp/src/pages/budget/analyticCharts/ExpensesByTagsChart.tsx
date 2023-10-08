@@ -1,45 +1,20 @@
 import { Pie } from '@ant-design/plots';
 import React from 'react';
+import { TagDto } from '../../../dto/tags/tagDto';
+import { ExpenseOperationsSumDto } from '../../../dto/budgetItems/expenseOperationsSumDto';
 
 const spendsByTagsChartConfig = {
   appendPadding: 10,
-  data: [
-    {
-      type: 'Tag 1',
-      value: 27,
-    },
-    {
-      type: 'Tag 2',
-      value: 25,
-    },
-    {
-      type: 'Tag 3',
-      value: 18,
-    },
-    {
-      type: 'Tag 4',
-      value: 15,
-    },
-    {
-      type: 'Tag 5',
-      value: 10,
-    },
-    {
-      type: 'Tag 6',
-      value: 5,
-    },
-  ],
   angleField: 'value',
   colorField: 'type',
   radius: 1,
-  innerRadius: 0.6,
   label: {
     type: 'inner',
-    offset: '-50%',
+    offset: '50%',
     content: '{value}',
     style: {
       textAlign: 'center',
-      fontSize: 14,
+      fontSize: 16,
     },
   },
   interactions: [
@@ -61,4 +36,27 @@ const spendsByTagsChartConfig = {
   },
 };
 
-export const ExpensesByTagsChart = (): JSX.Element => <Pie {...spendsByTagsChartConfig} />;
+interface ExpensesByTagsChartProps {
+  tags: TagDto[];
+  tagExpensesSums: ExpenseOperationsSumDto[];
+}
+
+interface TagChartEntry {
+  type: string;
+  value: number;
+}
+
+export const ExpensesByTagsChart = ({ tags, tagExpensesSums }: ExpensesByTagsChartProps): JSX.Element => {
+  const data: TagChartEntry[] = tagExpensesSums
+    .filter((operationSum) => operationSum.operationsSum !== 0)
+    .map((tagExpensesSum) => {
+      const tagLabel = tags.find((tagDto) => tagDto.id === tagExpensesSum.tagId)?.label ?? 'Unknown';
+
+      return {
+        type: tagLabel,
+        value: tagExpensesSum.operationsSum,
+      };
+    });
+
+  return <Pie {...spendsByTagsChartConfig} data={data} />;
+};

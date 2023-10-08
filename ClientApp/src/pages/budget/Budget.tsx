@@ -449,7 +449,7 @@ export const BudgetComponent = observer((): JSX.Element => {
                         </Col>
                         <Col span={9}>
                           <Card size={'small'} title="Expenses by tags">
-                            <ExpensesByTagsChart />
+                            <ExpensesByTagsChart tags={budgetTags} tagExpensesSums={expenseSumsGroupedByTags} />
                           </Card>
                         </Col>
                       </Row>
