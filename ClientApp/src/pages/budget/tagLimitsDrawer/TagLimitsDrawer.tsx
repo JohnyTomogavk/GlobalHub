@@ -128,11 +128,7 @@ export const TagLimitsDrawer = ({
                         </Form.Item>
                       </Col>
                       <Col offset={1}>
-                        <Button
-                          onClick={(): void => remove(name)}
-                          danger
-                          icon={<MinusOutlined />}
-                        />
+                        <Button onClick={(): void => remove(name)} danger icon={<MinusOutlined />} />
                       </Col>
                     </Row>
                   </Form.Item>
