@@ -13,5 +13,6 @@ public class AutoMapperProfile : Profile
         CreateMap<Tag, TagDto>().ReverseMap();
         CreateMap<BudgetItemCreateDto, BudgetItem>();
         CreateMap<TagCreateDto, Tag>();
+        CreateMap<TagLimit, TagLimitDto>().ReverseMap();
     }
 }

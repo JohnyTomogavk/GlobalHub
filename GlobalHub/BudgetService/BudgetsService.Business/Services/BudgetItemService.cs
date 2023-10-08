@@ -3,14 +3,16 @@
 public class BudgetItemService : IBudgetItemService
 {
     private readonly IBudgetItemRepository _budgetItemRepository;
+    private readonly ITagRepository _tagRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<BudgetItemCreateDto> _createDtoValidator;
     private readonly IValidator<BudgetItemUpdateDto> _updateDtoValidator;
 
-    public BudgetItemService(IBudgetItemRepository budgetItemRepository, IMapper mapper,
+    public BudgetItemService(IBudgetItemRepository budgetItemRepository, ITagRepository tagRepository, IMapper mapper,
         IValidator<BudgetItemCreateDto> createDtoValidator, IValidator<BudgetItemUpdateDto> updateDtoValidator)
     {
         _budgetItemRepository = budgetItemRepository;
+        _tagRepository = tagRepository;
         _mapper = mapper;
         _createDtoValidator = createDtoValidator;
         _updateDtoValidator = updateDtoValidator;
@@ -105,6 +107,20 @@ public class BudgetItemService : IBudgetItemService
         }
 
         await _budgetItemRepository.DeleteBudgetItemAsync(budgetItem);
+    }
+
+    public async Task<IEnumerable<ExpenseOperationsSumDto>> GetExpensesSumsGroupedByTags(long budgetId,
+        DateTimeRange currentBudgetPeriod)
+    {
+        var groupedSums = await _tagRepository.GetExpensesSumsGroupedByTags(budgetId,
+            currentBudgetPeriod.StartRangeDate, currentBudgetPeriod.EndRangeDate);
+
+        var sumsDto = groupedSums.Select(sum => new ExpenseOperationsSumDto
+        {
+            TagId = sum.Key, OperationsSum = sum.Value,
+        });
+
+        return sumsDto;
     }
 
     private static IQueryable<BudgetItem> ApplyFilters(IQueryable<BudgetItem> budgetItems, FilterModelDto filterModel)

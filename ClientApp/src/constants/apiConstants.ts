@@ -26,9 +26,14 @@ export const GET_BUDGET_ITEMS_BY_BUDGET_ID = '/BudgetItem/GetBudgetItemsByBudget
 export const CREATE_BUDGET_ITEM = '/BudgetItem/CreateBudgetItem';
 export const UPDATE_BUDGET_ITEM = '/BudgetItem/UpdateBudgetItem';
 export const DELETE_BUDGET_ITEM_BY_ID = '/BudgetItem/DeleteBudgetItem';
+export const GET_EXPENSES_SUM_GROUPED_BY_TAGS = '/BudgetItem/GetCurrentMonthExpensesSumsGroupedByTags';
 
 // Constants related to tags
 export const GET_BUDGET_TAGS_BY_ID = '/Tag/GetBudgetTagsByBudgetId';
 export const CREATE_TAG = '/Tag/CreateNewTag';
 export const UPDATE_TAG = '/Tag/UpdateTag';
 export const DELETE_TAG = '/Tag/DeleteTag';
+
+// Constants related to tag limits
+export const GET_TAG_LIMITS = '/TagLimits/GetTagLimits';
+export const UPDATE_BUDGET_TAG_LIMITS = '/TagLimits/UpdateBudgetTagLimits';

@@ -1,5 +1,19 @@
 import React, { ReactNode, useEffect, useState } from 'react';
-import { Button, Card, Col, Collapse, Form, Result, Row, Space, Statistic, Typography } from 'antd';
+import {
+  Button,
+  Card,
+  Col,
+  Collapse,
+  Divider,
+  Form,
+  List,
+  Progress,
+  Result,
+  Row,
+  Space,
+  Statistic,
+  Typography,
+} from 'antd';
 import styles from './budjet.module.scss';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
@@ -30,23 +44,56 @@ import { observer } from 'mobx-react-lite';
 import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
 import { PreserveControl } from './preserveControl/PreserveControl';
 import useBreadcrumbs from '../../hooks/useBreadcrumbs';
+import { TagLimitDto } from '../../dto/tagLimit/tagLimitDto';
+import { getTagLimits, updateTagLimits } from '../../api/tagLimitsService';
+import { getExpensesSumsGroupedByTags } from '../../api/budgetItemService';
+import { ExpenseOperationsSumDto } from '../../dto/budgetItems/expenseOperationsSumDto';
+import { CURRENCY_PRECISION } from '../../constants/budgetConstants';
+import { TagLimitsDrawer } from './tagLimitsDrawer/TagLimitsDrawer';
 
 const { Text } = Typography;
 
-const countUpFormatter = (value: valueType): ReactNode => <CountUp end={+value} separator="," />;
+const countUpFormatter = (value: valueType): ReactNode => <CountUp decimals={2} end={+value} />;
+
+const CONVERT_TO_PERCENT_RATIO = 100;
+
+interface TagLimitStatus {
+  tagId: number;
+  getTagLabel: () => string;
+  operationSumLimit: number;
+  currentOperationsSum: number;
+  hasLimitBeenReached: boolean;
+  limitAchievementPercent: number;
+}
 
 export const BudgetComponent = observer((): JSX.Element => {
   const { budgetStore, sideMenuItems } = SideMenuIndexStore;
+
   const { id } = useParams();
+  const budgetId = toNumber(id);
+
   const [budgetDto, setBudgetDto] = useState<BudgetDto | undefined>();
   const [budgetAnalyticData, setBudgetAnalyticData] = useState<BudgetAnalyticDto | undefined>();
   const [budgetTags, setBudgetTags] = useState<TagDto[]>([]);
   const [isPreservePercentEditable, setIsPreservePercentEditable] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
   const breadCrumbsItems = useBreadcrumbs(location.pathname, sideMenuItems);
 
-  const loadBudgetData = async (budgetId: number): Promise<void> => {
+  const [tagLimits, setTagLimits] = useState<TagLimitDto[]>([]);
+  const [expenseSumsGroupedByTags, setExpenseSumsGroupedByTags] = useState<ExpenseOperationsSumDto[]>([]);
+  const [tagLimitsStatuses, setTagLimitsStatuses] = useState<TagLimitStatus[]>([]);
+  const [isTagLimitsDrawerOpened, setIsTagLimitsDrawerOpened] = useState<boolean>(false);
+
+  const tagLimitsResultTitle =
+    tagLimitsStatuses.length === 0
+      ? 'You are on track with your limits'
+      : `Some of tags have reached their limits on expenses: ${tagLimitsStatuses
+          .map((limitStatus) => limitStatus.getTagLabel())
+          .join(', ')}`;
+
+  const loadBudgetData = async (): Promise<void> => {
     const [{ data: budget }, { data: budgetAnalytic }, { data: tags }] = await Promise.all([
       getBudgetById(budgetId),
       getBudgetAnalyticForCurrentMonthById(budgetId),
@@ -58,12 +105,58 @@ export const BudgetComponent = observer((): JSX.Element => {
     setBudgetTags(tags);
   };
 
-  useEffect(() => {
-    if (!id) return;
+  const handleReachedExpenseLimits = (): void => {
+    if (!tagLimits.length) return;
 
-    const budgetId = toNumber(id);
-    loadBudgetData(budgetId);
+    let tagLimitsData: TagLimitStatus[] = [];
+
+    expenseSumsGroupedByTags.map((expenseOperationsSum) => {
+      const limitForSum = tagLimits.find((limit) => limit.id === expenseOperationsSum.tagId);
+
+      if (!limitForSum) return;
+
+      const hasLimitBeenReached = expenseOperationsSum.operationsSum >= limitForSum.maxExpenseOperationsSum;
+      const limitAchievementRatio = expenseOperationsSum.operationsSum / limitForSum.maxExpenseOperationsSum;
+
+      const getTagLabel = (): string =>
+        budgetTags.find((tag) => tag.id === expenseOperationsSum.tagId)?.label ?? 'Unknown';
+
+      tagLimitsData.push({
+        tagId: expenseOperationsSum.tagId,
+        getTagLabel: getTagLabel,
+        hasLimitBeenReached: hasLimitBeenReached,
+        operationSumLimit: limitForSum.maxExpenseOperationsSum,
+        currentOperationsSum: expenseOperationsSum.operationsSum,
+        limitAchievementPercent: limitAchievementRatio * CONVERT_TO_PERCENT_RATIO,
+      });
+    });
+
+    tagLimitsData = tagLimitsData.sort((a, b) => b.limitAchievementPercent - a.limitAchievementPercent);
+    setTagLimitsStatuses(tagLimitsData);
+  };
+
+  const loadTagLimitsData = async (): Promise<void> => {
+    const [{ data: tagLimitsDtos }, { data: expSumsGroupedByTags }] = await Promise.all([
+      getTagLimits(budgetId),
+      getExpensesSumsGroupedByTags(budgetId),
+    ]);
+
+    setTagLimits(tagLimitsDtos);
+    setExpenseSumsGroupedByTags(expSumsGroupedByTags);
+  };
+
+  useEffect(() => {
+    loadTagLimitsData();
+    loadBudgetData();
+
+    return () => {
+      setTagLimitsStatuses([]);
+    };
   }, [id]);
+
+  useEffect(() => {
+    handleReachedExpenseLimits();
+  }, [budgetTags, expenseSumsGroupedByTags, tagLimits]);
 
   const onBudgetTitleUpdate = async (title: string): Promise<void> => {
     if (!id) return;
@@ -129,6 +222,19 @@ export const BudgetComponent = observer((): JSX.Element => {
     setIsPreservePercentEditable(false);
   };
 
+  const onTagLimitsDrawerClose = (): void => {
+    setIsTagLimitsDrawerOpened(false);
+  };
+
+  const onTagLimitsDrawerSubmit = async (updatedTagLimits: TagLimitDto[]): Promise<void> => {
+    const { status } = await updateTagLimits(budgetId, updatedTagLimits);
+
+    if (status === HttpStatusCode.Ok) {
+      setIsTagLimitsDrawerOpened(false);
+      await loadTagLimitsData();
+    }
+  };
+
   return (
     <>
       <ItemInfoSubHeader
@@ -151,7 +257,7 @@ export const BudgetComponent = observer((): JSX.Element => {
       <div className={styles.pageContent}>
         {/* eslint-disable-next-line no-magic-numbers */}
         <Row className={styles.budgetRow} gutter={[8, 8]}>
-          <Col span={6}>
+          <Col span={8}>
             <Card size={'small'} className={styles.budgetInfoCard} title="Budget info">
               <Form layout={'vertical'} size={'small'}>
                 <Form.Item className={styles.budgetDescriptionFormField} label={<Text strong>Budget title:</Text>}>
@@ -181,13 +287,7 @@ export const BudgetComponent = observer((): JSX.Element => {
             </Card>
           </Col>
           <Col flex={'auto'}>
-            <Card
-              size={'small'}
-              style={{
-                height: '100%',
-              }}
-              title="Current month balance state"
-            >
+            <Card size={'small'} title="Current month balance state" className={styles.card}>
               <Space size={'large'}>
                 <Space direction={'vertical'}>
                   <Statistic
@@ -225,13 +325,7 @@ export const BudgetComponent = observer((): JSX.Element => {
             </Card>
           </Col>
           <Col flex={'auto'}>
-            <Card
-              size={'small'}
-              style={{
-                height: '100%',
-              }}
-              title={'Operations analytic'}
-            >
+            <Card size={'small'} title={'Operations analytic'} className={styles.card}>
               <Space direction={'vertical'}>
                 <Statistic
                   value={budgetAnalyticData?.averageDailyExpenses}
@@ -253,9 +347,7 @@ export const BudgetComponent = observer((): JSX.Element => {
           <Col>
             <Card
               size={'small'}
-              style={{
-                height: '100%',
-              }}
+              className={styles.preserveControlCard}
               title={'Preserve'}
               extra={<Button onClick={onPreservePercentEditClick} size={'small'} icon={<EditOutlined />} />}
             >
@@ -269,18 +361,72 @@ export const BudgetComponent = observer((): JSX.Element => {
           <Col flex={'auto'}>
             <Card
               size={'small'}
-              style={{
-                height: '100%',
-              }}
-              extra={<Button size={'small'}>Set limits</Button>}
-              title={'Current budget status'}
+              title={'Current limits status'}
+              extra={
+                <Button onClick={(): void => setIsTagLimitsDrawerOpened(true)} size={'small'}>
+                  Update limits
+                </Button>
+              }
             >
-              <Result
-                style={{
-                  padding: 0,
-                }}
-                status="success"
-                subTitle="You are on track with your limits. No attention needed"
+              <Row>
+                {tagLimitsStatuses.length ? (
+                  <>
+                    <Col flex={'auto'}>
+                      <List className={styles.tagLimitWarningsList} size={'small'}>
+                        {tagLimitsStatuses.map((tagLimitStatus) => {
+                          const tagLabel = tagLimitStatus.getTagLabel();
+
+                          return (
+                            <List.Item key={tagLimitStatus.tagId} title={tagLabel}>
+                              <Col span={4}>
+                                <Text>{tagLabel}</Text>
+                              </Col>
+                              <Col span={8}>
+                                <Progress
+                                  strokeColor={tagLimitStatus.hasLimitBeenReached ? 'orange' : 'normal'}
+                                  size={'small'}
+                                  success={{
+                                    percent: -1,
+                                  }}
+                                  format={(): ReactNode => `${tagLimitStatus.limitAchievementPercent.toFixed(1)}%`}
+                                  percent={tagLimitStatus.limitAchievementPercent}
+                                  type={'line'}
+                                />
+                              </Col>
+                              <Col span={5}>
+                                <Text>
+                                  {`${tagLimitStatus.currentOperationsSum.toFixed(CURRENCY_PRECISION)}
+                                  / ${tagLimitStatus.operationSumLimit?.toFixed(CURRENCY_PRECISION)} BYN`}
+                                </Text>
+                              </Col>
+                            </List.Item>
+                          );
+                        })}
+                      </List>
+                    </Col>
+                    <Col>
+                      <Divider className={styles.tagLimitsBlockDivider} type={'vertical'} />
+                    </Col>
+                  </>
+                ) : (
+                  <></>
+                )}
+                {/* eslint-disable-next-line no-magic-numbers */}
+                <Col span={!tagLimitsStatuses.length ? 24 : 6}>
+                  <Result
+                    className={styles.tagLimitsResult}
+                    status={tagLimitsStatuses.length ? 'warning' : 'success'}
+                    title={tagLimitsStatuses.length ? 'Attention needed' : 'No attention needed'}
+                    subTitle={tagLimitsResultTitle}
+                  />
+                </Col>
+              </Row>
+              <TagLimitsDrawer
+                open={isTagLimitsDrawerOpened}
+                initialTagLimitsData={tagLimits}
+                budgetTags={budgetTags}
+                onClose={onTagLimitsDrawerClose}
+                onSubmit={onTagLimitsDrawerSubmit}
               />
             </Card>
           </Col>
@@ -326,6 +472,7 @@ export const BudgetComponent = observer((): JSX.Element => {
                 setBudgetTags={setBudgetTags}
                 onNewTagAdded={onNewTagAdded}
                 triggerAnalyticStatsRecalculation={fetchAnalyticData}
+                triggerTagLimitsDataLoading={loadTagLimitsData}
                 budgetTags={budgetTags ?? []}
                 budgetId={toNumber(id)}
               />

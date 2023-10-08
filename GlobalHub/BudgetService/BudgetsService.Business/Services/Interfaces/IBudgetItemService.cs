@@ -12,4 +12,7 @@ public interface IBudgetItemService
     Task<BudgetItemDto> UpdateBudgetItem(BudgetItemUpdateDto updateDto);
 
     Task DeleteBudgetItem(long budgetItemId);
+
+    Task<IEnumerable<ExpenseOperationsSumDto>> GetExpensesSumsGroupedByTags(long budgetId,
+        DateTimeRange currentBudgetPeriod);
 }

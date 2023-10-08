@@ -5,6 +5,7 @@ import { BudgetItemCreateDto } from '../dto/budgetItems/budgetItemCreateDto';
 import { BudgetItemRegularityType } from '../enums/budgetItemRegularityType';
 import { BudgetItemDto } from '../dto/budgets/budgetItemDto';
 import { BudgetItemUpdateDto } from '../dto/budgetItems/budgetItemUpdateDto';
+import { CURRENCY_PRECISION } from '../constants/budgetConstants';
 
 export const budgetItemTableEntryToDrawerModel = (tableEntry: BudgetItemTableEntry): BudgetItemDrawerModel => ({
   budgetItemId: tableEntry.key,
@@ -51,7 +52,7 @@ export const budgetItemDtoToTableEntry = (budgetItemDto: BudgetItemDto): BudgetI
   title: budgetItemDto.itemTitle,
   description: budgetItemDto.itemDescription,
   operationType: budgetItemDto.budgetItemOperationType,
-  operationCost: budgetItemDto.operationCost.toFixed(1).toString(),
+  operationCost: budgetItemDto.operationCost.toFixed(CURRENCY_PRECISION).toString(),
   tagIds: budgetItemDto.tagIds,
   operationDate: new Date(budgetItemDto.operationDate),
 });

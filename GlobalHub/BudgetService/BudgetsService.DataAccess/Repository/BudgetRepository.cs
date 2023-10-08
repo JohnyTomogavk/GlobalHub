@@ -24,6 +24,12 @@ public class BudgetRepository : IBudgetRepository
         return await aggregate.FirstOrDefaultAsync(b => b.Id == id);
     }
 
+    public async Task<Budget?> GetBudgetByIdWithTagLimits(long budgetId)
+    {
+        return await _dbContext.Budgets.Include(budget => budget.BudgetTags).ThenInclude(tag => tag.TagLimit)
+            .FirstOrDefaultAsync(budget => budget.Id == budgetId);
+    }
+
     public async Task<Budget> AddBudget(Budget budget)
     {
         var createdEntity = await _dbContext.Budgets.AddAsync(budget);

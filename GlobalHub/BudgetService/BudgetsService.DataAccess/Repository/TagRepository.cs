@@ -43,4 +43,23 @@ public class TagRepository : ITagRepository
 
         return tagId;
     }
+
+    public async Task<Dictionary<long, decimal>> GetExpensesSumsGroupedByTags(long budgetId, DateTime startRangeDate,
+        DateTime endRangeDate)
+    {
+        var grouped = await _dbContext.Tags.Include(tag => tag.BudgetItemTags).ThenInclude(biTag => biTag.BudgetItem)
+            .Where(tag => tag.BudgetId == budgetId)
+            .Select(tag => new
+            {
+                TagId = tag.Id,
+                OperationCostsSum = tag.BudgetItemTags
+                    .Where(itemTag =>
+                        itemTag.BudgetItem.BudgetItemOperationType == BudgetItemOperationType.Outgoing &&
+                        itemTag.BudgetItem.OperationDate.Date >= startRangeDate.Date &&
+                        itemTag.BudgetItem.OperationDate.Date <= endRangeDate.Date)
+                    .Sum(bi => bi.BudgetItem.OperationCost)
+            }).ToDictionaryAsync(t => t.TagId, arg => arg.OperationCostsSum);
+
+        return grouped;
+    }
 }

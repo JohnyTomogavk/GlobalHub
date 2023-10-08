@@ -1,13 +1,14 @@
 import { AxiosResponse } from 'axios';
 import { getResourceUrl } from '../helpers/urlHelper';
-import { BUDGETS_API_BASE } from '../constants/apiConstants';
+import { BUDGETS_API_BASE, GET_EXPENSES_SUM_GROUPED_BY_TAGS } from '../constants/apiConstants';
 import * as apiConstants from '../constants/apiConstants';
-import { DeleteRequest, PostRequest, PutRequest } from './base/apiServiceBase';
+import { DeleteRequest, GetRequest, PostRequest, PutRequest } from './base/apiServiceBase';
 import { BudgetItemsRequestDto } from '../dto/budgetItems/budgetItemsRequestDto';
 import { BudgetItemsPaginatedResponseDto } from '../dto/budgetItems/budgetItemsPaginatedResponseDto';
 import { BudgetItemCreateDto } from '../dto/budgetItems/budgetItemCreateDto';
 import { BudgetItemDto } from '../dto/budgets/budgetItemDto';
 import { BudgetItemUpdateDto } from '../dto/budgetItems/budgetItemUpdateDto';
+import { ExpenseOperationsSumDto } from '../dto/budgetItems/expenseOperationsSumDto';
 
 export const getBudgetItemsWithFiltersById = async (
   budgetId: number,
@@ -36,4 +37,12 @@ export const deleteBudgetItemById = async (budgetItemId: number): Promise<AxiosR
   return DeleteRequest<object, number>(resourceUrl, {
     budgetItemId: budgetItemId,
   });
+};
+
+export const getExpensesSumsGroupedByTags = async (
+  budgetId: number
+): Promise<AxiosResponse<ExpenseOperationsSumDto[]>> => {
+  const url = getResourceUrl(BUDGETS_API_BASE, GET_EXPENSES_SUM_GROUPED_BY_TAGS);
+
+  return GetRequest<ExpenseOperationsSumDto[]>(url, { budgetId: budgetId });
 };

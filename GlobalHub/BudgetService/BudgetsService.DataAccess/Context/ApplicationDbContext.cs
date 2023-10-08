@@ -12,11 +12,13 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<Budget> Budgets { get; set; }
 
-    public DbSet<BudgetItem?> BudgetsItems { get; set; }
+    public DbSet<BudgetItem> BudgetsItems { get; set; }
 
     public DbSet<BudgetItemTag> BudgetItemTags { get; set; }
 
     public DbSet<Tag> Tags { get; set; }
+
+    public DbSet<TagLimit> TagLimits { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

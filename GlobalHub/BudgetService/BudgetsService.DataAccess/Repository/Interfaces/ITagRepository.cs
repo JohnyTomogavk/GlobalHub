@@ -11,4 +11,7 @@ public interface ITagRepository
     Task<Tag> GetTagById(long tagId);
 
     Task<long> DeleteById(long tagId);
+
+    Task<Dictionary<long, decimal>> GetExpensesSumsGroupedByTags(long budgetId, DateTime startRangeDate,
+        DateTime endRangeDate);
 }
