@@ -15,4 +15,6 @@ public interface IBudgetItemService
 
     Task<IEnumerable<ExpenseOperationsSumDto>> GetExpensesSumsGroupedByTags(long budgetId,
         DateTimeRange currentBudgetPeriod);
+
+    Task<IEnumerable<ExpenseOperationSumByDayDto>> GetExpenseSumsByDays(long budgetId, DateTimeRange dateRange);
 }

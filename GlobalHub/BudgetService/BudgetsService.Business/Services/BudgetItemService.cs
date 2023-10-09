@@ -123,6 +123,21 @@ public class BudgetItemService : IBudgetItemService
         return sumsDto;
     }
 
+    public async Task<IEnumerable<ExpenseOperationSumByDayDto>> GetExpenseSumsByDays(long budgetId,
+        DateTimeRange dateRange)
+    {
+        var budgetItems = await _budgetItemRepository.GetBudgetItemsByIdAndDateRange(budgetId, dateRange);
+        var operationSumsGroupedByDays =
+            budgetItems.GroupBy(selector => selector.OperationDate.Date, item => item.OperationCost);
+        var dtos = operationSumsGroupedByDays
+            .Select(operationsSum => new ExpenseOperationSumByDayDto
+            {
+                OperationDate = operationsSum.Key, OperationCostsSum = operationsSum.Sum()
+            });
+
+        return dtos;
+    }
+
     private static IQueryable<BudgetItem> ApplyFilters(IQueryable<BudgetItem> budgetItems, FilterModelDto filterModel)
     {
         if (filterModel == null)

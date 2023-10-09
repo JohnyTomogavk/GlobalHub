@@ -8,14 +8,12 @@
 public class BudgetItemController : ControllerBase
 {
     private readonly IBudgetItemService _budgetItemService;
-    private readonly ITagService _tagService;
     private readonly IDateTimeService _dateTimeService;
 
     public BudgetItemController(IBudgetItemService budgetItemService, ITagService tagService,
         IDateTimeService dateTimeService)
     {
         _budgetItemService = budgetItemService;
-        _tagService = tagService;
         _dateTimeService = dateTimeService;
     }
 
@@ -73,5 +71,21 @@ public class BudgetItemController : ControllerBase
         await _budgetItemService.DeleteBudgetItem(budgetItemId);
 
         return Ok();
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<ExpenseOperationSumByDayDto>>> GetLast2MonthExpenseSumsByDays(
+        long budgetId)
+    {
+        var currentDate = _dateTimeService.CurrentDate;
+        var dateRange = _dateTimeService.GetLast2MonthRange(currentDate);
+        var expenseSums = await _budgetItemService.GetExpenseSumsByDays(budgetId, dateRange);
+
+        if (!expenseSums.Any())
+        {
+            return StatusCode(StatusCodes.Status204NoContent);
+        }
+
+        return StatusCode(StatusCodes.Status200OK, expenseSums);
     }
 }

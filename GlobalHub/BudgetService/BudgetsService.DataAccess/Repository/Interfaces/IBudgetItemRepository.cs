@@ -10,6 +10,8 @@ public interface IBudgetItemRepository
 
     Task<BudgetItem?> GetBudgetItemById(long budgetItemId);
 
+    Task<IEnumerable<BudgetItem>> GetBudgetItemsByIdAndDateRange(long budgetId, DateTimeRange dateTimeRange);
+
     Task<BudgetItem> UpdateBudgetItem(BudgetItem entityToUpdate);
 
     Task DeleteBudgetItemAsync(BudgetItem budgetItem);

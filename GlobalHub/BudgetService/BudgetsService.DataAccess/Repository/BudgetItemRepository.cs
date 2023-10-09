@@ -42,6 +42,15 @@ public class BudgetItemRepository : IBudgetItemRepository
         return await _dbContext.BudgetsItems.FirstOrDefaultAsync(item => item.Id == budgetItemId);
     }
 
+    public async Task<IEnumerable<BudgetItem>> GetBudgetItemsByIdAndDateRange(long budgetId,
+        DateTimeRange dateTimeRange)
+    {
+        return await _dbContext.BudgetsItems.Where(bi =>
+            bi.BudgetId == budgetId && bi.BudgetItemOperationType == BudgetItemOperationType.Outgoing &&
+            bi.OperationDate.Date >= dateTimeRange.StartRangeDate.Date &&
+            bi.OperationDate.Date <= dateTimeRange.EndRangeDate.Date).ToListAsync();
+    }
+
     public async Task<BudgetItem> UpdateBudgetItem(BudgetItem entityToUpdate)
     {
         var updateEntity = _dbContext.BudgetsItems.Update(entityToUpdate).Entity;
