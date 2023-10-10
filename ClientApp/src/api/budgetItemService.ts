@@ -13,7 +13,6 @@ import { BudgetItemCreateDto } from '../dto/budgetItems/budgetItemCreateDto';
 import { BudgetItemDto } from '../dto/budgets/budgetItemDto';
 import { BudgetItemUpdateDto } from '../dto/budgetItems/budgetItemUpdateDto';
 import { ExpenseOperationsSumDto } from '../dto/budgetItems/expenseOperationsSumDto';
-import { BudgetItemExpenseSumByDay } from '../dto/budgetItems/budgetItemExpenseSumByDay';
 
 export const getBudgetItemsWithFiltersById = async (
   budgetId: number,
