@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Area } from '@ant-design/plots';
 import { getBudgetItemsByBudgetIdAndDates } from '../../../api/budgetItemService';
 import { HttpStatusCode } from 'axios';
 import { nameof } from '../../../helpers/objectHelper';
@@ -9,6 +8,7 @@ import { BudgetItemDto } from '../../../dto/budgets/budgetItemDto';
 import { forOwn, groupBy, sumBy } from 'lodash';
 import { BudgetItemExpenseSumByDay } from '../../../dto/budgetItems/budgetItemExpenseSumByDay';
 import { ExpenseDistributionByDaysChartEntry } from '../../../models/analyticCharts/ExpenseDistributionByDaysChartEntry';
+import { Line } from '@ant-design/plots/lib';
 
 interface ExpensesDistributionByDaysChartProps {
   budgetId: number;
@@ -24,6 +24,17 @@ const distributionByDaysChartConfig = {
       type: 'linear',
       tickCount: 31,
       tickInterval: 1,
+    },
+  },
+  slider: {
+    start: 0,
+    end: 1,
+  },
+  smooth: true,
+  animation: {
+    appear: {
+      animation: 'wave-in',
+      duration: 1000,
     },
   },
 };
@@ -123,7 +134,7 @@ export const ExpensesDistributionByDaysChart = ({ budgetId }: ExpensesDistributi
   }, [budgetId]);
 
   return chartEntries.length ? (
-    <Area data={chartEntries} {...distributionByDaysChartConfig} />
+    <Line data={chartEntries} {...distributionByDaysChartConfig} />
   ) : (
     <Empty description={'There is not enough data to perform analytic on your expenses'} />
   );

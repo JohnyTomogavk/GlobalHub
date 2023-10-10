@@ -455,7 +455,6 @@ export const BudgetComponent = observer((): JSX.Element => {
               <Collapse
                 destroyInactivePanel={false}
                 size={'small'}
-                defaultActiveKey={2}
                 items={[
                   {
                     key: 1,
