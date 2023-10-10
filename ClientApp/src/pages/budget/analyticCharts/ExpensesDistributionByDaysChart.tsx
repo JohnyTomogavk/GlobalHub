@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Area } from '@ant-design/plots';
-import { getExpensesSumsByDaysForLast2Month } from '../../../api/budgetItemService';
+import { getBudgetItemsByBudgetIdAndDates } from '../../../api/budgetItemService';
 import { HttpStatusCode } from 'axios';
 import { nameof } from '../../../helpers/objectHelper';
 import dayjs from 'dayjs';
 import { Empty } from 'antd';
+import { BudgetItemDto } from '../../../dto/budgets/budgetItemDto';
+import { forOwn, groupBy, sumBy } from 'lodash';
+import { BudgetItemExpenseSumByDay } from '../../../dto/budgetItems/budgetItemExpenseSumByDay';
+import { ExpenseDistributionByDaysChartEntry } from '../../../models/analyticCharts/ExpenseDistributionByDaysChartEntry';
 
 interface ExpensesDistributionByDaysChartProps {
   budgetId: number;
 }
 
-interface ExpenseDistributionByDaysChartEntry {
-  monthLabel: string;
-  date: number;
-  value: number;
-}
-
-const distributionByDaysConfig = {
+const distributionByDaysChartConfig = {
   xField: nameof<ExpenseDistributionByDaysChartEntry>('date'),
   yField: nameof<ExpenseDistributionByDaysChartEntry>('value'),
   seriesField: nameof<ExpenseDistributionByDaysChartEntry>('monthLabel'),
@@ -30,25 +28,48 @@ const distributionByDaysConfig = {
   },
 };
 
+const getMonthLabel = (date: Date): string =>
+  date.toLocaleString('en-US', {
+    month: 'long',
+  });
+
 export const ExpensesDistributionByDaysChart = ({ budgetId }: ExpensesDistributionByDaysChartProps): JSX.Element => {
-  const [operationSumsByDays, setOperationSumsByDays] = useState<ExpenseDistributionByDaysChartEntry[]>([]);
+  const [chartEntries, setChartEntries] = useState<ExpenseDistributionByDaysChartEntry[]>([]);
+
   const today = dayjs();
   const monthsNumbersToCompare = [today.add(-1, 'months').month(), today.month()];
 
-  const loadOperationSumsByDays = async (): Promise<void> => {
-    const { data: expenseData, status } = await getExpensesSumsByDaysForLast2Month(budgetId);
+  const getGroupedSumsByDate = (budgetItems: BudgetItemDto[]): BudgetItemExpenseSumByDay[] => {
+    const budgetItemParsedData = budgetItems.map((dto) => ({
+      ...dto,
+      operationDate: dayjs(dto.operationDate).startOf('date').toDate(),
+    }));
 
-    if (status !== HttpStatusCode.Ok) {
-      setOperationSumsByDays([]);
+    const operationSumsGroupedByOperationDate = groupBy(
+      budgetItemParsedData,
+      (budgetItemDto) => budgetItemDto.operationDate
+    );
 
-      return;
-    }
+    const sumsByDays: BudgetItemExpenseSumByDay[] = [];
 
+    forOwn(operationSumsGroupedByOperationDate, (values: BudgetItemDto[], key: string) => {
+      sumsByDays.push({
+        operationDate: new Date(key),
+        operationCostsSum: sumBy(values, (dto) => dto.operationCost),
+      });
+    });
+
+    return sumsByDays;
+  };
+
+  const convertToChartEntries = (
+    sumsGroupedByDays: BudgetItemExpenseSumByDay[]
+  ): ExpenseDistributionByDaysChartEntry[] => {
     const chartData: ExpenseDistributionByDaysChartEntry[] = [];
 
     monthsNumbersToCompare.forEach((monthNumber) => {
       for (let dayNumber = 1; dayNumber <= today.get('date'); dayNumber++) {
-        const dateSumsModel = expenseData.find((dto) => {
+        const dateSumsModel = sumsGroupedByDays.find((dto) => {
           const date = new Date(dto.operationDate);
 
           return date.getMonth() === monthNumber && date.getDate() === dayNumber;
@@ -58,9 +79,7 @@ export const ExpensesDistributionByDaysChart = ({ budgetId }: ExpensesDistributi
 
         if (dateSumsModel) {
           chartEntry = {
-            monthLabel: new Date(dateSumsModel.operationDate).toLocaleString('en-US', {
-              month: 'long',
-            }),
+            monthLabel: getMonthLabel(new Date(dateSumsModel.operationDate)),
             value: dateSumsModel.operationCostsSum,
             date: dayNumber,
           };
@@ -68,9 +87,7 @@ export const ExpensesDistributionByDaysChart = ({ budgetId }: ExpensesDistributi
           const date = today.set('month', monthNumber).set('date', dayNumber);
 
           chartEntry = {
-            monthLabel: date.toDate().toLocaleString('en-US', {
-              month: 'long',
-            }),
+            monthLabel: getMonthLabel(date.toDate()),
             value: 0,
             date: dayNumber,
           };
@@ -80,16 +97,34 @@ export const ExpensesDistributionByDaysChart = ({ budgetId }: ExpensesDistributi
       }
     });
 
-    setOperationSumsByDays(chartData);
+    return chartData;
+  };
+
+  const loadBudgetItems = async (): Promise<void> => {
+    const previousMonthStartDate = dayjs().add(-1, 'months').set('date', 1).startOf('day');
+    const currentMonthEndDate = dayjs().set('date', 1).add(1, 'months').add(-1, 'days').startOf('day');
+
+    const { data: budgetItemsDtos, status } = await getBudgetItemsByBudgetIdAndDates(
+      budgetId,
+      previousMonthStartDate.toDate(),
+      currentMonthEndDate.toDate()
+    );
+
+    if (status !== HttpStatusCode.Ok) return;
+
+    const sumsByDays = getGroupedSumsByDate(budgetItemsDtos);
+    const entries = convertToChartEntries(sumsByDays);
+
+    setChartEntries(entries);
   };
 
   useEffect(() => {
-    loadOperationSumsByDays();
+    loadBudgetItems();
   }, [budgetId]);
 
-  return operationSumsByDays.length ? (
-    <Area data={operationSumsByDays} {...distributionByDaysConfig} />
+  return chartEntries.length ? (
+    <Area data={chartEntries} {...distributionByDaysChartConfig} />
   ) : (
-    <Empty description={'There is not enough data to show analytic on your expenses'} />
+    <Empty description={'There is not enough data to perform analytic on your expenses'} />
   );
 };

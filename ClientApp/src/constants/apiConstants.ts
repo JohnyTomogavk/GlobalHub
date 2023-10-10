@@ -27,7 +27,7 @@ export const CREATE_BUDGET_ITEM = '/BudgetItem/CreateBudgetItem';
 export const UPDATE_BUDGET_ITEM = '/BudgetItem/UpdateBudgetItem';
 export const DELETE_BUDGET_ITEM_BY_ID = '/BudgetItem/DeleteBudgetItem';
 export const GET_EXPENSES_SUM_GROUPED_BY_TAGS = '/BudgetItem/GetCurrentMonthExpensesSumsGroupedByTags';
-export const GET_LAST_2_MONTH_EXPENSES_SUM_BY_DAYS = '/BudgetItem/GetLast2MonthExpenseSumsByDays';
+export const GET_BUDGET_ITEMS_BY_ID_AND_RANGE = '/BudgetItem/GetBudgetItemsByIdAndRange';
 
 // Constants related to tags
 export const GET_BUDGET_TAGS_BY_ID = '/Tag/GetBudgetTagsByBudgetId';

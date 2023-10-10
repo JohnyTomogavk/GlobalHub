@@ -2,8 +2,8 @@ import { AxiosResponse } from 'axios';
 import { getResourceUrl } from '../helpers/urlHelper';
 import {
   BUDGETS_API_BASE,
+  GET_BUDGET_ITEMS_BY_ID_AND_RANGE,
   GET_EXPENSES_SUM_GROUPED_BY_TAGS,
-  GET_LAST_2_MONTH_EXPENSES_SUM_BY_DAYS,
 } from '../constants/apiConstants';
 import * as apiConstants from '../constants/apiConstants';
 import { DeleteRequest, GetRequest, PostRequest, PutRequest } from './base/apiServiceBase';
@@ -13,7 +13,7 @@ import { BudgetItemCreateDto } from '../dto/budgetItems/budgetItemCreateDto';
 import { BudgetItemDto } from '../dto/budgets/budgetItemDto';
 import { BudgetItemUpdateDto } from '../dto/budgetItems/budgetItemUpdateDto';
 import { ExpenseOperationsSumDto } from '../dto/budgetItems/expenseOperationsSumDto';
-import { ExpenseSumByDay } from '../dto/budgetItems/expenseSumByDay';
+import { BudgetItemExpenseSumByDay } from '../dto/budgetItems/budgetItemExpenseSumByDay';
 
 export const getBudgetItemsWithFiltersById = async (
   budgetId: number,
@@ -52,10 +52,16 @@ export const getExpensesSumsGroupedByTags = async (
   return GetRequest<ExpenseOperationsSumDto[]>(url, { budgetId: budgetId });
 };
 
-export const getExpensesSumsByDaysForLast2Month = async (
-  budgetId: number
-): Promise<AxiosResponse<ExpenseSumByDay[]>> => {
-  const url = getResourceUrl(BUDGETS_API_BASE, GET_LAST_2_MONTH_EXPENSES_SUM_BY_DAYS);
+export const getBudgetItemsByBudgetIdAndDates = async (
+  budgetId: number,
+  startDateRange: Date,
+  endDateRange: Date
+): Promise<AxiosResponse<BudgetItemDto[]>> => {
+  const url = getResourceUrl(BUDGETS_API_BASE, GET_BUDGET_ITEMS_BY_ID_AND_RANGE);
 
-  return GetRequest<ExpenseSumByDay[]>(url, { budgetId: budgetId });
+  return GetRequest<BudgetItemDto[]>(url, {
+    budgetId: budgetId,
+    startDateRange: startDateRange,
+    endDateRange: endDateRange,
+  });
 };

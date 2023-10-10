@@ -1,4 +1,4 @@
-export interface ExpenseSumByDay {
+export interface BudgetItemExpenseSumByDay {
   operationCostsSum: number;
   operationDate: Date;
 }
