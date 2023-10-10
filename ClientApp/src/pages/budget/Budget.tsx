@@ -25,7 +25,7 @@ import {
   updateBudgetTitle,
   updatePreservePercent,
 } from '../../api/budgetsService';
-import { toNumber } from 'lodash';
+import { isEqual, toNumber } from 'lodash';
 import { BudgetDto } from '../../dto/budgets/budgetDto';
 import CountUp from 'react-countup';
 import { valueType } from 'antd/es/statistic/utils';
@@ -245,10 +245,13 @@ export const BudgetComponent = observer((): JSX.Element => {
   };
 
   const onTagLimitsDrawerSubmit = async (updatedTagLimits: TagLimitDto[]): Promise<void> => {
+    setIsTagLimitsDrawerOpened(false);
+
+    if (isEqual(updatedTagLimits, tagLimits)) return;
+
     const { status } = await updateTagLimits(budgetId, updatedTagLimits);
 
     if (status === HttpStatusCode.Ok) {
-      setIsTagLimitsDrawerOpened(false);
       await loadTagLimitsData();
     }
   };
