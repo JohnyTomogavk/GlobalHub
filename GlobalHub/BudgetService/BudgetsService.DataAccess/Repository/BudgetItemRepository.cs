@@ -9,8 +9,7 @@ public class BudgetItemRepository : IBudgetItemRepository
         _dbContext = dbContext;
     }
 
-    public IQueryable<BudgetItem> GetBudgetItemsByIdAndPeriodAsIQueryable(long budgetId,
-        DateTimeRange datePeriod)
+    public IQueryable<BudgetItem> GetBudgetItemsByIdAndPeriodAsIQueryable(long budgetId)
     {
         return _dbContext.BudgetsItems
             .Include(item => item.BudgetItemTags)
@@ -42,13 +41,13 @@ public class BudgetItemRepository : IBudgetItemRepository
         return await _dbContext.BudgetsItems.FirstOrDefaultAsync(item => item.Id == budgetItemId);
     }
 
-    public async Task<IEnumerable<BudgetItem>> GetBudgetItemsByIdAndDateRange(long budgetId,
-        DateTimeRange dateTimeRange)
+    public async Task<IEnumerable<BudgetItem>> GetBudgetItemsByIdAndDateRange(long budgetId, DateTime startDateRange,
+        DateTime endDateRange)
     {
         return await _dbContext.BudgetsItems.Where(bi =>
             bi.BudgetId == budgetId && bi.BudgetItemOperationType == BudgetItemOperationType.Outgoing &&
-            bi.OperationDate.Date >= dateTimeRange.StartRangeDate.Date &&
-            bi.OperationDate.Date <= dateTimeRange.EndRangeDate.Date).ToListAsync();
+            bi.OperationDate >= startDateRange &&
+            bi.OperationDate <= endDateRange).ToListAsync();
     }
 
     public async Task<BudgetItem> UpdateBudgetItem(BudgetItem entityToUpdate)

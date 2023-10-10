@@ -2,7 +2,7 @@
 
 public interface IBudgetItemRepository
 {
-    public IQueryable<BudgetItem> GetBudgetItemsByIdAndPeriodAsIQueryable(long budgetId, DateTimeRange datePeriod);
+    public IQueryable<BudgetItem> GetBudgetItemsByIdAndPeriodAsIQueryable(long budgetId);
 
     Task<BudgetItem?> CreateBudgetItem(BudgetItem? createModel);
 
@@ -10,7 +10,8 @@ public interface IBudgetItemRepository
 
     Task<BudgetItem?> GetBudgetItemById(long budgetItemId);
 
-    Task<IEnumerable<BudgetItem>> GetBudgetItemsByIdAndDateRange(long budgetId, DateTimeRange dateTimeRange);
+    Task<IEnumerable<BudgetItem>> GetBudgetItemsByIdAndDateRange(long budgetId, DateTime startDateRange,
+        DateTime endDateRange);
 
     Task<BudgetItem> UpdateBudgetItem(BudgetItem entityToUpdate);
 

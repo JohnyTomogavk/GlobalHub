@@ -21,10 +21,8 @@ public class BudgetItemController : ControllerBase
     public async Task<ActionResult<BudgetItemPaginatedResponse>> GetBudgetItemsByBudgetId(long id,
         [FromBody] BudgetItemsQueryOptions? budgetItemsQueryOptions)
     {
-        var currentDate = _dateTimeService.CurrentDate;
-        var currentBudgetPeriod = _dateTimeService.GetDateTimeRangeByDate(currentDate);
         var budgetItems =
-            await _budgetItemService.GetBudgetItemsByBudgetId(id, currentBudgetPeriod, budgetItemsQueryOptions);
+            await _budgetItemService.GetBudgetItemsByBudgetId(id, budgetItemsQueryOptions);
 
         return Ok(budgetItems);
     }
@@ -74,18 +72,16 @@ public class BudgetItemController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ExpenseOperationSumByDayDto>>> GetLast2MonthExpenseSumsByDays(
-        long budgetId)
+    public async Task<ActionResult<IEnumerable<BudgetItemDto>>> GetBudgetItemsByIdAndRange(
+        long budgetId, DateTime startDateRange, DateTime endDateRange)
     {
-        var currentDate = _dateTimeService.CurrentDate;
-        var dateRange = _dateTimeService.GetLast2MonthRange(currentDate);
-        var expenseSums = await _budgetItemService.GetExpenseSumsByDays(budgetId, dateRange);
+        var budgetItems = await _budgetItemService.GetBudgetItemsByIdAndRange(budgetId, startDateRange, endDateRange);
 
-        if (!expenseSums.Any())
+        if (!budgetItems.Any())
         {
             return StatusCode(StatusCodes.Status204NoContent);
         }
 
-        return StatusCode(StatusCodes.Status200OK, expenseSums);
+        return StatusCode(StatusCodes.Status200OK, budgetItems);
     }
 }

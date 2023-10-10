@@ -2,7 +2,7 @@
 
 public interface IBudgetItemService
 {
-    public Task<BudgetItemPaginatedResponse> GetBudgetItemsByBudgetId(long id, DateTimeRange datePeriod,
+    public Task<BudgetItemPaginatedResponse> GetBudgetItemsByBudgetId(long id,
         BudgetItemsQueryOptions queryOptions);
 
     Task<BudgetItemDto> CreateBudgetItem(BudgetItemCreateDto createDto);
@@ -16,5 +16,6 @@ public interface IBudgetItemService
     Task<IEnumerable<ExpenseOperationsSumDto>> GetExpensesSumsGroupedByTags(long budgetId,
         DateTimeRange currentBudgetPeriod);
 
-    Task<IEnumerable<ExpenseOperationSumByDayDto>> GetExpenseSumsByDays(long budgetId, DateTimeRange dateRange);
+    Task<IEnumerable<BudgetItemDto>> GetBudgetItemsByIdAndRange(long budgetId, DateTime startDateRange,
+        DateTime endDateRange);
 }

@@ -18,10 +18,10 @@ public class BudgetItemService : IBudgetItemService
         _updateDtoValidator = updateDtoValidator;
     }
 
-    public async Task<BudgetItemPaginatedResponse> GetBudgetItemsByBudgetId(long id, DateTimeRange datePeriod,
+    public async Task<BudgetItemPaginatedResponse> GetBudgetItemsByBudgetId(long id,
         BudgetItemsQueryOptions queryOptions)
     {
-        var budgetItemsQueryExpression = _budgetItemRepository.GetBudgetItemsByIdAndPeriodAsIQueryable(id, datePeriod);
+        var budgetItemsQueryExpression = _budgetItemRepository.GetBudgetItemsByIdAndPeriodAsIQueryable(id);
         budgetItemsQueryExpression = ApplyFilters(budgetItemsQueryExpression, queryOptions.FilterModelDto);
         budgetItemsQueryExpression =
             budgetItemsQueryExpression.ApplySort(queryOptions.SortColumn, queryOptions.SortByAscending);
@@ -123,19 +123,13 @@ public class BudgetItemService : IBudgetItemService
         return sumsDto;
     }
 
-    public async Task<IEnumerable<ExpenseOperationSumByDayDto>> GetExpenseSumsByDays(long budgetId,
-        DateTimeRange dateRange)
+    public async Task<IEnumerable<BudgetItemDto>> GetBudgetItemsByIdAndRange(long budgetId, DateTime startDateRange,
+        DateTime endDateRange)
     {
-        var budgetItems = await _budgetItemRepository.GetBudgetItemsByIdAndDateRange(budgetId, dateRange);
-        var operationSumsGroupedByDays =
-            budgetItems.GroupBy(selector => selector.OperationDate.Date, item => item.OperationCost);
-        var dtos = operationSumsGroupedByDays
-            .Select(operationsSum => new ExpenseOperationSumByDayDto
-            {
-                OperationDate = operationsSum.Key, OperationCostsSum = operationsSum.Sum()
-            });
+        var budgetItems =
+            await _budgetItemRepository.GetBudgetItemsByIdAndDateRange(budgetId, startDateRange, endDateRange);
 
-        return dtos;
+        return _mapper.Map<IEnumerable<BudgetItemDto>>(budgetItems);
     }
 
     private static IQueryable<BudgetItem> ApplyFilters(IQueryable<BudgetItem> budgetItems, FilterModelDto filterModel)
