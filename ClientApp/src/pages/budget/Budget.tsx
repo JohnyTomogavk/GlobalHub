@@ -36,7 +36,7 @@ import { BudgetAnalyticDto } from '../../dto/budgets/budgetAnalyticDto';
 import { TagDto } from '../../dto/tags/tagDto';
 import { getBudgetTags } from '../../api/tagService';
 import { BudgetItemsTable } from './budgetItemsTable/BudgetItemsTable';
-import { DistributionByDaysChart } from './analyticCharts/DistributionByDaysChart';
+import { ExpensesDistributionByDaysChart } from './analyticCharts/ExpensesDistributionByDaysChart';
 import { TagLimitsStateBulletChart } from './analyticCharts/TagLimitsStateBulletChart';
 import { ExpensesByTagsChart } from './analyticCharts/ExpensesByTagsChart';
 import { BUDGET_LIST_ROUTE } from '../../constants/routingConstants';
@@ -455,6 +455,7 @@ export const BudgetComponent = observer((): JSX.Element => {
               <Collapse
                 destroyInactivePanel={false}
                 size={'small'}
+                defaultActiveKey={2}
                 items={[
                   {
                     key: 1,
@@ -491,7 +492,7 @@ export const BudgetComponent = observer((): JSX.Element => {
                   {
                     key: 2,
                     label: 'Current month expenses to previous',
-                    children: <DistributionByDaysChart />,
+                    children: <ExpensesDistributionByDaysChart budgetId={budgetId} />,
                   },
                 ]}
               />

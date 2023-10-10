@@ -8,14 +8,12 @@
 public class BudgetItemController : ControllerBase
 {
     private readonly IBudgetItemService _budgetItemService;
-    private readonly ITagService _tagService;
     private readonly IDateTimeService _dateTimeService;
 
     public BudgetItemController(IBudgetItemService budgetItemService, ITagService tagService,
         IDateTimeService dateTimeService)
     {
         _budgetItemService = budgetItemService;
-        _tagService = tagService;
         _dateTimeService = dateTimeService;
     }
 
@@ -23,10 +21,8 @@ public class BudgetItemController : ControllerBase
     public async Task<ActionResult<BudgetItemPaginatedResponse>> GetBudgetItemsByBudgetId(long id,
         [FromBody] BudgetItemsQueryOptions? budgetItemsQueryOptions)
     {
-        var currentDate = _dateTimeService.CurrentDate;
-        var currentBudgetPeriod = _dateTimeService.GetDateTimeRangeByDate(currentDate);
         var budgetItems =
-            await _budgetItemService.GetBudgetItemsByBudgetId(id, currentBudgetPeriod, budgetItemsQueryOptions);
+            await _budgetItemService.GetBudgetItemsByBudgetId(id, budgetItemsQueryOptions);
 
         return Ok(budgetItems);
     }
@@ -73,5 +69,19 @@ public class BudgetItemController : ControllerBase
         await _budgetItemService.DeleteBudgetItem(budgetItemId);
 
         return Ok();
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<BudgetItemDto>>> GetBudgetItemsByIdAndRange(
+        long budgetId, DateTime startDateRange, DateTime endDateRange)
+    {
+        var budgetItems = await _budgetItemService.GetBudgetItemsByIdAndRange(budgetId, startDateRange, endDateRange);
+
+        if (!budgetItems.Any())
+        {
+            return StatusCode(StatusCodes.Status204NoContent);
+        }
+
+        return StatusCode(StatusCodes.Status200OK, budgetItems);
     }
 }

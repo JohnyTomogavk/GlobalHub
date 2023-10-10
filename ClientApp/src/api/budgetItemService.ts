@@ -1,6 +1,10 @@
 import { AxiosResponse } from 'axios';
 import { getResourceUrl } from '../helpers/urlHelper';
-import { BUDGETS_API_BASE, GET_EXPENSES_SUM_GROUPED_BY_TAGS } from '../constants/apiConstants';
+import {
+  BUDGETS_API_BASE,
+  GET_BUDGET_ITEMS_BY_ID_AND_RANGE,
+  GET_EXPENSES_SUM_GROUPED_BY_TAGS,
+} from '../constants/apiConstants';
 import * as apiConstants from '../constants/apiConstants';
 import { DeleteRequest, GetRequest, PostRequest, PutRequest } from './base/apiServiceBase';
 import { BudgetItemsRequestDto } from '../dto/budgetItems/budgetItemsRequestDto';
@@ -45,4 +49,18 @@ export const getExpensesSumsGroupedByTags = async (
   const url = getResourceUrl(BUDGETS_API_BASE, GET_EXPENSES_SUM_GROUPED_BY_TAGS);
 
   return GetRequest<ExpenseOperationsSumDto[]>(url, { budgetId: budgetId });
+};
+
+export const getBudgetItemsByBudgetIdAndDates = async (
+  budgetId: number,
+  startDateRange: Date,
+  endDateRange: Date
+): Promise<AxiosResponse<BudgetItemDto[]>> => {
+  const url = getResourceUrl(BUDGETS_API_BASE, GET_BUDGET_ITEMS_BY_ID_AND_RANGE);
+
+  return GetRequest<BudgetItemDto[]>(url, {
+    budgetId: budgetId,
+    startDateRange: startDateRange,
+    endDateRange: endDateRange,
+  });
 };

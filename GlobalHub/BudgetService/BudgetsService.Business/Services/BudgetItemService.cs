@@ -18,10 +18,10 @@ public class BudgetItemService : IBudgetItemService
         _updateDtoValidator = updateDtoValidator;
     }
 
-    public async Task<BudgetItemPaginatedResponse> GetBudgetItemsByBudgetId(long id, DateTimeRange datePeriod,
+    public async Task<BudgetItemPaginatedResponse> GetBudgetItemsByBudgetId(long id,
         BudgetItemsQueryOptions queryOptions)
     {
-        var budgetItemsQueryExpression = _budgetItemRepository.GetBudgetItemsByIdAndPeriodAsIQueryable(id, datePeriod);
+        var budgetItemsQueryExpression = _budgetItemRepository.GetBudgetItemsByIdAndPeriodAsIQueryable(id);
         budgetItemsQueryExpression = ApplyFilters(budgetItemsQueryExpression, queryOptions.FilterModelDto);
         budgetItemsQueryExpression =
             budgetItemsQueryExpression.ApplySort(queryOptions.SortColumn, queryOptions.SortByAscending);
@@ -121,6 +121,15 @@ public class BudgetItemService : IBudgetItemService
         });
 
         return sumsDto;
+    }
+
+    public async Task<IEnumerable<BudgetItemDto>> GetBudgetItemsByIdAndRange(long budgetId, DateTime startDateRange,
+        DateTime endDateRange)
+    {
+        var budgetItems =
+            await _budgetItemRepository.GetBudgetItemsByIdAndDateRange(budgetId, startDateRange, endDateRange);
+
+        return _mapper.Map<IEnumerable<BudgetItemDto>>(budgetItems);
     }
 
     private static IQueryable<BudgetItem> ApplyFilters(IQueryable<BudgetItem> budgetItems, FilterModelDto filterModel)
