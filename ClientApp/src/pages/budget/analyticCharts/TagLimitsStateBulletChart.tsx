@@ -4,6 +4,7 @@ import { TagDto } from '../../../dto/tags/tagDto';
 import { TagLimitDto } from '../../../dto/tagLimit/tagLimitDto';
 import { ExpenseOperationsSumDto } from '../../../dto/budgetItems/expenseOperationsSumDto';
 import { max, maxBy } from 'lodash';
+import { nameof } from '../../../helpers/objectHelper';
 import { PERCENT_LEFT_BEFORE_REACHING_TAG_LIMIT_TO_SHOW_WARNING } from '../../../constants/budgetConstants';
 
 interface TagLimitsStateBulletChartProps {
@@ -20,10 +21,10 @@ interface TagDataEntry {
 }
 
 const balanceOnLimitsByTagsChart = {
-  measureField: 'currentValue',
-  rangeField: 'ranges',
-  targetField: 'target',
-  xField: 'title',
+  measureField: nameof<TagDataEntry>('currentValue'),
+  rangeField: nameof<TagDataEntry>('ranges'),
+  targetField: nameof<TagDataEntry>('target'),
+  xField: nameof<TagDataEntry>('title'),
   color: {
     range: ['#bfeec8', '#FFe0b0', '#FFbcb8'],
     measure: '#5B8FF9',
@@ -38,17 +39,14 @@ const sizeConfig = {
   target: 0,
 };
 
-const getExpenseSumRanges = (tagLimit: number, maxLimitOrExpenseValue: number): number[] => {
+const getChartColorZonesEndsForTagLimit = (tagLimit: number, maxLimitOrExpenseValue: number): number[] => {
   if (tagLimit === 0) {
-    return [maxLimitOrExpenseValue + maxLimitOrExpenseValue * PERCENT_LEFT_BEFORE_REACHING_TAG_LIMIT_TO_SHOW_WARNING];
+    return [maxLimitOrExpenseValue];
   }
 
-  const greenRange = tagLimit - tagLimit * PERCENT_LEFT_BEFORE_REACHING_TAG_LIMIT_TO_SHOW_WARNING;
-  const yellowRange = tagLimit + tagLimit * PERCENT_LEFT_BEFORE_REACHING_TAG_LIMIT_TO_SHOW_WARNING;
-  const redRange =
-    maxLimitOrExpenseValue + maxLimitOrExpenseValue * PERCENT_LEFT_BEFORE_REACHING_TAG_LIMIT_TO_SHOW_WARNING;
+  const greenRangeEnd = tagLimit - tagLimit * PERCENT_LEFT_BEFORE_REACHING_TAG_LIMIT_TO_SHOW_WARNING;
 
-  return [greenRange, yellowRange, redRange];
+  return [greenRangeEnd, tagLimit, maxLimitOrExpenseValue];
 };
 
 export const TagLimitsStateBulletChart = ({
@@ -56,7 +54,7 @@ export const TagLimitsStateBulletChart = ({
   tagLimitsData,
   expensesByTagSums,
 }: TagLimitsStateBulletChartProps): JSX.Element => {
-  const maxExpenseOrLimitValue =
+  const maxFromExpensesSumsAndLimits =
     max([
       maxBy(tagLimitsData, (lim) => lim.maxExpenseOperationsSum)?.maxExpenseOperationsSum ?? 1,
       maxBy(expensesByTagSums, (expense) => expense.operationsSum)?.operationsSum ?? 1,
@@ -67,7 +65,7 @@ export const TagLimitsStateBulletChart = ({
       const expenseSumOnTag = expensesByTagSums.find((sum) => sum.tagId === tagDto.id)?.operationsSum ?? 0;
       const tagLimit = tagLimitsData.find((limit) => limit.id === tagDto.id)?.maxExpenseOperationsSum ?? 0;
 
-      const sumRanges = getExpenseSumRanges(tagLimit, maxExpenseOrLimitValue);
+      const sumRanges = getChartColorZonesEndsForTagLimit(tagLimit, maxFromExpensesSumsAndLimits);
 
       return {
         title: tagDto.label,
