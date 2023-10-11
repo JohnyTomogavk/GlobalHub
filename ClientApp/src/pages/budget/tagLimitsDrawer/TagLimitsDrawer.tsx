@@ -7,7 +7,6 @@ import { LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons'
 import { nameof } from '../../../helpers/objectHelper';
 import { TagDto } from '../../../dto/tags/tagDto';
 import styles from '../../../styles.module.scss';
-import { isEqual } from 'lodash';
 
 interface TagLimitsDrawerProps {
   open: boolean;
@@ -62,10 +61,7 @@ export const TagLimitsDrawer = ({
         ({ id: tagLimitData.id, maxExpenseOperationsSum: tagLimitData.maxExpenseOperationsSum }) as TagLimitDto
     );
 
-    // TODO: Move check to parent component and call onSubmit in dependence on validness of the form
-    if (!isEqual(updatedLimits, initialTagLimitsData)) {
-      await onSubmit(updatedLimits);
-    }
+    await onSubmit(updatedLimits);
   };
 
   const afterOpenChange = (newOpenValue: boolean): void => {

@@ -25,7 +25,7 @@ import {
   updateBudgetTitle,
   updatePreservePercent,
 } from '../../api/budgetsService';
-import { toNumber } from 'lodash';
+import { isEqual, toNumber } from 'lodash';
 import { BudgetDto } from '../../dto/budgets/budgetDto';
 import CountUp from 'react-countup';
 import { valueType } from 'antd/es/statistic/utils';
@@ -54,6 +54,7 @@ import {
   PERCENT_LEFT_BEFORE_REACHING_TAG_LIMIT_TO_SHOW_WARNING,
 } from '../../constants/budgetConstants';
 import { TagLimitsDrawer } from './tagLimitsDrawer/TagLimitsDrawer';
+import { ResultStatusType } from 'antd/lib/result';
 
 const { Text } = Typography;
 
@@ -94,13 +95,6 @@ export const BudgetComponent = observer((): JSX.Element => {
     (operationSum: ExpenseOperationsSumDto): boolean => operationSum.operationsSum !== 0
   );
 
-  const tagLimitsResultTitle =
-    tagLimitsStatuses.length === 0
-      ? 'You are on track with your limits'
-      : `Some of tags have reached their limits on expenses: ${tagLimitsStatuses
-          .map((limitStatus) => limitStatus.getTagLabel())
-          .join(', ')}`;
-
   const loadBudgetData = async (): Promise<void> => {
     const [{ data: budget }, { data: budgetAnalytic }, { data: tags }] = await Promise.all([
       getBudgetById(budgetId),
@@ -111,6 +105,36 @@ export const BudgetComponent = observer((): JSX.Element => {
     setBudgetDto(budget);
     setBudgetAnalyticData(budgetAnalytic);
     setBudgetTags(tags);
+  };
+
+  const getTagLimitsResultTitle = (): string => {
+    let resultTitle = 'You are on track with your limits';
+
+    if (tagLimitsStatuses.some((status) => status.hasLimitBeenReached)) {
+      resultTitle = `Some of tags have reached their limits on expenses: ${tagLimitsStatuses
+        .filter((status) => status.hasLimitBeenReached)
+        .map((limitStatus) => limitStatus.getTagLabel())
+        .join(', ')}`;
+    } else if (tagLimitsStatuses.some((status) => !status.hasLimitBeenReached)) {
+      resultTitle = `Some of tags are about to reach their limits on expenses: ${tagLimitsStatuses
+        .filter((status) => !status.hasLimitBeenReached)
+        .map((limitStatus) => limitStatus.getTagLabel())
+        .join(', ')}`;
+    }
+
+    return resultTitle;
+  };
+
+  const getTagLimitResultStatus = (): ResultStatusType => {
+    let status: ResultStatusType = 'success';
+
+    if (tagLimitsStatuses.some((tagLimitStatus) => tagLimitStatus.hasLimitBeenReached)) {
+      status = 'error';
+    } else if (tagLimitsStatuses.some((tagLimitStatus) => !tagLimitStatus.hasLimitBeenReached)) {
+      status = 'warning';
+    }
+
+    return status;
   };
 
   const handleExpenseLimits = (): void => {
@@ -245,10 +269,13 @@ export const BudgetComponent = observer((): JSX.Element => {
   };
 
   const onTagLimitsDrawerSubmit = async (updatedTagLimits: TagLimitDto[]): Promise<void> => {
+    setIsTagLimitsDrawerOpened(false);
+
+    if (isEqual(updatedTagLimits, tagLimits)) return;
+
     const { status } = await updateTagLimits(budgetId, updatedTagLimits);
 
     if (status === HttpStatusCode.Ok) {
-      setIsTagLimitsDrawerOpened(false);
       await loadTagLimitsData();
     }
   };
@@ -401,7 +428,7 @@ export const BudgetComponent = observer((): JSX.Element => {
                               </Col>
                               <Col span={8}>
                                 <Progress
-                                  strokeColor={tagLimitStatus.hasLimitBeenReached ? 'orange' : 'normal'}
+                                  strokeColor={tagLimitStatus.hasLimitBeenReached ? 'red' : 'orange'}
                                   size={'small'}
                                   success={{
                                     percent: -1,
@@ -433,9 +460,9 @@ export const BudgetComponent = observer((): JSX.Element => {
                 <Col span={!tagLimitsStatuses.length ? 24 : 6}>
                   <Result
                     className={styles.tagLimitsResult}
-                    status={tagLimitsStatuses.length ? 'warning' : 'success'}
+                    status={getTagLimitResultStatus()}
                     title={tagLimitsStatuses.length ? 'Attention needed' : 'No attention needed'}
-                    subTitle={tagLimitsResultTitle}
+                    subTitle={getTagLimitsResultTitle()}
                   />
                 </Col>
               </Row>
@@ -455,7 +482,6 @@ export const BudgetComponent = observer((): JSX.Element => {
               <Collapse
                 destroyInactivePanel={false}
                 size={'small'}
-                defaultActiveKey={2}
                 items={[
                   {
                     key: 1,

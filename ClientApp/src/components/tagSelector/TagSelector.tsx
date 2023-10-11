@@ -11,6 +11,7 @@ import { ColorSelector } from '../colorSelector/ColorSelector';
 import { ColorValues, TagColor } from '../../enums/tagColor';
 import { isEqual } from 'lodash';
 import { nameof } from '../../helpers/objectHelper';
+import { DefaultOptionType } from 'rc-select/lib/Select';
 
 interface TagSelectorProps {
   tags: TagDto[];
@@ -19,7 +20,7 @@ interface TagSelectorProps {
   onTagDelete?: (tagId: number) => Promise<void>;
 }
 
-const Option = Select.Option;
+const { Option } = Select;
 const { Text } = Typography;
 
 const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>): void => {
@@ -71,6 +72,15 @@ export const TagSelector = ({
     setIsTagEditDrawerOpened(false);
   };
 
+  const filterOptionSelectHandler = (input: string, option: DefaultOptionType | undefined): boolean => {
+    if (!option) return false;
+
+    const tagId = option.value as number;
+    const tagLabel = tags.find((tagDto) => tagDto.id === tagId)?.label.toLowerCase();
+
+    return tagLabel?.includes(input.toLowerCase()) ?? false;
+  };
+
   return (
     <>
       <Drawer
@@ -106,6 +116,7 @@ export const TagSelector = ({
       </Drawer>
       <Select
         allowClear
+        filterOption={(a: string, b: DefaultOptionType | undefined): boolean => filterOptionSelectHandler(a, b)}
         mode={isTagCreatorEnabled ? 'tags' : 'multiple'}
         tagRender={(tagProps: CustomTagProps): ReactElement => {
           const isTagJustCreated = typeof tagProps.value === 'string';
