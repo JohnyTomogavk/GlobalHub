@@ -75,13 +75,13 @@ const countOfDaysInWeek = 7;
 const dateRangePickerPresets: TimeRangePickerProps['presets'] = [
   {
     label: 'This month',
-    value: [dayjs().date(1).startOf('date'), dayjs().date(1).add(1, 'months').add(-1, 'days').startOf('date')],
+    value: [dayjs().date(1).startOf('date'), dayjs().date(1).add(1, 'months').add(-1, 'days').endOf('date')],
   },
   {
     label: 'Last month',
-    value: [dayjs().date(1).add(-1, 'months').startOf('date'), dayjs().date(1).add(-1, 'days').startOf('date')],
+    value: [dayjs().date(1).add(-1, 'months').startOf('date'), dayjs().date(1).add(-1, 'days').endOf('date')],
   },
-  { label: 'Last 7 Days', value: [dayjs().add(-countOfDaysInWeek, 'days').startOf('date'), dayjs().startOf('date')] },
+  { label: 'Last 7 Days', value: [dayjs().add(-countOfDaysInWeek, 'days').startOf('date'), dayjs().endOf('date')] },
 ];
 
 export const BudgetItemsTable = ({
@@ -377,6 +377,9 @@ export const BudgetItemsTable = ({
                     >
                       <RangePicker
                         presets={dateRangePickerPresets}
+                        showSecond={false}
+                        showTime={{ format: 'HH:mm' }}
+                        format="YYYY-MM-DD HH:mm"
                         style={{
                           width: '100%',
                         }}

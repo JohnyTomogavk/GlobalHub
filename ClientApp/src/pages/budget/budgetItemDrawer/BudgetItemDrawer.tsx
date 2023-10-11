@@ -189,6 +189,9 @@ export const BudgetItemDrawer = ({
             label={'Operation Date'}
           >
             <DatePicker
+              showSecond={false}
+              showTime={{ format: 'HH:mm' }}
+              format="YYYY-MM-DD HH:mm"
               style={{
                 width: '100%',
               }}
