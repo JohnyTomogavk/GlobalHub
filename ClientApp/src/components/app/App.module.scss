@@ -14,4 +14,8 @@ body {
   z-index: 1000;
   box-sizing: border-box;
   background-clip: padding-box;
+
+  &:hover {
+    background-color: deepskyblue;
+  }
 }
