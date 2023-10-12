@@ -8,9 +8,9 @@ public record BudgetDto : IHasDate
 
     public string BudgetDescription { get; init; }
 
-    public IEnumerable<BudgetItemDto> BudgetItems { get; set; }
+    public IEnumerable<BudgetItemDto> BudgetItems { get; init; }
 
-    public int PreserveFromIncomingPercent { get; set; }
+    public int PreserveFromIncomingPercent { get; init; }
 
     public DateTime CreatedDate { get; set; }
 
