@@ -12,14 +12,15 @@ const languageResources = {
     translation: ruTranslations,
   },
 };
-
-i18n.use(initReactI18next).init({
-  resources: languageResources,
-  lng: EN,
-  fallbackLng: RU,
-  interpolation: {
-    escapeValue: false,
-  },
-});
+export const initLocales = (initLang: string): void => {
+  i18n.use(initReactI18next).init({
+    resources: languageResources,
+    lng: initLang,
+    fallbackLng: RU,
+    interpolation: {
+      escapeValue: false,
+    },
+  });
+};
 
 export default i18n;
