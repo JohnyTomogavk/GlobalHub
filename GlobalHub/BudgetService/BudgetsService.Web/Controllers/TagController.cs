@@ -24,7 +24,7 @@ public class TagController : ControllerBase
     {
         var tags = await _tagService.GetBudgetTags(budgetId);
 
-        return Ok(tags);
+        return StatusCode(StatusCodes.Status200OK, tags);
     }
 
     /// <summary>
@@ -50,7 +50,7 @@ public class TagController : ControllerBase
     {
         var updatedTag = await _tagService.UpdateTag(tagDto);
 
-        return Ok(updatedTag);
+        return StatusCode(StatusCodes.Status200OK, updatedTag);
     }
 
     /// <summary>

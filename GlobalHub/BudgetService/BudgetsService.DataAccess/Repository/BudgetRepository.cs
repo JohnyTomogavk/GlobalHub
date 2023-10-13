@@ -38,29 +38,12 @@ public class BudgetRepository : IBudgetRepository
         return createdEntity.Entity;
     }
 
-    public async Task<Budget> DeleteById(long id)
+    public async Task<Budget> DeleteById(Budget budget)
     {
-        var budget = await _dbContext.Budgets.FirstOrDefaultAsync(budget => budget.Id == id);
         var removedEntity = _dbContext.Budgets.Remove(budget).Entity;
         await _dbContext.SaveChangesAsync();
 
         return removedEntity;
-    }
-
-    public async Task UpdateBudgetTitle(long budgetId, string title)
-    {
-        var budget = await _dbContext.Budgets.FirstOrDefaultAsync(budget => budget.Id == budgetId);
-        budget.BudgetTitle = title;
-        _dbContext.Update(budget);
-        await _dbContext.SaveChangesAsync();
-    }
-
-    public async Task UpdateBudgetDescription(long budgetId, string description)
-    {
-        var budget = await _dbContext.Budgets.FirstOrDefaultAsync(budget => budget.Id == budgetId);
-        budget.BudgetDescription = description;
-        _dbContext.Update(budget);
-        await _dbContext.SaveChangesAsync();
     }
 
     public async Task<Budget> UpdateBudget(Budget budget)

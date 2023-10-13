@@ -27,10 +27,10 @@ public class BudgetItemController : ControllerBase
     public async Task<ActionResult<BudgetItemPaginatedResponse>> GetBudgetItemsByBudgetId(long id,
         [FromBody] BudgetItemsQueryOptions? budgetItemsQueryOptions)
     {
-        var budgetItems =
+        var budgetItemsPaginatedResponseDto =
             await _budgetItemService.GetBudgetItemsByBudgetId(id, budgetItemsQueryOptions);
 
-        return Ok(budgetItems);
+        return StatusCode(StatusCodes.Status200OK, budgetItemsPaginatedResponseDto);
     }
 
     /// <summary>
@@ -81,7 +81,7 @@ public class BudgetItemController : ControllerBase
         await _budgetItemService.UpdateBudgetItem(updateDto);
         var updatedBudgetItem = await _budgetItemService.UpdateBudgetItemTags(updateDto.Id, updateDto.TagIds);
 
-        return Ok(updatedBudgetItem);
+        return StatusCode(StatusCodes.Status200OK, updatedBudgetItem);
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ public class BudgetItemController : ControllerBase
     {
         await _budgetItemService.DeleteBudgetItem(budgetItemId);
 
-        return Ok();
+        return StatusCode(StatusCodes.Status200OK, budgetItemId);
     }
 
     /// <summary>

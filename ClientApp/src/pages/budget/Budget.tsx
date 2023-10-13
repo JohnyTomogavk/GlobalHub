@@ -517,6 +517,7 @@ export const BudgetComponent = observer((): JSX.Element => {
                   },
                   {
                     key: 2,
+                    destroyInactivePanel: true,
                     label: 'Current month expenses to previous',
                     children: <ExpensesDistributionByDaysChart budgetId={budgetId} />,
                   },

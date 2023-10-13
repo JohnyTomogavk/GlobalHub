@@ -1,10 +1,4 @@
-﻿using System.Net;
-using System.Net.Mime;
-using System.Text.Json;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-
-namespace Common.ExceptionHandling;
+﻿namespace Common.ExceptionHandling;
 
 public class ExceptionHandlingMiddleware
 {
@@ -23,11 +17,49 @@ public class ExceptionHandlingMiddleware
         {
             await _next(httpContext);
         }
-        catch (Exception e)
+        catch (EntityNotFoundException entityNotFoundException)
         {
-            _logger.LogError(e, e.Message);
-            await HandleExceptionAsync(httpContext, e);
+            await HandleEntityNotFoundException(httpContext, entityNotFoundException);
         }
+        catch (ValidationException validationException)
+        {
+            await HandleValidationException(httpContext, validationException);
+        }
+        catch (Exception exception)
+        {
+            await HandleExceptionAsync(httpContext, exception);
+        }
+    }
+
+    private async Task HandleEntityNotFoundException(HttpContext httpContext, Exception ex)
+    {
+        httpContext.Response.ContentType = MediaTypeNames.Application.Json;
+        httpContext.Response.StatusCode = (int)HttpStatusCode.NoContent;
+
+        var response =
+            new CustomResponse
+            {
+                Message = ex.Message, StatusCode = (int)HttpStatusCode.NoContent, Details = "Entity not found"
+            };
+        var serializedResponse = JsonSerializer.Serialize(response);
+        await httpContext.Response.WriteAsync(serializedResponse);
+        LogException(ex);
+    }
+
+    private async Task HandleValidationException(HttpContext httpContext, Exception ex)
+    {
+        httpContext.Response.ContentType = MediaTypeNames.Application.Json;
+        httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+        var response =
+            new CustomResponse
+            {
+                Message = ex.Message, StatusCode = (int)HttpStatusCode.BadRequest, Details = "Validation exception"
+            };
+
+        var serializedResponse = JsonSerializer.Serialize(response);
+        await httpContext.Response.WriteAsync(serializedResponse);
+        LogException(ex);
     }
 
     private async Task HandleExceptionAsync(HttpContext httpContext, Exception ex)
@@ -36,8 +68,19 @@ public class ExceptionHandlingMiddleware
         httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
         var response =
-            new CustomResponse() { Message = ex.Message, StatusCode = 500, Details = "Internal Server Error" };
+            new CustomResponse
+            {
+                Message = ex.Message,
+                StatusCode = (int)HttpStatusCode.InternalServerError,
+                Details = "Internal Server Error"
+            };
         var serializedResponse = JsonSerializer.Serialize(response);
         await httpContext.Response.WriteAsync(serializedResponse);
+        LogException(ex);
+    }
+
+    private void LogException(Exception e)
+    {
+        _logger.LogError(e, e.Message);
     }
 }
