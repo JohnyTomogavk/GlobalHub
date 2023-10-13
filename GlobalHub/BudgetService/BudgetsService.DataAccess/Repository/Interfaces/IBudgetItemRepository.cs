@@ -20,14 +20,6 @@ public interface IBudgetItemRepository
     Task<BudgetItem?> CreateBudgetItem(BudgetItem? createModel);
 
     /// <summary>
-    /// Updated budget item's tags
-    /// </summary>
-    /// <param name="budgetItemId">Budget item id</param>
-    /// <param name="budgetItemTags">Tag ids to add</param>
-    /// <returns>Updated budget item</returns>
-    Task<BudgetItem> UpdateBudgetItemTags(long budgetItemId, IEnumerable<BudgetItemTag> budgetItemTags);
-
-    /// <summary>
     /// Gets budget item by budget id
     /// </summary>
     /// <param name="budgetItemId">Budget item's id</param>
@@ -57,4 +49,13 @@ public interface IBudgetItemRepository
     /// </summary>
     /// <param name="budgetItem">Budget item to delete</param>
     Task DeleteBudgetItemAsync(BudgetItem budgetItem);
+
+    /// <summary>
+    /// Returns budget item by id with specified included properties
+    /// </summary>
+    /// <param name="id">Budget item id</param>
+    /// <param name="includes">Related properties that should be included to the model</param>
+    /// <returns></returns>
+    Task<BudgetItem?>
+        GetBudgetItemByIdWithIncludeAsync(long id, params Expression<Func<BudgetItem, object>>[] includes);
 }

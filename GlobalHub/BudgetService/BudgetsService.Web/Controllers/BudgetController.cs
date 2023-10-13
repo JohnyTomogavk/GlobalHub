@@ -25,7 +25,12 @@ public class BudgetController : ControllerBase
     {
         var userBudgetsMap = await _budgetService.GetUserBudgetsMapAsync();
 
-        return Ok(userBudgetsMap);
+        if (!userBudgetsMap.Any())
+        {
+            return StatusCode(StatusCodes.Status204NoContent);
+        }
+
+        return StatusCode(StatusCodes.Status200OK, userBudgetsMap);
     }
 
     /// <summary>
@@ -40,10 +45,10 @@ public class BudgetController : ControllerBase
 
         if (userBudgetsMap == null)
         {
-            return NotFound();
+            return StatusCode(StatusCodes.Status204NoContent);
         }
 
-        return Ok(userBudgetsMap);
+        return StatusCode(StatusCodes.Status200OK, userBudgetsMap);
     }
 
     /// <summary>
@@ -71,7 +76,7 @@ public class BudgetController : ControllerBase
         var currentMonthDateRange = _dateTimeService.GetDateTimeRangeByDate(currentDate);
         var analyticDto = await _budgetService.GetBudgetAnalytic(id, currentMonthDateRange);
 
-        return Ok(analyticDto);
+        return StatusCode(StatusCodes.Status200OK, analyticDto);
     }
 
     /// <summary>
@@ -84,12 +89,7 @@ public class BudgetController : ControllerBase
     {
         var deletedId = await _budgetService.DeleteBudgetById(budgetId);
 
-        if (deletedId == null)
-        {
-            return NoContent();
-        }
-
-        return Ok(deletedId);
+        return StatusCode(StatusCodes.Status200OK, deletedId);
     }
 
     /// <summary>
@@ -101,9 +101,9 @@ public class BudgetController : ControllerBase
     [HttpPut]
     public async Task<ActionResult> UpdateBudgetTitle(long budgetId, [FromBody] BudgetTitleUpdateDto titleDto)
     {
-        await _budgetService.UpdateBudgetTitle(budgetId, titleDto.Title);
+        var updatedEntity = await _budgetService.UpdateBudgetTitle(budgetId, titleDto.Title);
 
-        return Ok();
+        return StatusCode(StatusCodes.Status200OK, updatedEntity);
     }
 
     /// <summary>
@@ -116,9 +116,9 @@ public class BudgetController : ControllerBase
     public async Task<ActionResult> UpdateBudgetDescription(long budgetId,
         [FromBody] BudgetDescriptionUpdateDto descriptionUpdateDto)
     {
-        await _budgetService.UpdateBudgetDescription(budgetId, descriptionUpdateDto.Description);
+        var updatedEntity = await _budgetService.UpdateBudgetDescription(budgetId, descriptionUpdateDto.Description);
 
-        return Ok();
+        return StatusCode(StatusCodes.Status200OK, updatedEntity);
     }
 
     /// <summary>

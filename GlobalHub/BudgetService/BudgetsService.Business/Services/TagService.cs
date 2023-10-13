@@ -40,6 +40,12 @@ public class TagService : ITagService
     public async Task<TagDto> UpdateTag(TagDto tagDto)
     {
         var tag = await _tagRepository.GetTagById(tagDto.Id);
+
+        if (tag == null)
+        {
+            throw new EntityNotFoundException("Tag is not found");
+        }
+
         var updatedTag = _mapper.Map(tagDto, tag);
         var updateTag = await _tagRepository.UpdateTag(updatedTag);
 
@@ -48,6 +54,13 @@ public class TagService : ITagService
 
     public async Task<long> DeleteTag(long tagId)
     {
-        return await _tagRepository.DeleteById(tagId);
+        var tagToDelete = await _tagRepository.GetTagById(tagId);
+
+        if (tagToDelete == null)
+        {
+            throw new EntityNotFoundException("Tag is not found");
+        }
+
+        return await _tagRepository.DeleteById(tagToDelete);
     }
 }

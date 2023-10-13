@@ -25,17 +25,6 @@ public class BudgetItemRepository : IBudgetItemRepository
         return createdBudgetItem;
     }
 
-    public async Task<BudgetItem> UpdateBudgetItemTags(long budgetItemId,
-        IEnumerable<BudgetItemTag> budgetItemTags)
-    {
-        var budgetItem = await _dbContext.BudgetsItems.Include(item => item.BudgetItemTags)
-            .FirstOrDefaultAsync(item => item.Id == budgetItemId);
-        budgetItem.BudgetItemTags = budgetItemTags;
-        await _dbContext.SaveChangesAsync();
-
-        return budgetItem;
-    }
-
     public async Task<BudgetItem?> GetBudgetItemById(long budgetItemId)
     {
         return await _dbContext.BudgetsItems.FirstOrDefaultAsync(item => item.Id == budgetItemId);
@@ -62,5 +51,14 @@ public class BudgetItemRepository : IBudgetItemRepository
     {
         _dbContext.Remove(budgetItem);
         await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task<BudgetItem?> GetBudgetItemByIdWithIncludeAsync(long id,
+        params Expression<Func<BudgetItem, object>>[] includes)
+    {
+        var query = _dbContext.BudgetsItems.AsQueryable();
+        var aggregate = includes.Aggregate(query, (current, includeExpression) => current.Include(includeExpression));
+
+        return await aggregate.FirstOrDefaultAsync(b => b.Id == id);
     }
 }

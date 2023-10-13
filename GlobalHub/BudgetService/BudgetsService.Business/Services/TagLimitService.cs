@@ -39,7 +39,7 @@ public class TagLimitService : ITagLimitService
 
         if (budget == null)
         {
-            throw new EntityNotFoundException("Budget not found");
+            throw new EntityNotFoundException("Budget is not found");
         }
 
         UpdateTagLimitsOnBudget(budget, tagLimits);

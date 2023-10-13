@@ -27,7 +27,7 @@ public class BudgetService : IBudgetService
         return maps;
     }
 
-    public async Task<BudgetDto> GetBudgetByIdAsync(long budgetId)
+    public async Task<BudgetDto?> GetBudgetByIdAsync(long budgetId)
     {
         var budget = await _budgetRepository.GetBudgetByIdWithIncludeAsync(budgetId);
         var mappedBudget = _mapper.Map<BudgetDto>(budget);
@@ -54,6 +54,12 @@ public class BudgetService : IBudgetService
     public async Task<BudgetAnalyticDto> GetBudgetAnalytic(long budgetId, DateTimeRange dateRange)
     {
         var budget = await _budgetRepository.GetBudgetByIdWithIncludeAsync(budgetId, budget => budget.BudgetItems);
+
+        if (budget == null)
+        {
+            throw new EntityNotFoundException("Budget is not found");
+        }
+
         var analyticDto = GetBudgetAnalytic(budget, dateRange);
 
         return analyticDto;
@@ -61,17 +67,46 @@ public class BudgetService : IBudgetService
 
     public async Task<long> DeleteBudgetById(long id)
     {
-        return (await _budgetRepository.DeleteById(id)).Id;
+        var budgetToDelete = await _budgetRepository.GetBudgetByIdWithIncludeAsync(id);
+
+        if (budgetToDelete == null)
+        {
+            throw new EntityNotFoundException("Budget is not found");
+        }
+
+        var deletedEntity = await _budgetRepository.DeleteById(budgetToDelete);
+
+        return deletedEntity.Id;
     }
 
-    public async Task UpdateBudgetTitle(long budgetId, string title)
+    public async Task<BudgetDto> UpdateBudgetTitle(long budgetId, string title)
     {
-        await _budgetRepository.UpdateBudgetTitle(budgetId, title);
+        var budget = await _budgetRepository.GetBudgetByIdWithIncludeAsync(budgetId);
+
+        if (budget == null)
+        {
+            throw new EntityNotFoundException("Budget is not found");
+        }
+
+        budget.BudgetTitle = title;
+        var updatedBudget = await _budgetRepository.UpdateBudget(budget);
+
+        return _mapper.Map<BudgetDto>(updatedBudget);
     }
 
-    public async Task UpdateBudgetDescription(long budgetId, string description)
+    public async Task<BudgetDto> UpdateBudgetDescription(long budgetId, string description)
     {
-        await _budgetRepository.UpdateBudgetDescription(budgetId, description);
+        var budget = await _budgetRepository.GetBudgetByIdWithIncludeAsync(budgetId);
+
+        if (budget == null)
+        {
+            throw new EntityNotFoundException("Budget is not found");
+        }
+
+        budget.BudgetDescription = description;
+        var updatedBudget = await _budgetRepository.UpdateBudget(budget);
+
+        return _mapper.Map<BudgetDto>(updatedBudget);
     }
 
     public async Task<BudgetDto> UpdatePreservePercent(long budgetId, UpdateBudgetPreservePercentDto dto)
@@ -106,7 +141,6 @@ public class BudgetService : IBudgetService
         decimal moneyPreserved = currentMonthOperations
             .Where(item => item.BudgetItemOperationType == BudgetItemOperationType.Incoming)
             .Sum(item => item.OperationCost) * budget.PreserveFromIncomingPercent / 100;
-
 
         var analyticDto = new BudgetAnalyticDto
         {

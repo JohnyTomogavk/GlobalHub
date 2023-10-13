@@ -16,7 +16,7 @@ public interface IBudgetService
     /// </summary>
     /// <param name="budgetId">Budget id</param>
     /// <returns>Budget dto</returns>
-    Task<BudgetDto> GetBudgetByIdAsync(long budgetId);
+    Task<BudgetDto?> GetBudgetByIdAsync(long budgetId);
 
     /// <summary>
     /// Creates new budget
@@ -45,14 +45,14 @@ public interface IBudgetService
     /// </summary>
     /// <param name="budgetId">Budget id</param>
     /// <param name="title">New title</param>
-    Task UpdateBudgetTitle(long budgetId, string title);
+    Task<BudgetDto> UpdateBudgetTitle(long budgetId, string title);
 
     /// <summary>
     /// Update budget description
     /// </summary>
     /// <param name="budgetId">Budget id</param>
     /// <param name="description">New description</param>
-    Task UpdateBudgetDescription(long budgetId, string description);
+    Task<BudgetDto> UpdateBudgetDescription(long budgetId, string description);
 
     /// <summary>
     /// Updates preserve from incoming percent

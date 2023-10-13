@@ -16,10 +16,15 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="FluentValidation" Version="11.6.0" />
       <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
       <PackageReference Include="Serilog.Enrichers.CorrelationId" Version="3.0.1" />
       <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
       <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="9.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BudgetService\BudgetsService.Infrastructure\BudgetsService.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

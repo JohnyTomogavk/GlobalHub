@@ -74,8 +74,18 @@ public class BudgetItemService : IBudgetItemService
     {
         var budgetItemTags = tagsIds.Select(tagId => new BudgetItemTag { BudgetItemId = budgetItemId, TagId = tagId })
             .ToList();
-        var updatedBudgetItem = await _budgetItemRepository.UpdateBudgetItemTags(budgetItemId, budgetItemTags);
-        var mappedEntity = _mapper.Map<BudgetItemDto>(updatedBudgetItem);
+
+        var budgetItemToUpdate =
+            await _budgetItemRepository.GetBudgetItemByIdWithIncludeAsync(budgetItemId, bi => bi.BudgetItemTags);
+
+        if (budgetItemToUpdate == null)
+        {
+            throw new EntityNotFoundException("Budget item is not found");
+        }
+
+        budgetItemToUpdate.BudgetItemTags = budgetItemTags;
+        await _budgetItemRepository.UpdateBudgetItem(budgetItemToUpdate);
+        var mappedEntity = _mapper.Map<BudgetItemDto>(budgetItemToUpdate);
 
         return mappedEntity;
     }
@@ -90,6 +100,12 @@ public class BudgetItemService : IBudgetItemService
         }
 
         var budgetItem = await _budgetItemRepository.GetBudgetItemById(updateDto.Id);
+
+        if (budgetItem == null)
+        {
+            throw new EntityNotFoundException("Budget item is not found");
+        }
+
         var entityToUpdate = _mapper.Map<BudgetItemUpdateDto, BudgetItem>(updateDto, budgetItem);
         var updateEntity = await _budgetItemRepository.UpdateBudgetItem(entityToUpdate);
         var mappedEntity = _mapper.Map<BudgetItemDto>(updateEntity);
@@ -103,7 +119,7 @@ public class BudgetItemService : IBudgetItemService
 
         if (budgetItem == null)
         {
-            throw new EntityNotFoundException("Budget Item not found");
+            throw new EntityNotFoundException("Budget Item is not found");
         }
 
         await _budgetItemRepository.DeleteBudgetItemAsync(budgetItem);

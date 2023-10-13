@@ -5,7 +5,7 @@ public class BudgetValidator : AbstractValidator<Budget>
     public BudgetValidator()
     {
         RuleFor(e => e.BudgetTitle)
-            .NotNull()
+            .NotEmpty()
             .MaximumLength(BudgetConstants.MaxBudgetTitleLength);
 
         RuleFor(e => e.BudgetDescription)

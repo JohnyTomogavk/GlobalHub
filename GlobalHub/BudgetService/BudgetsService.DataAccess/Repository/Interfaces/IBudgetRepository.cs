@@ -36,23 +36,9 @@ public interface IBudgetRepository
     /// <summary>
     /// Deletes budget
     /// </summary>
-    /// <param name="id">Budget id</param>
+    /// <param name="budget"></param>
     /// <returns>Deleted budget's id</returns>
-    Task<Budget> DeleteById(long id);
-
-    /// <summary>
-    /// Updates budget title
-    /// </summary>
-    /// <param name="budgetId">Budget id</param>
-    /// <param name="title">New title</param>
-    Task UpdateBudgetTitle(long budgetId, string title);
-
-    /// <summary>
-    /// Updates budget description
-    /// </summary>
-    /// <param name="budgetId">Budget id</param>
-    /// <param name="description">New description</param>
-    Task UpdateBudgetDescription(long budgetId, string description);
+    Task<Budget> DeleteById(Budget budget);
 
     /// <summary>
     /// Updates budget
