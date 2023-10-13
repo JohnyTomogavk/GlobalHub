@@ -42,7 +42,7 @@ public class BudgetService : IBudgetService
 
         if (!validationResult.IsValid)
         {
-            throw new InvalidOperationException("Budget isn't valid");
+            throw new ValidationException(validationResult.Errors);
         }
 
         var createdEntity = await _budgetRepository.AddBudget(newBudget);
@@ -59,9 +59,9 @@ public class BudgetService : IBudgetService
         return analyticDto;
     }
 
-    public async Task<Budget> DeleteBudgetById(long id)
+    public async Task<long> DeleteBudgetById(long id)
     {
-        return await _budgetRepository.DeleteById(id);
+        return (await _budgetRepository.DeleteById(id)).Id;
     }
 
     public async Task UpdateBudgetTitle(long budgetId, string title)
@@ -74,24 +74,26 @@ public class BudgetService : IBudgetService
         await _budgetRepository.UpdateBudgetDescription(budgetId, description);
     }
 
-    public async Task<Budget> UpdatePreservePercent(long budgetId, UpdateBudgetPreservePercentDto dto)
+    public async Task<BudgetDto> UpdatePreservePercent(long budgetId, UpdateBudgetPreservePercentDto dto)
     {
         var validationResult = await this._preservePercentDto.ValidateAsync(dto);
 
         if (!validationResult.IsValid)
         {
-            throw new ValidationException("Budget Preserve Percent is not valid");
+            throw new ValidationException(validationResult.Errors);
         }
 
         var budget = await _budgetRepository.GetBudgetByIdWithIncludeAsync(budgetId);
 
         if (budget == null)
         {
-            throw new InvalidOperationException("Budget is not found");
+            throw new EntityNotFoundException("Budget is not found");
         }
 
         budget.PreserveFromIncomingPercent = dto.PreservePercent;
-        return await _budgetRepository.UpdateBudget(budget);
+        var updatedBudget = await _budgetRepository.UpdateBudget(budget);
+
+        return _mapper.Map<BudgetDto>(updatedBudget);
     }
 
     private BudgetAnalyticDto GetBudgetAnalytic(Budget budget, DateTimeRange dateRange)

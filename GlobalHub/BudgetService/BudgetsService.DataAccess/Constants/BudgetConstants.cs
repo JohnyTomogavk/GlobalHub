@@ -1,5 +1,8 @@
 ﻿namespace BudgetsService.DataAccess.Constants;
 
+/// <summary>
+/// Contains some constants related to budgets
+/// </summary>
 public static class BudgetConstants
 {
     // Rules related to Budget entity

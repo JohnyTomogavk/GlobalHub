@@ -1,5 +1,10 @@
-﻿namespace BudgetsService.Web.Controllers;
+﻿using System.Net;
 
+namespace BudgetsService.Web.Controllers;
+
+/// <summary>
+/// Controller that manages tag limits
+/// </summary>
 [ApiController]
 [Route("api/v1/[controller]/[action]")]
 public class TagLimitsController : ControllerBase
@@ -11,6 +16,11 @@ public class TagLimitsController : ControllerBase
         _tagLimitService = tagLimitService;
     }
 
+    /// <summary>
+    /// Returns tag limits for budget
+    /// </summary>
+    /// <param name="budgetId">Budget id</param>
+    /// <returns>Tag limits</returns>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TagLimitDto>>> GetTagLimits(long budgetId)
     {
@@ -24,6 +34,12 @@ public class TagLimitsController : ControllerBase
         return StatusCode(StatusCodes.Status204NoContent);
     }
 
+    /// <summary>
+    /// Updates tag limits for budget
+    /// </summary>
+    /// <param name="budgetId">Budget id</param>
+    /// <param name="tagLimitDtos">Tag limits' data</param>
+    /// <returns>Operation result</returns>
     [HttpPut]
     public async Task<ActionResult> UpdateBudgetTagLimits(long budgetId, IEnumerable<TagLimitDto> tagLimitDtos)
     {

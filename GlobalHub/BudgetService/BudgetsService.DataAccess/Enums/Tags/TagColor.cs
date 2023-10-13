@@ -1,5 +1,8 @@
 ﻿namespace BudgetsService.DataAccess.Enums.Tags;
 
+/// <summary>
+/// Represents colors of tags
+/// </summary>
 public enum TagColor
 {
     Default = 0,

@@ -14,6 +14,11 @@ public class TagController : ControllerBase
         _tagService = tagService;
     }
 
+    /// <summary>
+    /// Returns tags related to budgets
+    /// </summary>
+    /// <param name="budgetId">Budget id</param>
+    /// <returns>Tag dtos</returns>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TagDto>>> GetBudgetTagsByBudgetId(long budgetId)
     {
@@ -22,6 +27,11 @@ public class TagController : ControllerBase
         return Ok(tags);
     }
 
+    /// <summary>
+    /// Creates new tag
+    /// </summary>
+    /// <param name="newTagDto">Tag data</param>
+    /// <returns>Created tag dto</returns>
     [HttpPost]
     public async Task<ActionResult<TagDto>> CreateNewTag(TagCreateDto newTagDto)
     {
@@ -30,6 +40,11 @@ public class TagController : ControllerBase
         return StatusCode(StatusCodes.Status201Created, createdTag);
     }
 
+    /// <summary>
+    /// Updates tag
+    /// </summary>
+    /// <param name="tagDto">Tag data</param>
+    /// <returns>Updated tag data</returns>
     [HttpPut]
     public async Task<ActionResult<TagDto>> UpdateTag(TagDto tagDto)
     {
@@ -38,6 +53,11 @@ public class TagController : ControllerBase
         return Ok(updatedTag);
     }
 
+    /// <summary>
+    /// Deletes tag
+    /// </summary>
+    /// <param name="tagId">Tag id</param>
+    /// <returns>Deleted tag's id</returns>
     [HttpDelete]
     public async Task<ActionResult<long>> DeleteTag(long tagId)
     {

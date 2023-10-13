@@ -10,13 +10,19 @@ public class BudgetItemController : ControllerBase
     private readonly IBudgetItemService _budgetItemService;
     private readonly IDateTimeService _dateTimeService;
 
-    public BudgetItemController(IBudgetItemService budgetItemService, ITagService tagService,
+    public BudgetItemController(IBudgetItemService budgetItemService,
         IDateTimeService dateTimeService)
     {
         _budgetItemService = budgetItemService;
         _dateTimeService = dateTimeService;
     }
 
+    /// <summary>
+    /// Returns budget items by budget id applying sort, filtering and pagination
+    /// </summary>
+    /// <param name="id">Budget id</param>
+    /// <param name="budgetItemsQueryOptions">Options related to pagination, sorting and filtering</param>
+    /// <returns>Model that contains paginated set of budget items and aggregation metrics</returns>
     [HttpPut]
     public async Task<ActionResult<BudgetItemPaginatedResponse>> GetBudgetItemsByBudgetId(long id,
         [FromBody] BudgetItemsQueryOptions? budgetItemsQueryOptions)
@@ -27,6 +33,11 @@ public class BudgetItemController : ControllerBase
         return Ok(budgetItems);
     }
 
+    /// <summary>
+    /// Returns models containing expenses sums grouped by tag id's
+    /// </summary>
+    /// <param name="budgetId">Budget id</param>
+    /// <returns>Expenses sums grouped by tag id</returns>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ExpenseOperationsSumDto>>> GetCurrentMonthExpensesSumsGroupedByTags(
         long budgetId)
@@ -44,6 +55,11 @@ public class BudgetItemController : ControllerBase
         return StatusCode(StatusCodes.Status200OK, sums);
     }
 
+    /// <summary>
+    /// Creates new budget item
+    /// </summary>
+    /// <param name="createDto">New budget's initial data</param>
+    /// <returns>Created budget item dto</returns>
     [HttpPost]
     public async Task<ActionResult<BudgetItemDto>> CreateBudgetItem(BudgetItemCreateDto createDto)
     {
@@ -54,6 +70,11 @@ public class BudgetItemController : ControllerBase
         return StatusCode(StatusCodes.Status201Created, updatedBudgetItem);
     }
 
+    /// <summary>
+    /// Updates budget item
+    /// </summary>
+    /// <param name="updateDto">Budget item's data</param>
+    /// <returns>Updated budget item's data</returns>
     [HttpPut]
     public async Task<ActionResult<BudgetItemDto>> UpdateBudgetItem(BudgetItemUpdateDto updateDto)
     {
@@ -63,6 +84,11 @@ public class BudgetItemController : ControllerBase
         return Ok(updatedBudgetItem);
     }
 
+    /// <summary>
+    /// Deletes budget item by id
+    /// </summary>
+    /// <param name="budgetItemId">Budget item id</param>
+    /// <returns>Delete operation result</returns>
     [HttpDelete]
     public async Task<ActionResult> DeleteBudgetItem(long budgetItemId)
     {
@@ -71,6 +97,13 @@ public class BudgetItemController : ControllerBase
         return Ok();
     }
 
+    /// <summary>
+    /// Returns budget items by budget id and date range
+    /// </summary>
+    /// <param name="budgetId">Budget id</param>
+    /// <param name="startDateRange">Start date range</param>
+    /// <param name="endDateRange">End date range</param>
+    /// <returns>Budget items' dtos</returns>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<BudgetItemDto>>> GetBudgetItemsByIdAndRange(
         long budgetId, DateTime startDateRange, DateTime endDateRange)
