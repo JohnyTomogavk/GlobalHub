@@ -33,7 +33,7 @@ export const App = observer(() => {
       }}
     >
       <Layout>
-        <PanelGroup direction={'horizontal'} autoSaveId={'layout-panels-state'}>
+        <PanelGroup direction={'horizontal'} autoSaveId={'layout-panels-state'} disablePointerEventsDuringResize={true}>
           <Panel minSize={12} maxSize={40} defaultSize={12}>
             <Affix offsetTop={0}>
               <SideMenu />
