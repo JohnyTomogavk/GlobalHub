@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace BudgetsService.Web.Controllers;
+﻿namespace BudgetsService.Web.Controllers;
 
 /// <summary>
 /// Controller that manages tag limits
