@@ -14,9 +14,9 @@ public record BudgetItemDto : IHasDate
 
     public decimal OperationCost { get; init; }
 
-    public DateTime OperationDate { get; set; }
+    public DateTime OperationDate { get; init; }
 
-    public IEnumerable<long> TagIds { get; set; }
+    public IEnumerable<long> TagIds { get; init; }
 
     public DateTime CreatedDate { get; set; }
 

@@ -103,7 +103,7 @@ public class BudgetItemService : IBudgetItemService
 
         if (budgetItem == null)
         {
-            throw new InvalidOperationException("Budget Item not found");
+            throw new EntityNotFoundException("Budget Item not found");
         }
 
         await _budgetItemRepository.DeleteBudgetItemAsync(budgetItem);

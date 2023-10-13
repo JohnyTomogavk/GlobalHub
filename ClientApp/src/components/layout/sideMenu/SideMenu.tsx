@@ -27,6 +27,7 @@ import { getTopLevelItemTitle } from '../../../helpers/sideMenuHelper';
 import { createNewBudget, getBudgetsMap } from '../../../api/budgetsService';
 import { BUDGET_DEFAULT_TITLE } from '../../../constants/budgetConstants';
 import SideMenuIndexStore from '../../../store/sideMenu/sideMenuIndexStore';
+import uiConfigStore from '../../../store/uiConfigStore';
 
 interface SideMenuItemsLoadingState {
   isNotesLoaded: boolean;
@@ -61,7 +62,7 @@ export const SideMenu = observer((): JSX.Element => {
   );
 
   const {
-    token: { colorBgLayout },
+    token: { colorBgContainer },
   } = theme.useToken();
 
   const initializeActiveMenuItem = (currentPath: string): void => {
@@ -191,7 +192,7 @@ export const SideMenu = observer((): JSX.Element => {
   return (
     <Sider
       style={{
-        background: colorBgLayout,
+        background: uiConfigStore.isDarkTheme ? colorBgContainer : '#fff',
       }}
       width="100%"
       className={styles.siderContainer}
@@ -209,7 +210,7 @@ export const SideMenu = observer((): JSX.Element => {
       <Divider className={styles.siderDivider} />
       <Tree
         style={{
-          background: colorBgLayout,
+          background: uiConfigStore.isDarkTheme ? colorBgContainer : '#fff',
         }}
         switcherIcon={<DownOutlined />}
         showLine
