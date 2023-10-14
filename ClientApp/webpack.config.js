@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const Dotenv = require('dotenv-webpack');
 let mode = 'development';
 
 const isDevMode = () => mode === 'development';
@@ -33,6 +34,7 @@ const plugins = [
     filename: isDevMode() ? '[name].css' : '[name].[contenthash].css',
     chunkFilename: isDevMode() ? '[id].css' : '[id].[contenthash].css',
   }),
+  new Dotenv(),
 ];
 
 module.exports = {

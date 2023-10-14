@@ -1,7 +1,7 @@
 import React, { useEffect, useId, useState } from 'react';
 import EditorJS, { API, OutputData } from '@editorjs/editorjs';
-import { EditorJsToolsConfig } from '../../config/editorJsToolsConfig';
 import { NOTE_DEFAULT_EMPTY_BLOCK } from '../../constants/notesConstants';
+import { editorJsTools } from '../../config/editorJsTools';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const UndoPlugin = require('editorjs-undo');
@@ -28,7 +28,7 @@ export const RichTextEditor = (props: EditorParameters): JSX.Element => {
       const editor = new EditorJS({
         holder: editorHolderId,
         placeholder: 'Start typing your note here...',
-        tools: EditorJsToolsConfig,
+        tools: editorJsTools,
         onReady(): void {
           new UndoPlugin({ editor });
         },
