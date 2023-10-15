@@ -1,4 +1,5 @@
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvFilesToConfiguration();
 builder.Services.AddHttpContextAccessor();
 
 builder.Host.UseSerilog(SerilogExtensions.LoggerConfiguration);
@@ -18,7 +19,9 @@ builder.Services.RegisterServices();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString(ConfigConstants.BudgetStorageConnectionString));
+    var dbConnectionString = Environment.GetEnvironmentVariable(ConfigConstants.BudgetDbConnectionStringEnvKey) ??
+                             throw new ArgumentNullException(nameof(ConfigConstants.BudgetDbConnectionStringEnvKey));
+    options.UseNpgsql(dbConnectionString);
 });
 
 var app = builder.Build();
