@@ -2,11 +2,13 @@
 
 public class NotesDbContext : INotesDbContext
 {
-    public NotesDbContext(IOptions<NotesStoreConfig> notesStoreConfig)
+    public NotesDbContext()
     {
-        var mongoClient = new MongoClient(notesStoreConfig.Value.ConnectionString);
-        var mongoDatabase = mongoClient.GetDatabase(notesStoreConfig.Value.DatabaseName);
-        Notes = mongoDatabase.GetCollection<Note>(notesStoreConfig.Value.NotesCollectionName);
+        var connectionString = Environment.GetEnvironmentVariable(ConfigConstants.NoteDbConnectionStringEnvKey) ??
+                               throw new ArgumentNullException(nameof(ConfigConstants.NoteDbConnectionStringEnvKey));
+        var mongoClient = new MongoClient(connectionString);
+        var mongoDatabase = mongoClient.GetDatabase(ConfigConstants.NotesStorageDbName);
+        Notes = mongoDatabase.GetCollection<Note>(ConfigConstants.NotesEntityCollectionName);
     }
 
     public IMongoCollection<Note> Notes { get; }

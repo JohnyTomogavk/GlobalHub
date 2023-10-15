@@ -2,5 +2,7 @@
 
 public static class ConfigConstants
 {
-    public const string StorageConfigSectionName = "NotesStorage";
+    public const string NoteDbConnectionStringEnvKey = "NOTES_SERIVCE_STORAGE_CONNECTION_STRING";
+    public const string NotesStorageDbName = "NotesStore";
+    public const string NotesEntityCollectionName = "Notes";
 }

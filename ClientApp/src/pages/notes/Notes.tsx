@@ -52,7 +52,6 @@ export const NotesComponent = observer((): JSX.Element => {
     if (note === undefined) return;
 
     const newTitle = changedTitle.length !== 0 ? changedTitle : NOTE_TITLE_PLACEHOLDER;
-    setNote({ ...note, title: newTitle });
     setLoading(true);
     const { data } = await updateNoteTitle(note.id, { newTitle: newTitle });
     setNote(data);

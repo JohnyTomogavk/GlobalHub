@@ -1,10 +1,9 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// eslint-disable-next-line
 // @ts-nocheck
 import Table from '@editorjs/table';
 import Header from '@editorjs/header';
 import Checklist from '@editorjs/checklist';
 import NestedList from '@editorjs/nested-list';
-import Paragraph from 'editorjs-paragraph-with-alignment';
 import ColorPlugin from 'editorjs-text-color-plugin';
 import Delimiter from 'codex.editor.delimiter';
 import InlineCode from 'codex.editor.inline-code';
@@ -12,7 +11,7 @@ import CodeTool from 'codex.editor.code';
 import Alert from 'editorjs-alert';
 import AlignmentTuneTool from 'editorjs-text-alignment-blocktune';
 
-export const EditorJsToolsConfig = {
+export const editorJsTools = {
   table: {
     class: Table,
     inlineToolbar: true,
@@ -37,10 +36,6 @@ export const EditorJsToolsConfig = {
     config: {
       defaultStyle: 'ordered',
     },
-  },
-  paragraph: {
-    class: Paragraph,
-    inlineToolbar: true,
   },
   Color: {
     class: ColorPlugin,
@@ -70,8 +65,12 @@ export const EditorJsToolsConfig = {
       type: 'marker',
     },
   },
-  Delimiter,
-  InlineCode,
+  Delimiter: {
+    class: Delimiter,
+  },
+  InlineCode: {
+    class: InlineCode,
+  },
   CodeTool: {
     class: CodeTool,
   },

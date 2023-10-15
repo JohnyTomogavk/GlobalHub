@@ -1,6 +1,5 @@
-// TODO: Extract to environment variables
-export const NOTES_API_BASE = 'http://localhost:5143/api/v1';
-export const BUDGETS_API_BASE = 'http://localhost:5118/api/v1';
+export const NOTES_API_BASE = process.env.NOTES_SERVICE_BASE_ENV as string;
+export const BUDGETS_API_BASE = process.env.BUDGETS_SERVICE_BASE_ENV as string;
 
 // Constants related to notes
 export const CREATE_NOTE = '/Notes/CreateNote';

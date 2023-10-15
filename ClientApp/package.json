@@ -33,6 +33,7 @@
     "codex.editor.delimiter": "^1.0.2",
     "codex.editor.inline-code": "^1.2.0",
     "css-loader": "^6.8.1",
+    "dotenv-webpack": "^8.0.1",
     "editorjs-alert": "^1.1.3",
     "editorjs-hyperlink": "^1.0.6",
     "editorjs-paragraph-with-alignment": "^3.0.0",
