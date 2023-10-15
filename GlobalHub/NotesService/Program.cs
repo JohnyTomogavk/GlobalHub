@@ -1,10 +1,8 @@
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvFilesToConfiguration();
 builder.Services.AddHttpContextAccessor();
 
 builder.Host.UseSerilog(SerilogExtensions.LoggerConfiguration);
-
-var notesDbConfigSection = builder.Configuration.GetSection(ConfigConstants.StorageConfigSectionName);
-builder.Services.Configure<NotesStoreConfig>(notesDbConfigSection);
 
 builder.Services.AddCors();
 builder.Services.AddControllers();
@@ -29,7 +27,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("X-Correlation-id"));
+app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
+    .WithExposedHeaders("X-Correlation-id"));
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

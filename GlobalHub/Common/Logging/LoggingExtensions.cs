@@ -10,20 +10,25 @@ public static class SerilogExtensions
     public static Action<HostBuilderContext, LoggerConfiguration> LoggerConfiguration =>
         (context, configuration) =>
         {
-            var elasticUri = context.Configuration.GetValue<string>("LogStorageUri");
+            var logStorageUri = Environment.GetEnvironmentVariable("LOG_STORAGE");
+
+            if (logStorageUri == null)
+            {
+                return;
+            }
 
             configuration
                 .Enrich.WithMachineName()
                 .WriteTo.Console()
                 .Enrich.FromLogContext()
                 .WriteTo.Elasticsearch(
-                    new ElasticsearchSinkOptions(new Uri(elasticUri))
+                    new ElasticsearchSinkOptions(new Uri(logStorageUri))
                     {
                         IndexFormat =
                             $"applogs-{context.HostingEnvironment.ApplicationName?.ToLower().Replace(".", "-")}-{context.HostingEnvironment.EnvironmentName?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}",
                         TemplateName = "Common service logs template",
                         AutoRegisterTemplate = true,
-                        NumberOfShards = 2,
+                        NumberOfShards = 1,
                         NumberOfReplicas = 1,
                         OverwriteTemplate = true,
                         AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
