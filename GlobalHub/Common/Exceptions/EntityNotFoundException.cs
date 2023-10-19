@@ -1,4 +1,4 @@
-﻿namespace BudgetsService.Infrastructure.Exceptions;
+﻿namespace Common.Exceptions;
 
 public class EntityNotFoundException : Exception
 {

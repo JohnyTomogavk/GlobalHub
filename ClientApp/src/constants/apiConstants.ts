@@ -1,5 +1,8 @@
-export const NOTES_API_BASE = process.env.NOTES_SERVICE_BASE_ENV as string;
-export const BUDGETS_API_BASE = process.env.BUDGETS_SERVICE_BASE_ENV as string;
+import { getEnvVar } from '../config/environmentVariables';
+
+export const NOTES_API_BASE = getEnvVar('NOTES_SERVICE_BASE', process.env.NOTES_SERVICE_BASE);
+
+export const BUDGETS_API_BASE = getEnvVar('BUDGETS_SERVICE_BASE', process.env.BUDGETS_SERVICE_BASE);
 
 // Constants related to notes
 export const CREATE_NOTE = '/Notes/CreateNote';

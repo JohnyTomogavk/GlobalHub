@@ -93,7 +93,6 @@
     "no-trailing-spaces": "error",
     "no-undef-init": "error",
     "no-var": "error",
-    "no-underscore-dangle": "error",
     "no-restricted-imports": "error",
     "no-debugger": "error",
     "no-empty": "off",

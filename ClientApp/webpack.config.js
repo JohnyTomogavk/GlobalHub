@@ -4,9 +4,10 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const Dotenv = require('dotenv-webpack');
 let mode = 'development';
 
-const isDevMode = () => mode === 'development';
+const isDevMode = () => process.env.NODE_ENV === 'development';
+const isProductionMode = () => process.env.NODE_ENV === 'production';
 
-if (process.env.NODE_ENV === 'production') {
+if (isProductionMode()) {
   mode = 'production';
 }
 
@@ -50,7 +51,7 @@ module.exports = {
     publicPath: '/',
     path: path.resolve(__dirname, 'dist'),
     filename: 'index.[contenthash].js',
-    assetModuleFilename: path.join('images', '[name].[contenthash][ext]'),
+    assetModuleFilename: '[name][ext]',
     clean: true,
   },
   devServer: {
@@ -99,7 +100,7 @@ module.exports = {
       },
       {
         test: /\.(png|jpe?g|gif|svg|webp|ico)$/i,
-        type: mode === 'production' ? 'asset' : 'asset/resource',
+        type: isProductionMode() ? 'asset' : 'asset/resource',
       },
     ],
   },

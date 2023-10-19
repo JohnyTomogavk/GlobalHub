@@ -1,0 +1,59 @@
+﻿version: '3.8'
+
+services:
+  budgets-db:
+    image: postgres:16
+    volumes:
+      - budget-storage-volume:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    environment:
+      - 'POSTGRES_PASSWORD=Qwerty12345'
+
+  notes-db:
+    image: mongo:7
+    volumes:
+      - notes-storage-volume:/data/db
+    ports:
+      - '27017:27017'
+
+  budgets-service:
+    build:
+      context: .
+      dockerfile: ./BudgetService/BudgetsService.Web/Dockerfile
+    image: budgets-service
+    ports:
+      - "5118:80"
+    environment:
+      - "BUDGETS_SERVICE_STORAGE_CONNECTION_STRING=User ID=postgres;Password=Qwerty12345;Host=budgets-db;Port=5432;Database=BudgetStorage"
+    depends_on:
+      - budgets-db
+
+  notes-service:
+    build:
+      context: .
+      dockerfile: ./NotesService/Dockerfile
+    image: notes-service
+    ports:
+      - "5143:80"
+    environment:
+      - "NOTES_SERIVCE_STORAGE_CONNECTION_STRING=mongodb://notes-db:27017"
+    depends_on:
+      - notes-db
+    
+  global-hub-client:
+    build:
+      context: ../ClientApp
+      dockerfile: ../ClientApp/Dockerfile
+    environment:
+      - "NOTES_SERVICE_BASE=http://budgets-service:5143/api/v1"
+      - "BUDGETS_SERVICE_BASE=http://notes-service:5118/api/v1"
+    ports:
+      - "8080:80"
+    depends_on:
+      - budgets-service
+      - notes-service
+
+volumes:
+  notes-storage-volume:
+  budget-storage-volume:
