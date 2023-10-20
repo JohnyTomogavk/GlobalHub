@@ -1,7 +1,9 @@
 ﻿version: '3.8'
+name: 'global-hub-demo'
 
 services:
   budgets-db:
+    container_name: budgets-db
     image: postgres:16
     volumes:
       - budget-storage-volume:/var/lib/postgresql/data
@@ -9,15 +11,21 @@ services:
       - '5432:5432'
     environment:
       - 'POSTGRES_PASSWORD=Qwerty12345'
+    networks:
+      global-hub-net:
 
   notes-db:
+    container_name: notes-db
     image: mongo:7
     volumes:
       - notes-storage-volume:/data/db
     ports:
       - '27017:27017'
+    networks:
+      global-hub-net:
 
   budgets-service:
+    container_name: budgets-service
     build:
       context: .
       dockerfile: ./BudgetService/BudgetsService.Web/Dockerfile
@@ -30,8 +38,11 @@ services:
       - "LOG_STORAGE=localhost:9200"
     depends_on:
       - budgets-db
+    networks:
+      global-hub-net:
 
   notes-service:
+    container_name: notes-service
     build:
       context: .
       dockerfile: ./NotesService/Dockerfile
@@ -44,12 +55,16 @@ services:
       - "LOG_STORAGE=localhost:9200"
     depends_on:
       - notes-db
-    
+    networks:
+      global-hub-net:
+
   global-hub-client:
+    container_name: global-hub-client
     build:
       context: ../ClientApp
       dockerfile: ../ClientApp/Dockerfile
     environment:
+      - "NODE_ENV=development"
       - "NOTES_SERVICE_BASE=http://localhost:5143/api/v1"
       - "BUDGETS_SERVICE_BASE=http://localhost:5118/api/v1"
     ports:
@@ -57,7 +72,12 @@ services:
     depends_on:
       - budgets-service
       - notes-service
+    networks:
+      global-hub-net:
 
 volumes:
   notes-storage-volume:
   budget-storage-volume:
+
+networks:
+  global-hub-net:
