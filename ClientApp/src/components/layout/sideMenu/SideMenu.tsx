@@ -147,6 +147,7 @@ export const SideMenu = observer((): JSX.Element => {
     },
     {
       className: styles.sideMenuItem,
+      selectable: false,
       title: getTopLevelItemTitle(t('SIDE_MENU.BUDGETS'), onBudgetItemCreateClick),
       key: getClientItemUrl(ResourceNameConstants.BUDGET_RESOURCE_NAME),
       icon: <DollarOutlined />,

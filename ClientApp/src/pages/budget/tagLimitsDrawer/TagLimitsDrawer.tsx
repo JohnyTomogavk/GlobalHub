@@ -1,8 +1,8 @@
-import { Button, Col, Drawer, Form, Row, Select, Spin } from 'antd';
+import { Button, Col, Drawer, Form, InputNumber, Row, Select, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { TagLimitDto } from '../../../dto/tagLimit/tagLimitDto';
 import { useForm, useWatch } from 'antd/lib/form/Form';
-import { FormListFieldData, InputNumber } from 'antd/lib';
+import { FormListFieldData } from 'antd/lib';
 import { LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { nameof } from '../../../helpers/objectHelper';
 import { TagDto } from '../../../dto/tags/tagDto';
