@@ -51,7 +51,7 @@ services:
       - "5143:80"
     environment:
       - "ASPNETCORE_ENVIRONMENT=DOCKER_COMPOSE_DEMO"
-      - "NOTES_SERIVCE_STORAGE_CONNECTION_STRING=mongodb://notes-db:27017"
+      - "NOTES_SERVICE_STORAGE_CONNECTION_STRING=mongodb://notes-db:27017"
       - "LOG_STORAGE=localhost:9200"
     depends_on:
       - notes-db
