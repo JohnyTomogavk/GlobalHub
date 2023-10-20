@@ -24,8 +24,4 @@
       <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="9.0.3" />
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\BudgetService\BudgetsService.Infrastructure\BudgetsService.Infrastructure.csproj" />
-    </ItemGroup>
-
 </Project>

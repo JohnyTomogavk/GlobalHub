@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
 
@@ -12,20 +11,17 @@ public static class SerilogExtensions
         {
             var logStorageUri = Environment.GetEnvironmentVariable("LOG_STORAGE");
 
-            if (logStorageUri == null)
-            {
-                return;
-            }
-
             configuration
                 .Enrich.WithMachineName()
                 .WriteTo.Console()
                 .Enrich.FromLogContext()
-                .WriteTo.Elasticsearch(
-                    new ElasticsearchSinkOptions(new Uri(logStorageUri))
+                .WriteTo.Elasticsearch(!string.IsNullOrEmpty(logStorageUri)
+                    ? new ElasticsearchSinkOptions(new Uri(logStorageUri))
                     {
                         IndexFormat =
-                            $"applogs-{context.HostingEnvironment.ApplicationName?.ToLower().Replace(".", "-")}-{context.HostingEnvironment.EnvironmentName?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}",
+                            $"applogs-{context.HostingEnvironment.ApplicationName?
+                                .ToLower().Replace(".", "-")}-{context.HostingEnvironment.EnvironmentName?
+                                .ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}",
                         TemplateName = "Common service logs template",
                         AutoRegisterTemplate = true,
                         NumberOfShards = 1,
@@ -34,7 +30,8 @@ public static class SerilogExtensions
                         AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
                         TypeName = null,
                         BatchAction = ElasticOpType.Create
-                    })
+                    }
+                    : null)
                 .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
                 .Enrich.WithProperty("Application", context.HostingEnvironment.ApplicationName)
                 .Enrich.WithCorrelationId()

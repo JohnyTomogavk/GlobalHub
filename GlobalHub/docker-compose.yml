@@ -1,0 +1,83 @@
+﻿version: '3.8'
+name: 'global-hub-demo'
+
+services:
+  budgets-db:
+    container_name: budgets-db
+    image: postgres:16
+    volumes:
+      - budget-storage-volume:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    environment:
+      - 'POSTGRES_PASSWORD=Qwerty12345'
+    networks:
+      global-hub-net:
+
+  notes-db:
+    container_name: notes-db
+    image: mongo:7
+    volumes:
+      - notes-storage-volume:/data/db
+    ports:
+      - '27017:27017'
+    networks:
+      global-hub-net:
+
+  budgets-service:
+    container_name: budgets-service
+    build:
+      context: .
+      dockerfile: ./BudgetService/BudgetsService.Web/Dockerfile
+    image: budgets-service
+    ports:
+      - "5118:80"
+    environment:
+      - "ASPNETCORE_ENVIRONMENT=DOCKER_COMPOSE_DEMO"
+      - "BUDGETS_SERVICE_STORAGE_CONNECTION_STRING=User ID=postgres;Password=Qwerty12345;Host=budgets-db;Port=5432;Database=BudgetStorage"
+      - "LOG_STORAGE=localhost:9200"
+    depends_on:
+      - budgets-db
+    networks:
+      global-hub-net:
+
+  notes-service:
+    container_name: notes-service
+    build:
+      context: .
+      dockerfile: ./NotesService/Dockerfile
+    image: notes-service
+    ports:
+      - "5143:80"
+    environment:
+      - "ASPNETCORE_ENVIRONMENT=DOCKER_COMPOSE_DEMO"
+      - "NOTES_SERVICE_STORAGE_CONNECTION_STRING=mongodb://notes-db:27017"
+      - "LOG_STORAGE=localhost:9200"
+    depends_on:
+      - notes-db
+    networks:
+      global-hub-net:
+
+  global-hub-client:
+    container_name: global-hub-client
+    build:
+      context: ../ClientApp
+      dockerfile: ../ClientApp/Dockerfile
+    environment:
+      - "NODE_ENV=development"
+      - "NOTES_SERVICE_BASE=http://localhost:5143/api/v1"
+      - "BUDGETS_SERVICE_BASE=http://localhost:5118/api/v1"
+    ports:
+      - "8080:80"
+    depends_on:
+      - budgets-service
+      - notes-service
+    networks:
+      global-hub-net:
+
+volumes:
+  notes-storage-volume:
+  budget-storage-volume:
+
+networks:
+  global-hub-net:

@@ -16,6 +16,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
       <Content Include="..\stylecop.json">
         <Link>stylecop.json</Link>
       </Content>

@@ -1,8 +1,4 @@
-﻿using DotNetEnv;
-using DotNetEnv.Configuration;
-using Microsoft.Extensions.Configuration;
-
-namespace Common.Extensions;
+﻿namespace Common.Extensions;
 
 public static class ConfigurationBuilderExtensions
 {
