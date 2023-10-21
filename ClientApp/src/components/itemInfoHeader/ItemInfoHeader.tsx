@@ -35,19 +35,24 @@ export const ItemInfoSubHeader = (props: IItemInfoSubHeader): JSX.Element => {
             placement={'bottom'}
             title={
               <Space direction={'vertical'}>
-                <Space>
-                  <span>Created</span>
-                  <ReactTimeAgo date={props.createdAt} timeStyle={'round-minute'} locale={'en'} tooltip={false} />
-                </Space>
-                <Space>
-                  <span>Updated</span>
+                <span>
+                  Created&nbsp;
                   <ReactTimeAgo
-                    date={props.editedAt ? new Date(props.editedAt) : props.createdAt}
+                    date={new Date(props.createdAt)}
                     timeStyle={'round-minute'}
                     locale={'en'}
                     tooltip={false}
                   />
-                </Space>
+                </span>
+                <span>
+                  Updated&nbsp;
+                  <ReactTimeAgo
+                    date={new Date(props.editedAt ? props.editedAt : props.createdAt)}
+                    timeStyle={'round-minute'}
+                    locale={'en'}
+                    tooltip={false}
+                  />
+                </span>
               </Space>
             }
           >
