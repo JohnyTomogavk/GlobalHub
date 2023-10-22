@@ -27,7 +27,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("DOCKER_COM
     app.UseSwaggerUI();
 }
 
-app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("X-Correlation-id"));
+app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
+    .WithExposedHeaders("X-Correlation-id"));
 app.UseAuthorization();
 app.MapControllers();
 
