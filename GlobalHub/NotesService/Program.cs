@@ -29,6 +29,9 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("DOCKER_COM
 
 app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
     .WithExposedHeaders("X-Correlation-id"));
+
+Console.WriteLine("TEst");
+
 app.UseAuthorization();
 app.MapControllers();
 
