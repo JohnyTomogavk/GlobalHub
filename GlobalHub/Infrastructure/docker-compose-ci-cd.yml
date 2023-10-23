@@ -1,0 +1,66 @@
+version: '3.8'
+name: 'global_hub_ci_cd'
+
+services:
+  teamcity:
+    container_name: global-hub-teamcity-server
+    image: jetbrains/teamcity-server:2023.05.4
+    volumes:
+      - teamcity-data:/data/teamcity_server/datadir
+      - teamcity-logs:/opt/teamcity/logs
+    ports:
+      - '8111:8111'
+      - '8443:443'
+    networks:
+      - global-hub-ci-cd-net
+
+  teamcity-agent-1:
+    image: global-hub-build-agent
+    build:
+      dockerfile: ./BuildAgent/Dockerfile
+      context: .
+    container_name: agent1
+    privileged: true
+    environment:
+      - "AGENT_NAME=Agent 1"
+      - "SERVER_URL=http://teamcity:8111"
+      - "DOCKER_IN_DOCKER=start"
+    volumes:
+      - agent1-config:/data/teamcity_agent/conf
+      - agent1-docker-vol:/var/lib/docker
+    depends_on:
+      - teamcity
+    networks:
+      - global-hub-ci-cd-net
+
+  teamcity-agent-2:
+    image: global-hub-build-agent
+    build:
+      dockerfile: ./BuildAgent/Dockerfile
+      context: .
+    container_name: agent2
+    privileged: true
+    environment:
+      - "AGENT_NAME=Agent 2"
+      - "SERVER_URL=http://teamcity:8111"
+      - "DOCKER_IN_DOCKER=start"
+    volumes:
+      - agent2-config:/data/teamcity_agent/conf
+      - agent2-docker-vol:/var/lib/docker
+    depends_on:
+      - teamcity
+    networks:
+      - global-hub-ci-cd-net
+
+volumes:
+  teamcity-data:
+  teamcity-logs:
+  agent1-config:
+  agent2-config:
+  agent1-docker-vol:
+  agent2-docker-vol:
+
+networks:
+  global-hub-ci-cd-net:
+    name: global-hub-teamcity
+    driver: bridge

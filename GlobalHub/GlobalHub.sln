@@ -17,9 +17,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{8A8803
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{C79219AE-8756-4C8B-A98F-D53EF3DBD115}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MonitoringTools", "MonitoringTools", "{0AFC3EB0-30D2-461C-981A-4BEEEE2CAF6A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrustructure", "Infrustructure", "{0AFC3EB0-30D2-461C-981A-4BEEEE2CAF6A}"
 	ProjectSection(SolutionItems) = preProject
-		DockerCompose-Monitoring.yml = DockerCompose-Monitoring.yml
+		docker-compose-monitoring.yml = docker-compose-monitoring.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BudgetService", "BudgetService", "{5598758A-0BB8-4065-BD5C-F606F9C0F57D}"
@@ -33,6 +33,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetsService.Business", "BudgetService\BudgetsService.Business\BudgetsService.Business.csproj", "{DE1A4713-73F0-4B53-BAF7-F434BC27AF03}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetsService.Infrastructure", "BudgetService\BudgetsService.Infrastructure\BudgetsService.Infrastructure.csproj", "{5066B1A5-D493-4306-B129-B56D3BCC51FE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Teamcity", "Teamcity", "{46990DBA-4B90-4B05-BB70-AC15FE20E39C}"
+	ProjectSection(SolutionItems) = preProject
+		Infrastructure\docker-compose-ci-cd.yml = Infrastructure\docker-compose-ci-cd.yml
+		Infrastructure\BuildAgent\Dockerfile = Infrastructure\BuildAgent\Dockerfile
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,6 +54,7 @@ Global
 		{F707DC39-D5EC-4056-9462-D4BFA5F798F4} = {5598758A-0BB8-4065-BD5C-F606F9C0F57D}
 		{DE1A4713-73F0-4B53-BAF7-F434BC27AF03} = {5598758A-0BB8-4065-BD5C-F606F9C0F57D}
 		{5066B1A5-D493-4306-B129-B56D3BCC51FE} = {5598758A-0BB8-4065-BD5C-F606F9C0F57D}
+		{46990DBA-4B90-4B05-BB70-AC15FE20E39C} = {0AFC3EB0-30D2-461C-981A-4BEEEE2CAF6A}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FF9AF57C-8469-4371-B051-E6A64EC1429B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
