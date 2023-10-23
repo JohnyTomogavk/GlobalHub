@@ -1,8 +1,6 @@
 import { Button, DatePicker, Drawer, Form, Input, Select, Spin, Typography } from 'antd';
-import { InputNumber } from 'antd/lib';
 import { BudgetItemOperationType } from '../../../enums/budgetItemOperationType';
 import { TagSelector } from '../../../components/tagSelector/TagSelector';
-import TextArea from 'antd/lib/input/TextArea';
 import React, { useEffect, useState } from 'react';
 import { TagDto } from '../../../dto/tags/tagDto';
 import { BudgetItemDrawerModel } from '../../../models/budgetItem/budgetItemDrawer/budgetItemDrawerModel';
@@ -14,8 +12,10 @@ import dayjs from 'dayjs';
 import { createBudgetTag, deleteTag, updateBudgetTag } from '../../../api/tagService';
 import { TagColor } from '../../../enums/tagColor';
 import { nameof } from '../../../helpers/objectHelper';
+import { InputNumber } from 'antd';
 
 const { Text } = Typography;
+const { TextArea } = Input;
 
 interface BudgetItemDrawerProps {
   title: string;

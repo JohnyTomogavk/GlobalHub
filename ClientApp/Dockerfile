@@ -10,9 +10,9 @@ FROM nginx:1.25-alpine as final
 COPY --from=build ./app/dist ./usr/share/nginx/html
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
-RUN apk add --update nodejs
-RUN apk add --update npm
-RUN npm i -g runtime-env-cra@0.2.0
+RUN apk add --no-cache --update nodejs
+RUN apk add --no-cache --update npm
+RUN npm i -g runtime-env-cra@0.2.0 && npm cache clean --force
 
 WORKDIR /usr/share/nginx/html
 COPY .env .

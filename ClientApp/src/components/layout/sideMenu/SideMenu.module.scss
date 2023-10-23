@@ -46,15 +46,9 @@
     }
 
     .sideMenuActionButton {
-      border: 0;
-      background: transparent;
-      box-shadow: none;
-      min-width: 24px;
+      min-width: 1.5rem;
+      margin-left: 5px;
       display: none;
-
-      span {
-        height: 14px;
-      }
     }
   }
 
