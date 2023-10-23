@@ -9,7 +9,6 @@ public class NotesRepository : INotesRepository
         _notesDbContext = notesDbContext;
     }
 
-    // TODO: Add select by user if when user identification will be implemented
     public IEnumerable<Note> GetNotesMap()
     {
         return _notesDbContext.Notes.FindSync(note => note != null).ToList();
