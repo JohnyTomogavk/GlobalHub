@@ -12,7 +12,6 @@ global using BudgetsService.DataAccess.Enums.Budget;
 global using BudgetsService.DataAccess.Enums.Tags;
 global using BudgetsService.DataAccess.Repository.Interfaces;
 global using BudgetsService.Infrastructure.Interface;
-global using BudgetsService.Infrastructure.Models;
 global using BudgetsService.Infrastructure.Services.Interfaces;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Metadata.Builders;

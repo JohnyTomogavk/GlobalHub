@@ -1,8 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
-using Serilog;
-using Serilog.Sinks.Elasticsearch;
-
-namespace Common.Logging;
+﻿namespace Common.Logging;
 
 public static class SerilogExtensions
 {
