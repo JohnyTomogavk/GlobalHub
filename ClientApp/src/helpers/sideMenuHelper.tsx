@@ -1,7 +1,7 @@
 import React, { MouseEventHandler } from 'react';
 import styles from '../components/layout/sideMenu/SideMenu.module.scss';
 import { Button } from 'antd';
-import { EllipsisOutlined, MoreOutlined, PlusOutlined } from '@ant-design/icons';
+import { MoreOutlined, PlusOutlined } from '@ant-design/icons';
 
 export const getTopLevelItemTitle = (title: string, onClick?: MouseEventHandler): JSX.Element => (
   <span className={[styles.sideMenuItemTitleContainer, styles.topLevelItem].join(' ')}>
