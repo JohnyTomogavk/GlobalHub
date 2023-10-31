@@ -35,17 +35,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-if (app.Environment.IsEnvironment("DOCKER_COMPOSE_DEMO"))
+using var serviceScope = app.Services.CreateScope();
+var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+if (dbContext.Database.GetPendingMigrations().Any())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    using var serviceScope = app.Services.CreateScope();
-    var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    if (dbContext.Database.GetPendingMigrations().Any())
-    {
-        await dbContext.Database.MigrateAsync();
-        Log.Logger.Warning("Budgets database has been migrated");
-    }
+    await dbContext.Database.MigrateAsync();
+    Log.Logger.Warning("Budgets database has been migrated");
 }
 
 app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
