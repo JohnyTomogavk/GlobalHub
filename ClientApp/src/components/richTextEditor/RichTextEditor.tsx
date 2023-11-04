@@ -25,7 +25,6 @@ export const RichTextEditor = (props: EditorParameters): JSX.Element => {
     setEditorInstance(() => {
       const editor = new EditorJS({
         holder: editorHolderId,
-        autofocus: true,
         placeholder: 'Start typing your note here...',
         tools: editorTools,
         onChange: props.onChange,
