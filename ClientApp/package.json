@@ -93,6 +93,7 @@
     "react-resizable-panels": "^0.0.55",
     "react-router-dom": "^6.17.0",
     "react-time-ago": "^7.2.1",
-    "runtime-env-cra": "^0.2.4"
+    "runtime-env-cra": "^0.2.4",
+    "styled-components": "^6.1.0"
   }
 }

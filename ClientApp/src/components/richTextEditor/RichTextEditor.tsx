@@ -2,6 +2,7 @@ import React, { useEffect, useId, useState } from 'react';
 import EditorJS, { API, OutputData } from '@editorjs/editorjs';
 import { NOTE_DEFAULT_EMPTY_BLOCK } from '../../constants/notesConstants';
 import { editorTools } from '../../config/editorJsTools';
+import styledEditorJsWrapper from '../../pages/notes/StyledEditorJsWrapper';
 
 interface EditorParameters {
   onChange: (api: API, event: CustomEvent) => void;
@@ -24,6 +25,7 @@ export const RichTextEditor = (props: EditorParameters): JSX.Element => {
     setEditorInstance(() => {
       const editor = new EditorJS({
         holder: editorHolderId,
+        autofocus: true,
         placeholder: 'Start typing your note here...',
         tools: editorTools,
         onChange: props.onChange,
@@ -46,5 +48,5 @@ export const RichTextEditor = (props: EditorParameters): JSX.Element => {
     });
   }, [props.data]);
 
-  return <div id={editorHolderId}></div>;
+  return <StyledEditorJsWrapper id={editorHolderId} />;
 };
