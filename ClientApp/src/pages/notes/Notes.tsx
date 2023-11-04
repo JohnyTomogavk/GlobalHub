@@ -38,13 +38,16 @@ export const NotesComponent = observer((): JSX.Element => {
 
   const onEditorContentChange = async (api: API): Promise<void> => {
     const data = await api.saver.save();
-    if (noteRef.current === undefined || isEqual(data.blocks, JSON.parse(noteRef.current?.richTextContent).blocks))
-      return;
+
+    if (!noteRef.current || isEqual(data.blocks, JSON.parse(noteRef.current.richTextContent).blocks)) return;
+
     setLoading(true);
+
     const updateNoteResponse = await updateNoteContent(noteRef.current.id, {
       content: JSON.stringify(data),
     });
     setNote(updateNoteResponse.data);
+
     setLoading(false);
   };
 

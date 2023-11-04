@@ -1,10 +1,8 @@
 import React, { useEffect, useId, useState } from 'react';
 import EditorJS, { API, OutputData } from '@editorjs/editorjs';
 import { NOTE_DEFAULT_EMPTY_BLOCK } from '../../constants/notesConstants';
-import { editorJsTools } from '../../config/editorJsTools';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const UndoPlugin = require('editorjs-undo');
+import { editorTools } from '../../config/editorJsTools';
+import StyledEditorJsWrapper from './StyledEditorJsWrapper';
 
 interface EditorParameters {
   onChange: (api: API, event: CustomEvent) => void;
@@ -28,10 +26,7 @@ export const RichTextEditor = (props: EditorParameters): JSX.Element => {
       const editor = new EditorJS({
         holder: editorHolderId,
         placeholder: 'Start typing your note here...',
-        tools: editorJsTools,
-        onReady(): void {
-          new UndoPlugin({ editor });
-        },
+        tools: editorTools,
         onChange: props.onChange,
       });
 
@@ -52,5 +47,5 @@ export const RichTextEditor = (props: EditorParameters): JSX.Element => {
     });
   }, [props.data]);
 
-  return <div id={editorHolderId}></div>;
+  return <StyledEditorJsWrapper id={editorHolderId} />;
 };
