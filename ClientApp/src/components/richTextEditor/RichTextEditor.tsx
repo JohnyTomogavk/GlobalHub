@@ -2,7 +2,7 @@ import React, { useEffect, useId, useState } from 'react';
 import EditorJS, { API, OutputData } from '@editorjs/editorjs';
 import { NOTE_DEFAULT_EMPTY_BLOCK } from '../../constants/notesConstants';
 import { editorTools } from '../../config/editorJsTools';
-import styledEditorJsWrapper from '../../pages/notes/StyledEditorJsWrapper';
+import StyledEditorJsWrapper from './StyledEditorJsWrapper';
 
 interface EditorParameters {
   onChange: (api: API, event: CustomEvent) => void;

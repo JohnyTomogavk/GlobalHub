@@ -14,6 +14,10 @@ const styledEditorJsWrapper = styled.div`
   .ce-toolbar__content {
     width: 75%;
   }
+
+  .ce-toolbar__actions {
+    right: 100%;
+  }
 `;
 
 export default styledEditorJsWrapper;
