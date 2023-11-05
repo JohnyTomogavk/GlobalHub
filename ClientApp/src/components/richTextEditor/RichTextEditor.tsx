@@ -2,7 +2,10 @@ import React, { useEffect, useId, useState } from 'react';
 import EditorJS, { API, OutputData } from '@editorjs/editorjs';
 import { NOTE_DEFAULT_EMPTY_BLOCK } from '../../constants/notesConstants';
 import { editorTools } from '../../config/editorJsTools';
-import StyledEditorJsWrapper from './StyledEditorJsWrapper';
+import { StyledEditorJsWrapper } from './StyledEditorJsWrapper';
+import { observer } from 'mobx-react-lite';
+import UiConfigStore from '../../store/uiConfigStore';
+import { theme } from 'antd';
 
 interface EditorParameters {
   onChange: (api: API, event: CustomEvent) => void;
@@ -17,9 +20,14 @@ const ensureBlocksNoteEmpty = (data: OutputData): OutputData => {
   return data;
 };
 
-export const RichTextEditor = (props: EditorParameters): JSX.Element => {
+export const RichTextEditor = observer((props: EditorParameters): JSX.Element => {
+  const { isDarkTheme } = UiConfigStore;
   const editorHolderId = useId();
   const [editorInstance, setEditorInstance] = useState<EditorJS | undefined>(undefined);
+
+  const {
+    token: { colorText },
+  } = theme.useToken();
 
   useEffect(() => {
     setEditorInstance(() => {
@@ -47,5 +55,5 @@ export const RichTextEditor = (props: EditorParameters): JSX.Element => {
     });
   }, [props.data]);
 
-  return <StyledEditorJsWrapper id={editorHolderId} />;
-};
+  return <StyledEditorJsWrapper id={editorHolderId} isDarkTheme={isDarkTheme} textColor={colorText} />;
+});
