@@ -12,6 +12,6 @@
   .noteTitle {
     @include entity-title;
 
-    max-width: 650px;
+    width: 75%;
   }
 }

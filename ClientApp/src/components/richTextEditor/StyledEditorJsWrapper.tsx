@@ -120,4 +120,24 @@ export const StyledEditorJsWrapper = styled.div<StyledEditorJsProps>`
     color: ${(props): string => props.textColor};
     ${(props): string | false => props.isDarkTheme && 'background: #272727'}
   }
+
+  .ce-inline-toolbar,
+  .ce-conversion-toolbar {
+    ${(props): string | false => props.isDarkTheme && 'border-color: #2c2c2c; background-color: #252525;'}
+    color: ${(props): string => props.textColor};
+
+    .colorPlugin:not(.ce-inline-tool--active) svg {
+      fill: ${(props): string => props.textColor};
+    }
+
+    .ce-conversion-tool:hover,
+    .ce-inline-tool:hover,
+    .ce-inline-toolbar__dropdown:hover {
+      ${(props): string | false => props.isDarkTheme && 'background-color: rgba(49, 49, 49, 255)'};
+    }
+
+    .ce-conversion-tool__icon {
+      background-color: transparent;
+    }
+  }
 `;
