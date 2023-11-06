@@ -52,7 +52,7 @@ export const NotesComponent = observer((): JSX.Element => {
   };
 
   const onNoteTitleUpdate = async (changedTitle: string): Promise<void> => {
-    if (note === undefined) return;
+    if (!note) return;
 
     const newTitle = changedTitle.length !== 0 ? changedTitle : NOTE_TITLE_PLACEHOLDER;
     setLoading(true);
@@ -65,16 +65,16 @@ export const NotesComponent = observer((): JSX.Element => {
   const debouncedOnChange = debounce(onEditorContentChange, EDITOR_ON_CHANGE_DEBOUNCE);
 
   const onItemDelete = async (): Promise<void> => {
-    if (note?.id === undefined) return;
+    if (!id) return;
 
-    const deletedNoteIdResponse = await deleteNote(note.id);
+    const deletedNoteIdResponse = await deleteNote(id);
     notesStore.removeNoteFromSideMenu(deletedNoteIdResponse.data);
     commonSideMenuStore.changeSelectedMenuKey([RoutingConstants.NOTE_LIST_ROUTE]);
     navigate(`/${RoutingConstants.NOTE_LIST_ROUTE}`);
   };
 
   const loadNote = async (): Promise<void> => {
-    if (id === undefined) return;
+    if (!id) return;
 
     const noteResponse = await getNoteById(id);
     setNote(noteResponse.data);

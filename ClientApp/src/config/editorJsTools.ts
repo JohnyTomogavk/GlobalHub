@@ -46,7 +46,7 @@ const nestedList = {
 
 const warning = Warning;
 
-const likTool = LinkTool;
+const linkTool = LinkTool;
 
 const header = {
   class: Header,
@@ -143,7 +143,7 @@ const columnTools = {
   table,
   nestedList,
   warning,
-  likTool,
+  linkTool: linkTool,
   header,
   quote,
   marker,
@@ -172,7 +172,7 @@ export const editorTools = {
   table,
   nestedList,
   warning,
-  likTool,
+  linkTool: linkTool,
   header,
   quote,
   marker,
