@@ -55,5 +55,5 @@ export const RichTextEditor = observer((props: EditorParameters): JSX.Element =>
     });
   }, [props.data]);
 
-  return <StyledEditorJsWrapper id={editorHolderId} isDarkTheme={isDarkTheme} textColor={colorText} />;
+  return <StyledEditorJsWrapper id={editorHolderId} $isDarkTheme={isDarkTheme} $textColor={colorText} />;
 });

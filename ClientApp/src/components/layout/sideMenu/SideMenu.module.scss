@@ -14,12 +14,21 @@
   }
 
   .siderDivider {
-    margin-top: 0;
+    margin: 0;
   }
 }
 
 .sideMenuTree {
   white-space: nowrap;
+  padding-top: 24px;
+  padding-bottom: 24px;
+  overflow: hidden;
+  max-height: calc(100% - 3rem);
+  margin-right: -5px;
+
+  &:hover {
+    overflow: auto;
+  }
 
   span[title] {
     overflow: hidden;
