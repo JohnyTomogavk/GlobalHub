@@ -19,12 +19,18 @@ builder.Services.AddScoped<INotesRepository, NotesRepository>();
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+app.UseHttpsRedirection();
 app.UseSerilogRequestLogging();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("DOCKER_COMPOSE_DEMO"))
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+else
+{
+    app.UseHsts();
 }
 
 app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
