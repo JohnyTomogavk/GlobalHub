@@ -66,7 +66,7 @@ export const ItemInfoSubHeader = (props: IItemInfoSubHeader): JSX.Element => {
                 <>
                   <span>Edited </span>
                   <ReactTimeAgo
-                    date={props.editedAt ? new Date(props.editedAt) : props.createdAt}
+                    date={new Date(props.editedAt ? props.editedAt : props.createdAt)}
                     timeStyle={'round-minute'}
                     locale={'en'}
                     tooltip={false}

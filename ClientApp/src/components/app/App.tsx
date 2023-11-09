@@ -12,8 +12,15 @@ import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 import { setUpAxiosExceptionInterceptor } from '../../config/axiosExceptionInterceptor';
 import { initLocales } from '../../config/localizationConfigurator';
+import { createGlobalStyle } from 'styled-components';
 
 const { Content } = Layout;
+
+const ThemeStyleProvider = createGlobalStyle<{ $isDarkTheme: boolean }>`
+  html {
+    color-scheme: ${(props): string => (props.$isDarkTheme ? 'dark' : 'light')};
+  }
+`;
 
 export const App = observer(() => {
   const { isDarkTheme, currentLanguage } = CommonStore;
@@ -36,6 +43,7 @@ export const App = observer(() => {
       }}
     >
       <Layout>
+        <ThemeStyleProvider $isDarkTheme={isDarkTheme} />
         <PanelGroup direction={'horizontal'} autoSaveId={'layout-panels-state'} disablePointerEventsDuringResize={true}>
           <Panel minSize={12} maxSize={40} defaultSize={12}>
             <Affix offsetTop={0}>

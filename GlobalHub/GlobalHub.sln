@@ -18,9 +18,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{C79219AE-8756-4C8B-A98F-D53EF3DBD115}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrustructure", "Infrustructure", "{0AFC3EB0-30D2-461C-981A-4BEEEE2CAF6A}"
-	ProjectSection(SolutionItems) = preProject
-		docker-compose-monitoring.yml = docker-compose-monitoring.yml
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BudgetService", "BudgetService", "{5598758A-0BB8-4065-BD5C-F606F9C0F57D}"
 EndProject
@@ -36,8 +33,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetsService.Infrastructu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Teamcity", "Teamcity", "{46990DBA-4B90-4B05-BB70-AC15FE20E39C}"
 	ProjectSection(SolutionItems) = preProject
-		Infrastructure\docker-compose-ci-cd.yml = Infrastructure\docker-compose-ci-cd.yml
-		Infrastructure\BuildAgent\Dockerfile = Infrastructure\BuildAgent\Dockerfile
+		Infrastructure\Teamcity\docker-compose-ci-cd.yml = Infrastructure\Teamcity\docker-compose-ci-cd.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ELK", "ELK", "{5133750B-45D7-4F39-997D-B94ABE95D6BE}"
+	ProjectSection(SolutionItems) = preProject
+		Infrastructure\ELK\docker-compose-monitoring.yml = Infrastructure\ELK\docker-compose-monitoring.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildAgent", "BuildAgent", "{28F900C1-C45A-48C1-9811-10CC896C6F66}"
+	ProjectSection(SolutionItems) = preProject
+		Infrastructure\Teamcity\BuildAgent\Dockerfile = Infrastructure\Teamcity\BuildAgent\Dockerfile
 	EndProjectSection
 EndProject
 Global
@@ -55,6 +61,8 @@ Global
 		{DE1A4713-73F0-4B53-BAF7-F434BC27AF03} = {5598758A-0BB8-4065-BD5C-F606F9C0F57D}
 		{5066B1A5-D493-4306-B129-B56D3BCC51FE} = {5598758A-0BB8-4065-BD5C-F606F9C0F57D}
 		{46990DBA-4B90-4B05-BB70-AC15FE20E39C} = {0AFC3EB0-30D2-461C-981A-4BEEEE2CAF6A}
+		{5133750B-45D7-4F39-997D-B94ABE95D6BE} = {0AFC3EB0-30D2-461C-981A-4BEEEE2CAF6A}
+		{28F900C1-C45A-48C1-9811-10CC896C6F66} = {46990DBA-4B90-4B05-BB70-AC15FE20E39C}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FF9AF57C-8469-4371-B051-E6A64EC1429B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
