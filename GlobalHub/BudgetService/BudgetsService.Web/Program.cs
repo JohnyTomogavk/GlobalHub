@@ -27,6 +27,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+app.UseHttpsRedirection();
 app.UseSerilogRequestLogging();
 
 if (app.Environment.IsDevelopment())
@@ -34,9 +36,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    app.UseHsts();
+}
 
 using var serviceScope = app.Services.CreateScope();
 var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
 if (dbContext.Database.GetPendingMigrations().Any())
 {
     await dbContext.Database.MigrateAsync();

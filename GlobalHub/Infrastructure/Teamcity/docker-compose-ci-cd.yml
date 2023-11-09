@@ -23,13 +23,11 @@ services:
     privileged: true
     environment:
       - "AGENT_NAME=Agent 1"
-      - "SERVER_URL=http://teamcity:8111"
+      - "SERVER_URL=http://global-hub.xyz:8111"
       - "DOCKER_IN_DOCKER=start"
     volumes:
       - agent1-config:/data/teamcity_agent/conf
       - agent1-docker-vol:/var/lib/docker
-    depends_on:
-      - teamcity
     networks:
       - global-hub-ci-cd-net
 
@@ -42,13 +40,11 @@ services:
     privileged: true
     environment:
       - "AGENT_NAME=Agent 2"
-      - "SERVER_URL=http://teamcity:8111"
+      - "SERVER_URL=http://global-hub.xyz:8111"
       - "DOCKER_IN_DOCKER=start"
     volumes:
       - agent2-config:/data/teamcity_agent/conf
       - agent2-docker-vol:/var/lib/docker
-    depends_on:
-      - teamcity
     networks:
       - global-hub-ci-cd-net
 
