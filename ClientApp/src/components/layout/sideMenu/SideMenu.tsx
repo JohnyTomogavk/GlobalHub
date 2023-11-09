@@ -20,7 +20,7 @@ import * as ResourceNameConstants from '../../../constants/resourceConstants';
 import { BUDGET_RESOURCE_NAME, NOTE_RESOURCE_NAME } from '../../../constants/resourceConstants';
 import styles from './SideMenu.module.scss';
 import { createNote, getNotesMap } from '../../../api/noteService';
-import { NOTE_TITLE_PLACEHOLDER } from '../../../constants/notesConstants';
+import { NOTE_EMPTY_TITLE_PLACEHOLDER } from '../../../constants/notesConstants';
 import { SideMenuItemModel } from '../../../models/shared/sideMenu/sideMenuItemModel';
 import { observer } from 'mobx-react-lite';
 import { getTopLevelItemTitle } from '../../../helpers/sideMenuHelper';
@@ -127,7 +127,7 @@ export const SideMenu = observer((): JSX.Element => {
 
   const onNoteCreateClick = async (e: React.MouseEvent): Promise<void> => {
     const newNoteResponse = await createNote({
-      title: NOTE_TITLE_PLACEHOLDER,
+      title: NOTE_EMPTY_TITLE_PLACEHOLDER,
     });
     const newNoteUrl = getClientItemUrl(NOTE_RESOURCE_NAME, newNoteResponse.data.id);
     notesStore.addNewNoteToSideMenu(newNoteResponse.data);

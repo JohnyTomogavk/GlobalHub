@@ -5,7 +5,7 @@ import styles from './notes.module.scss';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { deleteNote, getNoteById, updateNoteContent, updateNoteTitle } from '../../api/noteService';
 import { Note } from '../../entities/notes/note';
-import { NOTE_DEFAULT_CONTENT, NOTE_TITLE_PLACEHOLDER } from '../../constants/notesConstants';
+import { NOTE_DEFAULT_CONTENT, NOTE_EMPTY_TITLE_PLACEHOLDER } from '../../constants/notesConstants';
 import Title from 'antd/es/typography/Title';
 import { RichTextEditor } from '../../components/richTextEditor/RichTextEditor';
 import * as RoutingConstants from '../../constants/routingConstants';
@@ -46,10 +46,13 @@ export const NotesComponent = observer((): JSX.Element => {
     setLoading(false);
   };
 
-  const onNoteTitleUpdate = async (changedTitle: string): Promise<void> => {
+  const onTitleUpdate = async (changedTitle: string): Promise<void> => {
     if (!id) return;
 
-    const newTitle = changedTitle.length !== 0 ? changedTitle : NOTE_TITLE_PLACEHOLDER;
+    const newTitle = changedTitle.length !== 0 ? changedTitle : NOTE_EMPTY_TITLE_PLACEHOLDER;
+
+    if (note?.title === newTitle) return;
+
     setLoading(true);
     const { data } = await updateNoteTitle(id, { newTitle: newTitle });
     setNote(data);
@@ -107,7 +110,7 @@ export const NotesComponent = observer((): JSX.Element => {
             editable={{
               triggerType: ['text'],
               text: note?.title,
-              onChange: (changedTitle: string) => onNoteTitleUpdate(changedTitle),
+              onChange: (changedTitle: string) => onTitleUpdate(changedTitle),
             }}
             level={2}
             className={styles.noteTitle}
