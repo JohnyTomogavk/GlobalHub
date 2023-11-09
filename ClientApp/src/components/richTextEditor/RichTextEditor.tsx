@@ -1,59 +1,55 @@
-import React, { useEffect, useId, useState } from 'react';
-import EditorJS, { API, OutputData } from '@editorjs/editorjs';
-import { NOTE_DEFAULT_EMPTY_BLOCK } from '../../constants/notesConstants';
+import React, { useEffect, useId, useRef } from 'react';
+import { OutputData } from '@editorjs/editorjs';
 import { editorTools } from '../../config/editorJsTools';
 import { StyledEditorJsWrapper } from './StyledEditorJsWrapper';
 import { observer } from 'mobx-react-lite';
 import UiConfigStore from '../../store/uiConfigStore';
 import { theme } from 'antd';
+import { isEqual } from 'lodash';
+import Editor from '@stfy/react-editor.js';
 
 interface EditorParameters {
-  onChange: (api: API, event: CustomEvent) => void;
+  onChange: (data: OutputData) => Promise<void>;
   data: OutputData;
+  onEditorReadyHandler: () => void;
 }
-
-const ensureBlocksNoteEmpty = (data: OutputData): OutputData => {
-  if (data.blocks.length === 0) {
-    data.blocks.push(JSON.parse(NOTE_DEFAULT_EMPTY_BLOCK));
-  }
-
-  return data;
-};
 
 export const RichTextEditor = observer((props: EditorParameters): JSX.Element => {
   const { isDarkTheme } = UiConfigStore;
   const editorHolderId = useId();
-  const [editorInstance, setEditorInstance] = useState<EditorJS | undefined>(undefined);
+  const editorRef = useRef<Editor>(null);
+
+  useEffect(() => {
+    if (!editorRef.current?.editor) return;
+
+    editorRef.current.editor.isReady.then(() => {
+      editorRef.current?.editor.render(props.data);
+    });
+  }, [props.data]);
+
+  const onEditorReady = (): void => {
+    props.onEditorReadyHandler();
+  };
 
   const {
     token: { colorText },
   } = theme.useToken();
 
-  useEffect(() => {
-    setEditorInstance(() => {
-      const editor = new EditorJS({
-        holder: editorHolderId,
-        placeholder: 'Start typing your note here...',
-        tools: editorTools,
-        onChange: props.onChange,
-      });
+  const onEditorDataChange = async (data: OutputData): Promise<void> => {
+    if (isEqual(data.blocks, props.data.blocks)) return;
+    await props.onChange(data);
+  };
 
-      return editor;
-    });
-
-    return () => {
-      if (editorInstance !== undefined) {
-        editorInstance.destroy();
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    editorInstance?.isReady.then(() => {
-      ensureBlocksNoteEmpty(props.data);
-      editorInstance?.render(props.data).then();
-    });
-  }, [props.data]);
-
-  return <StyledEditorJsWrapper id={editorHolderId} $isDarkTheme={isDarkTheme} $textColor={colorText} />;
+  return (
+    <StyledEditorJsWrapper id={editorHolderId} $isDarkTheme={isDarkTheme} $textColor={colorText}>
+      <Editor
+        ref={editorRef}
+        data={props.data}
+        reinitOnPropsChange={false}
+        tools={editorTools}
+        onReady={onEditorReady}
+        onData={onEditorDataChange}
+      />
+    </StyledEditorJsWrapper>
+  );
 });
