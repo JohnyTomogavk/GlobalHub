@@ -123,7 +123,7 @@ export const NotesComponent = observer((): JSX.Element => {
           () =>
             note && (
               <RichTextEditor
-                data={JSON.parse(note?.richTextContent ?? NOTE_DEFAULT_CONTENT)}
+                data={JSON.parse(note.richTextContent)}
                 onChange={onEditorContentChange}
                 onEditorReadyHandler={onRichTextEditorEditorReadyHandler}
               />
