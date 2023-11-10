@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useRef } from 'react';
-import { LogLevels, OutputData } from '@editorjs/editorjs';
+import { OutputData } from '@editorjs/editorjs';
 import { editorTools } from '../../config/editorJsTools';
 import { StyledEditorJsWrapper } from './StyledEditorJsWrapper';
 import { observer } from 'mobx-react-lite';
@@ -7,7 +7,7 @@ import UiConfigStore from '../../store/uiConfigStore';
 import { theme } from 'antd';
 import { isEqual } from 'lodash';
 import Editor from '@stfy/react-editor.js';
-import { NOTE_DEFAULT_CONTENT, NOTE_DEFAULT_EMPTY_BLOCK } from '../../constants/notesConstants';
+import { NOTE_DEFAULT_EMPTY_BLOCK } from '../../constants/notesConstants';
 
 interface EditorParameters {
   onChange: (data: OutputData) => Promise<void>;

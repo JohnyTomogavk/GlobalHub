@@ -5,7 +5,7 @@ import styles from './notes.module.scss';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { deleteNote, getNoteById, updateNoteContent, updateNoteTitle } from '../../api/noteService';
 import { Note } from '../../entities/notes/note';
-import { NOTE_DEFAULT_CONTENT, NOTE_EMPTY_TITLE_PLACEHOLDER } from '../../constants/notesConstants';
+import { NOTE_EMPTY_TITLE_PLACEHOLDER } from '../../constants/notesConstants';
 import Title from 'antd/es/typography/Title';
 import { RichTextEditor } from '../../components/richTextEditor/RichTextEditor';
 import * as RoutingConstants from '../../constants/routingConstants';
