@@ -3,10 +3,10 @@ WORKDIR /app
 
 COPY BudgetService/ ./BudgetService
 COPY Common/ ./Common
-RUN dotnet build -c Release BudgetService/BudgetService.sln
+RUN dotnet build -c Release Services/BudgetService/BudgetService.sln
 
 FROM build as publish
-RUN dotnet publish -c Release BudgetService/BudgetService.sln -o publish --no-restore --no-build
+RUN dotnet publish -c Release Services/BudgetService/BudgetService.sln -o publish --no-restore --no-build
 
 FROM mcr.microsoft.com/dotnet/aspnet:7.0-alpine AS final
 WORKDIR /app
