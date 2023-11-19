@@ -27,8 +27,6 @@ import {
 } from '../../api/budgetsService';
 import { isEqual, toNumber } from 'lodash';
 import { BudgetDto } from '../../dto/budgets/budgetDto';
-// import CountUp from 'react-countup';
-// import { valueType } from 'antd/es/statistic/utils';
 import { EditOutlined } from '@ant-design/icons';
 import { ItemInfoSubHeader } from '../../components/itemInfoHeader/ItemInfoHeader';
 import Paragraph from 'antd/es/typography/Paragraph';
@@ -57,8 +55,6 @@ import { TagLimitsDrawer } from './tagLimitsDrawer/TagLimitsDrawer';
 import { ResultStatusType } from 'antd/lib/result';
 
 const { Text } = Typography;
-
-// const countUpFormatter = (value: valueType): ReactNode => <CountUp decimals={2} end={+value} />;
 
 const CONVERT_TO_PERCENT_RATIO = 100;
 
