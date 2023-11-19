@@ -38,20 +38,20 @@ export const App = observer(() => {
       theme={{
         algorithm: isDarkTheme ? [theme.darkAlgorithm] : [theme.defaultAlgorithm],
         token: {
-          borderRadius: 0,
+          borderRadius: 2,
         },
       }}
     >
       <Layout>
         <ThemeStyleProvider $isDarkTheme={isDarkTheme} />
-        <PanelGroup direction={'horizontal'} autoSaveId={'layout-panels-state'} disablePointerEventsDuringResize={true}>
-          <Panel minSize={12} maxSize={40} defaultSize={12}>
+        <PanelGroup direction={'horizontal'} autoSaveId={'layout-panels-state'}>
+          <Panel minSizePercentage={10} maxSizePercentage={30} defaultSizePercentage={15}>
             <Affix offsetTop={0}>
               <SideMenu />
             </Affix>
           </Panel>
           <PanelResizeHandle className={styles.resizeHandle} />
-          <Panel minSize={60} maxSize={88} defaultSize={88}>
+          <Panel minSizePercentage={70} maxSizePercentage={90} defaultSizePercentage={85}>
             <AppHeader />
             <Layout>
               <Content>
