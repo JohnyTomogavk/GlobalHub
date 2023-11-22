@@ -1,4 +1,4 @@
-import axios, { AxiosError, HttpStatusCode } from 'axios';
+import axios, { AxiosError, HttpStatusCode, InternalAxiosRequestConfig } from 'axios';
 import { CORRELATION_ID_HEADER_NAME } from '../constants/requestConstants';
 import { NavigateFunction } from 'react-router/dist/lib/hooks';
 import { NOT_FOUND_ROUTE } from '../constants/routingConstants';
@@ -8,7 +8,7 @@ import { CustomAxiosConfig } from '../models/axios/CustomAxiosConfig';
 
 let errorCaptured = false;
 
-export const setUpAxiosExceptionInterceptor = (navigate: NavigateFunction): void => {
+export const setUpAxiosExceptionInterceptor = (navigate: NavigateFunction, accessToken?: string): void => {
   axios.interceptors.response.use(
     (response) => response,
     (error: AxiosError) => {
@@ -44,5 +44,16 @@ export const setUpAxiosExceptionInterceptor = (navigate: NavigateFunction): void
 
       return Promise.reject(error);
     }
+  );
+
+  axios.interceptors.request.use(
+    (request: InternalAxiosRequestConfig) => {
+      if (accessToken) {
+        request.headers.Authorization = `Bearer ${accessToken}`;
+      }
+
+      return Promise.resolve(request);
+    },
+    (error) => error
   );
 };

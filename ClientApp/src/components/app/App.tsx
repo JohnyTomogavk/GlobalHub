@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Affix, ConfigProvider, Layout, theme } from 'antd';
 import { AppFooter } from '../layout/footer/Footer';
 import AppHeader from '../layout/header/Header';
@@ -11,8 +11,9 @@ import CommonStore from '../../store/uiConfigStore';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 import { setUpAxiosExceptionInterceptor } from '../../config/axiosExceptionInterceptor';
-import { initLocales } from '../../config/localizationConfigurator';
 import { createGlobalStyle } from 'styled-components';
+import { useAuth } from 'react-oidc-context';
+import { initLocales } from '../../config/localizationConfigurator';
 
 const { Content } = Layout;
 
@@ -26,12 +27,17 @@ export const App = observer(() => {
   const { isDarkTheme, currentLanguage } = CommonStore;
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
+  const auth = useAuth();
 
   if (!isLoaded) {
-    setIsLoaded(true);
-    setUpAxiosExceptionInterceptor(navigate);
     initLocales(currentLanguage);
+    setIsLoaded(true);
   }
+
+  useEffect(() => {
+    setUpAxiosExceptionInterceptor(navigate, auth.user?.access_token);
+    console.log(auth);
+  }, [auth]);
 
   return (
     <ConfigProvider

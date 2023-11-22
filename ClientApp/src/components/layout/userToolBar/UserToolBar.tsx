@@ -1,6 +1,6 @@
 import { Badge, Button, Dropdown, Popover, Typography } from 'antd';
 import { BellOutlined, FormatPainterOutlined, TranslationOutlined } from '@ant-design/icons';
-import React from 'react';
+import React, { useEffect } from 'react';
 import NotificationPopover from '../notificationPopover/NotificationPopover';
 import { EN, RU } from '../../../constants/languagesConstants';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +9,7 @@ import { antdMenuItem } from '../../../models/shared/antdMenuItem';
 import CommonStore from '../../../store/uiConfigStore';
 import { observer } from 'mobx-react-lite';
 import styles from './UserToolBar.module.scss';
+import { useAuth } from 'react-oidc-context';
 
 const { Text } = Typography;
 
@@ -16,6 +17,7 @@ const UserToolBar = observer((): JSX.Element => {
   const { i18n } = useTranslation();
   const { t } = i18n;
   const { currentLanguage, setLanguage, isDarkTheme, toggleTheme } = CommonStore;
+  const auth = useAuth();
 
   const onLanguageSelect = (i18: i18n_type, selectedLanguage: string): void => {
     setLanguage(selectedLanguage);
@@ -39,7 +41,17 @@ const UserToolBar = observer((): JSX.Element => {
     },
   ];
 
-  const userName = 'Johny Tomogavk';
+  const onSignInClick = async (): Promise<void> => {
+    await auth.signinRedirect();
+  };
+
+  const onSignOutClick = async (): Promise<void> => {
+    await auth.signoutSilent();
+  };
+
+  useEffect(() => {
+    auth.signinSilent();
+  }, []);
 
   return (
     <div className={styles.headerToolbar}>
@@ -75,9 +87,15 @@ const UserToolBar = observer((): JSX.Element => {
         icon={<FormatPainterOutlined />}
       ></Button>
 
-      <Button danger type={'default'}>
-        {userName}
-      </Button>
+      {auth.isAuthenticated ? (
+        <Button onClick={onSignOutClick} danger type={'default'}>
+          {auth.user?.profile.name}
+        </Button>
+      ) : (
+        <Button onClick={onSignInClick} type={'primary'}>
+          Sign In
+        </Button>
+      )}
     </div>
   );
 });
