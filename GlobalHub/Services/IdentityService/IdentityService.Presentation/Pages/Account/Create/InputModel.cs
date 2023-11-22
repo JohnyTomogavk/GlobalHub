@@ -1,4 +1,4 @@
-namespace IdentityService.Presentation.Pages.Account.Login;
+﻿namespace IdentityService.Presentation.Pages.Account.Create;
 
 public class InputModel
 {
@@ -6,7 +6,8 @@ public class InputModel
 
     [Required] public string Password { get; set; }
 
-    public bool RememberLogin { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
 
     public string ReturnUrl { get; set; }
 

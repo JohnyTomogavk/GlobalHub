@@ -26,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj"/>
     <ProjectReference Include="..\IdentityService.Domain\IdentityService.Domain.csproj"/>
+    <ProjectReference Include="..\IdentityService.Infrastructure\IdentityService.Infrastructure.csproj" />
     <ProjectReference Include="..\IdentityService.Persistence\IdentityService.Persistence.csproj"/>
   </ItemGroup>
 

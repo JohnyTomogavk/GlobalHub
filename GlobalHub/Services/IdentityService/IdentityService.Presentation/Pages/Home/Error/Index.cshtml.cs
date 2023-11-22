@@ -1,4 +1,4 @@
-namespace IdentityService.Presentation.Pages.Error;
+namespace IdentityService.Presentation.Pages.Home.Error;
 
 [AllowAnonymous]
 [SecurityHeaders]

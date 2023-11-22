@@ -1,6 +1,4 @@
-using Duende.IdentityServer.Stores;
-
-namespace IdentityService.Presentation.Pages.Login;
+namespace IdentityService.Presentation.Pages.Account.Login;
 
 [SecurityHeaders]
 [AllowAnonymous]
@@ -54,6 +52,11 @@ public class Index : PageModel
         // the user clicked the "cancel" button
         if (Input.Button != "login")
         {
+            if (Input.Button == "register")
+            {
+                return RedirectToPage("/Account/Create/Index");
+            }
+
             if (context != null)
             {
                 // if the user cancels, send a result back into IdentityServer as if they 
@@ -82,6 +85,7 @@ public class Index : PageModel
         {
             var result = await _signInManager.PasswordSignInAsync(Input.Username, Input.Password, Input.RememberLogin,
                 lockoutOnFailure: true);
+
             if (result.Succeeded)
             {
                 var user = await _userManager.FindByNameAsync(Input.Username);

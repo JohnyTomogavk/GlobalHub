@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace IdentityService.Presentation.Pages.Home;
+namespace IdentityService.Presentation.Pages;
 
 [AllowAnonymous]
 public class Index : PageModel

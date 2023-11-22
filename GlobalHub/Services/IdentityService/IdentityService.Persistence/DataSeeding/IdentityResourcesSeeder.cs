@@ -22,22 +22,22 @@ public static class IdentityResourcesSeeder
         await context.SaveChangesAsync();
     }
 
-    private static async Task InitIdentityResources<TIdentityResource>(
+    private static async Task InitIdentityResources<TIdentityServerResource>(
         ConfigurationDbContext context,
         IConfiguration configuration,
         string configSectionKey)
-        where TIdentityResource : class
+        where TIdentityServerResource : class
     {
         var configurationSection = configuration.GetSection(configSectionKey);
-        var parsedResource = new List<TIdentityResource>();
+        var parsedResource = new List<TIdentityServerResource>();
         configurationSection.Bind(parsedResource);
 
         if (!parsedResource.Any())
         {
-            throw new ArgumentNullException(nameof(parsedResource));
+            throw new IdentityConfigNotFoundException(nameof(TIdentityServerResource));
         }
 
-        await context.Set<TIdentityResource>()
+        await context.Set<TIdentityServerResource>()
             .AddRangeAsync(parsedResource);
     }
 }

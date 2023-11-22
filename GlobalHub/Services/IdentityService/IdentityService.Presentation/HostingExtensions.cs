@@ -1,5 +1,3 @@
-using IdentityService.Persistence.DataSeeding;
-
 namespace IdentityService.Presentation;
 
 internal static class HostingExtensions
@@ -67,6 +65,8 @@ internal static class HostingExtensions
                         dbOpts => dbOpts.MigrationsAssembly(migrationAssemblyName));
             })
             .AddAspNetIdentity<ApplicationUser>();
+
+        builder.Services.AddScoped<IProfileService, AppProfileService>();
 
         return builder.Build();
     }

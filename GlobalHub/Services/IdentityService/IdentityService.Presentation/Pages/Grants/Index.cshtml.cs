@@ -1,6 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using Duende.IdentityServer.Stores;
-
 namespace IdentityService.Presentation.Pages.Grants;
 
 [SecurityHeaders]
