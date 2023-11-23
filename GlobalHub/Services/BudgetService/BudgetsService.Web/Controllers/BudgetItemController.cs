@@ -3,6 +3,7 @@
 /// <summary>
 /// Controller that manages budget items
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/v1/[controller]/[action]")]
 public class BudgetItemController : ControllerBase

@@ -3,6 +3,7 @@ namespace BudgetsService.Web.Controllers;
 /// <summary>
 /// Controller that manages user's budgets
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/v1/[controller]/[action]")]
 public class BudgetController : ControllerBase

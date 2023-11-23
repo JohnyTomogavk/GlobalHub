@@ -1,6 +1,6 @@
 import { Badge, Button, Dropdown, Popover, Typography } from 'antd';
 import { BellOutlined, FormatPainterOutlined, TranslationOutlined } from '@ant-design/icons';
-import React, { useEffect } from 'react';
+import React from 'react';
 import NotificationPopover from '../notificationPopover/NotificationPopover';
 import { EN, RU } from '../../../constants/languagesConstants';
 import { useTranslation } from 'react-i18next';
@@ -48,10 +48,6 @@ const UserToolBar = observer((): JSX.Element => {
   const onSignOutClick = async (): Promise<void> => {
     await auth.signoutSilent();
   };
-
-  useEffect(() => {
-    auth.signinSilent();
-  }, []);
 
   return (
     <div className={styles.headerToolbar}>

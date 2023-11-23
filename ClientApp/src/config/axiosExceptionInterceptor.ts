@@ -5,10 +5,13 @@ import { NOT_FOUND_ROUTE } from '../constants/routingConstants';
 import { OPERATION_FAILED_PAGE_RESOURCE } from '../constants/resourceConstants';
 import { notification } from 'antd';
 import { CustomAxiosConfig } from '../models/axios/CustomAxiosConfig';
+import { getItem } from '../helpers/localStorageHelper';
+import { User } from 'oidc-client-ts';
+import { getStorageUserKey } from './oidcConfig';
 
 let errorCaptured = false;
 
-export const setUpAxiosExceptionInterceptor = (navigate: NavigateFunction, accessToken?: string): void => {
+export const setUpAxiosExceptionInterceptor = (navigate: NavigateFunction): void => {
   axios.interceptors.response.use(
     (response) => response,
     (error: AxiosError) => {
@@ -48,8 +51,12 @@ export const setUpAxiosExceptionInterceptor = (navigate: NavigateFunction, acces
 
   axios.interceptors.request.use(
     (request: InternalAxiosRequestConfig) => {
-      if (accessToken) {
-        request.headers.Authorization = `Bearer ${accessToken}`;
+      const key = getStorageUserKey();
+      const userData = getItem(key);
+
+      if (userData) {
+        const user = User.fromStorageString(userData);
+        request.headers.Authorization = `Bearer ${user.access_token}`;
       }
 
       return Promise.resolve(request);

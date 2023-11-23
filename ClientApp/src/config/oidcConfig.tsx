@@ -1,6 +1,8 @@
 import { AuthProvider, AuthProviderProps } from 'react-oidc-context';
 import React, { ReactNode } from 'react';
+import { WebStorageStateStore } from 'oidc-client-ts';
 
+// TODO: Get required values from env variables
 export const oidcConfig: AuthProviderProps = {
   authority: 'https://localhost:7389',
   client_id: 'global-hub-local',
@@ -9,7 +11,11 @@ export const oidcConfig: AuthProviderProps = {
   response_type: 'code',
   scope: 'GlobalHub.BudgetsAPI GlobalHub.NotesAPI openid profile',
   automaticSilentRenew: true,
+  userStore: new WebStorageStateStore({ store: window.localStorage }),
 };
+
+// TODO: Build on the base of env variables - oidc.user:<authority>:<client-id>
+export const getStorageUserKey = (): string => 'oidc.user:https://localhost:7389:global-hub-local';
 
 export const AppAuthProvider = (props: { children: ReactNode }): JSX.Element => (
   <AuthProvider {...oidcConfig}>{props.children}</AuthProvider>
