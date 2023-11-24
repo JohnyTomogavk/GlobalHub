@@ -5,7 +5,7 @@ import * as ResourceConstants from '../../constants/resourceConstants';
 import ReactTimeAgo from 'react-time-ago';
 import { Key } from 'antd/lib/table/interface';
 import { getClientItemUrl } from '../../helpers/urlHelper';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Note } from '../../entities/notes/note';
 import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';

@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from 'react-oidc-context';
 
 const axiosInstance: AxiosInstance = axios.create();
-const isErrorCaptured = false;
 
 interface IAxiosApi {
   httpDelete: (url: string, config?: CustomAxiosConfig) => Promise<AxiosResponse>;
@@ -31,7 +30,7 @@ const useAxios = (): IAxiosApi => {
   axiosInstance.interceptors.response.use(
     (response) => Promise.resolve(response),
     (error: AxiosError) => {
-      handleAxiosError(error, navigate, isErrorCaptured);
+      handleAxiosError(error, navigate);
 
       return Promise.reject(error);
     }
