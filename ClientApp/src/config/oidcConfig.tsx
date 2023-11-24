@@ -14,9 +14,6 @@ export const oidcConfig: AuthProviderProps = {
   userStore: new WebStorageStateStore({ store: window.localStorage }),
 };
 
-// TODO: Build on the base of env variables - oidc.user:<authority>:<client-id>
-export const getStorageUserKey = (): string => 'oidc.user:https://localhost:7389:global-hub-local';
-
 export const AppAuthProvider = (props: { children: ReactNode }): JSX.Element => (
   <AuthProvider {...oidcConfig}>{props.children}</AuthProvider>
 );

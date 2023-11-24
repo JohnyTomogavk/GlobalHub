@@ -3,7 +3,6 @@ import { OutputData } from '@editorjs/editorjs';
 import { ItemInfoSubHeader } from '../../components/itemInfoHeader/ItemInfoHeader';
 import styles from './notes.module.scss';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { deleteNote, getNoteById, updateNoteContent, updateNoteTitle } from '../../api/noteService';
 import { Note } from '../../entities/notes/note';
 import { NOTE_EMPTY_TITLE_PLACEHOLDER } from '../../constants/notesConstants';
 import Title from 'antd/es/typography/Title';
@@ -14,6 +13,7 @@ import { Spin, theme } from 'antd';
 import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
 import useBreadcrumbs from '../../hooks/useBreadcrumbs';
 import { LoadingOutlined } from '@ant-design/icons';
+import useNotesAPI from '../../hooks/api/useNotesApi';
 
 export const NotesComponent = observer((): JSX.Element => {
   const { notesStore, commonSideMenuStore, sideMenuItems } = SideMenuIndexStore;
@@ -28,6 +28,7 @@ export const NotesComponent = observer((): JSX.Element => {
   const [note, setNote] = useState<Note | undefined>(undefined);
   const [isEditorLoading, setIsEditorLoading] = useState<boolean>(true);
   const noteRef = useRef(note);
+  const notesApi = useNotesAPI();
 
   const {
     token: { colorBgContainer },
@@ -37,7 +38,7 @@ export const NotesComponent = observer((): JSX.Element => {
     if (!noteRef.current) return;
 
     setLoading(true);
-    const updateNoteResponse = await updateNoteContent(noteRef.current.id, {
+    const updateNoteResponse = await notesApi.updateContent(noteRef.current.id, {
       content: JSON.stringify(data),
     });
 
@@ -54,7 +55,7 @@ export const NotesComponent = observer((): JSX.Element => {
     if (note?.title === newTitle) return;
 
     setLoading(true);
-    const { data } = await updateNoteTitle(id, { newTitle: newTitle });
+    const { data } = await notesApi.updateTitle(id, { newTitle: newTitle });
     setNote(data);
     notesStore.renameNoteInSideMenu(data.id, data.title);
     setLoading(false);
@@ -63,7 +64,7 @@ export const NotesComponent = observer((): JSX.Element => {
   const onItemDelete = async (): Promise<void> => {
     if (!id) return;
 
-    const deletedNoteIdResponse = await deleteNote(id);
+    const deletedNoteIdResponse = await notesApi.delete(id);
     notesStore.removeNoteFromSideMenu(deletedNoteIdResponse.data);
     commonSideMenuStore.changeSelectedMenuKey([RoutingConstants.NOTE_LIST_ROUTE]);
     navigate(`/${RoutingConstants.NOTE_LIST_ROUTE}`);
@@ -72,7 +73,7 @@ export const NotesComponent = observer((): JSX.Element => {
   const loadNote = async (): Promise<void> => {
     if (!id) return;
 
-    const noteResponse = await getNoteById(id);
+    const noteResponse = await notesApi.getById(id);
     setNote(noteResponse.data);
     noteRef.current = noteResponse.data;
   };

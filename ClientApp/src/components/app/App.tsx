@@ -9,10 +9,9 @@ import { AppContent } from '../layout/content/AppContent';
 import '../../config/localizationConfigurator';
 import CommonStore from '../../store/uiConfigStore';
 import { observer } from 'mobx-react-lite';
-import { useNavigate } from 'react-router-dom';
-import { setUpAxiosExceptionInterceptor } from '../../config/axiosExceptionInterceptor';
 import { createGlobalStyle } from 'styled-components';
 import { initLocales } from '../../config/localizationConfigurator';
+import GuardedComponent from '../../router/guard/GuardedComponent';
 
 const { Content } = Layout;
 
@@ -24,12 +23,10 @@ const ThemeStyleProvider = createGlobalStyle<{ $isDarkTheme: boolean }>`
 
 export const App = observer(() => {
   const { isDarkTheme, currentLanguage } = CommonStore;
-  const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
 
   if (!isLoaded) {
     initLocales(currentLanguage);
-    setUpAxiosExceptionInterceptor(navigate);
     setIsLoaded(true);
   }
 
@@ -42,26 +39,28 @@ export const App = observer(() => {
         },
       }}
     >
-      <Layout>
-        <ThemeStyleProvider $isDarkTheme={isDarkTheme} />
-        <PanelGroup direction={'horizontal'} autoSaveId={'layout-panels-state'}>
-          <Panel minSizePercentage={10} maxSizePercentage={30} defaultSizePercentage={15}>
-            <Affix offsetTop={0}>
-              <SideMenu />
-            </Affix>
-          </Panel>
-          <PanelResizeHandle className={styles.resizeHandle} />
-          <Panel minSizePercentage={70} maxSizePercentage={90} defaultSizePercentage={85}>
-            <AppHeader />
-            <Layout>
-              <Content>
-                <AppContent />
-              </Content>
-              <AppFooter />
-            </Layout>
-          </Panel>
-        </PanelGroup>
-      </Layout>
+      <GuardedComponent>
+        <Layout>
+          <ThemeStyleProvider $isDarkTheme={isDarkTheme} />
+          <PanelGroup direction={'horizontal'} autoSaveId={'layout-panels-state'}>
+            <Panel minSizePercentage={10} maxSizePercentage={30} defaultSizePercentage={15}>
+              <Affix offsetTop={0}>
+                <SideMenu />
+              </Affix>
+            </Panel>
+            <PanelResizeHandle className={styles.resizeHandle} />
+            <Panel minSizePercentage={70} maxSizePercentage={90} defaultSizePercentage={85}>
+              <AppHeader />
+              <Layout>
+                <Content>
+                  <AppContent />
+                </Content>
+                <AppFooter />
+              </Layout>
+            </Panel>
+          </PanelGroup>
+        </Layout>
+      </GuardedComponent>
     </ConfigProvider>
   );
 });

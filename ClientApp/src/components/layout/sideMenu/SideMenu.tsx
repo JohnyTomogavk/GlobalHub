@@ -19,7 +19,6 @@ import { getClientItemUrl } from '../../../helpers/urlHelper';
 import * as ResourceNameConstants from '../../../constants/resourceConstants';
 import { BUDGET_RESOURCE_NAME, NOTE_RESOURCE_NAME } from '../../../constants/resourceConstants';
 import styles from './SideMenu.module.scss';
-import { createNote, getNotesMap } from '../../../api/noteService';
 import { NOTE_EMPTY_TITLE_PLACEHOLDER } from '../../../constants/notesConstants';
 import { SideMenuItemModel } from '../../../models/shared/sideMenu/sideMenuItemModel';
 import { observer } from 'mobx-react-lite';
@@ -28,6 +27,8 @@ import { createNewBudget, getBudgetsMap } from '../../../api/budgetsService';
 import { BUDGET_DEFAULT_TITLE } from '../../../constants/budgetConstants';
 import SideMenuIndexStore from '../../../store/sideMenu/sideMenuIndexStore';
 import uiConfigStore from '../../../store/uiConfigStore';
+import useNotesAPI from '../../../hooks/api/useNotesApi';
+import GuardedComponent from '../../../router/guard/GuardedComponent';
 
 interface SideMenuItemsLoadingState {
   isNotesLoaded: boolean;
@@ -61,6 +62,8 @@ export const SideMenu = observer((): JSX.Element => {
     }
   );
 
+  const notesApi = useNotesAPI();
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -76,7 +79,7 @@ export const SideMenu = observer((): JSX.Element => {
   };
 
   const fetchNotesMap = async (): Promise<void> => {
-    const notesMapResponse = await getNotesMap();
+    const notesMapResponse = await notesApi.getNotesMap();
 
     notesStore.setNoteMapsItemsToSideMenu(notesMapResponse.data);
     setItemsLoadingState((prevState) => ({
@@ -126,7 +129,7 @@ export const SideMenu = observer((): JSX.Element => {
   };
 
   const onNoteCreateClick = async (e: React.MouseEvent): Promise<void> => {
-    const newNoteResponse = await createNote({
+    const newNoteResponse = await notesApi.create({
       title: NOTE_EMPTY_TITLE_PLACEHOLDER,
     });
     const newNoteUrl = getClientItemUrl(NOTE_RESOURCE_NAME, newNoteResponse.data.id);
