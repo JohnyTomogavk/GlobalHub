@@ -24,12 +24,6 @@ import { TagDto } from '../../../dto/tags/tagDto';
 import { BudgetItemOperationType, BudgetItemOperationTypeTitle } from '../../../enums/budgetItemOperationType';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import { isArray, toNumber } from 'lodash';
-import {
-  createBudgetItem,
-  deleteBudgetItemById,
-  getBudgetItemsWithFiltersById,
-  updateBudgetItem,
-} from '../../../api/budgetItemService';
 import { BudgetItemsRequestDto } from '../../../dto/budgetItems/budgetItemsRequestDto';
 import { BudgetItemsPaginatedResponseDto } from '../../../dto/budgetItems/budgetItemsPaginatedResponseDto';
 import { BudgetItemDto } from '../../../dto/budgets/budgetItemDto';
@@ -48,6 +42,7 @@ import { ColorValues, TagColor } from '../../../enums/tagColor';
 import dayjs from 'dayjs';
 import { nameof } from '../../../helpers/objectHelper';
 import { HttpStatusCode } from 'axios';
+import useBudgetsItemsApi from '../../../hooks/api/useBudgetsItemsApi';
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -94,6 +89,7 @@ export const BudgetItemsTable = ({
 }: BudgetItemTableProps): JSX.Element => {
   const [budgetItemsTableEntries, setBudgetItemsTableEntries] = useState<BudgetItemTableEntry[]>([]);
   const [filtersForm] = useForm<BudgetItemsFiltersModel>();
+  const budgetItemsApi = useBudgetsItemsApi();
 
   const [budgetItemTableAggregationModel, setBudgetItemTableAggregationModel] =
     useState<BudgetItemsTableAggregationModel>({
@@ -165,7 +161,7 @@ export const BudgetItemsTable = ({
   };
 
   const onBudgetItemDeleteButtonClick = async (record: BudgetItemTableEntry): Promise<void> => {
-    const { status } = await deleteBudgetItemById(record.key);
+    const { status } = await budgetItemsApi.delete(record.key);
 
     if (status !== HttpStatusCode.Ok) return;
 
@@ -296,13 +292,13 @@ export const BudgetItemsTable = ({
       sorterConfig.order === 'ascend'
     );
 
-    const { data: budgetItemsResponse } = await getBudgetItemsWithFiltersById(toNumber(budgetId), requestDto);
+    const { data: budgetItemsResponse } = await budgetItemsApi.getFiltered(toNumber(budgetId), requestDto);
     initializeBudgetItemsTable(budgetItemsResponse);
   };
 
   const onSearchButtonClick = async (): Promise<void> => {
     const requestDto = getBudgetItemRequestDto();
-    const { data: budgetItemsResponse } = await getBudgetItemsWithFiltersById(toNumber(budgetId), requestDto);
+    const { data: budgetItemsResponse } = await budgetItemsApi.getFiltered(toNumber(budgetId), requestDto);
     initializeBudgetItemsTable(budgetItemsResponse);
   };
 
@@ -313,7 +309,7 @@ export const BudgetItemsTable = ({
   const loadBudgetItems = async (): Promise<void> => {
     const requestDto = getBudgetItemRequestDto();
 
-    const { data: budgetItemsResponse } = await getBudgetItemsWithFiltersById(toNumber(budgetId), requestDto);
+    const { data: budgetItemsResponse } = await budgetItemsApi.getFiltered(toNumber(budgetId), requestDto);
     initializeBudgetItemsTable(budgetItemsResponse);
   };
 
@@ -324,10 +320,10 @@ export const BudgetItemsTable = ({
   const onBudgetItemFormSubmit = async (submittedData: BudgetItemDrawerModel): Promise<void> => {
     if (submittedData.budgetItemId) {
       const updateDto = drawerModelToBudgetItemUpdateDto(submittedData, budgetId, submittedData.budgetItemId);
-      await updateBudgetItem(updateDto);
+      await budgetItemsApi.update(updateDto);
     } else {
       const createDto = drawerModelToBudgetItemCreateDto(submittedData, budgetId);
-      await createBudgetItem(createDto);
+      await budgetItemsApi.create(createDto);
     }
 
     await Promise.all([loadBudgetItems(), triggerAnalyticStatsRecalculation(), triggerTagLimitsDataLoading()]);

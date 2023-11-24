@@ -1,8 +1,8 @@
-import { CustomAxiosConfig } from '../../models/axios/CustomAxiosConfig';
-import { CORRELATION_ID_HEADER_NAME } from '../../constants/requestConstants';
+import { CustomAxiosConfig } from '../models/axios/CustomAxiosConfig';
+import { CORRELATION_ID_HEADER_NAME } from '../constants/requestConstants';
 import { HttpStatusCode } from 'axios';
-import { NOT_FOUND_ROUTE } from '../../constants/routingConstants';
-import { OPERATION_FAILED_PAGE_RESOURCE } from '../../constants/resourceConstants';
+import { NOT_FOUND_ROUTE } from '../constants/routingConstants';
+import { OPERATION_FAILED_PAGE_RESOURCE } from '../constants/resourceConstants';
 import { notification } from 'antd';
 import { AxiosError } from 'axios';
 import { NavigateFunction } from 'react-router/dist/lib/hooks';

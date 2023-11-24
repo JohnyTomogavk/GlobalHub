@@ -23,12 +23,11 @@ import { NOTE_EMPTY_TITLE_PLACEHOLDER } from '../../../constants/notesConstants'
 import { SideMenuItemModel } from '../../../models/shared/sideMenu/sideMenuItemModel';
 import { observer } from 'mobx-react-lite';
 import { getTopLevelItemTitle } from '../../../helpers/sideMenuHelper';
-import { createNewBudget, getBudgetsMap } from '../../../api/budgetsService';
 import { BUDGET_DEFAULT_TITLE } from '../../../constants/budgetConstants';
 import SideMenuIndexStore from '../../../store/sideMenu/sideMenuIndexStore';
 import uiConfigStore from '../../../store/uiConfigStore';
 import useNotesAPI from '../../../hooks/api/useNotesApi';
-import GuardedComponent from '../../../router/guard/GuardedComponent';
+import useBudgetsApi from '../../../hooks/api/useBudgetsApi';
 
 interface SideMenuItemsLoadingState {
   isNotesLoaded: boolean;
@@ -63,6 +62,7 @@ export const SideMenu = observer((): JSX.Element => {
   );
 
   const notesApi = useNotesAPI();
+  const budgetsApi = useBudgetsApi();
 
   const {
     token: { colorBgContainer },
@@ -89,7 +89,7 @@ export const SideMenu = observer((): JSX.Element => {
   };
 
   const fetchBudgetsMap = async (): Promise<void> => {
-    const budgetsMapResponse = await getBudgetsMap();
+    const budgetsMapResponse = await budgetsApi.getBudgetsMap();
 
     budgetStore.setBudgetMapsToSideMenu(budgetsMapResponse.data);
     setItemsLoadingState((prevState) => ({
@@ -118,7 +118,7 @@ export const SideMenu = observer((): JSX.Element => {
   };
 
   const onBudgetItemCreateClick = async (e: React.MouseEvent): Promise<void> => {
-    const newBudgetResponse = await createNewBudget({
+    const newBudgetResponse = await budgetsApi.create({
       budgetTitle: BUDGET_DEFAULT_TITLE,
     });
     budgetStore.addBudgetToSideMenu(newBudgetResponse.data);

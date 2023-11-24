@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { CustomAxiosConfig } from '../../models/axios/CustomAxiosConfig';
-import { handleAxiosError } from '../../api/interceptors/handleAxiosError';
-import { setUpAuthorizationHeader } from '../../api/interceptors/setAuthorizationHeader';
+import { handleAxiosError } from '../../interceptors/handleAxiosError';
+import { setUpAuthorizationHeader } from '../../interceptors/setAuthorizationHeader';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from 'react-oidc-context';
 

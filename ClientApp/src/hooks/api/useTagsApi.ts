@@ -18,7 +18,7 @@ interface IUserApi {
   deleteTag: (tagId: number) => Promise<AxiosResponse<number>>;
 }
 
-const useTagsAPI = (): IUserApi => {
+const useTagsApi = (): IUserApi => {
   const { httpGet, httpPost, httpPut, httpDelete } = useAxios();
 
   return {
@@ -53,4 +53,4 @@ const useTagsAPI = (): IUserApi => {
   };
 };
 
-export default useTagsAPI;
+export default useTagsApi;

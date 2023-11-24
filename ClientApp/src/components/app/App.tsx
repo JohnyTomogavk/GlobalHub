@@ -39,9 +39,9 @@ export const App = observer(() => {
         },
       }}
     >
-      <GuardedComponent>
-        <Layout>
-          <ThemeStyleProvider $isDarkTheme={isDarkTheme} />
+      <Layout>
+        <ThemeStyleProvider $isDarkTheme={isDarkTheme} />
+        <GuardedComponent>
           <PanelGroup direction={'horizontal'} autoSaveId={'layout-panels-state'}>
             <Panel minSizePercentage={10} maxSizePercentage={30} defaultSizePercentage={15}>
               <Affix offsetTop={0}>
@@ -59,8 +59,8 @@ export const App = observer(() => {
               </Layout>
             </Panel>
           </PanelGroup>
-        </Layout>
-      </GuardedComponent>
+        </GuardedComponent>
+      </Layout>
     </ConfigProvider>
   );
 });
