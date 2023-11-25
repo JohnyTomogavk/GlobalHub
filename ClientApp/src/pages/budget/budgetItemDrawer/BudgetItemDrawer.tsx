@@ -1,18 +1,18 @@
-import { Button, DatePicker, Drawer, Form, Input, Select, Spin, Typography } from 'antd';
+import { Button, DatePicker, Drawer, Form, Input, Select, Typography } from 'antd';
 import { BudgetItemOperationType } from '../../../enums/budgetItemOperationType';
 import { TagSelector } from '../../../components/tagSelector/TagSelector';
 import React, { useEffect, useState } from 'react';
 import { TagDto } from '../../../dto/tags/tagDto';
 import { BudgetItemDrawerModel } from '../../../models/budgetItem/budgetItemDrawer/budgetItemDrawerModel';
 import { useForm, useWatch } from 'antd/lib/form/Form';
-import { LoadingOutlined } from '@ant-design/icons';
-import styles from '../../../styles.module.scss';
+import styles from './budgetItemDrawer.module.scss';
 import { tagSelectorValidator } from '../../../validators/tagSelectorValidators';
 import dayjs from 'dayjs';
 import { TagColor } from '../../../enums/tagColor';
 import { nameof } from '../../../helpers/objectHelper';
 import { InputNumber } from 'antd';
 import useTagsApi from '../../../hooks/api/useTagsApi';
+import { Loader } from '../../../components/loader/Loader';
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -167,7 +167,9 @@ export const BudgetItemDrawer = ({
       }
     >
       {isLoading ? (
-        <Spin className={styles.loader} indicator={<LoadingOutlined />} />
+        <div className={styles.loaderContainer}>
+          <Loader />
+        </div>
       ) : (
         <Form
           form={budgetItemForm}

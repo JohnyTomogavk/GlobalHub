@@ -44,7 +44,7 @@ export const App = observer(() => {
         <GuardedComponent>
           <PanelGroup direction={'horizontal'} autoSaveId={'layout-panels-state'}>
             <Panel minSizePercentage={10} maxSizePercentage={30} defaultSizePercentage={15}>
-              <Affix offsetTop={0}>
+              <Affix offsetTop={1}>
                 <SideMenu />
               </Affix>
             </Panel>

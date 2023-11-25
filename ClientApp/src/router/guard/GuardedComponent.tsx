@@ -1,19 +1,25 @@
 import React, { ReactNode, useEffect } from 'react';
 import { useAuth } from 'react-oidc-context';
-import styles from '../../styles.module.scss';
-import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
+import { Loader } from '../../components/loader/Loader';
+import { Typography } from 'antd';
+import Title from 'antd/es/typography/Title';
+const { Text } = Typography;
 
 const loader = (
   <div
     style={{
       display: 'flex',
+      flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
       height: '100vh',
     }}
   >
-    <Spin className={styles.loader} size={'large'} indicator={<LoadingOutlined spin />} />
+    <Loader size={'large'} />
+    <Title level={3}>Global Hub</Title>
+    <Text type={'secondary'} italic={true}>
+      Loading...
+    </Text>
   </div>
 );
 

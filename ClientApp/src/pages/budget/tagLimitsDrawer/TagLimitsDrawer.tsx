@@ -1,12 +1,12 @@
-import { Button, Col, Drawer, Form, InputNumber, Row, Select, Spin } from 'antd';
+import { Button, Col, Drawer, Form, FormListFieldData, InputNumber, Row, Select } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { TagLimitDto } from '../../../dto/tagLimit/tagLimitDto';
 import { useForm, useWatch } from 'antd/lib/form/Form';
-import { FormListFieldData } from 'antd/lib';
-import { LoadingOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { nameof } from '../../../helpers/objectHelper';
 import { TagDto } from '../../../dto/tags/tagDto';
-import styles from '../../../styles.module.scss';
+import styles from './tagLimitsDrawer.module.scss';
+import { Loader } from '../../../components/loader/Loader';
 
 interface TagLimitsDrawerProps {
   open: boolean;
@@ -90,7 +90,9 @@ export const TagLimitsDrawer = ({
       }
     >
       {isLoading ? (
-        <Spin className={styles.loader} indicator={<LoadingOutlined />} />
+        <div className={styles.loaderContainer}>
+          <Loader />
+        </div>
       ) : (
         <Form form={limitsForm} layout={'horizontal'}>
           <Form.List name={nameof<TagLimitsFormModel>('items')}>

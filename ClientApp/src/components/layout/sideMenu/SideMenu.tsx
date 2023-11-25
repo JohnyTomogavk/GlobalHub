@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Title from 'antd/es/typography/Title';
-import { Divider, Space, Spin, theme, Tree } from 'antd';
+import { Divider, Space, theme, Tree } from 'antd';
 import {
   CheckOutlined,
   DashboardOutlined,
   DollarOutlined,
   DownOutlined,
   GlobalOutlined,
-  LoadingOutlined,
   PieChartOutlined,
   ReadOutlined,
 } from '@ant-design/icons';
@@ -28,6 +27,7 @@ import SideMenuIndexStore from '../../../store/sideMenu/sideMenuIndexStore';
 import uiConfigStore from '../../../store/uiConfigStore';
 import useNotesAPI from '../../../hooks/api/useNotesApi';
 import useBudgetsApi from '../../../hooks/api/useBudgetsApi';
+import { Loader } from '../../loader/Loader';
 
 interface SideMenuItemsLoadingState {
   isNotesLoaded: boolean;
@@ -40,7 +40,7 @@ const getLoaderNode = (key: Key): SideMenuItemModel => ({
   key: `${key}-loader-node`,
   title: (
     <Space>
-      <Spin size={'small'} indicator={<LoadingOutlined spin />} />
+      <Loader size={'small'} />
       Loading
     </Space>
   ),

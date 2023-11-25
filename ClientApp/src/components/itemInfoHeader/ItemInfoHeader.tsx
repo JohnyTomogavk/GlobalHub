@@ -1,10 +1,11 @@
 import { Header } from 'antd/es/layout/layout';
-import { Affix, Breadcrumb, Button, Space, Spin, theme, Tooltip, Typography } from 'antd';
+import { Affix, Breadcrumb, Button, Space, theme, Tooltip, Typography } from 'antd';
 import React from 'react';
 import styles from './itemInfoHeader.module.scss';
-import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 import ReactTimeAgo from 'react-time-ago';
 import { BreadCrumbItem } from '../../models/breadCrumbs/breadCrumbItem';
+import { Loader } from '../loader/Loader';
 
 const { Text } = Typography;
 
@@ -30,7 +31,7 @@ export const ItemInfoSubHeader = (props: IItemInfoSubHeader): JSX.Element => {
         }}
       >
         <Breadcrumb items={props.breadCrumbsItems}></Breadcrumb>
-        <Space>
+        <Space size={'middle'}>
           <Tooltip
             placement={'bottom'}
             title={
@@ -58,8 +59,8 @@ export const ItemInfoSubHeader = (props: IItemInfoSubHeader): JSX.Element => {
           >
             <Text className={styles.itemSaveStatus} type={'secondary'}>
               {props.isLoading ? (
-                <Space>
-                  <Spin size={'small'} indicator={<LoadingOutlined spin />} />
+                <Space className={styles.loaderSpacer}>
+                  <Loader />
                   Saving
                 </Space>
               ) : (

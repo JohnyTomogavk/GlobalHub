@@ -9,11 +9,11 @@ import Title from 'antd/es/typography/Title';
 import { RichTextEditor } from '../../components/richTextEditor/RichTextEditor';
 import * as RoutingConstants from '../../constants/routingConstants';
 import { observer } from 'mobx-react-lite';
-import { Spin, theme } from 'antd';
+import { theme } from 'antd';
 import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
 import useBreadcrumbs from '../../hooks/useBreadcrumbs';
-import { LoadingOutlined } from '@ant-design/icons';
 import useNotesAPI from '../../hooks/api/useNotesApi';
+import { Loader } from '../../components/loader/Loader';
 
 export const NotesComponent = observer((): JSX.Element => {
   const { notesStore, commonSideMenuStore, sideMenuItems } = SideMenuIndexStore;
@@ -99,7 +99,13 @@ export const NotesComponent = observer((): JSX.Element => {
         createdAt={note?.createdDate ?? new Date()}
         isLoading={isLoading}
       />
-      {isEditorLoading ? <Spin className={styles.editorLoader} indicator={<LoadingOutlined spin />} /> : <></>}
+      {isEditorLoading ? (
+        <div className={styles.editorLoader}>
+          <Loader />
+        </div>
+      ) : (
+        <></>
+      )}
       <div
         style={{
           visibility: isEditorLoading ? 'hidden' : 'visible',
