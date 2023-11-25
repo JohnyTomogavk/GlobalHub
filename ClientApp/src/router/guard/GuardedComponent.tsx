@@ -27,7 +27,7 @@ const GuardedComponent = (props: { children: ReactNode }): JSX.Element => {
   const auth = useAuth();
 
   useEffect(() => {
-    if (!auth.isLoading && !auth.isAuthenticated) {
+    if (!auth.isAuthenticated && !auth.isLoading) {
       auth.signinRedirect();
     }
   }, [auth]);

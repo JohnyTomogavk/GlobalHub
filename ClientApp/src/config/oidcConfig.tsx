@@ -1,13 +1,13 @@
 import { AuthProvider, AuthProviderProps } from 'react-oidc-context';
 import React, { ReactNode } from 'react';
 import { WebStorageStateStore } from 'oidc-client-ts';
+import { getEnvVar } from './environmentVariables';
 
-// TODO: Get required values from env variables
 export const oidcConfig: AuthProviderProps = {
-  authority: 'https://localhost:7389',
-  client_id: 'global-hub-local',
-  redirect_uri: 'http://localhost:8080/notes',
-  post_logout_redirect_uri: 'http://localhost:8080',
+  authority: getEnvVar('IDENTITY_SERVICE_BASE', process.env.IDENTITY_SERVICE_BASE),
+  client_id: getEnvVar('CLIENT_ID', process.env.CLIENT_ID),
+  redirect_uri: getEnvVar('REDIRECT_URI', process.env.REDIRECT_URI),
+  post_logout_redirect_uri: getEnvVar('POST_LOGOUT_REDIRECT_URI', process.env.POST_LOGOUT_REDIRECT_URI),
   response_type: 'code',
   scope: 'GlobalHub.BudgetsAPI GlobalHub.NotesAPI openid profile',
   automaticSilentRenew: true,

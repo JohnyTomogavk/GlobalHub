@@ -47,7 +47,6 @@ const UserToolBar = observer((): JSX.Element => {
 
   const onSignOutClick = async (): Promise<void> => {
     await auth.signoutSilent();
-    await auth.signinRedirect();
   };
 
   return (
