@@ -38,7 +38,7 @@
     <Content Include="..\..\..\stylecop.json">
       <Link>stylecop.json</Link>
     </Content>
-    <Content Update="appsettings.Production.json">
+    <Content Update="appsettings.Staging.json">
       <DependentUpon>appsettings.json</DependentUpon>
     </Content>
   </ItemGroup>

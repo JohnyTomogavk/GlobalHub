@@ -21,7 +21,7 @@ builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(options =>
     {
         // TODO: Extract to env variable
-        options.Authority = "https://localhost:7389";
+        options.Authority = Environment.GetEnvironmentVariable("IDENTITY_SERVICE_URL");
         options.TokenValidationParameters.ValidateAudience = false;
     });
 
