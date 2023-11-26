@@ -5,11 +5,11 @@ import * as ResourceConstants from '../../constants/resourceConstants';
 import ReactTimeAgo from 'react-time-ago';
 import { Key } from 'antd/lib/table/interface';
 import { getClientItemUrl } from '../../helpers/urlHelper';
-import { deleteNote, getNotesList } from '../../api/noteService';
 import { Link } from 'react-router-dom';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Note } from '../../entities/notes/note';
 import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
+import useNotesAPI from '../../hooks/api/useNotesApi';
 
 interface NoteTableItem {
   id: string;
@@ -21,6 +21,7 @@ interface NoteTableItem {
 export const NoteList = (): JSX.Element => {
   const [notes, setNotes] = useState<NoteTableItem[]>([]);
   const { notesStore } = SideMenuIndexStore;
+  const notesApi = useNotesAPI();
 
   const columns: ColumnsType<NoteTableItem> = [
     {
@@ -50,7 +51,7 @@ export const NoteList = (): JSX.Element => {
       render: (_, item: NoteTableItem) => (
         <Button
           onClick={async (): Promise<void> => {
-            const deletedIdResponse = await deleteNote(item.id);
+            const deletedIdResponse = await notesApi.delete(item.id);
             setNotes((prev) => {
               prev = prev.filter((note) => note.id !== item.id);
 
@@ -66,7 +67,7 @@ export const NoteList = (): JSX.Element => {
   ];
 
   const fetchNoteList = async (): Promise<void> => {
-    const notesResponse = await getNotesList();
+    const notesResponse = await notesApi.getNotesList();
 
     const noteTableItems = notesResponse.data.map(
       (item: Note) =>

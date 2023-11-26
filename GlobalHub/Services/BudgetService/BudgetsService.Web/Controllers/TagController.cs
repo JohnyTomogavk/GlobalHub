@@ -3,6 +3,7 @@
 /// <summary>
 /// Controller that manages tags
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/v1/[controller]/[action]")]
 public class TagController : ControllerBase

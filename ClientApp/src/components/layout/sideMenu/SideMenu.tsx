@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Title from 'antd/es/typography/Title';
-import { Divider, Space, Spin, theme, Tree } from 'antd';
+import { Divider, Space, theme, Tree } from 'antd';
 import {
   CheckOutlined,
   DashboardOutlined,
   DollarOutlined,
   DownOutlined,
   GlobalOutlined,
-  LoadingOutlined,
   PieChartOutlined,
   ReadOutlined,
 } from '@ant-design/icons';
@@ -19,15 +18,16 @@ import { getClientItemUrl } from '../../../helpers/urlHelper';
 import * as ResourceNameConstants from '../../../constants/resourceConstants';
 import { BUDGET_RESOURCE_NAME, NOTE_RESOURCE_NAME } from '../../../constants/resourceConstants';
 import styles from './SideMenu.module.scss';
-import { createNote, getNotesMap } from '../../../api/noteService';
 import { NOTE_EMPTY_TITLE_PLACEHOLDER } from '../../../constants/notesConstants';
 import { SideMenuItemModel } from '../../../models/shared/sideMenu/sideMenuItemModel';
 import { observer } from 'mobx-react-lite';
 import { getTopLevelItemTitle } from '../../../helpers/sideMenuHelper';
-import { createNewBudget, getBudgetsMap } from '../../../api/budgetsService';
 import { BUDGET_DEFAULT_TITLE } from '../../../constants/budgetConstants';
 import SideMenuIndexStore from '../../../store/sideMenu/sideMenuIndexStore';
 import uiConfigStore from '../../../store/uiConfigStore';
+import useNotesAPI from '../../../hooks/api/useNotesApi';
+import useBudgetsApi from '../../../hooks/api/useBudgetsApi';
+import { Loader } from '../../loader/Loader';
 
 interface SideMenuItemsLoadingState {
   isNotesLoaded: boolean;
@@ -40,7 +40,7 @@ const getLoaderNode = (key: Key): SideMenuItemModel => ({
   key: `${key}-loader-node`,
   title: (
     <Space>
-      <Spin size={'small'} indicator={<LoadingOutlined spin />} />
+      <Loader size={'small'} />
       Loading
     </Space>
   ),
@@ -61,6 +61,9 @@ export const SideMenu = observer((): JSX.Element => {
     }
   );
 
+  const notesApi = useNotesAPI();
+  const budgetsApi = useBudgetsApi();
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -76,7 +79,7 @@ export const SideMenu = observer((): JSX.Element => {
   };
 
   const fetchNotesMap = async (): Promise<void> => {
-    const notesMapResponse = await getNotesMap();
+    const notesMapResponse = await notesApi.getNotesMap();
 
     notesStore.setNoteMapsItemsToSideMenu(notesMapResponse.data);
     setItemsLoadingState((prevState) => ({
@@ -86,7 +89,7 @@ export const SideMenu = observer((): JSX.Element => {
   };
 
   const fetchBudgetsMap = async (): Promise<void> => {
-    const budgetsMapResponse = await getBudgetsMap();
+    const budgetsMapResponse = await budgetsApi.getBudgetsMap();
 
     budgetStore.setBudgetMapsToSideMenu(budgetsMapResponse.data);
     setItemsLoadingState((prevState) => ({
@@ -115,7 +118,7 @@ export const SideMenu = observer((): JSX.Element => {
   };
 
   const onBudgetItemCreateClick = async (e: React.MouseEvent): Promise<void> => {
-    const newBudgetResponse = await createNewBudget({
+    const newBudgetResponse = await budgetsApi.create({
       budgetTitle: BUDGET_DEFAULT_TITLE,
     });
     budgetStore.addBudgetToSideMenu(newBudgetResponse.data);
@@ -126,7 +129,7 @@ export const SideMenu = observer((): JSX.Element => {
   };
 
   const onNoteCreateClick = async (e: React.MouseEvent): Promise<void> => {
-    const newNoteResponse = await createNote({
+    const newNoteResponse = await notesApi.create({
       title: NOTE_EMPTY_TITLE_PLACEHOLDER,
     });
     const newNoteUrl = getClientItemUrl(NOTE_RESOURCE_NAME, newNoteResponse.data.id);

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { getBudgetItemsByBudgetIdAndDates } from '../../../api/budgetItemService';
 import { HttpStatusCode } from 'axios';
 import { nameof } from '../../../helpers/objectHelper';
 import dayjs from 'dayjs';
@@ -9,6 +8,7 @@ import { forOwn, groupBy, sumBy } from 'lodash';
 import { BudgetItemExpenseSumByDay } from '../../../dto/budgetItems/budgetItemExpenseSumByDay';
 import { ExpenseDistributionByDaysChartEntry } from '../../../models/analyticCharts/ExpenseDistributionByDaysChartEntry';
 import { Line } from '@ant-design/plots/lib';
+import useBudgetsItemsApi from '../../../hooks/api/useBudgetsItemsApi';
 
 interface ExpensesDistributionByDaysChartProps {
   budgetId: number;
@@ -46,7 +46,7 @@ const getMonthLabel = (date: Date): string =>
 
 export const ExpensesDistributionByDaysChart = ({ budgetId }: ExpensesDistributionByDaysChartProps): JSX.Element => {
   const [chartEntries, setChartEntries] = useState<ExpenseDistributionByDaysChartEntry[]>([]);
-
+  const budgetItemsApi = useBudgetsItemsApi();
   const today = dayjs();
   const monthsNumbersToCompare = [today.add(-1, 'months').month(), today.month()];
 
@@ -115,7 +115,7 @@ export const ExpensesDistributionByDaysChart = ({ budgetId }: ExpensesDistributi
     const previousMonthStartDate = dayjs().add(-1, 'months').set('date', 1).startOf('day');
     const currentMonthEndDate = dayjs().set('date', 1).add(1, 'months').add(-1, 'days').startOf('day');
 
-    const { data: budgetItemsDtos, status } = await getBudgetItemsByBudgetIdAndDates(
+    const { data: budgetItemsDtos, status } = await budgetItemsApi.getBudgetItemsByBudgetIdAndDates(
       budgetId,
       previousMonthStartDate.toDate(),
       currentMonthEndDate.toDate()

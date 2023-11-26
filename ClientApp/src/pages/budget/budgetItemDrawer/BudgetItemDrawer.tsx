@@ -1,18 +1,18 @@
-import { Button, DatePicker, Drawer, Form, Input, Select, Spin, Typography } from 'antd';
+import { Button, DatePicker, Drawer, Form, Input, Select, Typography } from 'antd';
 import { BudgetItemOperationType } from '../../../enums/budgetItemOperationType';
 import { TagSelector } from '../../../components/tagSelector/TagSelector';
 import React, { useEffect, useState } from 'react';
 import { TagDto } from '../../../dto/tags/tagDto';
 import { BudgetItemDrawerModel } from '../../../models/budgetItem/budgetItemDrawer/budgetItemDrawerModel';
 import { useForm, useWatch } from 'antd/lib/form/Form';
-import { LoadingOutlined } from '@ant-design/icons';
-import styles from '../../../styles.module.scss';
+import styles from './budgetItemDrawer.module.scss';
 import { tagSelectorValidator } from '../../../validators/tagSelectorValidators';
 import dayjs from 'dayjs';
-import { createBudgetTag, deleteTag, updateBudgetTag } from '../../../api/tagService';
 import { TagColor } from '../../../enums/tagColor';
 import { nameof } from '../../../helpers/objectHelper';
 import { InputNumber } from 'antd';
+import useTagsApi from '../../../hooks/api/useTagsApi';
+import { Loader } from '../../../components/loader/Loader';
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -47,6 +47,7 @@ export const BudgetItemDrawer = ({
   const [budgetItemForm] = useForm<BudgetItemDrawerModel>();
   const [isLoading, setIsLoading] = useState(true);
   const selectedTagsWatcher = useWatch(nameof<BudgetItemDrawerModel>('selectedTags'), budgetItemForm);
+  const tagsApi = useTagsApi();
 
   const todayDate = dayjs(new Date());
 
@@ -99,7 +100,7 @@ export const BudgetItemDrawer = ({
   };
 
   const createNewTag = async (tagLabel: string): Promise<TagDto> => {
-    const { data: createdTag } = await createBudgetTag({
+    const { data: createdTag } = await tagsApi.createTag({
       budgetId: budgetId,
       label: tagLabel,
       color: TagColor.Default,
@@ -135,12 +136,12 @@ export const BudgetItemDrawer = ({
   }, [selectedTagsWatcher]);
 
   const onTagEdit = async (tagData: TagDto): Promise<void> => {
-    const { data: updatedTag } = await updateBudgetTag(tagData);
+    const { data: updatedTag } = await tagsApi.updateBudgetTag(tagData);
     setBudgetTags((prevState) => prevState.map((tag) => (tag.id === updatedTag.id ? updatedTag : tag)));
   };
 
   const onTagDelete = async (tagId: number): Promise<void> => {
-    const { data: removedTagId } = await deleteTag(tagId);
+    const { data: removedTagId } = await tagsApi.deleteTag(tagId);
     setBudgetTags((prevState) => prevState.filter((tag) => tag.id !== removedTagId));
     const selectedTags = budgetItemForm.getFieldsValue().selectedTags ?? [];
     const newSelectedTagsValues = selectedTags.filter((tag) => typeof tag === 'number' && tag !== removedTagId);
@@ -166,7 +167,9 @@ export const BudgetItemDrawer = ({
       }
     >
       {isLoading ? (
-        <Spin className={styles.loader} indicator={<LoadingOutlined />} />
+        <div className={styles.loaderContainer}>
+          <Loader />
+        </div>
       ) : (
         <Form
           form={budgetItemForm}

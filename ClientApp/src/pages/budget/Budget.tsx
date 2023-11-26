@@ -17,14 +17,7 @@ import {
 } from 'antd';
 import styles from './budjet.module.scss';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import {
-  deleteBudgetById,
-  getBudgetAnalyticForCurrentMonthById,
-  getBudgetById,
-  updateBudgetDescription,
-  updateBudgetTitle,
-  updatePreservePercent,
-} from '../../api/budgetsService';
+
 import { isEqual, toNumber } from 'lodash';
 import { BudgetDto } from '../../dto/budgets/budgetDto';
 import { EditOutlined } from '@ant-design/icons';
@@ -32,7 +25,6 @@ import { ItemInfoSubHeader } from '../../components/itemInfoHeader/ItemInfoHeade
 import Paragraph from 'antd/es/typography/Paragraph';
 import { BudgetAnalyticDto } from '../../dto/budgets/budgetAnalyticDto';
 import { TagDto } from '../../dto/tags/tagDto';
-import { getBudgetTags } from '../../api/tagService';
 import { BudgetItemsTable } from './budgetItemsTable/BudgetItemsTable';
 import { ExpensesDistributionByDaysChart } from './analyticCharts/ExpensesDistributionByDaysChart';
 import { TagLimitsStateBulletChart } from './analyticCharts/TagLimitsStateBulletChart';
@@ -44,8 +36,6 @@ import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
 import { PreserveControl } from './preserveControl/PreserveControl';
 import useBreadcrumbs from '../../hooks/useBreadcrumbs';
 import { TagLimitDto } from '../../dto/tagLimit/tagLimitDto';
-import { getTagLimits, updateTagLimits } from '../../api/tagLimitsService';
-import { getExpensesSumsGroupedByTags } from '../../api/budgetItemService';
 import { ExpenseOperationsSumDto } from '../../dto/budgetItems/expenseOperationsSumDto';
 import {
   CURRENCY_PRECISION,
@@ -53,6 +43,10 @@ import {
 } from '../../constants/budgetConstants';
 import { TagLimitsDrawer } from './tagLimitsDrawer/TagLimitsDrawer';
 import { ResultStatusType } from 'antd/lib/result';
+import useTagsApi from '../../hooks/api/useTagsApi';
+import useBudgetsApi from '../../hooks/api/useBudgetsApi';
+import useBudgetsItemsApi from '../../hooks/api/useBudgetsItemsApi';
+import useTagLimitsApi from '../../hooks/api/useTagLimitsApi';
 
 const { Text } = Typography;
 
@@ -81,6 +75,10 @@ export const BudgetComponent = observer((): JSX.Element => {
   const navigate = useNavigate();
   const location = useLocation();
   const breadCrumbsItems = useBreadcrumbs(location.pathname, sideMenuItems);
+  const tagsApi = useTagsApi();
+  const budgetsApi = useBudgetsApi();
+  const budgetItemsApi = useBudgetsItemsApi();
+  const tagLimitsApi = useTagLimitsApi();
 
   const [tagLimits, setTagLimits] = useState<TagLimitDto[]>([]);
   const [expenseSumsGroupedByTags, setExpenseSumsGroupedByTags] = useState<ExpenseOperationsSumDto[]>([]);
@@ -93,9 +91,9 @@ export const BudgetComponent = observer((): JSX.Element => {
 
   const loadBudgetData = async (): Promise<void> => {
     const [{ data: budget }, { data: budgetAnalytic }, { data: tags }] = await Promise.all([
-      getBudgetById(budgetId),
-      getBudgetAnalyticForCurrentMonthById(budgetId),
-      getBudgetTags(budgetId),
+      budgetsApi.getById(budgetId),
+      budgetsApi.getAnalyticById(budgetId),
+      tagsApi.getTags(budgetId),
     ]);
 
     setBudgetDto(budget);
@@ -177,7 +175,7 @@ export const BudgetComponent = observer((): JSX.Element => {
 
   const loadTagLimitsData = async (): Promise<void> => {
     const [{ data: tagLimitsDtos, status: tagLimitsStatus }, { data: expSumsGroupedByTags, status: expSumsStatus }] =
-      await Promise.all([getTagLimits(budgetId), getExpensesSumsGroupedByTags(budgetId)]);
+      await Promise.all([tagLimitsApi.getLimits(budgetId), budgetItemsApi.getExpensesSumsGroupedByTags(budgetId)]);
 
     setTagLimits(tagLimitsStatus === HttpStatusCode.Ok ? tagLimitsDtos : []);
     setExpenseSumsGroupedByTags(expSumsStatus === HttpStatusCode.Ok ? expSumsGroupedByTags : []);
@@ -201,7 +199,7 @@ export const BudgetComponent = observer((): JSX.Element => {
 
     const parsedId = toNumber(id);
 
-    const response = await updateBudgetTitle(parsedId, title);
+    const response = await budgetsApi.updateTitle(parsedId, title);
     if (response.status === HttpStatusCode.Ok) {
       setBudgetDto((oldValue) => {
         if (!oldValue) return undefined;
@@ -219,7 +217,7 @@ export const BudgetComponent = observer((): JSX.Element => {
   const onBudgetDescriptionUpdate = async (description: string): Promise<void> => {
     if (!id) return;
 
-    const response = await updateBudgetDescription(toNumber(id), description);
+    const response = await budgetsApi.updateDescription(toNumber(id), description);
     if (response.status === HttpStatusCode.Ok) {
       setBudgetDto((oldValue) => {
         if (!oldValue) return undefined;
@@ -235,7 +233,7 @@ export const BudgetComponent = observer((): JSX.Element => {
   const fetchAnalyticData = async (): Promise<void> => {
     if (!id) return;
 
-    const { data: analyticData } = await getBudgetAnalyticForCurrentMonthById(toNumber(id));
+    const { data: analyticData } = await budgetsApi.getAnalyticById(toNumber(id));
     setBudgetAnalyticData(analyticData);
   };
 
@@ -250,7 +248,7 @@ export const BudgetComponent = observer((): JSX.Element => {
   const opPreservePercentUpdate = async (newPercentValue: number): Promise<void> => {
     if (!id) return;
 
-    const { data: updatedBudget, status } = await updatePreservePercent(toNumber(id), newPercentValue);
+    const { data: updatedBudget, status } = await budgetsApi.updatePreservePercent(toNumber(id), newPercentValue);
 
     if (status === HttpStatusCode.Ok) {
       setBudgetDto(updatedBudget);
@@ -269,7 +267,7 @@ export const BudgetComponent = observer((): JSX.Element => {
 
     if (isEqual(updatedTagLimits, tagLimits)) return;
 
-    const { status } = await updateTagLimits(budgetId, updatedTagLimits);
+    const { status } = await tagLimitsApi.updateLimits(budgetId, updatedTagLimits);
 
     if (status === HttpStatusCode.Ok) {
       await loadTagLimitsData();
@@ -283,7 +281,7 @@ export const BudgetComponent = observer((): JSX.Element => {
           if (!id) return;
 
           const parsedId = toNumber(id);
-          const { status } = await deleteBudgetById(parsedId);
+          const { status } = await budgetsApi.delete(parsedId);
 
           if (status === HttpStatusCode.Ok) {
             navigate(`/${BUDGET_LIST_ROUTE}`);

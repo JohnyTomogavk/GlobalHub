@@ -19,6 +19,7 @@ global using Common.ExceptionHandling;
 global using Common.Extensions;
 global using Common.Logging;
 global using FluentValidation;
+global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.OpenApi.Models;
