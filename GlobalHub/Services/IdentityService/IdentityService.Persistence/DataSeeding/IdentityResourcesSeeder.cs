@@ -7,19 +7,28 @@ public static class IdentityResourcesSeeder
         IConfiguration configuration)
     {
         using var serviceScope = serviceProvider.GetService<IServiceScopeFactory>().CreateScope();
+        var configurationDbContext = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+        await configurationDbContext.Database.MigrateAsync();
 
-        var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-        await context.Database.EnsureDeletedAsync();
+        var transaction = await configurationDbContext.Database.BeginTransactionAsync();
 
-        await serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.MigrateAsync();
-        await context.Database.MigrateAsync();
+        try
+        {
+            await InitIdentityResources<Client>(configurationDbContext, configuration, "IdentityServer:Clients");
+            await InitIdentityResources<ApiResource>(configurationDbContext, configuration,
+                "IdentityServer:ApiResources");
+            await InitIdentityResources<IdentityResource>(configurationDbContext, configuration,
+                "IdentityServer:IdentityResources");
+            await InitIdentityResources<ApiScope>(configurationDbContext, configuration, "IdentityServer:ApiScopes");
 
-        await InitIdentityResources<Client>(context, configuration, "IdentityServer:Clients");
-        await InitIdentityResources<ApiResource>(context, configuration, "IdentityServer:ApiResources");
-        await InitIdentityResources<IdentityResource>(context, configuration, "IdentityServer:IdentityResources");
-        await InitIdentityResources<ApiScope>(context, configuration, "IdentityServer:ApiScopes");
-
-        await context.SaveChangesAsync();
+            await transaction.CommitAsync();
+            Log.Information("Identity Service DB has been seeded");
+        }
+        catch (Exception e)
+        {
+            await transaction.RollbackAsync();
+            Log.Error("Error migrating Identity Service DB: ", e.Message);
+        }
     }
 
     private static async Task InitIdentityResources<TIdentityServerResource>(
@@ -39,5 +48,6 @@ public static class IdentityResourcesSeeder
 
         await context.Set<TIdentityServerResource>()
             .AddRangeAsync(parsedResource);
+        await context.SaveChangesAsync();
     }
 }
