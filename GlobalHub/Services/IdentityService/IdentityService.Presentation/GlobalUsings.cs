@@ -7,6 +7,7 @@ global using Common.Extensions;
 global using Common.Logging;
 global using Duende.IdentityServer;
 global using Duende.IdentityServer.Configuration;
+global using Duende.IdentityServer.EntityFramework.DbContexts;
 global using Duende.IdentityServer.Events;
 global using Duende.IdentityServer.Extensions;
 global using Duende.IdentityServer.Models;

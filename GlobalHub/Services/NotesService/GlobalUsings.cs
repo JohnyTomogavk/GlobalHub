@@ -9,6 +9,7 @@ global using DotNetEnv.Configuration;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.Extensions.Options;
+global using Microsoft.IdentityModel.Logging;
 global using Microsoft.OpenApi.Models;
 global using MongoDB.Bson;
 global using MongoDB.Bson.Serialization.Attributes;

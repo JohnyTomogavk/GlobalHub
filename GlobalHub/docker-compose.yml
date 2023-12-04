@@ -1,5 +1,5 @@
-﻿version: '3.8'
-name: 'global-hub-demo'
+﻿version: "3.8"
+name: "global-hub-demo"
 
 services:
   budgets-db:
@@ -8,9 +8,9 @@ services:
     volumes:
       - budget-storage-volume:/var/lib/postgresql/data
     ports:
-      - '5432:5432'
+      - "5432:5432"
     environment:
-      - 'POSTGRES_PASSWORD=Qwerty12345'
+      - "POSTGRES_PASSWORD=Qwerty12345"
     networks:
       global-hub-net:
 
@@ -20,22 +20,70 @@ services:
     volumes:
       - notes-storage-volume:/data/db
     ports:
-      - '27017:27017'
+      - "27017:27017"
+    networks:
+      global-hub-net:
+
+  identity-db:
+    container_name: identity-db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - "MSSQL_SA_PASSWORD=Bamboozled_123456"
+      - "ACCEPT_EULA=Y"
+    volumes:
+      - identity-storage-volume:/var/opt/mssql
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U "sa" -P "$$MSSQL_SA_PASSWORD" -Q "Select 1"
+      interval: 3s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    networks:
+      global-hub-net:
+
+  identity-service:
+    container_name: identity-service
+    build:
+      context: ./Services
+      dockerfile: ./IdentityService/IdentityService.Presentation/Dockerfile
+    image: compose-identity-service
+    environment:
+      - "ASPNETCORE_ENVIRONMENT=DOCKER_COMPOSE_DEMO"
+      - "ASPNETCORE_URLS=https://+;http://+"
+      - "REINITIALIZE_IDENTITY_RESOURCES=true"
+      - "IDENTITY_DB_CONNECTION_STRING=Server=identity-db;User Id=sa;Password=Bamboozled_123456;Encrypt=False;"
+      - "OPERATIONAL_DB_CONNECTION_STRING=Server=identity-db;User Id=sa;Password=Bamboozled_123456;Encrypt=False;"
+      - "CONFIGURATION_DB_CONNECTION_STRING=Server=identity-db;User Id=sa;Password=Bamboozled_123456;Encrypt=False;"
+      - "IdentityServer__Clients__0__RedirectUris__0__RedirectUri=https://localhost:8080/notes"
+      - "IdentityServer__Clients__0__PostLogoutRedirectUris__0__PostLogoutRedirectUri=https://localhost:8080"
+    ports:
+      - "5119:80"
+      - "7389:443"
+    volumes:
+      - "../Cert:/etc/https"
+    depends_on:
+      identity-db:
+        condition: service_healthy
     networks:
       global-hub-net:
 
   budgets-service:
     container_name: budgets-service
     build:
-      context: .
+      context: ./Services
       dockerfile: ./BudgetService/BudgetsService.Web/Dockerfile
-    image: budgets-service
+    image: compose-budgets-service
     ports:
       - "5118:80"
+      - "7285:443"
     environment:
       - "ASPNETCORE_ENVIRONMENT=DOCKER_COMPOSE_DEMO"
+      - "ASPNETCORE_URLS=https://+;http://+"
       - "BUDGETS_SERVICE_STORAGE_CONNECTION_STRING=User ID=postgres;Password=Qwerty12345;Host=budgets-db;Port=5432;Database=BudgetStorage"
+      - "IDENTITY_SERVICE_URL=https://identity-service:443"
       - "LOG_STORAGE=localhost:9200"
+    volumes:
+      - "../Cert:/etc/https"
     depends_on:
       - budgets-db
     networks:
@@ -44,40 +92,54 @@ services:
   notes-service:
     container_name: notes-service
     build:
-      context: .
+      context: ./Services
       dockerfile: ./NotesService/Dockerfile
-    image: notes-service
+    image: compose-notes-service
     ports:
       - "5143:80"
+      - "7198:443"
     environment:
       - "ASPNETCORE_ENVIRONMENT=DOCKER_COMPOSE_DEMO"
+      - "ASPNETCORE_URLS=https://+;http://+"
       - "NOTES_SERVICE_STORAGE_CONNECTION_STRING=mongodb://notes-db:27017"
+      - "IDENTITY_SERVICE_URL=https://identity-service:443"
       - "LOG_STORAGE=localhost:9200"
     depends_on:
       - notes-db
+    volumes:
+      - "../Cert:/etc/https"
     networks:
       global-hub-net:
 
   global-hub-client:
     container_name: global-hub-client
+    image: compose-dg-client
     build:
       context: ../ClientApp
       dockerfile: ../ClientApp/Dockerfile
     environment:
-      - "NODE_ENV=development"
-      - "NOTES_SERVICE_BASE=http://localhost:5143/api/v1"
-      - "BUDGETS_SERVICE_BASE=http://localhost:5118/api/v1"
+      - "NODE_ENV=production"
+      - "NOTES_SERVICE_BASE=https://localhost:7198/api/v1"
+      - "BUDGETS_SERVICE_BASE=https://localhost:7285/api/v1"
+      - "IDENTITY_SERVICE_BASE=https://localhost:7389"
+      - "CLIENT_ID=global-hub-local"
+      - "REDIRECT_URI=https://localhost:8080/notes"
+      - "POST_LOGOUT_REDIRECT_URI=https://localhost:8080"
     ports:
-      - "8080:80"
+      - "8080:443"
+    volumes:
+      - "../Cert:/etc/https"
     depends_on:
       - budgets-service
       - notes-service
+      - identity-service
     networks:
       global-hub-net:
 
 volumes:
   notes-storage-volume:
   budget-storage-volume:
+  identity-storage-volume:
 
 networks:
   global-hub-net:

@@ -29,11 +29,11 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Content Include="..\..\..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
       <Content Include="..\..\..\stylecop.json">
         <Link>stylecop.json</Link>
-      </Content>
-      <Content Include="..\..\.dockerignore">
-        <Link>.dockerignore</Link>
       </Content>
       <Content Update="appsettings.Production.json">
         <DependentUpon>appsettings.json</DependentUpon>

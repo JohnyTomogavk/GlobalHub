@@ -2,15 +2,12 @@
 
 public static class IdentityResourcesSeeder
 {
-    public static async void ReinitializeDatabase(
+    public static async Task ReinitializeDatabase(
         IServiceProvider serviceProvider,
         IConfiguration configuration)
     {
         using var serviceScope = serviceProvider.GetService<IServiceScopeFactory>().CreateScope();
         var configurationDbContext = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-        await configurationDbContext.Database.MigrateAsync();
-
-        var transaction = await configurationDbContext.Database.BeginTransactionAsync();
 
         try
         {
@@ -21,13 +18,13 @@ public static class IdentityResourcesSeeder
                 "IdentityServer:IdentityResources");
             await InitIdentityResources<ApiScope>(configurationDbContext, configuration, "IdentityServer:ApiScopes");
 
-            await transaction.CommitAsync();
+            await configurationDbContext.SaveChangesAsync();
             Log.Information("Identity Service DB has been seeded");
         }
         catch (Exception e)
         {
-            await transaction.RollbackAsync();
-            Log.Error("Error migrating Identity Service DB: ", e.Message);
+            Log.Error("Error seeding Identity Service DB: {E}", e);
+            throw;
         }
     }
 
@@ -46,8 +43,9 @@ public static class IdentityResourcesSeeder
             throw new IdentityConfigNotFoundException(nameof(TIdentityServerResource));
         }
 
-        await context.Set<TIdentityServerResource>()
-            .AddRangeAsync(parsedResource);
-        await context.SaveChangesAsync();
+        var dbSet = context.Set<TIdentityServerResource>();
+        var entities = dbSet.AsQueryable();
+        dbSet.RemoveRange(entities);
+        await dbSet.AddRangeAsync(parsedResource);
     }
 }

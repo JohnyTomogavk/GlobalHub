@@ -24,12 +24,21 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(dbConnectionString);
 });
 
-// TODO: Replace by authentication call on API gateway when it is implemented
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(options =>
     {
         options.Authority = Environment.GetEnvironmentVariable("IDENTITY_SERVICE_URL");
-        options.TokenValidationParameters.ValidateAudience = false;
+        options.Audience = "BudgetsAPI";
+
+        if (builder.Environment.IsDockerComposeEnvironment())
+        {
+            options.TokenValidationParameters.ValidateIssuer = false;
+            options.BackchannelHttpHandler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback =
+                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+        }
     });
 
 builder.Services.AddAuthorization(options =>
@@ -44,10 +53,9 @@ var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-app.UseHttpsRedirection();
 app.UseSerilogRequestLogging();
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsDockerComposeEnvironment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
@@ -55,16 +63,10 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseHsts();
+    app.UseHttpsRedirection();
 }
 
-using var serviceScope = app.Services.CreateScope();
-var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-if (dbContext.Database.GetPendingMigrations().Any())
-{
-    await dbContext.Database.MigrateAsync();
-    Log.Logger.Warning("Budgets database has been migrated");
-}
+await MigrateDatabase(app.Services);
 
 app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
     .WithExposedHeaders("X-Correlation-id"));
@@ -74,3 +76,15 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+async Task MigrateDatabase(IServiceProvider appServices)
+{
+    using var serviceScope = appServices.CreateScope();
+    var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    if (dbContext.Database.GetPendingMigrations().Any())
+    {
+        await dbContext.Database.MigrateAsync();
+        Log.Logger.Warning("Budgets database has been migrated");
+    }
+}
