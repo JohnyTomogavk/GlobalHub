@@ -30,7 +30,7 @@ builder.Services.AddAuthentication("Bearer")
         options.Authority = Environment.GetEnvironmentVariable("IDENTITY_SERVICE_URL");
         options.Audience = "BudgetsAPI";
 
-        if (builder.Environment.IsDevelopment() || builder.Environment.IsDockerComposeEnvironment())
+        if (builder.Environment.IsDockerComposeEnvironment())
         {
             options.TokenValidationParameters.ValidateIssuer = false;
             options.BackchannelHttpHandler = new HttpClientHandler
