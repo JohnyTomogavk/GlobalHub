@@ -16,13 +16,21 @@ builder.Services.AddSwaggerGen(action =>
 builder.Services.AddScoped<INotesDbContext, NotesDbContext>();
 builder.Services.AddScoped<INotesRepository, NotesRepository>();
 
-// TODO: Replace by authentication call on API gateway when it is implemented
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(options =>
     {
-        // TODO: Extract to env variable
         options.Authority = Environment.GetEnvironmentVariable("IDENTITY_SERVICE_URL");
-        options.TokenValidationParameters.ValidateAudience = false;
+        options.Audience = "NotesAPI";
+
+        if (builder.Environment.IsDevelopment() || builder.Environment.IsDockerComposeEnvironment())
+        {
+            options.TokenValidationParameters.ValidateIssuer = false;
+            options.BackchannelHttpHandler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback =
+                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+        }
     });
 
 builder.Services.AddAuthorization(options =>
@@ -37,10 +45,9 @@ var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-app.UseHttpsRedirection();
 app.UseSerilogRequestLogging();
 
-if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("DOCKER_COMPOSE_DEMO"))
+if (app.Environment.IsDevelopment() || app.Environment.IsDockerComposeEnvironment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
@@ -48,6 +55,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("DOCKER_COM
 else
 {
     app.UseHsts();
+    app.UseHttpsRedirection();
 }
 
 app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()

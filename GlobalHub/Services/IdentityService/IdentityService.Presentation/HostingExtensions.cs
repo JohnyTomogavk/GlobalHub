@@ -2,7 +2,7 @@ namespace IdentityService.Presentation;
 
 internal static class HostingExtensions
 {
-    public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
+    public static async Task<WebApplication> ConfigureServices(this WebApplicationBuilder builder)
     {
         builder.Configuration.AddEnvFilesToConfiguration();
         builder.Host.UseSerilog(SerilogExtensions.LoggerConfiguration);
@@ -66,26 +66,27 @@ internal static class HostingExtensions
 
         builder.Services.AddScoped<IProfileService, AppProfileService>();
 
-        return builder.Build();
-    }
-
-    public static WebApplication ConfigurePipeline(this WebApplication app)
-    {
-        app.UseMiddleware<ExceptionHandlingMiddleware>();
+        var app = builder.Build();
 
         var shouldReinitializeDatabaseEnv =
             Environment.GetEnvironmentVariable(EnvVariablesConfig.ReinitializeIdentityResources);
         var parsed = bool.TryParse(shouldReinitializeDatabaseEnv, out var shouldReinitialize);
 
-        if (parsed && shouldReinitialize)
+        if (builder.Environment.IsDockerComposeEnvironment() && parsed && shouldReinitialize)
         {
-            IdentityResourcesSeeder.ReinitializeDatabase(app.Services, app.Configuration);
+            await MigrateDatabases(app.Services);
+            await IdentityResourcesSeeder.ReinitializeDatabase(app.Services, builder.Configuration);
         }
 
-        app.UseHttpsRedirection();
+        return app;
+    }
+
+    public static WebApplication ConfigurePipeline(this WebApplication app)
+    {
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
         app.UseSerilogRequestLogging();
 
-        if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("DOCKER_COMPOSE_DEMO"))
+        if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
             app.UseSwaggerUI();
@@ -94,6 +95,7 @@ internal static class HostingExtensions
         else
         {
             app.UseHsts();
+            app.UseHttpsRedirection();
         }
 
         app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
@@ -108,5 +110,32 @@ internal static class HostingExtensions
             .RequireAuthorization();
 
         return app;
+    }
+
+    private static async Task MigrateDatabases(IServiceProvider serviceProvider)
+    {
+        using var serviceScope = serviceProvider.GetService<IServiceScopeFactory>().CreateScope();
+        var appIdentityDbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var configDbContext = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+        var operationalDbContext = serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
+        var databases = new[]
+        {
+            appIdentityDbContext.Database, configDbContext.Database, operationalDbContext.Database
+        };
+
+        try
+        {
+            foreach (var db in databases)
+            {
+                await db.MigrateAsync();
+            }
+
+            Log.Information("Identity Service's DBs have been migrated");
+        }
+        catch (Exception e)
+        {
+            Log.Fatal("Error migrating DBs {E}", e);
+            throw;
+        }
     }
 }
