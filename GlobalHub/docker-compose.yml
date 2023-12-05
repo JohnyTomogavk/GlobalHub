@@ -7,8 +7,6 @@ services:
     image: postgres:16
     volumes:
       - budget-storage-volume:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     environment:
       - "POSTGRES_PASSWORD=Qwerty12345"
     networks:
@@ -19,8 +17,6 @@ services:
     image: mongo:7
     volumes:
       - notes-storage-volume:/data/db
-    ports:
-      - "27017:27017"
     networks:
       global-hub-net:
 
@@ -60,7 +56,7 @@ services:
       - "5119:80"
       - "7389:443"
     volumes:
-      - "../Cert:/etc/https"
+      - "../Infrastructure/DevCertificates:/etc/https"
     depends_on:
       identity-db:
         condition: service_healthy
@@ -83,7 +79,7 @@ services:
       - "IDENTITY_SERVICE_URL=https://identity-service:443"
       - "LOG_STORAGE=localhost:9200"
     volumes:
-      - "../Cert:/etc/https"
+      - "../Infrastructure/DevCertificates:/etc/https"
     depends_on:
       - budgets-db
     networks:
@@ -107,7 +103,7 @@ services:
     depends_on:
       - notes-db
     volumes:
-      - "../Cert:/etc/https"
+      - "../Infrastructure/DevCertificates:/etc/https"
     networks:
       global-hub-net:
 
@@ -128,7 +124,7 @@ services:
     ports:
       - "8080:443"
     volumes:
-      - "../Cert:/etc/https"
+      - "../Infrastructure/DevCertificates:/etc/https"
     depends_on:
       - budgets-service
       - notes-service

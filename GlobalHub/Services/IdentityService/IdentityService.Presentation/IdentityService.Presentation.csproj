@@ -41,5 +41,8 @@
     <Content Update="appsettings.Staging.json">
       <DependentUpon>appsettings.json</DependentUpon>
     </Content>
+    <Content Update="appsettings.DOCKER_COMPOSE_DEMO.json">
+      <DependentUpon>appsettings.json</DependentUpon>
+    </Content>
   </ItemGroup>
 </Project>
