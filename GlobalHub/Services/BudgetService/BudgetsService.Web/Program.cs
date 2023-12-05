@@ -19,8 +19,8 @@ builder.Services.RegisterServices();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    var dbConnectionString = Environment.GetEnvironmentVariable(ConfigConstants.BudgetDbConnectionStringEnvKey) ??
-                             throw new ArgumentNullException(nameof(ConfigConstants.BudgetDbConnectionStringEnvKey));
+    var dbConnectionString = Environment.GetEnvironmentVariable(ConfigConstants.BudgetDbConnectionStringEnvKey);
+    ArgumentException.ThrowIfNullOrEmpty(dbConnectionString);
     options.UseNpgsql(dbConnectionString);
 });
 

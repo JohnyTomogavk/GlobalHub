@@ -26,6 +26,9 @@
     <Content Update="appsettings.Production.json">
       <DependentUpon>appsettings.json</DependentUpon>
     </Content>
+    <Content Update="appsettings.DOCKER_COMPOSE_DEMO.json">
+      <DependentUpon>appsettings.json</DependentUpon>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

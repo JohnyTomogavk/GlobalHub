@@ -20,8 +20,8 @@ internal static class HostingExtensions
         builder.Services.AddRazorPages();
 
         var identityDbConnectionString =
-            Environment.GetEnvironmentVariable(EnvVariablesConfig.IdentityDbConnectionStringKey) ??
-            throw new ArgumentNullException(EnvVariablesConfig.IdentityDbConnectionStringKey);
+            Environment.GetEnvironmentVariable(EnvVariablesConfig.IdentityDbConnectionStringKey);
+        ArgumentException.ThrowIfNullOrEmpty(identityDbConnectionString);
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(identityDbConnectionString));
@@ -45,8 +45,8 @@ internal static class HostingExtensions
             .AddConfigurationStore(options =>
             {
                 var configurationDbConnectionString =
-                    Environment.GetEnvironmentVariable(EnvVariablesConfig.ConfigurationDbConnectionStringKey) ??
-                    throw new ArgumentNullException(EnvVariablesConfig.ConfigurationDbConnectionStringKey);
+                    Environment.GetEnvironmentVariable(EnvVariablesConfig.ConfigurationDbConnectionStringKey);
+                ArgumentException.ThrowIfNullOrEmpty(configurationDbConnectionString);
 
                 options.ConfigureDbContext = b =>
                     b.UseSqlServer(configurationDbConnectionString,
@@ -55,8 +55,8 @@ internal static class HostingExtensions
             .AddOperationalStore(options =>
             {
                 var operationalDbConnectionString =
-                    Environment.GetEnvironmentVariable(EnvVariablesConfig.OperationalDbConnectionStringKey) ??
-                    throw new ArgumentNullException(EnvVariablesConfig.OperationalDbConnectionStringKey);
+                    Environment.GetEnvironmentVariable(EnvVariablesConfig.OperationalDbConnectionStringKey);
+                ArgumentException.ThrowIfNullOrEmpty(operationalDbConnectionString);
 
                 options.ConfigureDbContext = b =>
                     b.UseSqlServer(operationalDbConnectionString,
