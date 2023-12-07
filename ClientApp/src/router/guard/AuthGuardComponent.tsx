@@ -1,9 +1,11 @@
 import React, { ReactNode, useEffect } from 'react';
 import { useAuth } from 'react-oidc-context';
 import { Loader } from '../../components/loader/Loader';
+import { useNavigate } from 'react-router-dom';
+import { WELCOME_PAGE_ROUTE } from '../../constants/routingConstants';
 import { Typography } from 'antd';
-import Title from 'antd/es/typography/Title';
-const { Text } = Typography;
+
+const { Text, Title } = Typography;
 
 const loader = (
   <div
@@ -23,20 +25,21 @@ const loader = (
   </div>
 );
 
-const GuardedComponent = (props: { children: ReactNode }): JSX.Element => {
+const AuthGuardComponent = (props: { children: ReactNode }): JSX.Element => {
   const auth = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!auth.isAuthenticated && !auth.isLoading) {
-      auth.signinRedirect();
+    if (!auth.isLoading && !auth.isAuthenticated) {
+      navigate(`/${WELCOME_PAGE_ROUTE}`);
     }
   }, [auth]);
 
-  if (auth.isLoading) {
+  if (auth.isLoading || !auth.isAuthenticated) {
     return loader;
   }
 
   return <>{props.children}</>;
 };
 
-export default GuardedComponent;
+export default AuthGuardComponent;

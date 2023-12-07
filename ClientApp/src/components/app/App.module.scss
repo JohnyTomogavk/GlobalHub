@@ -21,3 +21,7 @@ body {
     border-color: #1677ff;
   }
 }
+
+.pageContent{
+  min-height: calc(100vh - 6rem);
+}

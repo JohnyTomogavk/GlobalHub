@@ -5,13 +5,13 @@ import AppHeader from '../layout/header/Header';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { SideMenu } from '../layout/sideMenu/SideMenu';
 import styles from './App.module.scss';
-import { AppContent } from '../layout/content/AppContent';
 import '../../config/localizationConfigurator';
 import CommonStore from '../../store/uiConfigStore';
 import { observer } from 'mobx-react-lite';
 import { createGlobalStyle } from 'styled-components';
 import { initLocales } from '../../config/localizationConfigurator';
-import GuardedComponent from '../../router/guard/GuardedComponent';
+import AuthGuardComponent from '../../router/guard/AuthGuardComponent';
+import { Outlet } from 'react-router-dom';
 
 const { Content } = Layout;
 
@@ -21,7 +21,7 @@ const ThemeStyleProvider = createGlobalStyle<{ $isDarkTheme: boolean }>`
   }
 `;
 
-export const App = observer(() => {
+export const AppLayout = observer(() => {
   const { isDarkTheme, currentLanguage } = CommonStore;
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -41,7 +41,7 @@ export const App = observer(() => {
     >
       <Layout>
         <ThemeStyleProvider $isDarkTheme={isDarkTheme} />
-        <GuardedComponent>
+        <AuthGuardComponent>
           <PanelGroup direction={'horizontal'} autoSaveId={'layout-panels-state'}>
             <Panel minSizePercentage={10} maxSizePercentage={30} defaultSizePercentage={15}>
               <Affix offsetTop={1}>
@@ -52,14 +52,14 @@ export const App = observer(() => {
             <Panel minSizePercentage={70} maxSizePercentage={90} defaultSizePercentage={85}>
               <AppHeader />
               <Layout>
-                <Content>
-                  <AppContent />
+                <Content className={styles.pageContent}>
+                  <Outlet />
                 </Content>
                 <AppFooter />
               </Layout>
             </Panel>
           </PanelGroup>
-        </GuardedComponent>
+        </AuthGuardComponent>
       </Layout>
     </ConfigProvider>
   );

@@ -1,5 +1,5 @@
+export const WELCOME_PAGE_ROUTE = 'welcome';
 export const NOTE_LIST_ROUTE = 'notes';
-
 export const NOTE_ROUTE = 'notes/:id';
 export const BUDGET_LIST_ROUTE = 'budgets';
 export const BUDGET_ROUTE = 'budgets/:id';
