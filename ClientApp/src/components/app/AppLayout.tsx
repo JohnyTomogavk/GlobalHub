@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Affix, ConfigProvider, Layout, theme } from 'antd';
+import { Affix, Layout } from 'antd';
 import { AppFooter } from '../layout/footer/Footer';
 import AppHeader from '../layout/header/Header';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
@@ -31,36 +31,27 @@ export const AppLayout = observer(() => {
   }
 
   return (
-    <ConfigProvider
-      theme={{
-        algorithm: isDarkTheme ? [theme.darkAlgorithm] : [theme.defaultAlgorithm],
-        token: {
-          borderRadius: 2,
-        },
-      }}
-    >
-      <Layout>
-        <ThemeStyleProvider $isDarkTheme={isDarkTheme} />
-        <AuthGuardComponent>
-          <PanelGroup direction={'horizontal'} autoSaveId={'layout-panels-state'}>
-            <Panel minSizePercentage={10} maxSizePercentage={30} defaultSizePercentage={15}>
-              <Affix offsetTop={1}>
-                <SideMenu />
-              </Affix>
-            </Panel>
-            <PanelResizeHandle className={styles.resizeHandle} />
-            <Panel minSizePercentage={70} maxSizePercentage={90} defaultSizePercentage={85}>
-              <AppHeader />
-              <Layout>
-                <Content className={styles.pageContent}>
-                  <Outlet />
-                </Content>
-                <AppFooter />
-              </Layout>
-            </Panel>
-          </PanelGroup>
-        </AuthGuardComponent>
-      </Layout>
-    </ConfigProvider>
+    <Layout>
+      <ThemeStyleProvider $isDarkTheme={isDarkTheme} />
+      <AuthGuardComponent>
+        <PanelGroup direction={'horizontal'} autoSaveId={'layout-panels-state'}>
+          <Panel minSizePercentage={10} maxSizePercentage={30} defaultSizePercentage={15}>
+            <Affix offsetTop={1}>
+              <SideMenu />
+            </Affix>
+          </Panel>
+          <PanelResizeHandle className={styles.resizeHandle} />
+          <Panel minSizePercentage={70} maxSizePercentage={90} defaultSizePercentage={85}>
+            <AppHeader />
+            <Layout>
+              <Content className={styles.pageContent}>
+                <Outlet />
+              </Content>
+              <AppFooter />
+            </Layout>
+          </Panel>
+        </PanelGroup>
+      </AuthGuardComponent>
+    </Layout>
   );
 });
