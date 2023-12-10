@@ -1,18 +1,21 @@
 import * as ReactDOMClient from 'react-dom/client';
 import React from 'react';
-import { App } from './components/app/App';
 import './config/relativeDateConfig';
 import { BrowserRouter } from 'react-router-dom';
 import { AppAuthProvider } from './config/oidcConfig';
+import { AppRouter } from './router/AppRouter';
+import { AppThemeProvider } from './components/appThemeProvider/AppThemeProvider';
 
 const root = ReactDOMClient.createRoot(document.querySelector('#root') as HTMLElement);
 
 const app: JSX.Element = (
-  <BrowserRouter>
+  <AppThemeProvider>
     <AppAuthProvider>
-      <App />
+      <BrowserRouter>
+        <AppRouter />
+      </BrowserRouter>
     </AppAuthProvider>
-  </BrowserRouter>
+  </AppThemeProvider>
 );
 
 root.render(app);

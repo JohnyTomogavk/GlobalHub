@@ -1,0 +1,79 @@
+%flex-base {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sectionsContainer {
+  @extend %flex-base;
+
+  padding-bottom: 2rem;
+  gap: 4rem;
+  width: 55vw;
+  margin: auto;
+}
+
+.titlesSection {
+  @extend %flex-base;
+
+  gap: 0.8rem;
+  padding-top: 30px;
+
+  h1.productTitle  {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  h3.productTitle {
+    margin: 0;
+  }
+}
+
+.tabsSection {
+  @extend %flex-base;
+
+  $tabs-block-flex-gap: 20px;
+  $card-shadow: 0 4px 18px #00000007,0 2px 8px #00000007,0 0.8px 3px #00000007,0 0.1px 1px #00000007;
+
+  .productImage {
+    height: 200px;
+    width: auto;
+  }
+
+  .tabsContainer {
+    gap: $tabs-block-flex-gap;
+
+    .tabBar {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      gap: $tabs-block-flex-gap;
+
+      .tabCard {
+        width: 35%;
+        height: 8rem;
+        box-shadow: $card-shadow;
+
+        :hover {
+          cursor: pointer;
+        }
+
+        .productTitle {
+          margin: 0;
+        }
+      }
+
+      .cardActive {
+        @extend .tabCard;
+
+        background: white;
+        transition: background-color 150ms ease-out;
+      }
+    }
+
+    .tabContentContainer {
+      box-shadow: $card-shadow;
+      border-radius: 3px;
+    }
+  }
+}
