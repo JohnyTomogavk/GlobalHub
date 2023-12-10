@@ -4,7 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const Dotenv = require('dotenv-webpack');
 let mode = 'development';
 
-const isDevMode = () => process.env.NODE_ENV === 'development';
+const isDevMode = () => mode === 'development';
 const isProductionMode = () => process.env.NODE_ENV === 'production';
 
 if (isProductionMode()) {
@@ -29,7 +29,7 @@ const plugins = [
   new HtmlWebpackPlugin({
     filename: 'index.html',
     template: 'public/index.html',
-    favicon: 'public/favicon.png',
+    favicon: 'public/favicon.svg',
   }),
   new MiniCssExtractPlugin({
     filename: isDevMode() ? '[name].css' : '[name].[contenthash].css',

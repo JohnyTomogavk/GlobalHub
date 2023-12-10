@@ -11,7 +11,7 @@ export const AppThemeProvider = observer(({ children }: { children: JSX.Element 
       theme={{
         algorithm: isDarkTheme ? [theme.darkAlgorithm] : [theme.defaultAlgorithm],
         token: {
-          borderRadius: 2,
+          borderRadius: 3,
         },
       }}
     >

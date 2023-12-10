@@ -12,6 +12,7 @@
   .noteTitle {
     @include entity-title;
 
+    font-weight: bold;
     width: 75%;
   }
 }

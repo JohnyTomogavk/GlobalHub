@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect } from 'react';
-import { useAuth } from 'react-oidc-context';
+import { hasAuthParams, useAuth } from 'react-oidc-context';
 import { Loader } from '../../components/loader/Loader';
 import { useNavigate } from 'react-router-dom';
 import { WELCOME_PAGE_ROUTE } from '../../constants/routingConstants';
@@ -31,7 +31,11 @@ const AuthGuardComponent = (props: { children: ReactNode }): JSX.Element => {
 
   useEffect(() => {
     if (!auth.isLoading && !auth.isAuthenticated) {
-      navigate(`/${WELCOME_PAGE_ROUTE}`);
+      if (!hasAuthParams()) {
+        navigate(`/${WELCOME_PAGE_ROUTE}`);
+      }
+
+      auth.signinSilent();
     }
   }, [auth]);
 

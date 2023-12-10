@@ -18,12 +18,12 @@ import { BudgetComponent } from '../pages/budget/Budget';
 import { NoteList } from '../pages/noteList/NoteList';
 import { NotFound } from '../pages/notFound/NotFound';
 import { OperationFailedComponent } from '../pages/operationFailed/OperationFailed';
-import { WelcomePage } from '../pages/welcome/WelcomePage';
+import { ProductPage } from '../pages/product/ProductPage';
 import { AppLayout } from '../components/app/AppLayout';
 
 export const AppRouter = (): JSX.Element => (
   <Routes>
-    <Route index path={WELCOME_PAGE_ROUTE} element={<WelcomePage />} />
+    <Route index path={WELCOME_PAGE_ROUTE} element={<ProductPage />} />
     <Route path={'/'} element={<AppLayout />}>
       <Route index path={DASHBOARD_ROUTE} element={<DashboardComponent />} />
       <Route path={NOTE_LIST_ROUTE} element={<NoteList />} />

@@ -61,6 +61,7 @@
         "ignore": "first-nested"
       }
     ],
-    "custom-property-empty-line-before": "always"
+    "custom-property-empty-line-before": "always",
+    "scss/at-extend-no-missing-placeholder": null
   }
 }
