@@ -1,76 +1,73 @@
 @page
 @using IdentityService.Infrastructure.Models
 @model IdentityService.Presentation.Pages.Account.Login.Index
-<link rel="stylesheet" href="~/scss/account/login.css"/>
 
-<div class="login-page-container">
-    <div class="card col-md-6 col-lg-4">
-        <div class="card-body p-4">
-            <form asp-page="/Account/Login/Index">
-                <partial name="_SystemLogo"/>
-                <partial name="_ValidationSummary"/>
-                <input type="hidden" asp-for="Input.ReturnUrl"/>
+@{
+    Layout = "Shared/_AuthCardLayout";
+}
 
-                <div class="mb-3">
-                    <label asp-for="Input.Username" class="form-label"></label>
-                    <input class="form-control" placeholder="Username" asp-for="Input.Username" autofocus>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="Input.Password" class="form-label"></label>
-                    <input class="form-control"
-                           placeholder="Password"
-                           asp-for="Input.Password"
-                           type="password"
-                           autocomplete="off">
-                </div>
-                <div class="mb-3 form-check">
-                    <input class="form-check-input"
-                           type="checkbox"
-                           asp-for="Input.RememberLogin"
-                           id="rememberMeCheckbox">
-                    <label class="form-check-label form-label" for="rememberMeCheckbox" asp-for="Input.RememberLogin">
-                        Remember My Login
-                    </label>
-                </div>
+<form asp-page="/Account/Login/Index">
+    <partial name="_SystemLogo"/>
+    <partial name="_ValidationSummary"/>
+    <input type="hidden" asp-for="Input.ReturnUrl"/>
 
-                <button class="btn btn-primary w-100 mb-0"
-                        name="Input.Button"
-                        value="@AuthAction.Login">
-                    Login
-                </button>
+    <div class="mb-3">
+        <label asp-for="Input.Username" class="form-label"></label>
+        <input class="form-control" placeholder="Username" asp-for="Input.Username" autofocus>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Input.Password" class="form-label"></label>
+        <input class="form-control"
+               placeholder="Password"
+               asp-for="Input.Password"
+               type="password"
+               autocomplete="off">
+    </div>
+    <div class="mb-3 form-check">
+        <input class="form-check-input"
+               type="checkbox"
+               asp-for="Input.RememberLogin"
+               id="rememberMeCheckbox">
+        <label class="form-check-label form-label" for="rememberMeCheckbox" asp-for="Input.RememberLogin">
+            Remember My Login
+        </label>
+    </div>
 
-                <span class="d-flex flex-wrap align-items-center mb-3">
-                    New here?&nbsp;
-                    <button type="submit"
-                            class="link-underline-primary btn btn-link p-0"
-                            name="Input.Button"
-                            value="@AuthAction.Register">
-                        Create an account.
-                    </button>
-                </span>
+    <button class="btn btn-primary w-100 mb-0"
+            name="Input.Button"
+            value="@AuthAction.SignIn">
+        Login
+    </button>
 
-                <div class="row align-items-center mb-3 flex-nowrap">
-                    <div class="col ">
-                        <hr >
-                    </div>
-                    <span class="col p-0 text-center">
-                        or sign in with
-                    </span>
-                    <div class="col ">
-                        <hr >
-                    </div>
-                </div>
+    <span class="d-flex flex-wrap align-items-center mb-3">
+        New here?&nbsp;
+        <button type="submit"
+                class="link-underline-primary btn btn-link p-0"
+                name="Input.Button"
+                value="@AuthAction.RedirectToSignUp">
+            Create an account.
+        </button>
+    </span>
 
-                @foreach (var provider in Model.View.VisibleExternalProviders)
-                {
-                    <a class="btn btn-secondary w-100"
-                       asp-page="/ExternalLogin/Challenge"
-                       asp-route-scheme="@provider.AuthenticationScheme"
-                       asp-route-returnUrl="@Model.Input.ReturnUrl">
-                        @provider.DisplayName
-                    </a>
-                }
-            </form>
+    <div class="row align-items-center mb-3 flex-nowrap">
+        <div class="col">
+            <hr >
+        </div>
+        <span class="col p-0 text-center">
+            or sign in with
+        </span>
+        <div class="col">
+            <hr >
         </div>
     </div>
-</div>
+
+    @foreach (var provider in Model.View.VisibleExternalProviders)
+    {
+        <a class="btn btn-secondary w-100"
+           asp-page="/ExternalLogin/Challenge"
+           asp-route-scheme="@provider.AuthenticationScheme"
+           asp-route-returnUrl="@Model.Input.ReturnUrl">
+            @provider.DisplayName
+        </a>
+    }
+</form>

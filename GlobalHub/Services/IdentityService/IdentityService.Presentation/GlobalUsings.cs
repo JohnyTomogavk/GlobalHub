@@ -16,6 +16,8 @@ global using Duende.IdentityServer.Stores;
 global using Duende.IdentityServer.Validation;
 global using IdentityModel;
 global using IdentityService.Domain.Entities;
+global using IdentityService.Infrastructure.Config;
+global using IdentityService.Infrastructure.Extensions;
 global using IdentityService.Infrastructure.Models;
 global using IdentityService.Infrastructure.Services;
 global using IdentityService.Persistence.Configs;

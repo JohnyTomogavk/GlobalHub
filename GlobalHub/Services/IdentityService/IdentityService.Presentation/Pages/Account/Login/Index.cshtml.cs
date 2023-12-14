@@ -1,5 +1,3 @@
-using Azure;
-
 namespace IdentityService.Presentation.Pages.Account.Login;
 
 [SecurityHeaders]
@@ -42,12 +40,12 @@ public class Index : PageModel
     {
         var context = await _interactionService.GetAuthorizationContextAsync(Input.ReturnUrl);
 
-        if (Input.Button == AuthAction.Register)
+        if (Input.Button == AuthAction.RedirectToSignUp)
         {
             return RedirectToPage("/Account/Create/Index");
         }
 
-        if (Input.Button == AuthAction.Login)
+        if (Input.Button == AuthAction.SignIn)
         {
             if (!ModelState.IsValid)
             {
