@@ -1,3 +1,5 @@
+using HttpContextExtensions = IdentityService.Infrastructure.Extensions.HttpContextExtensions;
+
 namespace IdentityService.Presentation.Pages.Account.Logout;
 
 [SecurityHeaders]
@@ -71,7 +73,7 @@ public class Index : PageModel
             if (idp != null && idp != Duende.IdentityServer.IdentityServerConstants.LocalIdentityProvider)
             {
                 // we need to see if the provider supports external logout
-                if (await HttpContext.GetSchemeSupportsSignOutAsync(idp))
+                if (await HttpContextExtensions.GetSchemeSupportsSignOutAsync(HttpContext, idp))
                 {
                     // build a return URL so the upstream provider will redirect back
                     // to us after the user has logged out. this allows us to then
