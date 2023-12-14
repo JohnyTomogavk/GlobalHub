@@ -64,6 +64,15 @@ internal static class HostingExtensions
             })
             .AddAspNetIdentity<ApplicationUser>();
 
+        builder.Services.AddAuthentication()
+            .AddGoogle("Google", options =>
+            {
+                options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+
+                options.ClientId = "<insert here>";
+                options.ClientSecret = "<insert here>";
+            });
+
         builder.Services.AddScoped<IProfileService, AppProfileService>();
 
         var app = builder.Build();

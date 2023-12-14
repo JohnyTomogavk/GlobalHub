@@ -10,5 +10,5 @@ public class InputModel
 
     public string ReturnUrl { get; set; }
 
-    public string Button { get; set; }
+    public AuthAction Button { get; set; }
 }

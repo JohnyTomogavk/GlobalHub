@@ -1,0 +1,19 @@
+﻿.login-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 60px;
+  padding-bottom: 40px;
+
+  .system-logo {
+    height: 50px;
+    width: 50px;
+  }
+
+  .image {
+    position: relative;
+    z-index: -1000;
+    height: 250px;
+    width: auto;
+  }
+}
