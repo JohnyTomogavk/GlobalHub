@@ -1,4 +1,4 @@
-namespace IdentityService.Infrastructure.Config;
+namespace IdentityService.Infrastructure.Attributes;
 
 public class SecurityHeadersAttribute : ActionFilterAttribute
 {
@@ -25,6 +25,7 @@ public class SecurityHeadersAttribute : ActionFilterAttribute
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
         var csp =
             "default-src 'self' https://cdn.jsdelivr.net; object-src 'none'; frame-ancestors 'none'; sandbox allow-forms allow-same-origin allow-scripts; base-uri 'self'; img-src 'self' data:;";
+
         // also consider adding upgrade-insecure-requests once you have HTTPS in place for production
         //csp += "upgrade-insecure-requests;";
         // also an example if you need client images to be displayed from twitter

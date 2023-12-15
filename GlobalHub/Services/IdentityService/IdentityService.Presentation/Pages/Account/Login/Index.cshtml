@@ -1,14 +1,21 @@
 @page
 @using IdentityService.Infrastructure.Models
+@using IdentityService.Presentation.Pages.Shared.ExternalAuth
 @model IdentityService.Presentation.Pages.Account.Login.Index
 
 @{
-    Layout = "Shared/_AuthCardLayout";
+    Layout = "Shared/Layouts/_AuthCardLayout";
+
+    var externalAuthModel = new ExternalAuthViewModel
+    {
+        ExternalProviders = Model.View.ExternalProviders,
+        ReturnUrl = Model.Input.ReturnUrl,
+    };
 }
 
 <form asp-page="/Account/Login/Index">
-    <partial name="_SystemLogo"/>
-    <partial name="_ValidationSummary"/>
+    <partial name="Shared/Components/_SystemLogo"/>
+    <partial name="Shared/Components/_ValidationSummary"/>
     <input type="hidden" asp-for="Input.ReturnUrl"/>
 
     <div class="mb-3">
@@ -48,26 +55,6 @@
             Create an account.
         </button>
     </span>
-
-    <div class="row align-items-center mb-3 flex-nowrap">
-        <div class="col">
-            <hr >
-        </div>
-        <span class="col p-0 text-center">
-            or sign in with
-        </span>
-        <div class="col">
-            <hr >
-        </div>
-    </div>
-
-    @foreach (var provider in Model.View.VisibleExternalProviders)
-    {
-        <a class="btn btn-secondary w-100"
-           asp-page="/ExternalLogin/Challenge"
-           asp-route-scheme="@provider.AuthenticationScheme"
-           asp-route-returnUrl="@Model.Input.ReturnUrl">
-            @provider.DisplayName
-        </a>
-    }
 </form>
+
+<partial name="Shared/ExternalAuth/_ExternalAuthSection" model="externalAuthModel"/>

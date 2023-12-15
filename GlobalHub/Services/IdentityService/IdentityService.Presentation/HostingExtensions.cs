@@ -65,7 +65,14 @@ internal static class HostingExtensions
             .AddAspNetIdentity<ApplicationUser>();
 
         builder.Services.AddAuthentication()
-            .AddGoogle("Google", options =>
+            .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+            {
+                options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+
+                options.ClientId = "<insert here>";
+                options.ClientSecret = "<insert here>";
+            })
+            .AddGitHub(GitHubAuthenticationDefaults.AuthenticationScheme, options =>
             {
                 options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
 
@@ -81,7 +88,7 @@ internal static class HostingExtensions
             Environment.GetEnvironmentVariable(EnvVariablesConfig.ReinitializeIdentityResources);
         var parsed = bool.TryParse(shouldReinitializeDatabaseEnv, out var shouldReinitialize);
 
-        if (builder.Environment.IsDockerComposeEnvironment() && parsed && shouldReinitialize)
+        if (parsed && shouldReinitialize)
         {
             await MigrateDatabases(app.Services);
             await IdentityResourcesSeeder.ReinitializeDatabase(app.Services, builder.Configuration);

@@ -42,7 +42,7 @@ public class Index : PageModel
 
         if (Input.Button == AuthAction.RedirectToSignUp)
         {
-            return RedirectToPage("/Account/Create/Index");
+            return RedirectToPage("/Account/Create/Index", new { Input.ReturnUrl, });
         }
 
         if (Input.Button == AuthAction.SignIn)

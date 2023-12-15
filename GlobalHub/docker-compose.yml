@@ -50,8 +50,8 @@ services:
       - "IDENTITY_DB_CONNECTION_STRING=Server=identity-db;User Id=sa;Password=Bamboozled_123456;Encrypt=False;"
       - "OPERATIONAL_DB_CONNECTION_STRING=Server=identity-db;User Id=sa;Password=Bamboozled_123456;Encrypt=False;"
       - "CONFIGURATION_DB_CONNECTION_STRING=Server=identity-db;User Id=sa;Password=Bamboozled_123456;Encrypt=False;"
-      - "IdentityServer__Clients__0__RedirectUris__0__RedirectUri=https://localhost:8080/notes"
-      - "IdentityServer__Clients__0__PostLogoutRedirectUris__0__PostLogoutRedirectUri=https://localhost:8080"
+      - "IdentityServer__Clients__0__RedirectUris__0__RedirectUri=https://localhost:8080"
+      - "IdentityServer__Clients__0__PostLogoutRedirectUris__0__PostLogoutRedirectUri=https://localhost:8080/product"
     ports:
       - "5119:80"
       - "7389:443"

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="7.0.4" />
     <PackageReference Include="Duende.IdentityServer" Version="6.3.6"/>
     <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="6.3.2"/>
     <PackageReference Include="Duende.IdentityServer.EntityFramework" Version="6.3.6"/>
@@ -44,6 +45,10 @@
     </Content>
     <Content Update="appsettings.DOCKER_COMPOSE_DEMO.json">
       <DependentUpon>appsettings.json</DependentUpon>
+    </Content>
+    <Content Update="Pages\Shared\_ExternalAuth.cshtml.cs">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
   </ItemGroup>
 </Project>
