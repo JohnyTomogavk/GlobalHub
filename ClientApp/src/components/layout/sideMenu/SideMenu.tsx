@@ -205,7 +205,7 @@ export const SideMenu = observer((): JSX.Element => {
         <Title className={styles.title} level={3}>
           <GlobalOutlined className={styles.brandIcon} />
           &nbsp;
-          <span>GlobalHub</span>
+          <span>Global Hub</span>
         </Title>
       </Link>
       <Divider className={styles.siderDivider} />

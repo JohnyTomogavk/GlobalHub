@@ -18,7 +18,7 @@ public class AuthPageModelBase : PageModel
         SchemeProvider = schemeProvider;
     }
 
-    protected async Task BuildModelAsync()
+    protected async Task BuildExternalProvidersAsync()
     {
         var schemes = await SchemeProvider.GetAllSchemesAsync();
 

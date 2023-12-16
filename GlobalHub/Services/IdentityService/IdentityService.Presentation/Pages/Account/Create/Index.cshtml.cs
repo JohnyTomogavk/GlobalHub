@@ -4,117 +4,93 @@
 [AllowAnonymous]
 public class Index : AuthPageModelBase
 {
-    private readonly IIdentityServerInteractionService _interaction;
+    private readonly IIdentityServerInteractionService _interactionService;
     private readonly UserManager<ApplicationUser> _userManager;
 
     [BindProperty] public InputModel Input { get; set; }
 
     public Index(
-        IIdentityServerInteractionService interaction,
+        IIdentityServerInteractionService interactionService,
         UserManager<ApplicationUser> userManager,
         IAuthenticationSchemeProvider schemeProvider) : base(schemeProvider)
     {
-        _interaction = interaction;
+        _interactionService = interactionService;
         _userManager = userManager;
     }
 
     public async Task<IActionResult> OnGet(string returnUrl)
     {
         ReturnUrl = returnUrl;
-        await BuildModelAsync();
+        await BuildExternalProvidersAsync();
 
         return Page();
     }
 
     public async Task<IActionResult> OnPost()
     {
-        // check if we are in the context of an authorization request
-        var context = await _interaction.GetAuthorizationContextAsync(ReturnUrl);
-
         if (Input.Button == AuthAction.RedirectToSignIn)
         {
             return RedirectToPage("/Account/Login/Index", new { ReturnUrl, });
         }
 
-        // the user clicked the "cancel" button
-        if (Input.Button != AuthAction.SignUp)
+        if (Input.Button == AuthAction.SignUp)
         {
-            if (context != null)
+            if (ModelState.IsValid)
             {
-                // if the user cancels, send a result back into IdentityServer as if they 
-                // denied the consent (even if this client does not require consent).
-                // this will send back an access denied OIDC error response to the client.
-                await _interaction.DenyAuthorizationAsync(context, AuthorizationError.AccessDenied);
-
-                // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                if (context.IsNativeClient())
-                {
-                    // The client is native, so this change in how to
-                    // return the response is for better UX for the end user.
-                    return this.LoadingPage(ReturnUrl);
-                }
-
-                return Redirect(ReturnUrl);
+                return await CreateUser();
             }
-            else
-            {
-                // since we don't have a valid context, then we just go back to the home page
-                return Redirect("~/");
-            }
+
+            await BuildExternalProvidersAsync();
+
+            return Page();
         }
 
-        if (await _userManager.FindByNameAsync(Input.Username) != null)
+        var context = await _interactionService.GetAuthorizationContextAsync(ReturnUrl);
+        await _interactionService.DenyAuthorizationAsync(context, AuthorizationError.AccessDenied);
+
+        return Redirect(ReturnUrl);
+    }
+
+    private async Task<IActionResult> CreateUser()
+    {
+        var user = await _userManager.FindByNameAsync(Input.Username);
+
+        if (user != null)
         {
             ModelState.AddModelError("Input.Username", "UserName is busy");
+            await BuildExternalProvidersAsync();
+
+            return Page();
         }
 
-        if (ModelState.IsValid)
+        var userToCreate = new ApplicationUser { UserName = Input.Username, Email = Input.Email };
+        var identityResult = await _userManager.CreateAsync(userToCreate, Input.Password);
+
+        if (!identityResult.Succeeded)
         {
-            var user = new ApplicationUser() { UserName = Input.Username, Email = Input.Email };
-            var identityResult = await _userManager.CreateAsync(user, Input.Password);
-
-            if (!identityResult.Succeeded)
-            {
-                ModelState.AddModelError("error", "Error сreating user");
-
-                return Page();
-            }
-
-            // issue authentication cookie with subject ID and username
-            var isuser = new IdentityServerUser(user.Id) { DisplayName = user.UserName };
-
-            await HttpContext.SignInAsync(isuser);
-
-            if (context != null)
-            {
-                if (context.IsNativeClient())
-                {
-                    // The client is native, so this change in how to
-                    // return the response is for better UX for the end user.
-                    return this.LoadingPage(ReturnUrl);
-                }
-
-                // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                return Redirect(ReturnUrl);
-            }
-
-            // TODO: Extract to base
-            // request for a local page
-            if (Url.IsLocalUrl(ReturnUrl))
-            {
-                return Redirect(ReturnUrl);
-            }
-            else if (string.IsNullOrEmpty(ReturnUrl))
-            {
-                return Redirect("~/");
-            }
-            else
-            {
-                // user might have clicked on a malicious link - should be logged
-                throw new Exception("invalid return URL");
-            }
+            return await OnUserCreationFail(identityResult.Errors);
         }
+
+        return await OnUserCreationSuccess(userToCreate);
+    }
+
+    private async Task<IActionResult> OnUserCreationFail(IEnumerable<IdentityError> identityResultErrors)
+    {
+        foreach (var error in identityResultErrors)
+        {
+            ModelState.AddModelError(error.Code, error.Description);
+        }
+
+        await BuildExternalProvidersAsync();
 
         return Page();
+    }
+
+    private async Task<IActionResult> OnUserCreationSuccess(ApplicationUser user)
+    {
+        var issuedUser = new IdentityServerUser(user.Id) { DisplayName = user.UserName };
+        await HttpContext.SignInAsync(issuedUser);
+
+        return TryGetRedirectionToReturnUrl();
     }
 }

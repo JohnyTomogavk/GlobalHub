@@ -28,7 +28,7 @@ public class Index : AuthPageModelBase
     public async Task<IActionResult> OnGet(string returnUrl)
     {
         ReturnUrl = returnUrl;
-        await BuildModelAsync();
+        await BuildExternalProvidersAsync();
 
         return Page();
     }
@@ -46,7 +46,7 @@ public class Index : AuthPageModelBase
         {
             if (!ModelState.IsValid)
             {
-                await BuildModelAsync();
+                await BuildExternalProvidersAsync();
 
                 return Page();
             }
@@ -74,7 +74,7 @@ public class Index : AuthPageModelBase
         await _eventsService.RaiseAsync(new UserLoginFailureEvent(Input.Username, "invalid credentials",
             clientId: context?.Client.ClientId));
         ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
-        await BuildModelAsync();
+        await BuildExternalProvidersAsync();
 
         return Page();
     }
