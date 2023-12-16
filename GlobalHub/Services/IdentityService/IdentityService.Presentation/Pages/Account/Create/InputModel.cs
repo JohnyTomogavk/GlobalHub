@@ -8,7 +8,5 @@ public class InputModel
 
     [Required] public string Email { get; set; }
 
-    public string ReturnUrl { get; set; }
-
     public AuthAction Button { get; set; }
 }

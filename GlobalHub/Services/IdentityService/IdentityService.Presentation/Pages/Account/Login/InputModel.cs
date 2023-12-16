@@ -8,7 +8,5 @@ public class InputModel
 
     public bool RememberLogin { get; set; }
 
-    public string ReturnUrl { get; set; }
-
     public AuthAction Button { get; set; }
 }

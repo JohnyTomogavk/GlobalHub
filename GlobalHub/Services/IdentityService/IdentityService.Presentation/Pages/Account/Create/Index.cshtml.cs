@@ -2,29 +2,26 @@
 
 [SecurityHeaders]
 [AllowAnonymous]
-public class Index : PageModel
+public class Index : AuthPageModelBase
 {
     private readonly IIdentityServerInteractionService _interaction;
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly IAuthenticationSchemeProvider _schemeProvider;
 
     [BindProperty] public InputModel Input { get; set; }
 
-    // TODO: Extract to base
-    public IEnumerable<ExternalProvider> ExternalProviders { get; set; }
-
     public Index(
         IIdentityServerInteractionService interaction,
-        UserManager<ApplicationUser> userManager, IAuthenticationSchemeProvider schemeProvider)
+        UserManager<ApplicationUser> userManager,
+        IAuthenticationSchemeProvider schemeProvider) : base(schemeProvider)
     {
         _interaction = interaction;
         _userManager = userManager;
-        _schemeProvider = schemeProvider;
     }
 
     public async Task<IActionResult> OnGet(string returnUrl)
     {
-        await BuildModelAsync(returnUrl);
+        ReturnUrl = returnUrl;
+        await BuildModelAsync();
 
         return Page();
     }
@@ -32,11 +29,11 @@ public class Index : PageModel
     public async Task<IActionResult> OnPost()
     {
         // check if we are in the context of an authorization request
-        var context = await _interaction.GetAuthorizationContextAsync(Input.ReturnUrl);
+        var context = await _interaction.GetAuthorizationContextAsync(ReturnUrl);
 
         if (Input.Button == AuthAction.RedirectToSignIn)
         {
-            return RedirectToPage("/Account/Login/Index", new { Input.ReturnUrl, });
+            return RedirectToPage("/Account/Login/Index", new { ReturnUrl, });
         }
 
         // the user clicked the "cancel" button
@@ -54,10 +51,10 @@ public class Index : PageModel
                 {
                     // The client is native, so this change in how to
                     // return the response is for better UX for the end user.
-                    return this.LoadingPage(Input.ReturnUrl);
+                    return this.LoadingPage(ReturnUrl);
                 }
 
-                return Redirect(Input.ReturnUrl);
+                return Redirect(ReturnUrl);
             }
             else
             {
@@ -94,20 +91,20 @@ public class Index : PageModel
                 {
                     // The client is native, so this change in how to
                     // return the response is for better UX for the end user.
-                    return this.LoadingPage(Input.ReturnUrl);
+                    return this.LoadingPage(ReturnUrl);
                 }
 
                 // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                return Redirect(Input.ReturnUrl);
+                return Redirect(ReturnUrl);
             }
 
             // TODO: Extract to base
             // request for a local page
-            if (Url.IsLocalUrl(Input.ReturnUrl))
+            if (Url.IsLocalUrl(ReturnUrl))
             {
-                return Redirect(Input.ReturnUrl);
+                return Redirect(ReturnUrl);
             }
-            else if (string.IsNullOrEmpty(Input.ReturnUrl))
+            else if (string.IsNullOrEmpty(ReturnUrl))
             {
                 return Redirect("~/");
             }
@@ -119,19 +116,5 @@ public class Index : PageModel
         }
 
         return Page();
-    }
-
-    // TODO: Extract to base
-    private async Task BuildModelAsync(string returnUrl)
-    {
-        Input = new InputModel { ReturnUrl = returnUrl };
-        var schemes = await _schemeProvider.GetAllSchemesAsync();
-
-        var providers = schemes
-            .Where(x => x.DisplayName != null)
-            .Select(x => new ExternalProvider { DisplayName = x.DisplayName ?? x.Name, AuthenticationScheme = x.Name })
-            .ToList();
-
-        ExternalProviders = providers.ToArray();
     }
 }

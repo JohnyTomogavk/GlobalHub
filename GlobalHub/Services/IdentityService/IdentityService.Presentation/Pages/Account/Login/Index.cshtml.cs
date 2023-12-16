@@ -2,15 +2,12 @@ namespace IdentityService.Presentation.Pages.Account.Login;
 
 [SecurityHeaders]
 [AllowAnonymous]
-public class Index : PageModel
+public class Index : AuthPageModelBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IIdentityServerInteractionService _interactionService;
     private readonly IEventService _eventsService;
-    private readonly IAuthenticationSchemeProvider _schemeProvider;
-
-    public ViewModel View { get; set; }
 
     [BindProperty] public InputModel Input { get; set; }
 
@@ -20,36 +17,36 @@ public class Index : PageModel
         IIdentityProviderStore identityProviderStore,
         IEventService eventsService,
         UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager)
+        SignInManager<ApplicationUser> signInManager) : base(schemeProvider)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _interactionService = interactionService;
-        _schemeProvider = schemeProvider;
         _eventsService = eventsService;
     }
 
     public async Task<IActionResult> OnGet(string returnUrl)
     {
-        await BuildModelAsync(returnUrl);
+        ReturnUrl = returnUrl;
+        await BuildModelAsync();
 
         return Page();
     }
 
     public async Task<IActionResult> OnPost()
     {
-        var context = await _interactionService.GetAuthorizationContextAsync(Input.ReturnUrl);
+        var context = await _interactionService.GetAuthorizationContextAsync(ReturnUrl);
 
         if (Input.Button == AuthAction.RedirectToSignUp)
         {
-            return RedirectToPage("/Account/Create/Index", new { Input.ReturnUrl, });
+            return RedirectToPage("/Account/Create/Index", new { ReturnUrl, });
         }
 
         if (Input.Button == AuthAction.SignIn)
         {
             if (!ModelState.IsValid)
             {
-                await BuildModelAsync(Input.ReturnUrl);
+                await BuildModelAsync();
 
                 return Page();
             }
@@ -69,20 +66,7 @@ public class Index : PageModel
 
         await _interactionService.DenyAuthorizationAsync(context, AuthorizationError.AccessDenied);
 
-        return Redirect(Input.ReturnUrl);
-    }
-
-    private async Task BuildModelAsync(string returnUrl)
-    {
-        Input = new InputModel { ReturnUrl = returnUrl };
-        var schemes = await _schemeProvider.GetAllSchemesAsync();
-
-        var providers = schemes
-            .Where(x => x.DisplayName != null)
-            .Select(x => new ExternalProvider { DisplayName = x.DisplayName ?? x.Name, AuthenticationScheme = x.Name })
-            .ToList();
-
-        View = new ViewModel { ExternalProviders = providers.ToArray() };
+        return Redirect(ReturnUrl);
     }
 
     private async Task<IActionResult> HandleFailedLogin(AuthorizationRequest context)
@@ -90,7 +74,7 @@ public class Index : PageModel
         await _eventsService.RaiseAsync(new UserLoginFailureEvent(Input.Username, "invalid credentials",
             clientId: context?.Client.ClientId));
         ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
-        await BuildModelAsync(Input.ReturnUrl);
+        await BuildModelAsync();
 
         return Page();
     }
@@ -102,20 +86,5 @@ public class Index : PageModel
             clientId: context?.Client.ClientId));
 
         return TryGetRedirectionToReturnUrl();
-    }
-
-    private IActionResult TryGetRedirectionToReturnUrl()
-    {
-        if (Url.IsLocalUrl(Input.ReturnUrl))
-        {
-            return Redirect(Input.ReturnUrl);
-        }
-
-        if (string.IsNullOrEmpty(Input.ReturnUrl))
-        {
-            return Redirect("~/");
-        }
-
-        throw new Exception("invalid return URL");
     }
 }

@@ -8,15 +8,15 @@
 
     var externalAuthModel = new ExternalAuthViewModel
     {
-        ExternalProviders = Model.View.ExternalProviders,
-        ReturnUrl = Model.Input.ReturnUrl,
+        ExternalProviders = Model.ExternalProviders,
+        ReturnUrl = Model.ReturnUrl,
     };
 }
 
 <form asp-page="/Account/Login/Index">
     <partial name="Shared/Components/_SystemLogo"/>
     <partial name="Shared/Components/_ValidationSummary"/>
-    <input type="hidden" asp-for="Input.ReturnUrl"/>
+    <input type="hidden" asp-for="ReturnUrl"/>
 
     <div class="mb-3">
         <label asp-for="Input.Username" class="form-label"></label>

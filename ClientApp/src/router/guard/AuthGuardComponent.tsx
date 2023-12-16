@@ -31,7 +31,7 @@ const AuthGuardComponent = (props: { children: ReactNode }): JSX.Element => {
 
   useEffect(() => {
     if (!auth.isLoading && !auth.isAuthenticated) {
-      if (!hasAuthParams()) {
+      if (!hasAuthParams() || auth.error) {
         navigate(`/${WELCOME_PAGE_ROUTE}`);
       }
 

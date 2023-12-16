@@ -25,6 +25,7 @@ global using IdentityService.Persistence.Configs;
 global using IdentityService.Persistence.Data;
 global using IdentityService.Persistence.DataSeeding;
 global using IdentityService.Presentation;
+global using IdentityService.Presentation.Pages.Account.Base;
 global using IdentityService.Presentation.Pages.Consent;
 global using Microsoft.AspNetCore.Authentication;
 global using Microsoft.AspNetCore.Authentication.Google;
