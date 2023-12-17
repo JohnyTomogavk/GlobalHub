@@ -1,5 +1,6 @@
 ﻿// Global using directives
 
+global using System.Security.Claims;
 global using Common.ExceptionHandling;
 global using Common.Extensions;
 global using Common.Logging;
@@ -16,4 +17,6 @@ global using NotesService.Data.Repositories;
 global using NotesService.Data.Repositories.Interfaces;
 global using NotesService.Dtos;
 global using NotesService.Entities;
+global using NotesService.Entities.Services;
+global using NotesService.Entities.Services.Interfaces;
 global using Serilog;

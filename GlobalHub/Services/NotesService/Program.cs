@@ -15,6 +15,7 @@ builder.Services.AddSwaggerGen(action =>
 
 builder.Services.AddScoped<INotesDbContext, NotesDbContext>();
 builder.Services.AddScoped<INotesRepository, NotesRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(options =>

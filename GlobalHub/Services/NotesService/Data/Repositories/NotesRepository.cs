@@ -9,9 +9,9 @@ public class NotesRepository : INotesRepository
         _notesDbContext = notesDbContext;
     }
 
-    public IEnumerable<Note> GetNotesMap()
+    public IEnumerable<Note> GetNotesMap(string userId)
     {
-        return _notesDbContext.Notes.FindSync(note => note != null).ToList();
+        return _notesDbContext.Notes.FindSync(note => note.CreatedBy == userId).ToList();
     }
 
     public IEnumerable<Note> GetNoteList()

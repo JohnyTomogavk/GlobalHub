@@ -9,10 +9,12 @@ namespace NotesService.Controllers;
 public class NotesController : ControllerBase
 {
     private readonly INotesRepository _notesRepository;
+    private readonly IUserService _userService;
 
-    public NotesController(INotesRepository notesRepository)
+    public NotesController(INotesRepository notesRepository, IUserService userService)
     {
         _notesRepository = notesRepository;
+        _userService = userService;
     }
 
     // TODO: Add filtration by user id, when users will be implemented
@@ -23,7 +25,8 @@ public class NotesController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<NoteMenuItem>> GetNoteMap()
     {
-        var notes = _notesRepository.GetNotesMap();
+        var userId = _userService.UserId;
+        var notes = _notesRepository.GetNotesMap(userId);
         var noteMap = notes.Select(note => new NoteMenuItem { Id = note.Id, Title = note.Title });
 
         return Ok(noteMap);
