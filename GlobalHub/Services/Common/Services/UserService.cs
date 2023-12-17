@@ -1,4 +1,4 @@
-﻿namespace NotesService.Entities.Services;
+﻿namespace Common.Services;
 
 public class UserService : IUserService
 {

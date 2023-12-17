@@ -2,8 +2,11 @@
 
 global using System.Security.Claims;
 global using Common.ExceptionHandling;
+global using Common.Exceptions;
 global using Common.Extensions;
 global using Common.Logging;
+global using Common.Services;
+global using Common.Services.Abstract;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.OpenApi.Models;
@@ -17,6 +20,4 @@ global using NotesService.Data.Repositories;
 global using NotesService.Data.Repositories.Interfaces;
 global using NotesService.Dtos;
 global using NotesService.Entities;
-global using NotesService.Entities.Services;
-global using NotesService.Entities.Services.Interfaces;
 global using Serilog;

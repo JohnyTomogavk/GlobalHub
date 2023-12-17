@@ -2,8 +2,10 @@
 
 global using System.Net;
 global using System.Net.Mime;
+global using System.Security.Claims;
 global using System.Text.Json;
 global using Common.Exceptions;
+global using Common.Services.Abstract;
 global using DotNetEnv;
 global using DotNetEnv.Configuration;
 global using FluentValidation;

@@ -17,7 +17,6 @@ public class NotesController : ControllerBase
         _userService = userService;
     }
 
-    // TODO: Add filtration by user id, when users will be implemented
     /// <summary>
     /// Gets all available for current user notes
     /// </summary>
@@ -47,6 +46,7 @@ public class NotesController : ControllerBase
         }
 
         var note = _notesRepository.GetById(id);
+        EnsureCurrentUserIsNoteOwner(note);
 
         if (note == null)
         {
@@ -56,7 +56,6 @@ public class NotesController : ControllerBase
         return Ok(note);
     }
 
-    // TODO: Add filtration by user id, when users will be implemented
     /// <summary>
     /// Gets list of available notes
     /// </summary>
@@ -64,7 +63,8 @@ public class NotesController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<Note>> GetNoteList()
     {
-        var notes = _notesRepository.GetNoteList();
+        var userId = _userService.UserId;
+        var notes = _notesRepository.GetNoteList(userId);
 
         return Ok(notes);
     }
@@ -76,8 +76,10 @@ public class NotesController : ControllerBase
     [HttpPost]
     public ActionResult<Note> CreateNote(CreateNoteDto createNoteDto)
     {
-        // TODO: Initialize other fields when according logic will be implemented
-        var newNote = new Note { CreatedDate = DateTime.Now, Title = createNoteDto.Title };
+        var newNote = new Note
+        {
+            CreatedDate = DateTime.Now, Title = createNoteDto.Title, CreatedBy = _userService.UserId
+        };
         var createdNote = _notesRepository.Create(newNote);
 
         return StatusCode(StatusCodes.Status201Created, createdNote);
@@ -93,6 +95,7 @@ public class NotesController : ControllerBase
     public ActionResult<Note> UpdateNoteContent(string id, [FromBody] UpdateNoteContentDto updateDto)
     {
         var note = _notesRepository.GetById(id);
+        EnsureCurrentUserIsNoteOwner(note);
         note.RichTextContent = updateDto.Content;
         note.UpdatedDate = DateTime.Now;
         var updatedNote = _notesRepository.Update(note);
@@ -110,6 +113,7 @@ public class NotesController : ControllerBase
     public ActionResult<Note> UpdateNoteTitle(string id, [FromBody] UpdateNoteTitleDto updateNoteTitleDto)
     {
         var note = _notesRepository.GetById(id);
+        EnsureCurrentUserIsNoteOwner(note);
         note.Title = updateNoteTitleDto.NewTitle;
         note.UpdatedDate = DateTime.Now;
         var updatedNote = _notesRepository.Update(note);
@@ -124,9 +128,20 @@ public class NotesController : ControllerBase
     [HttpDelete]
     public ActionResult<string> DeleteNote(string id)
     {
+        var note = _notesRepository.GetById(id);
+        EnsureCurrentUserIsNoteOwner(note);
+
         _notesRepository.DeleteById(id);
 
         return Ok(id);
+    }
+
+    private void EnsureCurrentUserIsNoteOwner(Note note)
+    {
+        if (note.CreatedBy != _userService.UserId)
+        {
+            throw new AccessDeniedException("Access denied");
+        }
     }
 
     private bool IsNoteIdValid(string noteId) => ObjectId.TryParse(noteId, out var _);

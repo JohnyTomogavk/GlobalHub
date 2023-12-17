@@ -1,4 +1,4 @@
-﻿namespace NotesService.Entities.Services.Interfaces;
+﻿namespace Common.Services.Abstract;
 
 /// <summary>
 /// Service for retrieving information from user's identity
