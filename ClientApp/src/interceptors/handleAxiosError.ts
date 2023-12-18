@@ -15,6 +15,7 @@ export const handleAxiosError = (error: AxiosError, navigate: NavigateFunction):
     const correlation_id = error.response.headers[CORRELATION_ID_HEADER_NAME];
 
     switch (error.response.status) {
+      case HttpStatusCode.Forbidden:
       case HttpStatusCode.NotFound:
         navigate(`/${NOT_FOUND_ROUTE}`);
         break;

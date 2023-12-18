@@ -46,7 +46,7 @@ public class NotesController : ControllerBase
         }
 
         var note = _notesRepository.GetById(id);
-        EnsureCurrentUserIsNoteOwner(note);
+        AuthorizeAccessToTheNote(note);
 
         if (note == null)
         {
@@ -95,7 +95,7 @@ public class NotesController : ControllerBase
     public ActionResult<Note> UpdateNoteContent(string id, [FromBody] UpdateNoteContentDto updateDto)
     {
         var note = _notesRepository.GetById(id);
-        EnsureCurrentUserIsNoteOwner(note);
+        AuthorizeAccessToTheNote(note);
         note.RichTextContent = updateDto.Content;
         note.UpdatedDate = DateTime.Now;
         var updatedNote = _notesRepository.Update(note);
@@ -113,7 +113,7 @@ public class NotesController : ControllerBase
     public ActionResult<Note> UpdateNoteTitle(string id, [FromBody] UpdateNoteTitleDto updateNoteTitleDto)
     {
         var note = _notesRepository.GetById(id);
-        EnsureCurrentUserIsNoteOwner(note);
+        AuthorizeAccessToTheNote(note);
         note.Title = updateNoteTitleDto.NewTitle;
         note.UpdatedDate = DateTime.Now;
         var updatedNote = _notesRepository.Update(note);
@@ -129,16 +129,16 @@ public class NotesController : ControllerBase
     public ActionResult<string> DeleteNote(string id)
     {
         var note = _notesRepository.GetById(id);
-        EnsureCurrentUserIsNoteOwner(note);
+        AuthorizeAccessToTheNote(note);
 
         _notesRepository.DeleteById(id);
 
         return Ok(id);
     }
 
-    private void EnsureCurrentUserIsNoteOwner(Note note)
+    private void AuthorizeAccessToTheNote(Note? note)
     {
-        if (note.CreatedBy != _userService.UserId)
+        if (note == null || note.CreatedBy != _userService.UserId)
         {
             throw new AccessDeniedException("Access denied");
         }

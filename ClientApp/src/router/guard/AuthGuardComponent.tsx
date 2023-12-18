@@ -39,7 +39,7 @@ const AuthGuardComponent = (props: { children: ReactNode }): JSX.Element => {
         if (!auth.isAuthenticated) navigate(`/${WELCOME_PAGE_ROUTE}`);
       });
     }
-  }, [auth.error, auth.isLoading]);
+  }, [auth]);
 
   if (auth.isLoading || !auth.isAuthenticated) {
     return loader;
