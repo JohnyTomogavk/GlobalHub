@@ -19,6 +19,8 @@ public static class ServiceCollectionExtension
         serviceCollection.AddScoped<ITagService, TagService>();
         serviceCollection.AddScoped<ITagLimitService, TagLimitService>();
         serviceCollection.AddScoped<IDateTimeService, DateTimeService>();
+        serviceCollection.AddScoped<IUserService, UserService>();
+        serviceCollection.AddScoped<IAuthorizationService<Budget>, BudgetAuthorizationService>();
 
         return serviceCollection;
     }

@@ -3,7 +3,7 @@
 /// <summary>
 /// User's budget. Contains common budget's config and info
 /// </summary>
-public class Budget : BaseEntity, IHasDate
+public class Budget : BaseEntity, IHasDate, IHasCreator
 {
     /// <summary>
     /// Budget title
@@ -33,4 +33,8 @@ public class Budget : BaseEntity, IHasDate
     /// Related tags, that have been created in budget
     /// </summary>
     public virtual IEnumerable<Tag> BudgetTags { get; set; } = new List<Tag>();
+
+    public string? CreatedBy { get; set; }
+
+    public string? UpdatedBy { get; set; }
 }

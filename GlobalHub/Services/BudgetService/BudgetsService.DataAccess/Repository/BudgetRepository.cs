@@ -9,10 +9,9 @@ public class BudgetRepository : IBudgetRepository
         _dbContext = dbContext;
     }
 
-    // TODO: Add filter by user when users logic is implemented
-    public async Task<IEnumerable<Budget?>> GetUserBudgetsAsync()
+    public async Task<IEnumerable<Budget?>> GetUserBudgetsAsync(string userId)
     {
-        return await _dbContext.Budgets.ToListAsync();
+        return await _dbContext.Budgets.Where(budget => budget.CreatedBy == userId).ToListAsync();
     }
 
     public async Task<Budget?> GetBudgetByIdWithIncludeAsync(long id,

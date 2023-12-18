@@ -3,17 +3,20 @@ using System;
 using BudgetsService.DataAccess.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace BudgetsService.DataAccess.Migrations
+namespace BudgetsService.DataAccess.Migrations.IdentityDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231217182548_AddCreatedByFieldToBudget")]
+    partial class AddCreatedByFieldToBudget
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,9 +49,6 @@ namespace BudgetsService.DataAccess.Migrations
 
                     b.Property<int>("PreserveFromIncomingPercent")
                         .HasColumnType("integer");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");

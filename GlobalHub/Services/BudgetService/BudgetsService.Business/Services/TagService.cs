@@ -5,16 +5,31 @@ public class TagService : ITagService
     private readonly ITagRepository _tagRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<TagCreateDto> _createTagValidator;
+    private readonly IAuthorizationService<Budget> _budgetAuthorizationService;
+    private readonly IUserService _userService;
 
-    public TagService(ITagRepository tagRepository, IMapper mapper, IValidator<TagCreateDto> createTagValidator)
+    public TagService(ITagRepository tagRepository,
+        IMapper mapper,
+        IValidator<TagCreateDto> createTagValidator,
+        IAuthorizationService<Budget> budgetAuthorizationService,
+        IUserService userService)
     {
         _tagRepository = tagRepository;
         _mapper = mapper;
         _createTagValidator = createTagValidator;
+        _budgetAuthorizationService = budgetAuthorizationService;
+        _userService = userService;
     }
 
     public async Task<IEnumerable<TagDto>> GetBudgetTags(long budgetId)
     {
+        var authorized =
+            await _budgetAuthorizationService.AuthorizeRead(_userService.UserId, budgetId);
+        if (!authorized)
+        {
+            throw new AccessDeniedException("Access denied");
+        }
+
         var tags = await _tagRepository.GetTagsByBudgetId(budgetId);
         var tagDtos = _mapper.Map<IEnumerable<TagDto>>(tags);
 
@@ -23,6 +38,13 @@ public class TagService : ITagService
 
     public async Task<TagDto> CreateNewTag(TagCreateDto newTagDto)
     {
+        var authorized =
+            await _budgetAuthorizationService.AuthorizeUpdate(_userService.UserId, newTagDto.BudgetId);
+        if (!authorized)
+        {
+            throw new AccessDeniedException("Access denied");
+        }
+
         var result = await _createTagValidator.ValidateAsync(newTagDto);
 
         if (!result.IsValid)
@@ -41,6 +63,13 @@ public class TagService : ITagService
     {
         var tag = await _tagRepository.GetTagById(tagDto.Id);
 
+        var authorized =
+            await _budgetAuthorizationService.AuthorizeUpdate(_userService.UserId, tag.BudgetId);
+        if (!authorized)
+        {
+            throw new AccessDeniedException("Access denied");
+        }
+
         if (tag == null)
         {
             throw new EntityNotFoundException("Tag is not found");
@@ -55,6 +84,13 @@ public class TagService : ITagService
     public async Task<long> DeleteTag(long tagId)
     {
         var tagToDelete = await _tagRepository.GetTagById(tagId);
+
+        var authorized =
+            await _budgetAuthorizationService.AuthorizeUpdate(_userService.UserId, tagToDelete.BudgetId);
+        if (!authorized)
+        {
+            throw new AccessDeniedException("Access denied");
+        }
 
         if (tagToDelete == null)
         {
