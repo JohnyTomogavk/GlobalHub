@@ -35,13 +35,13 @@ export const AppLayout = observer(() => {
       <ThemeStyleProvider $isDarkTheme={isDarkTheme} />
       <AuthGuardComponent>
         <PanelGroup direction={'horizontal'} autoSaveId={'layout-panels-state'}>
-          <Panel minSizePercentage={10} maxSizePercentage={30} defaultSizePercentage={15}>
+          <Panel minSize={10} maxSize={30} defaultSize={15}>
             <Affix offsetTop={1}>
               <SideMenu />
             </Affix>
           </Panel>
           <PanelResizeHandle className={styles.resizeHandle} />
-          <Panel minSizePercentage={70} maxSizePercentage={90} defaultSizePercentage={85}>
+          <Panel minSize={70} maxSize={90} defaultSize={85}>
             <AppHeader />
             <Layout>
               <Content className={styles.pageContent}>

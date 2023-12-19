@@ -1,4 +1,3 @@
-import { Bullet } from '@ant-design/plots';
 import React from 'react';
 import { TagDto } from '../../../dto/tags/tagDto';
 import { TagLimitDto } from '../../../dto/tagLimit/tagLimitDto';
@@ -6,6 +5,8 @@ import { ExpenseOperationsSumDto } from '../../../dto/budgetItems/expenseOperati
 import { max, maxBy } from 'lodash';
 import { nameof } from '../../../helpers/objectHelper';
 import { PERCENT_LEFT_BEFORE_REACHING_TAG_LIMIT_TO_SHOW_WARNING } from '../../../constants/budgetConstants';
+import Bullet from '@ant-design/plots/lib/components/bullet';
+import { BulletConfig } from '@ant-design/plots';
 
 interface TagLimitsStateBulletChartProps {
   tags: TagDto[];
@@ -16,28 +17,9 @@ interface TagLimitsStateBulletChartProps {
 interface TagDataEntry {
   title: string;
   ranges: number[];
-  currentValue: number[];
+  measure: number[];
   target: number;
 }
-
-const balanceOnLimitsByTagsChart = {
-  measureField: nameof<TagDataEntry>('currentValue'),
-  rangeField: nameof<TagDataEntry>('ranges'),
-  targetField: nameof<TagDataEntry>('target'),
-  xField: nameof<TagDataEntry>('title'),
-  color: {
-    range: ['#bfeec8', '#FFe0b0', '#FFbcb8'],
-    measure: '#5B8FF9',
-    target: '#39a3f4',
-  },
-  xAxis: {
-    line: null,
-  },
-};
-
-const sizeConfig = {
-  target: 0,
-};
 
 const getChartColorZonesEndsForTagLimit = (tagLimit: number, maxLimitOrExpenseValue: number): number[] => {
   if (tagLimit === 0) {
@@ -70,23 +52,32 @@ export const TagLimitsStateBulletChart = ({
       return {
         title: tagDto.label,
         ranges: sumRanges,
-        currentValue: [expenseSumOnTag],
+        measure: [expenseSumOnTag],
         target: 0,
-      };
+      } as TagDataEntry;
     })
-    .sort((a, b) => a.currentValue[0] - b.currentValue[0]);
+    .sort((a, b) => a.measure[0] - b.measure[0]);
 
-  return (
-    <Bullet
-      data={data}
-      color={balanceOnLimitsByTagsChart.color}
-      xField={balanceOnLimitsByTagsChart.xField}
-      xAxis={balanceOnLimitsByTagsChart.xAxis}
-      yAxis={false}
-      size={sizeConfig}
-      targetField={balanceOnLimitsByTagsChart.targetField}
-      rangeField={balanceOnLimitsByTagsChart.rangeField}
-      measureField={balanceOnLimitsByTagsChart.measureField}
-    />
-  );
+  const balanceOnLimitsByTagsChart: BulletConfig = {
+    data: data,
+    measureField: nameof<TagDataEntry>('measure'),
+    rangeField: nameof<TagDataEntry>('ranges'),
+    targetField: nameof<TagDataEntry>('target'),
+    xField: nameof<TagDataEntry>('title'),
+    size: {
+      target: 0,
+    },
+    color: {
+      range: ['#bfeec8', '#FFe0b0', '#FFbcb8'],
+      measure: '#5B8FF9',
+      target: '#39a3f4',
+    },
+    xAxis: {
+      line: null,
+    },
+    yAxis: false,
+    layout: 'horizontal',
+  };
+
+  return <Bullet {...balanceOnLimitsByTagsChart} />;
 };
