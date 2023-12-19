@@ -2,8 +2,8 @@
 
 public interface INotesRepository
 {
-    IEnumerable<Note> GetNotesMap();
-    IEnumerable<Note> GetNoteList();
+    IEnumerable<Note> GetNotesMap(string userId);
+    IEnumerable<Note> GetNoteList(string userId);
     Note Create(Note newNote);
     Note GetById(string id);
     void DeleteById(string id);

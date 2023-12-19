@@ -1,13 +1,21 @@
-﻿namespace BudgetsService.DataAccess.Context;
+﻿using Common.Services.Abstract;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+
+namespace BudgetsService.DataAccess.Context;
 
 public class ApplicationDbContext : DbContext
 {
     private readonly IDateTimeService _dateTimeService;
+    private readonly IUserService _userService;
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IDateTimeService dateTimeService) :
+    public ApplicationDbContext(
+        DbContextOptions<ApplicationDbContext> options,
+        IDateTimeService dateTimeService,
+        IUserService userService) :
         base(options)
     {
         _dateTimeService = dateTimeService;
+        _userService = userService;
     }
 
     public DbSet<Budget> Budgets { get; set; }
@@ -29,19 +37,44 @@ public class ApplicationDbContext : DbContext
     {
         foreach (var entry in ChangeTracker.Entries<IHasDate>())
         {
-            switch (entry.State)
-            {
-                case EntityState.Added:
-                    entry.Entity.CreatedDate = _dateTimeService.CurrentDate;
-                    break;
-                case EntityState.Modified:
-                    entry.Entity.UpdatedDate = _dateTimeService.CurrentDate;
-                    break;
-                default:
-                    break;
-            }
+            UpdateDates(entry);
+        }
+
+        foreach (var entry in ChangeTracker.Entries<IHasCreator>())
+        {
+            UpdateAuthors(entry);
         }
 
         return await base.SaveChangesAsync(cancellationToken);
+    }
+
+    private void UpdateAuthors(EntityEntry<IHasCreator> entry)
+    {
+        switch (entry.State)
+        {
+            case EntityState.Added:
+                entry.Entity.CreatedBy = _userService.UserId;
+                break;
+            case EntityState.Modified:
+                entry.Entity.UpdatedBy = _userService.UserId;
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void UpdateDates(EntityEntry<IHasDate> entry)
+    {
+        switch (entry.State)
+        {
+            case EntityState.Added:
+                entry.Entity.CreatedDate = _dateTimeService.CurrentDate;
+                break;
+            case EntityState.Modified:
+                entry.Entity.UpdatedDate = _dateTimeService.CurrentDate;
+                break;
+            default:
+                break;
+        }
     }
 }

@@ -9,13 +9,14 @@ namespace NotesService.Controllers;
 public class NotesController : ControllerBase
 {
     private readonly INotesRepository _notesRepository;
+    private readonly IUserService _userService;
 
-    public NotesController(INotesRepository notesRepository)
+    public NotesController(INotesRepository notesRepository, IUserService userService)
     {
         _notesRepository = notesRepository;
+        _userService = userService;
     }
 
-    // TODO: Add filtration by user id, when users will be implemented
     /// <summary>
     /// Gets all available for current user notes
     /// </summary>
@@ -23,7 +24,8 @@ public class NotesController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<NoteMenuItem>> GetNoteMap()
     {
-        var notes = _notesRepository.GetNotesMap();
+        var userId = _userService.UserId;
+        var notes = _notesRepository.GetNotesMap(userId);
         var noteMap = notes.Select(note => new NoteMenuItem { Id = note.Id, Title = note.Title });
 
         return Ok(noteMap);
@@ -44,6 +46,7 @@ public class NotesController : ControllerBase
         }
 
         var note = _notesRepository.GetById(id);
+        AuthorizeAccessToTheNote(note);
 
         if (note == null)
         {
@@ -53,7 +56,6 @@ public class NotesController : ControllerBase
         return Ok(note);
     }
 
-    // TODO: Add filtration by user id, when users will be implemented
     /// <summary>
     /// Gets list of available notes
     /// </summary>
@@ -61,7 +63,8 @@ public class NotesController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<Note>> GetNoteList()
     {
-        var notes = _notesRepository.GetNoteList();
+        var userId = _userService.UserId;
+        var notes = _notesRepository.GetNoteList(userId);
 
         return Ok(notes);
     }
@@ -73,8 +76,10 @@ public class NotesController : ControllerBase
     [HttpPost]
     public ActionResult<Note> CreateNote(CreateNoteDto createNoteDto)
     {
-        // TODO: Initialize other fields when according logic will be implemented
-        var newNote = new Note { CreatedDate = DateTime.Now, Title = createNoteDto.Title };
+        var newNote = new Note
+        {
+            CreatedDate = DateTime.Now, Title = createNoteDto.Title, CreatedBy = _userService.UserId
+        };
         var createdNote = _notesRepository.Create(newNote);
 
         return StatusCode(StatusCodes.Status201Created, createdNote);
@@ -90,6 +95,7 @@ public class NotesController : ControllerBase
     public ActionResult<Note> UpdateNoteContent(string id, [FromBody] UpdateNoteContentDto updateDto)
     {
         var note = _notesRepository.GetById(id);
+        AuthorizeAccessToTheNote(note);
         note.RichTextContent = updateDto.Content;
         note.UpdatedDate = DateTime.Now;
         var updatedNote = _notesRepository.Update(note);
@@ -107,6 +113,7 @@ public class NotesController : ControllerBase
     public ActionResult<Note> UpdateNoteTitle(string id, [FromBody] UpdateNoteTitleDto updateNoteTitleDto)
     {
         var note = _notesRepository.GetById(id);
+        AuthorizeAccessToTheNote(note);
         note.Title = updateNoteTitleDto.NewTitle;
         note.UpdatedDate = DateTime.Now;
         var updatedNote = _notesRepository.Update(note);
@@ -121,9 +128,20 @@ public class NotesController : ControllerBase
     [HttpDelete]
     public ActionResult<string> DeleteNote(string id)
     {
+        var note = _notesRepository.GetById(id);
+        AuthorizeAccessToTheNote(note);
+
         _notesRepository.DeleteById(id);
 
         return Ok(id);
+    }
+
+    private void AuthorizeAccessToTheNote(Note? note)
+    {
+        if (note == null || note.CreatedBy != _userService.UserId)
+        {
+            throw new AccessDeniedException("Access denied");
+        }
     }
 
     private bool IsNoteIdValid(string noteId) => ObjectId.TryParse(noteId, out var _);

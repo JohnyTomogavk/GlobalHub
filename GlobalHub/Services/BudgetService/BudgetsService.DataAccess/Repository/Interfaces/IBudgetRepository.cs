@@ -8,8 +8,9 @@ public interface IBudgetRepository
     /// <summary>
     /// Gets user's budgets
     /// </summary>
+    /// <param name="userId"></param>
     /// <returns>User's budgets</returns>
-    Task<IEnumerable<Budget?>> GetUserBudgetsAsync();
+    Task<IEnumerable<Budget?>> GetUserBudgetsAsync(string userId);
 
     /// <summary>
     /// Gets budget by budget id with specified includes

@@ -47,6 +47,7 @@ import useTagsApi from '../../hooks/api/useTagsApi';
 import useBudgetsApi from '../../hooks/api/useBudgetsApi';
 import useBudgetsItemsApi from '../../hooks/api/useBudgetsItemsApi';
 import useTagLimitsApi from '../../hooks/api/useTagLimitsApi';
+import CountUp from 'react-countup';
 
 const { Text } = Typography;
 
@@ -329,12 +330,32 @@ export const BudgetComponent = observer((): JSX.Element => {
             <Card size={'small'} title="Current month balance state" className={styles.card}>
               <Space size={'large'}>
                 <Space direction={'vertical'}>
-                  <Statistic title="Left" suffix={'BYN'} value={budgetAnalyticData?.moneyLeft} />
-                  <Statistic title="Irregular Expenses" suffix={'BYN'} value={budgetAnalyticData?.irregularExpenses} />
+                  <Statistic
+                    title="Left"
+                    suffix={'BYN'}
+                    formatter={() => <CountUp start={0} end={toNumber(budgetAnalyticData?.moneyLeft)} />}
+                    value={budgetAnalyticData?.moneyLeft}
+                  />
+                  <Statistic
+                    title="Irregular Expenses"
+                    suffix={'BYN'}
+                    formatter={() => <CountUp start={0} end={toNumber(budgetAnalyticData?.irregularExpenses)} />}
+                    value={budgetAnalyticData?.irregularExpenses}
+                  />
                 </Space>
                 <Space direction={'vertical'}>
-                  <Statistic title="Preserved" suffix={'BYN'} value={budgetAnalyticData?.moneyPreserved} />
-                  <Statistic title="Regular expenses" suffix={'BYN'} value={budgetAnalyticData?.regularExpenses} />
+                  <Statistic
+                    title="Preserved"
+                    suffix={'BYN'}
+                    formatter={() => <CountUp start={0} end={toNumber(budgetAnalyticData?.moneyPreserved)} />}
+                    value={budgetAnalyticData?.moneyPreserved}
+                  />
+                  <Statistic
+                    title="Regular expenses"
+                    suffix={'BYN'}
+                    formatter={() => <CountUp start={0} end={toNumber(budgetAnalyticData?.regularExpenses)} />}
+                    value={budgetAnalyticData?.regularExpenses}
+                  />
                 </Space>
               </Space>
             </Card>
@@ -342,8 +363,18 @@ export const BudgetComponent = observer((): JSX.Element => {
           <Col flex={'auto'}>
             <Card size={'small'} title={'Operations analytic'} className={styles.card}>
               <Space direction={'vertical'}>
-                <Statistic value={budgetAnalyticData?.averageDailyExpenses} title="Avg daily expenses" suffix={'BYN'} />
-                <Statistic value={budgetAnalyticData?.expensesMedian} title="Expenses median" suffix={'BYN'} />
+                <Statistic
+                  formatter={() => <CountUp start={0} end={toNumber(budgetAnalyticData?.averageDailyExpenses)} />}
+                  value={budgetAnalyticData?.averageDailyExpenses}
+                  title="Avg daily expenses"
+                  suffix={'BYN'}
+                />
+                <Statistic
+                  formatter={() => <CountUp start={0} end={toNumber(budgetAnalyticData?.expensesMedian)} />}
+                  value={budgetAnalyticData?.expensesMedian}
+                  title="Expenses median"
+                  suffix={'BYN'}
+                />
               </Space>
             </Card>
           </Col>

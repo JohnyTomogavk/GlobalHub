@@ -7,20 +7,35 @@ public class BudgetItemService : IBudgetItemService
     private readonly IMapper _mapper;
     private readonly IValidator<BudgetItemCreateDto> _createDtoValidator;
     private readonly IValidator<BudgetItemUpdateDto> _updateDtoValidator;
+    private readonly IAuthorizationService<Budget> _budgetAuthorizationService;
+    private readonly IUserService _userService;
 
-    public BudgetItemService(IBudgetItemRepository budgetItemRepository, ITagRepository tagRepository, IMapper mapper,
-        IValidator<BudgetItemCreateDto> createDtoValidator, IValidator<BudgetItemUpdateDto> updateDtoValidator)
+    public BudgetItemService(IBudgetItemRepository budgetItemRepository,
+        ITagRepository tagRepository,
+        IMapper mapper,
+        IValidator<BudgetItemCreateDto> createDtoValidator,
+        IValidator<BudgetItemUpdateDto> updateDtoValidator,
+        IAuthorizationService<Budget> budgetAuthorizationService,
+        IUserService userService)
     {
         _budgetItemRepository = budgetItemRepository;
         _tagRepository = tagRepository;
         _mapper = mapper;
         _createDtoValidator = createDtoValidator;
         _updateDtoValidator = updateDtoValidator;
+        _budgetAuthorizationService = budgetAuthorizationService;
+        _userService = userService;
     }
 
     public async Task<BudgetItemPaginatedResponse> GetBudgetItemsByBudgetId(long id,
         BudgetItemsQueryOptions queryOptions)
     {
+        var authorized = await _budgetAuthorizationService.AuthorizeRead(_userService.UserId, id);
+        if (!authorized)
+        {
+            throw new AccessDeniedException("Access denied");
+        }
+
         var budgetItemsQueryExpression = _budgetItemRepository.GetBudgetItemsByIdAndPeriodAsIQueryable(id);
         budgetItemsQueryExpression = ApplyFilters(budgetItemsQueryExpression, queryOptions.FilterModelDto);
         budgetItemsQueryExpression =
@@ -56,6 +71,13 @@ public class BudgetItemService : IBudgetItemService
 
     public async Task<BudgetItemDto> CreateBudgetItem(BudgetItemCreateDto createDto)
     {
+        var authorized =
+            await _budgetAuthorizationService.AuthorizeUpdate(_userService.UserId, createDto.BudgetId);
+        if (!authorized)
+        {
+            throw new AccessDeniedException("Access denied");
+        }
+
         var validationResult = await _createDtoValidator.ValidateAsync(createDto);
 
         if (!validationResult.IsValid)
@@ -78,6 +100,13 @@ public class BudgetItemService : IBudgetItemService
         var budgetItemToUpdate =
             await _budgetItemRepository.GetBudgetItemByIdWithIncludeAsync(budgetItemId, bi => bi.BudgetItemTags);
 
+        var authorized =
+            await _budgetAuthorizationService.AuthorizeUpdate(_userService.UserId, budgetItemToUpdate.BudgetId);
+        if (!authorized)
+        {
+            throw new AccessDeniedException("Access denied");
+        }
+
         if (budgetItemToUpdate == null)
         {
             throw new EntityNotFoundException("Budget item is not found");
@@ -92,6 +121,13 @@ public class BudgetItemService : IBudgetItemService
 
     public async Task<BudgetItemDto> UpdateBudgetItem(BudgetItemUpdateDto updateDto)
     {
+        var authorized =
+            await _budgetAuthorizationService.AuthorizeUpdate(_userService.UserId, updateDto.BudgetId);
+        if (!authorized)
+        {
+            throw new AccessDeniedException("Access denied");
+        }
+
         var validationResult = await _updateDtoValidator.ValidateAsync(updateDto);
 
         if (!validationResult.IsValid)
@@ -117,6 +153,12 @@ public class BudgetItemService : IBudgetItemService
     {
         var budgetItem = await _budgetItemRepository.GetBudgetItemById(budgetItemId);
 
+        var authorized = await _budgetAuthorizationService.AuthorizeUpdate(_userService.UserId, budgetItem.BudgetId);
+        if (!authorized)
+        {
+            throw new AccessDeniedException("Access denied");
+        }
+
         if (budgetItem == null)
         {
             throw new EntityNotFoundException("Budget Item is not found");
@@ -128,6 +170,13 @@ public class BudgetItemService : IBudgetItemService
     public async Task<IEnumerable<ExpenseOperationsSumDto>> GetExpensesSumsGroupedByTags(long budgetId,
         DateTimeRange currentBudgetPeriod)
     {
+        var authorized =
+            await _budgetAuthorizationService.AuthorizeRead(_userService.UserId, budgetId);
+        if (!authorized)
+        {
+            throw new AccessDeniedException("Access denied");
+        }
+
         var groupedSums = await _tagRepository.GetExpensesSumsGroupedByTags(budgetId,
             currentBudgetPeriod.StartRangeDate, currentBudgetPeriod.EndRangeDate);
 
@@ -142,6 +191,13 @@ public class BudgetItemService : IBudgetItemService
     public async Task<IEnumerable<BudgetItemDto>> GetBudgetItemsByIdAndRange(long budgetId, DateTime startDateRange,
         DateTime endDateRange)
     {
+        var authorized =
+            await _budgetAuthorizationService.AuthorizeRead(_userService.UserId, budgetId);
+        if (!authorized)
+        {
+            throw new AccessDeniedException("Access denied");
+        }
+
         var budgetItems =
             await _budgetItemRepository.GetBudgetItemsByIdAndDateRange(budgetId, startDateRange, endDateRange);
 

@@ -35,7 +35,9 @@ const AuthGuardComponent = (props: { children: ReactNode }): JSX.Element => {
         navigate(`/${WELCOME_PAGE_ROUTE}`);
       }
 
-      auth.signinSilent();
+      auth.signinSilent().then(() => {
+        if (!auth.isAuthenticated) navigate(`/${WELCOME_PAGE_ROUTE}`);
+      });
     }
   }, [auth]);
 

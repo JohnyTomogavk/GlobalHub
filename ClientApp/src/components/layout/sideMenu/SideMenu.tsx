@@ -201,16 +201,13 @@ export const SideMenu = observer((): JSX.Element => {
       width="100%"
       className={styles.siderContainer}
     >
-      <div className={styles.systemLogo}>
-        <Link to="/">
-          <Title className={styles.title} level={3}>
-            <Space>
-              <GlobalOutlined />
-              <span>GlobalHub</span>
-            </Space>
-          </Title>
-        </Link>
-      </div>
+      <Link to="/">
+        <Title className={styles.title} level={3}>
+          <GlobalOutlined className={styles.brandIcon} />
+          &nbsp;
+          <span>Global Hub</span>
+        </Title>
+      </Link>
       <Divider className={styles.siderDivider} />
       <Tree
         style={{

@@ -1,40 +1,49 @@
 ﻿@page
+@using IdentityService.Presentation.Pages.Shared.ExternalAuth
 @model IdentityService.Presentation.Pages.Account.Create.Index
 
-<div class="login-page">
-    <div class="lead">
-        <h1>Create Account</h1>
+@{
+    Layout = "Shared/Layouts/_AuthCardLayout";
+
+    var externalAuthModel = new ExternalAuthViewModel
+    {
+        ExternalProviders = Model.ExternalProviders,
+        ReturnUrl = Model.ReturnUrl,
+    };
+}
+
+<form asp-page="/Account/Create/Index">
+    <partial name="Shared/Components/_SystemLogo"/>
+
+    <button
+        type="submit"
+        class="btn btn-light mb-3"
+        name="Input.Button"
+        value="@AuthAction.RedirectToSignIn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+        </svg>
+        Back to Login
+    </button>
+
+    <partial name="Shared/Components/_ValidationSummary"/>
+    <input type="hidden" asp-for="ReturnUrl"/>
+
+
+    <div class="form-group mb-3">
+        <label asp-for="Input.Username" class="form-label"></label>
+        <input class="form-control" placeholder="Username" asp-for="Input.Username" autofocus>
+    </div>
+    <div class="form-group mb-3">
+        <label asp-for="Input.Email" class="form-label"></label>
+        <input type="email" class="form-control" placeholder="Email" asp-for="Input.Email">
+    </div>
+    <div class="form-group mb-3">
+        <label asp-for="Input.Password" class="form-label"></label>
+        <input type="password" class="form-control" placeholder="Password" asp-for="Input.Password" autocomplete="off">
     </div>
 
-    <partial name="_ValidationSummary"/>
+    <button class="btn btn-primary w-100 mb-3" name="Input.Button" value="@AuthAction.SignUp">Create</button>
+</form>
 
-    <div class="row">
-
-        <div class="col-sm-6">
-            <form asp-page="/Account/Create/Index">
-                <input type="hidden" asp-for="Input.ReturnUrl"/>
-
-                <div class="form-group">
-                    <label asp-for="Input.Username"></label>
-                    <input class="form-control" placeholder="Username" asp-for="Input.Username" autofocus>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Input.Password"></label>
-                    <input type="password" class="form-control" placeholder="Password" asp-for="Input.Password" autocomplete="off">
-                </div>
-                <div class="form-group">
-                    <label asp-for="Input.Name"></label>
-                    <input type="text" class="form-control" placeholder="Name" asp-for="Input.Name">
-                </div>
-                <div class="form-group">
-                    <label asp-for="Input.Email"></label>
-                    <input type="email" class="form-control" placeholder="Email" asp-for="Input.Email">
-                </div>
-
-                <button class="btn btn-primary" name="Input.Button" value="create">Create</button>
-                <button class="btn btn-secondary" name="Input.Button" value="cancel">Cancel</button>
-            </form>
-        </div>
-
-    </div>
-</div>
+<partial name="Shared/ExternalAuth/_ExternalAuthSection" model="externalAuthModel"/>

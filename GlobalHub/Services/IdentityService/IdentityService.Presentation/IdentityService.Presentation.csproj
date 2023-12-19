@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="7.0.4" />
     <PackageReference Include="Duende.IdentityServer" Version="6.3.6"/>
     <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="6.3.2"/>
     <PackageReference Include="Duende.IdentityServer.EntityFramework" Version="6.3.6"/>
     <PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="6.3.6"/>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.14"/>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.14"/>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.14"/>
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.0"/>
@@ -27,7 +29,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj"/>
     <ProjectReference Include="..\IdentityService.Domain\IdentityService.Domain.csproj"/>
-    <ProjectReference Include="..\IdentityService.Infrastructure\IdentityService.Infrastructure.csproj" />
+    <ProjectReference Include="..\IdentityService.Infrastructure\IdentityService.Infrastructure.csproj"/>
     <ProjectReference Include="..\IdentityService.Persistence\IdentityService.Persistence.csproj"/>
   </ItemGroup>
 
@@ -43,6 +45,10 @@
     </Content>
     <Content Update="appsettings.DOCKER_COMPOSE_DEMO.json">
       <DependentUpon>appsettings.json</DependentUpon>
+    </Content>
+    <Content Update="Pages\Shared\_ExternalAuth.cshtml.cs">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
   </ItemGroup>
 </Project>

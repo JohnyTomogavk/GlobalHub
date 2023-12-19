@@ -6,22 +6,36 @@ public class BudgetService : IBudgetService
     private readonly IMapper _mapper;
     private readonly IValidator<Budget> _budgetValidator;
     private readonly IValidator<UpdateBudgetPreservePercentDto> _preservePercentDto;
+    private readonly IAuthorizationService<Budget> _budgetAuthorizationService;
+    private readonly IUserService _userService;
 
     public BudgetService(
         IBudgetRepository budgetRepository,
         IMapper mapper,
         IValidator<Budget> budgetValidator,
-        IValidator<UpdateBudgetPreservePercentDto> preservePercentDto)
+        IValidator<UpdateBudgetPreservePercentDto> preservePercentDto,
+        IAuthorizationService<Budget> budgetAuthorizationService,
+        IUserService userService)
     {
         _budgetRepository = budgetRepository;
         _mapper = mapper;
         _budgetValidator = budgetValidator;
         _preservePercentDto = preservePercentDto;
+        _budgetAuthorizationService = budgetAuthorizationService;
+        _userService = userService;
     }
 
-    public async Task<IEnumerable<BudgetMap>> GetUserBudgetsMapAsync()
+    public async Task<IEnumerable<BudgetMap>> GetUserBudgetsMapAsync(string userId)
     {
-        var userBudgets = await _budgetRepository.GetUserBudgetsAsync();
+        var userBudgets = await _budgetRepository.GetUserBudgetsAsync(userId);
+
+        var ids = userBudgets.Select(budget => budget.Id);
+        var authorized = await _budgetAuthorizationService.AuthorizeRead(_userService.UserId, ids);
+        if (!authorized)
+        {
+            throw new AccessDeniedException("Access denied");
+        }
+
         var maps = _mapper.Map<IEnumerable<BudgetMap>>(userBudgets);
 
         return maps;
@@ -29,7 +43,14 @@ public class BudgetService : IBudgetService
 
     public async Task<BudgetDto?> GetBudgetByIdAsync(long budgetId)
     {
+        var authorized = await _budgetAuthorizationService.AuthorizeRead(_userService.UserId, budgetId);
+        if (!authorized)
+        {
+            throw new AccessDeniedException("Access denied");
+        }
+
         var budget = await _budgetRepository.GetBudgetByIdWithIncludeAsync(budgetId);
+
         var mappedBudget = _mapper.Map<BudgetDto>(budget);
 
         return mappedBudget;
@@ -53,6 +74,12 @@ public class BudgetService : IBudgetService
 
     public async Task<BudgetAnalyticDto> GetBudgetAnalytic(long budgetId, DateTimeRange dateRange)
     {
+        var authorized = await _budgetAuthorizationService.AuthorizeRead(_userService.UserId, budgetId);
+        if (!authorized)
+        {
+            throw new AccessDeniedException("Access denied");
+        }
+
         var budget = await _budgetRepository.GetBudgetByIdWithIncludeAsync(budgetId, budget => budget.BudgetItems);
 
         if (budget == null)
@@ -67,6 +94,12 @@ public class BudgetService : IBudgetService
 
     public async Task<long> DeleteBudgetById(long id)
     {
+        var authorized = await _budgetAuthorizationService.AuthorizeDelete(_userService.UserId, id);
+        if (!authorized)
+        {
+            throw new AccessDeniedException("Access denied");
+        }
+
         var budgetToDelete = await _budgetRepository.GetBudgetByIdWithIncludeAsync(id);
 
         if (budgetToDelete == null)
@@ -81,6 +114,12 @@ public class BudgetService : IBudgetService
 
     public async Task<BudgetDto> UpdateBudgetTitle(long budgetId, string title)
     {
+        var authorized = await _budgetAuthorizationService.AuthorizeUpdate(_userService.UserId, budgetId);
+        if (!authorized)
+        {
+            throw new AccessDeniedException("Access denied");
+        }
+
         var budget = await _budgetRepository.GetBudgetByIdWithIncludeAsync(budgetId);
 
         if (budget == null)
@@ -96,6 +135,12 @@ public class BudgetService : IBudgetService
 
     public async Task<BudgetDto> UpdateBudgetDescription(long budgetId, string description)
     {
+        var authorized = await _budgetAuthorizationService.AuthorizeUpdate(_userService.UserId, budgetId);
+        if (!authorized)
+        {
+            throw new AccessDeniedException("Access denied");
+        }
+
         var budget = await _budgetRepository.GetBudgetByIdWithIncludeAsync(budgetId);
 
         if (budget == null)
@@ -111,6 +156,12 @@ public class BudgetService : IBudgetService
 
     public async Task<BudgetDto> UpdatePreservePercent(long budgetId, UpdateBudgetPreservePercentDto dto)
     {
+        var authorized = await _budgetAuthorizationService.AuthorizeUpdate(_userService.UserId, budgetId);
+        if (!authorized)
+        {
+            throw new AccessDeniedException("Access denied");
+        }
+
         var validationResult = await this._preservePercentDto.ValidateAsync(dto);
 
         if (!validationResult.IsValid)

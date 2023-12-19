@@ -8,8 +8,9 @@ public interface IBudgetService
     /// <summary>
     /// Gets map of user's budgets
     /// </summary>
+    /// <param name="userId"></param>
     /// <returns>Set of maps</returns>
-    Task<IEnumerable<BudgetMap>> GetUserBudgetsMapAsync();
+    Task<IEnumerable<BudgetMap>> GetUserBudgetsMapAsync(string userId);
 
     /// <summary>
     /// Gets budget by id

@@ -17,7 +17,7 @@ namespace BudgetsService.DataAccess.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.9")
+                .HasAnnotation("ProductVersion", "7.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -38,11 +38,17 @@ namespace BudgetsService.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("PreserveFromIncomingPercent")
                         .HasColumnType("integer");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
@@ -176,7 +182,7 @@ namespace BudgetsService.DataAccess.Migrations
                         .IsRequired();
 
                     b.HasOne("BudgetsService.DataAccess.Entities.Tags.Tag", "Tag")
-                        .WithMany("BudgetItems")
+                        .WithMany("BudgetItemTags")
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -222,10 +228,9 @@ namespace BudgetsService.DataAccess.Migrations
 
             modelBuilder.Entity("BudgetsService.DataAccess.Entities.Tags.Tag", b =>
                 {
-                    b.Navigation("BudgetItems");
+                    b.Navigation("BudgetItemTags");
 
-                    b.Navigation("TagLimit")
-                        .IsRequired();
+                    b.Navigation("TagLimit");
                 });
 #pragma warning restore 612, 618
         }

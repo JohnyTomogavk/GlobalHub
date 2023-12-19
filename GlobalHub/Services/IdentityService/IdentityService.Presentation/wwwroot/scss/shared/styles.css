@@ -1,0 +1,14 @@
+.system-logo {
+  height: 50px;
+  width: 50px;
+}
+
+.card-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 60px;
+  padding-bottom: 40px;
+}
+
+/*# sourceMappingURL=styles.css.map */

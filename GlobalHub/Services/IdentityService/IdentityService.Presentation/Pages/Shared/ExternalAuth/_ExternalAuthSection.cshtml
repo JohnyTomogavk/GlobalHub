@@ -1,0 +1,40 @@
+﻿@using Microsoft.AspNetCore.Authentication.Google
+@using AspNet.Security.OAuth.GitHub
+@model IdentityService.Presentation.Pages.Shared.ExternalAuth.ExternalAuthViewModel
+
+<div class="row align-items-center mb-3 flex-nowrap">
+    <div class="col">
+        <hr >
+    </div>
+    <span class="col p-0 text-center">
+        or sign in with
+    </span>
+    <div class="col">
+        <hr >
+    </div>
+</div>
+
+<div class="row">
+    @foreach (var provider in Model.ExternalProviders)
+    {
+        <div class="col-6">
+            <a
+                asp-page="/ExternalLogin/Challenge"
+                asp-route-scheme="@provider.AuthenticationScheme"
+                asp-route-returnUrl="@Model.ReturnUrl">
+                @switch (provider.AuthenticationScheme)
+                {
+                    case GoogleDefaults.AuthenticationScheme:
+                        <partial name="Shared/Components/_GoogleSignInButton"/>
+                        break;
+                    case GitHubAuthenticationDefaults.AuthenticationScheme:
+                        <partial name="Shared/Components/_GithubSignInButton"/>
+                        break;
+                    default:
+                        @provider.DisplayName
+                        break;
+                }
+            </a>
+        </div>
+    }
+</div>

@@ -25,10 +25,29 @@ public class ExceptionHandlingMiddleware
         {
             await HandleValidationException(httpContext, validationException);
         }
+        catch (AccessDeniedException exception)
+        {
+            await HandleAccessDeniedException(httpContext, exception);
+        }
         catch (Exception exception)
         {
             await HandleExceptionAsync(httpContext, exception);
         }
+    }
+
+    private async Task HandleAccessDeniedException(HttpContext httpContext, Exception ex)
+    {
+        httpContext.Response.ContentType = MediaTypeNames.Application.Json;
+        httpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+
+        var response =
+            new CustomResponse
+            {
+                Message = ex.Message, StatusCode = (int)HttpStatusCode.Forbidden, Details = "Access denied"
+            };
+        var serializedResponse = JsonSerializer.Serialize(response);
+        await httpContext.Response.WriteAsync(serializedResponse);
+        LogException(ex);
     }
 
     private async Task HandleEntityNotFoundException(HttpContext httpContext, Exception ex)

@@ -9,14 +9,14 @@ public class NotesRepository : INotesRepository
         _notesDbContext = notesDbContext;
     }
 
-    public IEnumerable<Note> GetNotesMap()
+    public IEnumerable<Note> GetNotesMap(string userId)
     {
-        return _notesDbContext.Notes.FindSync(note => note != null).ToList();
+        return _notesDbContext.Notes.FindSync(note => note.CreatedBy == userId).ToList();
     }
 
-    public IEnumerable<Note> GetNoteList()
+    public IEnumerable<Note> GetNoteList(string userId)
     {
-        return _notesDbContext.Notes.FindSync(item => item.CreatedBy == null).ToList();
+        return _notesDbContext.Notes.FindSync(item => item.CreatedBy == userId).ToList();
     }
 
     public Note Create(Note newNote)

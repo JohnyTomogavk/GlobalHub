@@ -26,7 +26,10 @@ internal static class HostingExtensions
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(identityDbConnectionString));
 
-        builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+        builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+            })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
@@ -64,6 +67,22 @@ internal static class HostingExtensions
             })
             .AddAspNetIdentity<ApplicationUser>();
 
+        builder.Services.AddAuthentication()
+            .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+            {
+                options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+
+                options.ClientId = "<insert here>";
+                options.ClientSecret = "<insert here>";
+            })
+            .AddGitHub(GitHubAuthenticationDefaults.AuthenticationScheme, options =>
+            {
+                options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+
+                options.ClientId = "<insert here>";
+                options.ClientSecret = "<insert here>";
+            });
+
         builder.Services.AddScoped<IProfileService, AppProfileService>();
 
         var app = builder.Build();
@@ -72,7 +91,7 @@ internal static class HostingExtensions
             Environment.GetEnvironmentVariable(EnvVariablesConfig.ReinitializeIdentityResources);
         var parsed = bool.TryParse(shouldReinitializeDatabaseEnv, out var shouldReinitialize);
 
-        if (builder.Environment.IsDockerComposeEnvironment() && parsed && shouldReinitialize)
+        if (parsed && shouldReinitialize)
         {
             await MigrateDatabases(app.Services);
             await IdentityResourcesSeeder.ReinitializeDatabase(app.Services, builder.Configuration);

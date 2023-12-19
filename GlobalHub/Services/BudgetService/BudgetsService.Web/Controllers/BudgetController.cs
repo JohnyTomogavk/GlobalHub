@@ -10,11 +10,13 @@ public class BudgetController : ControllerBase
 {
     private readonly IBudgetService _budgetService;
     private readonly IDateTimeService _dateTimeService;
+    private readonly IUserService _userService;
 
-    public BudgetController(IBudgetService budgetService, IDateTimeService dateTimeService)
+    public BudgetController(IBudgetService budgetService, IDateTimeService dateTimeService, IUserService userService)
     {
         _budgetService = budgetService;
         _dateTimeService = dateTimeService;
+        _userService = userService;
     }
 
     /// <summary>
@@ -24,7 +26,8 @@ public class BudgetController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<BudgetMap>>> GetBudgetsMap()
     {
-        var userBudgetsMap = await _budgetService.GetUserBudgetsMapAsync();
+        var userId = _userService.UserId;
+        var userBudgetsMap = await _budgetService.GetUserBudgetsMapAsync(userId);
 
         if (!userBudgetsMap.Any())
         {

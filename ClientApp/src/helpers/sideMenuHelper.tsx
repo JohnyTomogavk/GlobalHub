@@ -8,7 +8,10 @@ export const getTopLevelItemTitle = (title: string, onClick?: MouseEventHandler)
     <span className={styles.itemTitle}>{title}</span>
     {onClick && (
       <Button
-        onClick={onClick}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick(e);
+        }}
         type={'text'}
         className={styles.sideMenuActionButton}
         size={'small'}
