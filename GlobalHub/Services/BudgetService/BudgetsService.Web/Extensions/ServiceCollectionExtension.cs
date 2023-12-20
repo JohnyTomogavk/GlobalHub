@@ -1,4 +1,7 @@
-﻿namespace BudgetsService.Web.Extensions;
+﻿using BudgetsService.DataAccess.Entities.Budgets;
+using Common.Services;
+
+namespace BudgetsService.Web.Extensions;
 
 public static class ServiceCollectionExtension
 {

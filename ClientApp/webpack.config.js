@@ -62,6 +62,9 @@ module.exports = {
       overlay: true,
     },
   },
+  stats: {
+    errorDetails: true,
+  },
   module: {
     strictExportPresence: true,
     rules: [
