@@ -3,7 +3,6 @@ namespace NotesService.Controllers;
 /// <summary>
 /// Controller that manages user's notes
 /// </summary>
-[Authorize]
 [ApiController]
 [Route("api/v1/[controller]/[action]")]
 public class NotesController : ControllerBase
