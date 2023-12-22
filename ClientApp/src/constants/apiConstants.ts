@@ -1,8 +1,11 @@
 import { getEnvVar } from '../config/environmentVariables';
 
-export const NOTES_API_BASE = getEnvVar('NOTES_SERVICE_BASE', process.env.NOTES_SERVICE_BASE);
+export const API_GATEWAY_BASE = getEnvVar('API_GATEWAY_URL', process.env.API_GATEWAY_URL);
 
-export const BUDGETS_API_BASE = getEnvVar('BUDGETS_SERVICE_BASE', process.env.BUDGETS_SERVICE_BASE);
+// API Suffixes
+export const NOTES_API_SUFFIX = 'notes-api';
+export const BUDGETS_API_SUFFIX = 'budgets-api';
+export const IDENTITY_API_SUFFIX = 'identity-api';
 
 // Constants related to notes
 export const CREATE_NOTE = '/Notes/CreateNote';

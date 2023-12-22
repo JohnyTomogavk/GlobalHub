@@ -4,7 +4,7 @@ import { AxiosResponse } from 'axios';
 import { BudgetItemsPaginatedResponseDto } from '../../dto/budgetItems/budgetItemsPaginatedResponseDto';
 import { getResourceUrl } from '../../helpers/urlHelper';
 import {
-  BUDGETS_API_BASE,
+  BUDGETS_API_SUFFIX,
   GET_BUDGET_ITEMS_BY_ID_AND_RANGE,
   GET_EXPENSES_SUM_GROUPED_BY_TAGS,
 } from '../../constants/apiConstants';
@@ -38,22 +38,22 @@ const useBudgetsItemsApi = (): IBudgetItemsApi => {
       budgetId: number,
       budgetItemDto: BudgetItemsRequestDto
     ): Promise<AxiosResponse<BudgetItemsPaginatedResponseDto>> => {
-      const url = getResourceUrl(BUDGETS_API_BASE, apiConstants.GET_BUDGET_ITEMS_BY_BUDGET_ID, budgetId);
+      const url = getResourceUrl(BUDGETS_API_SUFFIX, apiConstants.GET_BUDGET_ITEMS_BY_BUDGET_ID, budgetId);
 
       return httpPut(url, budgetItemDto);
     },
     create: (createDto: BudgetItemCreateDto): Promise<AxiosResponse<BudgetItemDto>> => {
-      const url = getResourceUrl(BUDGETS_API_BASE, apiConstants.CREATE_BUDGET_ITEM);
+      const url = getResourceUrl(BUDGETS_API_SUFFIX, apiConstants.CREATE_BUDGET_ITEM);
 
       return httpPost(url, createDto);
     },
     update: (updateDto: BudgetItemUpdateDto): Promise<AxiosResponse<BudgetItemDto>> => {
-      const url = getResourceUrl(BUDGETS_API_BASE, apiConstants.UPDATE_BUDGET_ITEM);
+      const url = getResourceUrl(BUDGETS_API_SUFFIX, apiConstants.UPDATE_BUDGET_ITEM);
 
       return httpPut(url, updateDto);
     },
     delete: (budgetItemId: number): Promise<AxiosResponse<number>> => {
-      const url = getResourceUrl(BUDGETS_API_BASE, apiConstants.DELETE_BUDGET_ITEM_BY_ID);
+      const url = getResourceUrl(BUDGETS_API_SUFFIX, apiConstants.DELETE_BUDGET_ITEM_BY_ID);
 
       return httpDelete(url, {
         params: {
@@ -62,7 +62,7 @@ const useBudgetsItemsApi = (): IBudgetItemsApi => {
       });
     },
     getExpensesSumsGroupedByTags: (budgetId: number): Promise<AxiosResponse<ExpenseOperationsSumDto[]>> => {
-      const url = getResourceUrl(BUDGETS_API_BASE, GET_EXPENSES_SUM_GROUPED_BY_TAGS);
+      const url = getResourceUrl(BUDGETS_API_SUFFIX, GET_EXPENSES_SUM_GROUPED_BY_TAGS);
 
       return httpGet(url, {
         params: { budgetId: budgetId },
@@ -73,7 +73,7 @@ const useBudgetsItemsApi = (): IBudgetItemsApi => {
       startDateRange: Date,
       endDateRange: Date
     ): Promise<AxiosResponse<BudgetItemDto[]>> => {
-      const url = getResourceUrl(BUDGETS_API_BASE, GET_BUDGET_ITEMS_BY_ID_AND_RANGE);
+      const url = getResourceUrl(BUDGETS_API_SUFFIX, GET_BUDGET_ITEMS_BY_ID_AND_RANGE);
 
       return httpGet(url, {
         params: {

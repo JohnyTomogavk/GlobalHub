@@ -1,7 +1,7 @@
 import useAxios from './useAxios';
 import { AxiosResponse } from 'axios';
 import { getResourceUrl } from '../../helpers/urlHelper';
-import { BUDGETS_API_BASE } from '../../constants/apiConstants';
+import { BUDGETS_API_SUFFIX } from '../../constants/apiConstants';
 import * as apiConstants from '../../constants/apiConstants';
 import { BudgetMap } from '../../dto/sideMenu/budgetMap';
 import { BudgetDto } from '../../dto/budgets/budgetDto';
@@ -24,12 +24,12 @@ const useBudgetsApi = (): IBudgetsApi => {
 
   return {
     getBudgetsMap: (): Promise<AxiosResponse<BudgetMap[]>> => {
-      const url = getResourceUrl(BUDGETS_API_BASE, apiConstants.GET_BUDGETS_MAP);
+      const url = getResourceUrl(BUDGETS_API_SUFFIX, apiConstants.GET_BUDGETS_MAP);
 
       return httpGet(url);
     },
     getById: (id: number): Promise<AxiosResponse<BudgetDto>> => {
-      const url = getResourceUrl(BUDGETS_API_BASE, apiConstants.GET_BUDGET_BY_ID);
+      const url = getResourceUrl(BUDGETS_API_SUFFIX, apiConstants.GET_BUDGET_BY_ID);
 
       return httpGet(url, {
         params: {
@@ -38,12 +38,12 @@ const useBudgetsApi = (): IBudgetsApi => {
       });
     },
     create: (createDto: CreateBudgetDto): Promise<AxiosResponse<BudgetDto>> => {
-      const url = getResourceUrl(BUDGETS_API_BASE, apiConstants.CREATE_BUDGET);
+      const url = getResourceUrl(BUDGETS_API_SUFFIX, apiConstants.CREATE_BUDGET);
 
       return httpPost(url, createDto);
     },
     updateTitle: (budgetId: number, title: string): Promise<AxiosResponse> => {
-      const url = getResourceUrl(BUDGETS_API_BASE, apiConstants.UPDATE_BUDGET_TITLE);
+      const url = getResourceUrl(BUDGETS_API_SUFFIX, apiConstants.UPDATE_BUDGET_TITLE);
 
       return httpPut(
         url,
@@ -58,7 +58,7 @@ const useBudgetsApi = (): IBudgetsApi => {
       );
     },
     updateDescription: (budgetId: number, description: string): Promise<AxiosResponse> => {
-      const url = getResourceUrl(BUDGETS_API_BASE, apiConstants.UPDATE_BUDGET_DESCRIPTION);
+      const url = getResourceUrl(BUDGETS_API_SUFFIX, apiConstants.UPDATE_BUDGET_DESCRIPTION);
 
       return httpPut(
         url,
@@ -73,7 +73,7 @@ const useBudgetsApi = (): IBudgetsApi => {
       );
     },
     delete: (budgetId: number): Promise<AxiosResponse<number>> => {
-      const url = getResourceUrl(BUDGETS_API_BASE, apiConstants.DELETE_BUDGET_BY_ID);
+      const url = getResourceUrl(BUDGETS_API_SUFFIX, apiConstants.DELETE_BUDGET_BY_ID);
 
       return httpDelete(url, {
         params: {
@@ -82,7 +82,7 @@ const useBudgetsApi = (): IBudgetsApi => {
       });
     },
     updatePreservePercent: (budgetId: number, newPercentValue: number): Promise<AxiosResponse<BudgetDto>> => {
-      const url = getResourceUrl(BUDGETS_API_BASE, apiConstants.UPDATE_BUDGET_PRESERVE_PERCENT);
+      const url = getResourceUrl(BUDGETS_API_SUFFIX, apiConstants.UPDATE_BUDGET_PRESERVE_PERCENT);
 
       return httpPut(
         url,
@@ -97,7 +97,7 @@ const useBudgetsApi = (): IBudgetsApi => {
       );
     },
     getAnalyticById: (budgetId: number): Promise<AxiosResponse<BudgetAnalyticDto>> => {
-      const url = getResourceUrl(BUDGETS_API_BASE, apiConstants.GET_BUDGETS_ANALYTIC_FOR_CURRENT_MONTH);
+      const url = getResourceUrl(BUDGETS_API_SUFFIX, apiConstants.GET_BUDGETS_ANALYTIC_FOR_CURRENT_MONTH);
 
       return httpGet(url, {
         params: {
