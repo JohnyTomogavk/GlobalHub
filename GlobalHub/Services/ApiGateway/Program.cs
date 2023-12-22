@@ -1,6 +1,6 @@
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvFilesToConfiguration()
-    .AddJsonFile("ocelot.json");
+    .AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json");
 builder.Services.AddHttpContextAccessor();
 
 builder.Host.UseSerilog(SerilogExtensions.LoggerConfiguration);

@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { useAuth } from 'react-oidc-context';
 import Button from 'antd/es/button';
 import styles from './product.module.scss';
@@ -6,6 +6,7 @@ import { ArrowRightOutlined, CheckSquareTwoTone, DollarTwoTone, EditTwoTone } fr
 import { Image, TabsProps, Card, Tabs, theme } from 'antd/lib';
 import Typography from 'antd/lib/typography';
 import { AppFooter } from '../../components/layout/footer/Footer';
+import { toNumber } from 'lodash';
 
 const { Text, Title } = Typography;
 
@@ -108,6 +109,18 @@ export const ProductPage = (): JSX.Element => {
       ))}
     </div>
   );
+
+  useEffect(() => {
+    const tabSwitchInterval = 3000;
+
+    setInterval(() => {
+      setTabsActiveKey((prevState) => {
+        const lastItemKey = tabsItems[tabsItems.length - 1].key;
+
+        return prevState === lastItemKey ? tabsItems[0].key : `${toNumber(prevState) + 1}`;
+      });
+    }, tabSwitchInterval);
+  }, []);
 
   return (
     <>
