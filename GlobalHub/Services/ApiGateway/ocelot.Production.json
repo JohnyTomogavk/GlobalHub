@@ -14,7 +14,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "budget-service",
-          "Port": 443
+          "Port": 80
         }
       ],
       "AuthenticationOptions": {
@@ -38,7 +38,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "note-service",
-          "Port": 443
+          "Port": 80
         }
       ],
       "AuthenticationOptions": {
@@ -59,7 +59,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "identity-service",
-          "Port": 443
+          "Port": 80
         }
       ]
     }
