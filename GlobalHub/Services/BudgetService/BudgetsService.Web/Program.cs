@@ -57,6 +57,7 @@ app.UseSerilogRequestLogging();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsDockerComposeEnvironment())
 {
+    IdentityModelEventSource.ShowPII = true;
     app.UseSwagger();
     app.UseSwaggerUI();
 }

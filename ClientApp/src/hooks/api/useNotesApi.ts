@@ -2,7 +2,7 @@ import useAxios from './useAxios';
 import { AxiosResponse } from 'axios';
 import { Note } from '../../entities/notes/note';
 import { getResourceUrl } from '../../helpers/urlHelper';
-import { NOTES_API_BASE } from '../../constants/apiConstants';
+import { NOTES_API_SUFFIX } from '../../constants/apiConstants';
 import * as apiConstants from '../../constants/apiConstants';
 import { NoteMap } from '../../dto/sideMenu/noteMap';
 import { CreateNoteDto } from '../../dto/notes/createNoteDto';
@@ -24,7 +24,7 @@ const useNotesAPI = (): INotesApi => {
 
   return {
     getById: (id: string): Promise<AxiosResponse<Note>> => {
-      const url = getResourceUrl(NOTES_API_BASE, apiConstants.GET_NOTE_BY_ID);
+      const url = getResourceUrl(NOTES_API_SUFFIX, apiConstants.GET_NOTE_BY_ID);
 
       return httpGet(url, {
         params: {
@@ -33,32 +33,32 @@ const useNotesAPI = (): INotesApi => {
       });
     },
     getNotesMap: (): Promise<AxiosResponse<NoteMap[]>> => {
-      const url = getResourceUrl(NOTES_API_BASE, apiConstants.GET_NOTES_MAP);
+      const url = getResourceUrl(NOTES_API_SUFFIX, apiConstants.GET_NOTES_MAP);
 
       return httpGet(url);
     },
     getNotesList: (): Promise<AxiosResponse<Note[]>> => {
-      const url = getResourceUrl(NOTES_API_BASE, apiConstants.GET_NOTES_LIST);
+      const url = getResourceUrl(NOTES_API_SUFFIX, apiConstants.GET_NOTES_LIST);
 
       return httpGet(url);
     },
     create: (createDto: CreateNoteDto): Promise<AxiosResponse<Note>> => {
-      const url = getResourceUrl(NOTES_API_BASE, apiConstants.CREATE_NOTE);
+      const url = getResourceUrl(NOTES_API_SUFFIX, apiConstants.CREATE_NOTE);
 
       return httpPost(url, createDto);
     },
     updateContent: (id: string, updateDto: UpdateNoteContentDto): Promise<AxiosResponse<Note>> => {
-      const url = getResourceUrl(NOTES_API_BASE, apiConstants.UPDATE_NOTE_CONTENT, id);
+      const url = getResourceUrl(NOTES_API_SUFFIX, apiConstants.UPDATE_NOTE_CONTENT, id);
 
       return httpPut(url, updateDto);
     },
     updateTitle: (id: string, noteTitleDto: UpdateNoteTitleDto): Promise<AxiosResponse<Note>> => {
-      const url = getResourceUrl(NOTES_API_BASE, apiConstants.UPDATE_NOTE_TITLE, id);
+      const url = getResourceUrl(NOTES_API_SUFFIX, apiConstants.UPDATE_NOTE_TITLE, id);
 
       return httpPut(url, noteTitleDto);
     },
     delete: (id: string): Promise<AxiosResponse<string>> => {
-      const url = getResourceUrl(NOTES_API_BASE, apiConstants.DELETE_NOTE);
+      const url = getResourceUrl(NOTES_API_SUFFIX, apiConstants.DELETE_NOTE);
 
       return httpDelete(url, {
         params: {

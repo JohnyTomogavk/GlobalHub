@@ -1,5 +1,6 @@
 ﻿// Global using directives
 
+global using System.Text;
 global using BudgetsService.Business.Dto.Budget;
 global using BudgetsService.Business.Dto.BudgetItems;
 global using BudgetsService.Business.Dto.Tag;
@@ -20,8 +21,11 @@ global using Common.Extensions;
 global using Common.Logging;
 global using Common.Services.Abstract;
 global using FluentValidation;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
+global using Microsoft.IdentityModel.Logging;
+global using Microsoft.IdentityModel.Tokens;
 global using Microsoft.OpenApi.Models;
 global using Serilog;

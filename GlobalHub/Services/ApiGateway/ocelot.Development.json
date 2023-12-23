@@ -1,0 +1,67 @@
+﻿{
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/budgets-api/{path}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "OPTIONS"
+      ],
+      "DownstreamPathTemplate": "/api/v1/{path}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7285
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [
+          "GlobalHub.BudgetsAPI"
+        ]
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/notes-api/{path}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "OPTIONS"
+      ],
+      "DownstreamPathTemplate": "/api/v1/{path}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7198
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [
+          "GlobalHub.NotesAPI"
+        ]
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/identity-api/{path}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST"
+      ],
+      "DownstreamPathTemplate": "/{path}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7389
+        }
+      ]
+    }
+  ]
+}

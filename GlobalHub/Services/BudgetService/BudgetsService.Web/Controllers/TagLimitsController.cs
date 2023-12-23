@@ -3,7 +3,6 @@
 /// <summary>
 /// Controller that manages tag limits
 /// </summary>
-[Authorize]
 [ApiController]
 [Route("api/v1/[controller]/[action]")]
 public class TagLimitsController : ControllerBase

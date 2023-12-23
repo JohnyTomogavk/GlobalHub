@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityService.Persistence
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityService.Infrastructure", "Services\IdentityService\IdentityService.Infrastructure\IdentityService.Infrastructure.csproj", "{68F63153-EA8B-43B7-9A78-CCCEA9C9BB08}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway", "Services\ApiGateway\ApiGateway.csproj", "{A61A549A-5136-4394-8E5B-6AA78301B131}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,7 @@ Global
 		{200DDC4D-44E2-40A7-9A7F-0D5C689DA9B0} = {2C30B56D-8D18-4A2E-84AC-B18EF60926A8}
 		{615F32E0-3557-4A4E-8E55-8DE0F888BEE2} = {2C30B56D-8D18-4A2E-84AC-B18EF60926A8}
 		{68F63153-EA8B-43B7-9A78-CCCEA9C9BB08} = {2C30B56D-8D18-4A2E-84AC-B18EF60926A8}
+		{A61A549A-5136-4394-8E5B-6AA78301B131} = {8A8803A9-8818-4CAB-8761-F8750F49423D}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FF9AF57C-8469-4371-B051-E6A64EC1429B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -100,5 +103,9 @@ Global
 		{68F63153-EA8B-43B7-9A78-CCCEA9C9BB08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68F63153-EA8B-43B7-9A78-CCCEA9C9BB08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68F63153-EA8B-43B7-9A78-CCCEA9C9BB08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A61A549A-5136-4394-8E5B-6AA78301B131}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A61A549A-5136-4394-8E5B-6AA78301B131}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A61A549A-5136-4394-8E5B-6AA78301B131}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A61A549A-5136-4394-8E5B-6AA78301B131}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

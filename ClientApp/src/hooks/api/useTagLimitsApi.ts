@@ -1,8 +1,8 @@
 import useAxios from './useAxios';
-import { AxiosResponse } from 'axios/index';
+import { AxiosResponse } from 'axios';
 import { TagLimitDto } from '../../dto/tagLimit/tagLimitDto';
 import { getResourceUrl } from '../../helpers/urlHelper';
-import { BUDGETS_API_BASE, GET_TAG_LIMITS, UPDATE_BUDGET_TAG_LIMITS } from '../../constants/apiConstants';
+import { BUDGETS_API_SUFFIX, GET_TAG_LIMITS, UPDATE_BUDGET_TAG_LIMITS } from '../../constants/apiConstants';
 
 interface ITagLimitsApi {
   getLimits: (budgetId: number) => Promise<AxiosResponse<TagLimitDto[]>>;
@@ -14,7 +14,7 @@ const useTagLimitsApi = (): ITagLimitsApi => {
 
   return {
     getLimits: (budgetId: number): Promise<AxiosResponse<TagLimitDto[]>> => {
-      const url = getResourceUrl(BUDGETS_API_BASE, GET_TAG_LIMITS);
+      const url = getResourceUrl(BUDGETS_API_SUFFIX, GET_TAG_LIMITS);
 
       return httpGet(url, {
         params: {
@@ -23,7 +23,7 @@ const useTagLimitsApi = (): ITagLimitsApi => {
       });
     },
     updateLimits: (budgetId: number, tagLimitsData: TagLimitDto[]): Promise<AxiosResponse> => {
-      const url = getResourceUrl(BUDGETS_API_BASE, UPDATE_BUDGET_TAG_LIMITS);
+      const url = getResourceUrl(BUDGETS_API_SUFFIX, UPDATE_BUDGET_TAG_LIMITS);
 
       return httpPut(url, tagLimitsData, {
         params: {
