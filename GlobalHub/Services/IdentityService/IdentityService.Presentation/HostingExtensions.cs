@@ -111,11 +111,6 @@ internal static class HostingExtensions
             app.UseSwaggerUI();
             app.UseDeveloperExceptionPage();
         }
-        else
-        {
-            app.UseHsts();
-            app.UseHttpsRedirection();
-        }
 
         app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
             .WithExposedHeaders("X-Correlation-id"));

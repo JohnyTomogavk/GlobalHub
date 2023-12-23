@@ -54,11 +54,6 @@ if (app.Environment.IsDevelopment() || app.Environment.IsDockerComposeEnvironmen
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-else
-{
-    app.UseHsts();
-    app.UseHttpsRedirection();
-}
 
 app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
     .WithExposedHeaders("X-Correlation-id"));
