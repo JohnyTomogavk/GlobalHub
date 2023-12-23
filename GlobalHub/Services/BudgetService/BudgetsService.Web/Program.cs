@@ -61,11 +61,6 @@ if (app.Environment.IsDevelopment() || app.Environment.IsDockerComposeEnvironmen
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-else
-{
-    app.UseHsts();
-    app.UseHttpsRedirection();
-}
 
 await MigrateDatabase(app.Services);
 

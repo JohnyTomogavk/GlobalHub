@@ -10,7 +10,7 @@
         "OPTIONS"
       ],
       "DownstreamPathTemplate": "/api/v1/{path}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "budget-service",
@@ -34,7 +34,7 @@
         "OPTIONS"
       ],
       "DownstreamPathTemplate": "/api/v1/{path}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "note-service",
@@ -55,7 +55,7 @@
         "POST"
       ],
       "DownstreamPathTemplate": "/{path}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "identity-service",
