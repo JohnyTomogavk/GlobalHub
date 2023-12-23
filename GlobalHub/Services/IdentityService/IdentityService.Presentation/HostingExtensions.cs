@@ -102,6 +102,7 @@ internal static class HostingExtensions
 
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
+        app.UseForwardedHeaders();
         app.UseMiddleware<ExceptionHandlingMiddleware>();
         app.UseSerilogRequestLogging();
 

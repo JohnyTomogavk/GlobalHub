@@ -22,6 +22,9 @@
         "AllowedScopes": [
           "GlobalHub.BudgetsAPI"
         ]
+      },
+      "UpstreamHeaderTransform": {
+        "X-Forwarded-For": "{RemoteIpAddress}"
       }
     },
     {
@@ -46,6 +49,9 @@
         "AllowedScopes": [
           "GlobalHub.NotesAPI"
         ]
+      },
+      "UpstreamHeaderTransform": {
+        "X-Forwarded-For": "{RemoteIpAddress}"
       }
     },
     {
@@ -61,7 +67,10 @@
           "Host": "identity-service",
           "Port": 80
         }
-      ]
+      ],
+      "UpstreamHeaderTransform": {
+        "X-Forwarded-For": "{RemoteIpAddress}"
+      }
     }
   ]
 }
