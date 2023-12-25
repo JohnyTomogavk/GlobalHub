@@ -1,3 +1,5 @@
+using DotNetEnv;
+
 namespace IdentityService.Presentation;
 
 internal static class HostingExtensions
@@ -38,6 +40,7 @@ internal static class HostingExtensions
         builder.Services
             .AddIdentityServer(options =>
             {
+                options.IssuerUri = Environment.GetEnvironmentVariable("ISSUER_URI");
                 options.Events.RaiseErrorEvents = true;
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
@@ -85,6 +88,11 @@ internal static class HostingExtensions
 
         builder.Services.AddScoped<IProfileService, AppProfileService>();
 
+        builder.Services.Configure<ForwardedHeadersOptions>(options =>
+        {
+            options.ForwardedHeaders = ForwardedHeaders.All;
+        });
+
         var app = builder.Build();
 
         var shouldReinitializeDatabaseEnv =
@@ -102,8 +110,9 @@ internal static class HostingExtensions
 
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
-        app.UseForwardedHeaders();
         app.UseMiddleware<ExceptionHandlingMiddleware>();
+        app.UseForwardedHeaders();
+        app.UseMiddleware<UpdateRequestBasePathMiddleware>();
         app.UseSerilogRequestLogging();
 
         if (app.Environment.IsDevelopment())
@@ -115,7 +124,6 @@ internal static class HostingExtensions
 
         app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
             .WithExposedHeaders("X-Correlation-id"));
-
         app.UseStaticFiles();
         app.UseRouting();
         app.UseIdentityServer();
