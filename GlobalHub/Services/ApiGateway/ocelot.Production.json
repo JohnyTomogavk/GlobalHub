@@ -22,9 +22,6 @@
         "AllowedScopes": [
           "GlobalHub.BudgetsAPI"
         ]
-      },
-      "UpstreamHeaderTransform": {
-        "X-Forwarded-For": "{RemoteIpAddress}"
       }
     },
     {
@@ -49,9 +46,6 @@
         "AllowedScopes": [
           "GlobalHub.NotesAPI"
         ]
-      },
-      "UpstreamHeaderTransform": {
-        "X-Forwarded-For": "{RemoteIpAddress}"
       }
     },
     {
@@ -69,8 +63,13 @@
         }
       ],
       "UpstreamHeaderTransform": {
-        "X-Forwarded-For": "{RemoteIpAddress}"
+        "X-Forwarded-Host": "{BaseUrl}",
+        "X-Forwarded-Path": "/identity-api",
+        "X-Forwarded-Proto": "https"
       }
     }
-  ]
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": ""
+  }
 }

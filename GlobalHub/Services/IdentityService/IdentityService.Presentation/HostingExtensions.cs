@@ -1,5 +1,3 @@
-using DotNetEnv;
-
 namespace IdentityService.Presentation;
 
 internal static class HostingExtensions
