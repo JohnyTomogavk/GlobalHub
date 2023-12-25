@@ -1,14 +1,16 @@
 var builder = WebApplication.CreateBuilder(args);
-builder.Configuration.AddEnvFilesToConfiguration()
-    .AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
-builder.Services.AddHttpContextAccessor();
 
+builder.Configuration
+    .AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true)
+    .AddEnvFilesToConfiguration();
+
+builder.Services.AddHttpContextAccessor();
 builder.Host.UseSerilog(SerilogExtensions.LoggerConfiguration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddOcelot();
+builder.Services.AddOcelot(builder.Configuration);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
