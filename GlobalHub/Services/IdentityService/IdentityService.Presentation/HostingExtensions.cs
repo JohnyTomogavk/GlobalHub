@@ -89,6 +89,7 @@ internal static class HostingExtensions
         builder.Services.Configure<ForwardedHeadersOptions>(options =>
         {
             options.ForwardedHeaders = ForwardedHeaders.All;
+            options.AllowedHosts = new List<string> { Environment.GetEnvironmentVariable("ALLOW_FORWARDING_FROM") };
         });
 
         var app = builder.Build();
