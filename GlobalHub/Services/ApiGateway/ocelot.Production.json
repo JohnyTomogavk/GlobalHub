@@ -64,6 +64,7 @@
       ],
       "UpstreamHeaderTransform": {
         "X-Forwarded-Host": "{BaseUrl}",
+        "X-Forwarded-For": "{RemoteIpAddress}",
         "X-Forwarded-Path": "/identity-api",
         "X-Forwarded-Proto": "https"
       }

@@ -10,11 +10,11 @@
         "OPTIONS"
       ],
       "DownstreamPathTemplate": "/api/v1/{path}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7285
+          "Port": 5118
         }
       ],
       "AuthenticationOptions": {
@@ -34,11 +34,11 @@
         "OPTIONS"
       ],
       "DownstreamPathTemplate": "/api/v1/{path}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7198
+          "Port": 5143
         }
       ],
       "AuthenticationOptions": {
@@ -55,15 +55,16 @@
         "POST"
       ],
       "DownstreamPathTemplate": "/{path}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7389
+          "Port": 5119
         }
       ],
       "UpstreamHeaderTransform": {
         "X-Forwarded-Host": "{BaseUrl}",
+        "X-Forwarded-For": "{RemoteIpAddress}",
         "X-Forwarded-Path": "/identity-api",
         "X-Forwarded-Proto": "https"
       }

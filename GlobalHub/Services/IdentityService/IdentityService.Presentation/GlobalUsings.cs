@@ -1,6 +1,7 @@
 ﻿// Global using directives
 
 global using System.ComponentModel.DataAnnotations;
+global using System.Net;
 global using System.Security.Claims;
 global using AspNet.Security.OAuth.GitHub;
 global using Common.ExceptionHandling;

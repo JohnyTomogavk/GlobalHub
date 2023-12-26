@@ -1,5 +1,3 @@
-using System.Net;
-
 namespace IdentityService.Presentation;
 
 internal static class HostingExtensions
@@ -40,7 +38,6 @@ internal static class HostingExtensions
         builder.Services
             .AddIdentityServer(options =>
             {
-                options.IssuerUri = Environment.GetEnvironmentVariable("ISSUER_URI");
                 options.Events.RaiseErrorEvents = true;
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
