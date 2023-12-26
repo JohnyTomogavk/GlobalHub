@@ -92,7 +92,7 @@ internal static class HostingExtensions
         {
             options.ForwardedHeaders = ForwardedHeaders.All;
 
-            if (builder.Environment.IsProduction())
+            if (!builder.Environment.IsDevelopment())
             {
                 var proxyIp = Environment.GetEnvironmentVariable("PROXY_IP");
                 ArgumentNullException.ThrowIfNull(proxyIp);
