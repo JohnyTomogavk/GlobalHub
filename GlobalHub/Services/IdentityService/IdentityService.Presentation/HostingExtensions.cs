@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace IdentityService.Presentation;
 
 internal static class HostingExtensions
@@ -89,7 +91,15 @@ internal static class HostingExtensions
         builder.Services.Configure<ForwardedHeadersOptions>(options =>
         {
             options.ForwardedHeaders = ForwardedHeaders.All;
-            options.AllowedHosts = new List<string> { Environment.GetEnvironmentVariable("ALLOW_FORWARDING_FROM") };
+
+            if (builder.Environment.IsProduction())
+            {
+                var proxyIp = Environment.GetEnvironmentVariable("PROXY_IP");
+                ArgumentNullException.ThrowIfNull(proxyIp);
+                var parsedProxyIp = IPAddress.Parse(proxyIp);
+
+                options.KnownProxies.Add(parsedProxyIp);
+            }
         });
 
         var app = builder.Build();
