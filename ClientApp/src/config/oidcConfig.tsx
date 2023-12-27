@@ -2,9 +2,9 @@ import { AuthProvider, AuthProviderProps } from 'react-oidc-context';
 import React, { ReactNode } from 'react';
 import { WebStorageStateStore } from 'oidc-client-ts';
 import { getEnvVar } from './environmentVariables';
-import { IDENTITY_API_SUFFIX } from '../constants/apiConstants';
+import { API_GATEWAY_BASE, IDENTITY_API_SUFFIX } from '../constants/apiConstants';
 
-const identityUrl = `${getEnvVar('API_GATEWAY_URL', process.env.API_GATEWAY_URL)}/${IDENTITY_API_SUFFIX}`;
+const identityUrl = `${API_GATEWAY_BASE}/${IDENTITY_API_SUFFIX}`;
 
 export const oidcConfig: AuthProviderProps = {
   authority: identityUrl,
