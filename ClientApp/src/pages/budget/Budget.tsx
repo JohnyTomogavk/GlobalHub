@@ -6,6 +6,7 @@ import {
   Collapse,
   Divider,
   Empty,
+  Flex,
   Form,
   List,
   Progress,
@@ -71,7 +72,7 @@ const countUpFormatter: Formatter = (value: number | string, config: FormatConfi
     <CountUp
       delay={0}
       duration={countUpDuration}
-      end={toNumber(endValueToDisplay)}
+      end={endValueToDisplay}
       decimal={config?.decimalSeparator}
       decimals={2}
     />
@@ -344,7 +345,7 @@ export const BudgetComponent = observer((): JSX.Element => {
           </Col>
           <Col flex={'auto'}>
             <Card size={'small'} title="Current month balance state" className={styles.card}>
-              <Space size={'large'}>
+              <Flex justify={'space-around'} gap={8}>
                 <Space direction={'vertical'}>
                   <Statistic
                     title="Left"
@@ -373,25 +374,27 @@ export const BudgetComponent = observer((): JSX.Element => {
                     value={budgetAnalyticData?.regularExpenses}
                   />
                 </Space>
-              </Space>
+              </Flex>
             </Card>
           </Col>
           <Col flex={'auto'}>
             <Card size={'small'} title={'Operations analytic'} className={styles.card}>
-              <Space direction={'vertical'}>
-                <Statistic
-                  formatter={countUpFormatter}
-                  value={budgetAnalyticData?.averageDailyExpenses}
-                  title="Avg daily expenses"
-                  suffix={'BYN'}
-                />
-                <Statistic
-                  formatter={countUpFormatter}
-                  value={budgetAnalyticData?.expensesMedian}
-                  title="Expenses median"
-                  suffix={'BYN'}
-                />
-              </Space>
+              <Flex justify={'center'}>
+                <Space direction={'vertical'}>
+                  <Statistic
+                    formatter={countUpFormatter}
+                    value={budgetAnalyticData?.averageDailyExpenses}
+                    title="Avg daily expenses"
+                    suffix={'BYN'}
+                  />
+                  <Statistic
+                    formatter={countUpFormatter}
+                    value={budgetAnalyticData?.expensesMedian}
+                    title="Expenses median"
+                    suffix={'BYN'}
+                  />
+                </Space>
+              </Flex>
             </Card>
           </Col>
           <Col>
