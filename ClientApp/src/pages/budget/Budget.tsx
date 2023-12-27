@@ -48,6 +48,7 @@ import useBudgetsApi from '../../hooks/api/useBudgetsApi';
 import useBudgetsItemsApi from '../../hooks/api/useBudgetsItemsApi';
 import useTagLimitsApi from '../../hooks/api/useTagLimitsApi';
 import CountUp from 'react-countup';
+import { FormatConfig, Formatter } from 'antd/lib/statistic/utils';
 
 const { Text } = Typography;
 
@@ -61,6 +62,21 @@ interface TagLimitStatus {
   hasLimitBeenReached: boolean;
   limitAchievementPercent: number;
 }
+
+const countUpFormatter: Formatter = (value: number | string, config: FormatConfig | undefined): ReactNode => {
+  const countUpDuration = 1.5;
+  const endValueToDisplay = typeof value === 'string' ? toNumber(value) : value;
+
+  return (
+    <CountUp
+      delay={0}
+      duration={countUpDuration}
+      end={toNumber(endValueToDisplay)}
+      decimal={config?.decimalSeparator}
+      decimals={2}
+    />
+  );
+};
 
 export const BudgetComponent = observer((): JSX.Element => {
   const { budgetStore, sideMenuItems } = SideMenuIndexStore;
@@ -333,13 +349,13 @@ export const BudgetComponent = observer((): JSX.Element => {
                   <Statistic
                     title="Left"
                     suffix={'BYN'}
-                    formatter={() => <CountUp start={0} end={toNumber(budgetAnalyticData?.moneyLeft)} />}
+                    formatter={countUpFormatter}
                     value={budgetAnalyticData?.moneyLeft}
                   />
                   <Statistic
                     title="Irregular Expenses"
                     suffix={'BYN'}
-                    formatter={() => <CountUp start={0} end={toNumber(budgetAnalyticData?.irregularExpenses)} />}
+                    formatter={countUpFormatter}
                     value={budgetAnalyticData?.irregularExpenses}
                   />
                 </Space>
@@ -347,13 +363,13 @@ export const BudgetComponent = observer((): JSX.Element => {
                   <Statistic
                     title="Preserved"
                     suffix={'BYN'}
-                    formatter={() => <CountUp start={0} end={toNumber(budgetAnalyticData?.moneyPreserved)} />}
+                    formatter={countUpFormatter}
                     value={budgetAnalyticData?.moneyPreserved}
                   />
                   <Statistic
                     title="Regular expenses"
                     suffix={'BYN'}
-                    formatter={() => <CountUp start={0} end={toNumber(budgetAnalyticData?.regularExpenses)} />}
+                    formatter={countUpFormatter}
                     value={budgetAnalyticData?.regularExpenses}
                   />
                 </Space>
@@ -364,13 +380,13 @@ export const BudgetComponent = observer((): JSX.Element => {
             <Card size={'small'} title={'Operations analytic'} className={styles.card}>
               <Space direction={'vertical'}>
                 <Statistic
-                  formatter={() => <CountUp start={0} end={toNumber(budgetAnalyticData?.averageDailyExpenses)} />}
+                  formatter={countUpFormatter}
                   value={budgetAnalyticData?.averageDailyExpenses}
                   title="Avg daily expenses"
                   suffix={'BYN'}
                 />
                 <Statistic
-                  formatter={() => <CountUp start={0} end={toNumber(budgetAnalyticData?.expensesMedian)} />}
+                  formatter={countUpFormatter}
                   value={budgetAnalyticData?.expensesMedian}
                   title="Expenses median"
                   suffix={'BYN'}
