@@ -50,6 +50,7 @@ import useBudgetsItemsApi from '../../hooks/api/useBudgetsItemsApi';
 import useTagLimitsApi from '../../hooks/api/useTagLimitsApi';
 import CountUp from 'react-countup';
 import { FormatConfig, Formatter } from 'antd/lib/statistic/utils';
+import { Loader } from '../../components/loader/Loader';
 
 const { Text } = Typography;
 
@@ -102,6 +103,7 @@ export const BudgetComponent = observer((): JSX.Element => {
   const [expenseSumsGroupedByTags, setExpenseSumsGroupedByTags] = useState<ExpenseOperationsSumDto[]>([]);
   const [tagLimitsStatuses, setTagLimitsStatuses] = useState<TagLimitStatus[]>([]);
   const [isTagLimitsDrawerOpened, setIsTagLimitsDrawerOpened] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const notEmptyExpenseSumsGroupedByTags: ExpenseOperationsSumDto[] = expenseSumsGroupedByTags.filter(
     (operationSum: ExpenseOperationsSumDto): boolean => operationSum.operationsSum !== 0
@@ -200,11 +202,13 @@ export const BudgetComponent = observer((): JSX.Element => {
   };
 
   useEffect(() => {
-    loadTagLimitsData();
-    loadBudgetData();
+    Promise.all([loadTagLimitsData(), loadBudgetData()]).then(() => {
+      setIsLoading(false);
+    });
 
     return () => {
       setTagLimitsStatuses([]);
+      setIsLoading(true);
     };
   }, [id]);
 
@@ -291,6 +295,14 @@ export const BudgetComponent = observer((): JSX.Element => {
       await loadTagLimitsData();
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className={styles.loaderContainer}>
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <>

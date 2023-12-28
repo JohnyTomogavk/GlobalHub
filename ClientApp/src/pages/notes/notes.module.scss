@@ -1,4 +1,4 @@
-@use "src/styles.module" as *;
+@import "/src/styles.module";
 
 .pageContent {
   @include page-content-base;
@@ -18,7 +18,7 @@
 }
 
 .editorLoader {
-  height: calc(100vh - 9rem);
-  display: flex;
-  justify-content: center;
+  @extend %loader;
+
+  height: 80vh;
 }

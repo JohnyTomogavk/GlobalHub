@@ -21,7 +21,7 @@ export const NotesComponent = observer((): JSX.Element => {
   const { id } = useParams();
   const location = useLocation();
 
-  const [isLoading, setLoading] = useState<boolean>(false);
+  const [isFetching, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const breadCrumbsItems = useBreadcrumbs(location.pathname, sideMenuItems);
 
@@ -78,13 +78,15 @@ export const NotesComponent = observer((): JSX.Element => {
     noteRef.current = noteResponse.data;
   };
 
-  useEffect((): void => {
-    loadNote();
-  }, [id]);
+  useEffect(() => {
+    loadNote().then(() => {
+      setIsEditorLoading(false);
+    });
 
-  const onRichTextEditorEditorReadyHandler = (): void => {
-    setIsEditorLoading(false);
-  };
+    return () => {
+      setIsEditorLoading(true);
+    };
+  }, [id]);
 
   return (
     <div
@@ -92,19 +94,18 @@ export const NotesComponent = observer((): JSX.Element => {
         background: colorBgContainer,
       }}
     >
-      <ItemInfoSubHeader
-        onDeleteCallback={onItemDelete}
-        breadCrumbsItems={breadCrumbsItems}
-        editedAt={note?.updatedDate}
-        createdAt={note?.createdDate ?? new Date()}
-        isLoading={isLoading}
-      />
       {isEditorLoading ? (
         <div className={styles.editorLoader}>
           <Loader />
         </div>
       ) : (
-        <></>
+        <ItemInfoSubHeader
+          onDeleteCallback={onItemDelete}
+          breadCrumbsItems={breadCrumbsItems}
+          editedAt={note?.updatedDate}
+          createdAt={note?.createdDate ?? new Date()}
+          isLoading={isFetching}
+        />
       )}
       <div
         style={{
@@ -127,14 +128,7 @@ export const NotesComponent = observer((): JSX.Element => {
           </Title>
         </div>
         {useMemo(
-          () =>
-            note && (
-              <RichTextEditor
-                data={JSON.parse(note.richTextContent)}
-                onChange={onEditorContentChange}
-                onEditorReadyHandler={onRichTextEditorEditorReadyHandler}
-              />
-            ),
+          () => note && <RichTextEditor data={JSON.parse(note.richTextContent)} onChange={onEditorContentChange} />,
           [note?.id]
         )}
       </div>

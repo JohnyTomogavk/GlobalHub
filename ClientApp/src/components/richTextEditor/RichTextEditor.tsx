@@ -12,7 +12,6 @@ import { NOTE_DEFAULT_EMPTY_BLOCK } from '../../constants/notesConstants';
 interface EditorParameters {
   onChange: (data: OutputData) => Promise<void>;
   data: OutputData;
-  onEditorReadyHandler: () => void;
 }
 
 export const RichTextEditor = observer((props: EditorParameters): JSX.Element => {
@@ -27,10 +26,6 @@ export const RichTextEditor = observer((props: EditorParameters): JSX.Element =>
       editorRef.current?.editor.render(props.data);
     });
   }, [props.data]);
-
-  const onEditorReady = (): void => {
-    props.onEditorReadyHandler();
-  };
 
   const {
     token: { colorText },
@@ -49,13 +44,7 @@ export const RichTextEditor = observer((props: EditorParameters): JSX.Element =>
 
   return (
     <StyledEditorJsWrapper id={editorHolderId} $isDarkTheme={isDarkTheme} $textColor={colorText}>
-      <Editor
-        ref={editorRef}
-        reinitOnPropsChange={false}
-        tools={editorTools}
-        onReady={onEditorReady}
-        onData={onEditorDataChange}
-      />
+      <Editor ref={editorRef} reinitOnPropsChange={false} tools={editorTools} onData={onEditorDataChange} />
     </StyledEditorJsWrapper>
   );
 });
