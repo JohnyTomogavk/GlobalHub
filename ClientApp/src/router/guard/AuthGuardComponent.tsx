@@ -1,5 +1,5 @@
-import React, { ReactNode, useEffect } from 'react';
-import { hasAuthParams, useAuth } from 'react-oidc-context';
+import React, { ReactNode, useEffect, useState } from 'react';
+import { useAuth } from 'react-oidc-context';
 import { Loader } from '../../components/loader/Loader';
 import { useNavigate } from 'react-router-dom';
 import { WELCOME_PAGE_ROUTE } from '../../constants/routingConstants';
@@ -28,24 +28,25 @@ const loader = (
 const AuthGuardComponent = (props: { children: ReactNode }): JSX.Element => {
   const auth = useAuth();
   const navigate = useNavigate();
+  const [hasTriedSignIn, setHasTriedSignIn] = useState(false);
 
   useEffect(() => {
-    if (!auth.isLoading && !auth.isAuthenticated) {
-      if (!hasAuthParams()) {
-        navigate(`/${WELCOME_PAGE_ROUTE}`);
-      }
-
+    if (!hasTriedSignIn && !auth.isAuthenticated && !auth.activeNavigator && !auth.isLoading) {
       auth.signinSilent().then(() => {
-        if (!auth.isAuthenticated) navigate(`/${WELCOME_PAGE_ROUTE}`);
-      });
-    }
-  }, [auth]);
+        if (auth.isAuthenticated) return;
 
-  if (auth.isLoading || !auth.isAuthenticated) {
-    return loader;
+        navigate(`/${WELCOME_PAGE_ROUTE}`);
+      });
+
+      setHasTriedSignIn(true);
+    }
+  }, [auth, hasTriedSignIn, navigate]);
+
+  if (auth.isAuthenticated) {
+    return <>{props.children}</>;
   }
 
-  return <>{props.children}</>;
+  return loader;
 };
 
 export default AuthGuardComponent;
