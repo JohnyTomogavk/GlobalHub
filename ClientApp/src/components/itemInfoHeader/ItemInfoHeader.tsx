@@ -59,10 +59,10 @@ export const ItemInfoSubHeader = (props: IItemInfoSubHeader): JSX.Element => {
           >
             <Text className={styles.itemSaveStatus} type={'secondary'}>
               {props.isLoading ? (
-                <Space className={styles.loaderSpacer}>
+                <div className={styles.loaderSpacer}>
                   <Loader />
                   Saving
-                </Space>
+                </div>
               ) : (
                 <>
                   <span>Edited </span>

@@ -109,7 +109,7 @@ export const NotesComponent = observer((): JSX.Element => {
       )}
       <div
         style={{
-          visibility: isEditorLoading ? 'hidden' : 'visible',
+          display: isEditorLoading ? 'none' : 'block',
         }}
         className={styles.pageContent}
       >
