@@ -428,9 +428,7 @@ export const BudgetComponent = observer((): JSX.Element => {
               size={'small'}
               title={'Current limits status'}
               extra={
-                <Button onClick={(): void => setIsTagLimitsDrawerOpened(true)} size={'small'}>
-                  Update limits
-                </Button>
+                <Button onClick={(): void => setIsTagLimitsDrawerOpened(true)} icon={<EditOutlined />} size={'small'} />
               }
             >
               <Row>
