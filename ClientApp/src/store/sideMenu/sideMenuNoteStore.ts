@@ -7,6 +7,7 @@ import { getClientItemUrl } from '../../helpers/urlHelper';
 import * as ResourceNameConstants from '../../constants/resourceConstants';
 import { NoteMap } from '../../dto/sideMenu/noteMap';
 import { Note } from '../../entities/notes/note';
+import { EntityType } from '../../enums/entityType';
 
 class SideMenuNoteStore {
   sideMenuNoteItems: SideMenuItemModel[] = [];
@@ -29,10 +30,11 @@ class SideMenuNoteStore {
     this.sideMenuNoteItems = items.map(
       (noteMap): SideMenuItemModel => ({
         className: styles.sideMenuItem,
-        title: getSecondaryLevelItemTitle(noteMap.title),
+        title: getSecondaryLevelItemTitle(noteMap.title, EntityType.Note),
         textTitle: noteMap.title,
         key: getClientItemUrl(ResourceNameConstants.NOTE_RESOURCE_NAME, noteMap.id),
         pageId: noteMap.id,
+        entityType: EntityType.Note,
       })
     );
   }
@@ -40,15 +42,16 @@ class SideMenuNoteStore {
   addNewNoteToSideMenu(item: Note): void {
     this.sideMenuNoteItems.push({
       className: styles.sideMenuItem,
-      title: getSecondaryLevelItemTitle(item.title),
+      title: getSecondaryLevelItemTitle(item.title, EntityType.Note),
       textTitle: item.title,
       key: getClientItemUrl(ResourceNameConstants.NOTE_RESOURCE_NAME, item.id),
       pageId: item.id,
+      entityType: EntityType.Note,
     });
   }
 
   renameNoteInSideMenu(itemId: Key, newTitle: string): void {
-    const newTitleElement = getSecondaryLevelItemTitle(newTitle);
+    const newTitleElement = getSecondaryLevelItemTitle(newTitle, EntityType.Note);
 
     this.sideMenuNoteItems = this.sideMenuNoteItems.map((item) => {
       if (item.pageId === itemId) {
