@@ -10,7 +10,7 @@ import Editor from '@stfy/react-editor.js';
 import { NOTE_DEFAULT_EMPTY_BLOCK } from '../../constants/notesConstants';
 
 interface EditorParameters {
-  onChange: (data: OutputData) => Promise<void>;
+  onChange: (data: OutputData) => Promise<void> | void;
   data: OutputData;
 }
 
