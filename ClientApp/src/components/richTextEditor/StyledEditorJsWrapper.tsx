@@ -26,6 +26,7 @@ export const StyledEditorJsWrapper = styled.div<StyledEditorJsProps>`
   .ce-block__content,
   .ce-toolbar__content {
     width: 75%;
+    max-width: initial;
   }
 
   .ce-toolbar__actions {
@@ -82,6 +83,12 @@ export const StyledEditorJsWrapper = styled.div<StyledEditorJsProps>`
   .tc-popover__item-icon {
     color: ${(props): string => props.$textColor};
     background: transparent;
+  }
+
+  .tc-toolbox {
+    ${(props): string | false =>
+      props.$isDarkTheme &&
+      `--toggler-dots-color: ${props.$textColor}; --toggler-dots-color-hovered: ${props.$textColor};`}
   }
 
   .tc-toolbox__toggler svg rect {
