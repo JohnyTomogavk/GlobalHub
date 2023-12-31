@@ -4,7 +4,10 @@ import { ItemInfoSubHeader } from '../../components/itemInfoHeader/ItemInfoHeade
 import styles from './notes.module.scss';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Note } from '../../entities/notes/note';
-import { NOTE_EMPTY_TITLE_PLACEHOLDER, NOTE_UPDATE_DEBOUNCE } from '../../constants/notesConstants';
+import {
+  NOTE_EMPTY_TITLE_PLACEHOLDER,
+  NOTE_UPDATE_DEBOUNCE,
+} from '../../constants/notesConstants';
 import { RichTextEditor } from '../../components/richTextEditor/RichTextEditor';
 import * as RoutingConstants from '../../constants/routingConstants';
 import { observer } from 'mobx-react-lite';
@@ -34,15 +37,16 @@ export const NotesComponent = observer((): JSX.Element => {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const onEditorContentChange = async (data: OutputData): Promise<void> => {
+  const onNoteContentChange = async (data: OutputData): Promise<void> => {
     if (!note) return;
 
     setLoading(true);
+
     const { data: updatedNote } = await notesApi.updateContent(note.id, {
       content: JSON.stringify(data),
     });
 
-    if (noteRef && noteRef.current?.id === note.id) {
+    if (noteRef.current?.id === note.id) {
       setNote(
         (prevState) =>
           prevState && {
@@ -53,12 +57,7 @@ export const NotesComponent = observer((): JSX.Element => {
     }
 
     setLoading(false);
-  };
-
-  const debouncedEditorContentChange = useCallback(
-    debounce(async (data: OutputData): Promise<void> => await onEditorContentChange(data), NOTE_UPDATE_DEBOUNCE),
-    [note?.id]
-  );
+  }
 
   const updateTitleDebounced = useCallback(
     debounce(async (noteId: string, changedTitle: string): Promise<void> => {
@@ -124,7 +123,6 @@ export const NotesComponent = observer((): JSX.Element => {
 
     return () => {
       updateTitleDebounced.flush();
-      debouncedEditorContentChange.flush();
       setIsEditorLoading(true);
     };
   }, [id]);
@@ -163,16 +161,13 @@ export const NotesComponent = observer((): JSX.Element => {
             bordered={false}
           />
         </div>
-        {useMemo(
-          () =>
-            noteRef.current && (
-              <RichTextEditor
-                data={JSON.parse(noteRef.current.richTextContent)}
-                onChange={debouncedEditorContentChange}
-              />
-            ),
-          [note?.id]
-        )}
+        {
+          useMemo(() => note && <RichTextEditor
+            key={note.id}
+            data={JSON.parse(note.richTextContent)}
+            onChange={onNoteContentChange}
+          />, [note?.id])
+        }
       </div>
     </div>
   );
