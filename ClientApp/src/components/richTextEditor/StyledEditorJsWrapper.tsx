@@ -53,8 +53,6 @@ export const StyledEditorJsWrapper = styled.div<StyledEditorJsProps>`
     color: ${(props): string => props.$textColor};
   }
 
-  .toggle-block__selector,
-  .toggle-block__icon,
   .cdx-checklist {
     color: ${(props): string => props.$textColor} !important;
   }
@@ -84,12 +82,6 @@ export const StyledEditorJsWrapper = styled.div<StyledEditorJsProps>`
   .tc-popover__item-icon {
     color: ${(props): string => props.$textColor};
     background: transparent;
-  }
-
-  .tc-toolbox {
-    ${(props): string | false =>
-      props.$isDarkTheme &&
-      `--toggler-dots-color: ${props.$textColor}; --toggler-dots-color-hovered: ${props.$textColor};`}
   }
 
   .tc-toolbox__toggler svg rect {
