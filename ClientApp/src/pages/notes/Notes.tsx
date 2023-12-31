@@ -35,41 +35,54 @@ export const NotesComponent = observer((): JSX.Element => {
   } = theme.useToken();
 
   const onEditorContentChange = async (data: OutputData): Promise<void> => {
-    if (!noteRef.current) return;
+    if (!note) return;
 
     setLoading(true);
-    const updateNoteResponse = await notesApi.updateContent(noteRef.current.id, {
+    const { data: updatedNote } = await notesApi.updateContent(note.id, {
       content: JSON.stringify(data),
     });
 
-    setNote(updateNoteResponse.data);
+    if (noteRef && noteRef.current?.id === note.id) {
+      setNote(
+        (prevState) =>
+          prevState && {
+            ...prevState,
+            updatedDate: updatedNote.updatedDate,
+          }
+      );
+    }
+
     setLoading(false);
   };
 
   const debouncedEditorContentChange = useCallback(
-    debounce((data: OutputData): Promise<void> => onEditorContentChange(data), NOTE_UPDATE_DEBOUNCE),
-    []
+    debounce(async (data: OutputData): Promise<void> => await onEditorContentChange(data), NOTE_UPDATE_DEBOUNCE),
+    [note?.id]
   );
 
-  const updatedTitle = async (noteId: string, changedTitle: string): Promise<void> => {
-    setLoading(true);
+  const updateTitleDebounced = useCallback(
+    debounce(async (noteId: string, changedTitle: string): Promise<void> => {
+      if (!note) return;
 
-    const { data: updatedNote } = await notesApi.updateTitle(noteId, { newTitle: changedTitle });
+      setLoading(true);
 
-    setNote(
-      (prevState) =>
-        prevState && {
-          ...prevState,
-          updatedDate: updatedNote.updatedDate,
-        }
-    );
+      const { data: updatedNote } = await notesApi.updateTitle(noteId, { newTitle: changedTitle });
 
-    notesStore.renameNoteInSideMenu(noteId, changedTitle);
+      if (noteRef && noteRef.current?.id === note.id) {
+        setNote(
+          (prevState) =>
+            prevState && {
+              ...prevState,
+              updatedDate: updatedNote.updatedDate,
+            }
+        );
+      }
 
-    setLoading(false);
-  };
-
-  const updateTitleDebounced = useCallback(debounce(updatedTitle, NOTE_UPDATE_DEBOUNCE), []);
+      notesStore.renameNoteInSideMenu(noteId, changedTitle);
+      setLoading(false);
+    }, NOTE_UPDATE_DEBOUNCE),
+    [note?.id]
+  );
 
   const onTitleUpdate = async (changedTitle: string): Promise<void> => {
     if (!id) return;
@@ -152,7 +165,12 @@ export const NotesComponent = observer((): JSX.Element => {
         </div>
         {useMemo(
           () =>
-            note && <RichTextEditor data={JSON.parse(note.richTextContent)} onChange={debouncedEditorContentChange} />,
+            noteRef.current && (
+              <RichTextEditor
+                data={JSON.parse(noteRef.current.richTextContent)}
+                onChange={debouncedEditorContentChange}
+              />
+            ),
           [note?.id]
         )}
       </div>
