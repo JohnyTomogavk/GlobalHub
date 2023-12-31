@@ -2,10 +2,12 @@
 
 .pageContent {
   @include page-content-base;
+
   min-height: calc(100vh - 9rem);
 
   .noteTitleContainer {
     text-align: center;
+
     @include page-title-container;
   }
 
