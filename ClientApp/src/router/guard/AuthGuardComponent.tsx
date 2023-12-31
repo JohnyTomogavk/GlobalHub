@@ -1,9 +1,10 @@
-import React, { ReactNode, useEffect } from 'react';
-import { hasAuthParams, useAuth } from 'react-oidc-context';
+import React, { ReactNode, useState } from 'react';
+import { useAuth } from 'react-oidc-context';
 import { Loader } from '../../components/loader/Loader';
 import { useNavigate } from 'react-router-dom';
 import { WELCOME_PAGE_ROUTE } from '../../constants/routingConstants';
 import { Typography } from 'antd';
+import { getItem } from '../../helpers/localStorageHelper';
 
 const { Text, Title } = Typography;
 
@@ -28,24 +29,28 @@ const loader = (
 const AuthGuardComponent = (props: { children: ReactNode }): JSX.Element => {
   const auth = useAuth();
   const navigate = useNavigate();
+  const [hasTriedSignIn, setHasTriedSignIn] = useState(false);
 
-  useEffect(() => {
-    if (!auth.isLoading && !auth.isAuthenticated) {
-      if (!hasAuthParams()) {
-        navigate(`/${WELCOME_PAGE_ROUTE}`);
-      }
+  const hasStoredAuthParams = (): boolean => {
+    const storageAuthItemKey = `oidc.user:${auth.settings.authority}:${auth.settings.client_id}`;
 
-      auth.signinSilent().then(() => {
-        if (!auth.isAuthenticated) navigate(`/${WELCOME_PAGE_ROUTE}`);
-      });
-    }
-  }, [auth]);
+    return getItem(storageAuthItemKey) !== null;
+  };
 
-  if (auth.isLoading || !auth.isAuthenticated) {
-    return loader;
+  if (hasStoredAuthParams() && !auth.isAuthenticated && !auth.isLoading && !hasTriedSignIn) {
+    auth.signinSilent();
+    setHasTriedSignIn(true);
   }
 
-  return <>{props.children}</>;
+  if (!hasStoredAuthParams() && !auth.isLoading && !auth.isAuthenticated) {
+    navigate(`/${WELCOME_PAGE_ROUTE}`);
+  }
+
+  if (auth.isAuthenticated) {
+    return <>{props.children}</>;
+  }
+
+  return loader;
 };
 
 export default AuthGuardComponent;

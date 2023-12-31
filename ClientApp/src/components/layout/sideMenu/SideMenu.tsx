@@ -28,6 +28,7 @@ import uiConfigStore from '../../../store/uiConfigStore';
 import useNotesAPI from '../../../hooks/api/useNotesApi';
 import useBudgetsApi from '../../../hooks/api/useBudgetsApi';
 import { Loader } from '../../loader/Loader';
+import { EntityType } from '../../../enums/entityType';
 
 interface SideMenuItemsLoadingState {
   isNotesLoaded: boolean;
@@ -46,6 +47,7 @@ const getLoaderNode = (key: Key): SideMenuItemModel => ({
   ),
   selectable: false,
   isLeaf: true,
+  entityType: EntityType.Unknown,
 });
 
 export const SideMenu = observer((): JSX.Element => {
@@ -147,6 +149,7 @@ export const SideMenu = observer((): JSX.Element => {
       switcherIcon: <></>,
       isLeaf: false,
       pageId: ResourceNameConstants.DASHBOARD_RESOURCE_NAME,
+      entityType: EntityType.Unknown,
     },
     {
       className: styles.sideMenuItem,
@@ -159,6 +162,7 @@ export const SideMenu = observer((): JSX.Element => {
       children: isBudgetsLoaded
         ? budgetStore.sideMenuBudgetItems
         : [getLoaderNode(ResourceNameConstants.BUDGET_RESOURCE_NAME)],
+      entityType: EntityType.Unknown,
     },
     {
       className: styles.sideMenuItem,
@@ -170,6 +174,7 @@ export const SideMenu = observer((): JSX.Element => {
       children: isNotesLoaded
         ? notesStore.sideMenuNoteItems
         : [getLoaderNode(ResourceNameConstants.NOTE_RESOURCE_NAME)],
+      entityType: EntityType.Unknown,
     },
     {
       className: styles.sideMenuItem,
@@ -182,6 +187,7 @@ export const SideMenu = observer((): JSX.Element => {
       pageId: ResourceNameConstants.TASK_RESOURCE_NAME,
       isLeaf: false,
       children: isTasksLoaded ? [] : [getLoaderNode(ResourceNameConstants.TASK_RESOURCE_NAME)],
+      entityType: EntityType.Unknown,
     },
     {
       title: getTopLevelItemTitle(t('SIDE_MENU.REPORTS')),
@@ -190,6 +196,7 @@ export const SideMenu = observer((): JSX.Element => {
       isLeaf: false,
       children: [],
       pageId: ResourceNameConstants.REPORT_RESOURCE_NAME,
+      entityType: EntityType.Unknown,
     },
   ];
 

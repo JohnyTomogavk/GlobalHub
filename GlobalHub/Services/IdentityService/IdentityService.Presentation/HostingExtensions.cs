@@ -42,7 +42,6 @@ internal static class HostingExtensions
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
-
                 options.EmitStaticAudienceClaim = true;
             })
             .AddConfigurationStore(options =>

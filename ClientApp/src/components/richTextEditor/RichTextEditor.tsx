@@ -1,36 +1,22 @@
 import React, { useEffect, useId, useRef } from 'react';
-import { OutputData } from '@editorjs/editorjs';
+import EditorJS, { API, LogLevels, OutputData } from '@editorjs/editorjs';
 import { editorTools } from '../../config/editorJsTools';
 import { StyledEditorJsWrapper } from './StyledEditorJsWrapper';
 import { observer } from 'mobx-react-lite';
 import UiConfigStore from '../../store/uiConfigStore';
 import { theme } from 'antd';
 import { isEqual } from 'lodash';
-import Editor from '@stfy/react-editor.js';
 import { NOTE_DEFAULT_EMPTY_BLOCK } from '../../constants/notesConstants';
 
 interface EditorParameters {
-  onChange: (data: OutputData) => Promise<void>;
+  onChange: (data: OutputData) => Promise<void> | void;
   data: OutputData;
-  onEditorReadyHandler: () => void;
 }
 
 export const RichTextEditor = observer((props: EditorParameters): JSX.Element => {
   const { isDarkTheme } = UiConfigStore;
   const editorHolderId = useId();
-  const editorRef = useRef<Editor>(null);
-
-  useEffect(() => {
-    if (!editorRef.current?.editor) return;
-
-    editorRef.current.editor.isReady.then(() => {
-      editorRef.current?.editor.render(props.data);
-    });
-  }, [props.data]);
-
-  const onEditorReady = (): void => {
-    props.onEditorReadyHandler();
-  };
+  const editorRef = useRef<EditorJS | null>(null);
 
   const {
     token: { colorText },
@@ -47,15 +33,38 @@ export const RichTextEditor = observer((props: EditorParameters): JSX.Element =>
     await props.onChange(dataToUpdate);
   };
 
+  useEffect(() => {
+    editorRef.current = new EditorJS({
+      holder: editorHolderId,
+      tools: editorTools,
+      data: props.data,
+      logLevel: 'ERROR' as LogLevels,
+      onChange: async (api: API): Promise<void> => {
+        const data = await api.saver.save();
+
+        await onEditorDataChange(data);
+      },
+    });
+
+    return () => {
+      editorRef.current?.isReady.then(() => {
+        editorRef.current?.destroy();
+        editorRef.current = null;
+      });
+    };
+  }, []);
+
+  useEffect(() => {
+    if (editorRef?.current === null) return;
+
+    editorRef.current.isReady.then(() => {
+      editorRef.current?.render(props.data);
+    });
+  }, [props.data]);
+
   return (
     <StyledEditorJsWrapper id={editorHolderId} $isDarkTheme={isDarkTheme} $textColor={colorText}>
-      <Editor
-        ref={editorRef}
-        reinitOnPropsChange={false}
-        tools={editorTools}
-        onReady={onEditorReady}
-        onData={onEditorDataChange}
-      />
+      <div id={editorHolderId}></div>
     </StyledEditorJsWrapper>
   );
 });

@@ -6,6 +6,7 @@ import {
   Collapse,
   Divider,
   Empty,
+  Flex,
   Form,
   List,
   Progress,
@@ -48,6 +49,8 @@ import useBudgetsApi from '../../hooks/api/useBudgetsApi';
 import useBudgetsItemsApi from '../../hooks/api/useBudgetsItemsApi';
 import useTagLimitsApi from '../../hooks/api/useTagLimitsApi';
 import CountUp from 'react-countup';
+import { FormatConfig, Formatter } from 'antd/lib/statistic/utils';
+import { Loader } from '../../components/loader/Loader';
 
 const { Text } = Typography;
 
@@ -61,6 +64,21 @@ interface TagLimitStatus {
   hasLimitBeenReached: boolean;
   limitAchievementPercent: number;
 }
+
+const countUpFormatter: Formatter = (value: number | string, config: FormatConfig | undefined): ReactNode => {
+  const countUpDuration = 1.5;
+  const endValueToDisplay = typeof value === 'string' ? toNumber(value) : value;
+
+  return (
+    <CountUp
+      delay={0}
+      duration={countUpDuration}
+      end={endValueToDisplay}
+      decimal={config?.decimalSeparator}
+      decimals={2}
+    />
+  );
+};
 
 export const BudgetComponent = observer((): JSX.Element => {
   const { budgetStore, sideMenuItems } = SideMenuIndexStore;
@@ -85,6 +103,7 @@ export const BudgetComponent = observer((): JSX.Element => {
   const [expenseSumsGroupedByTags, setExpenseSumsGroupedByTags] = useState<ExpenseOperationsSumDto[]>([]);
   const [tagLimitsStatuses, setTagLimitsStatuses] = useState<TagLimitStatus[]>([]);
   const [isTagLimitsDrawerOpened, setIsTagLimitsDrawerOpened] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const notEmptyExpenseSumsGroupedByTags: ExpenseOperationsSumDto[] = expenseSumsGroupedByTags.filter(
     (operationSum: ExpenseOperationsSumDto): boolean => operationSum.operationsSum !== 0
@@ -183,11 +202,13 @@ export const BudgetComponent = observer((): JSX.Element => {
   };
 
   useEffect(() => {
-    loadTagLimitsData();
-    loadBudgetData();
+    Promise.all([loadTagLimitsData(), loadBudgetData()]).then(() => {
+      setIsLoading(false);
+    });
 
     return () => {
       setTagLimitsStatuses([]);
+      setIsLoading(true);
     };
   }, [id]);
 
@@ -275,6 +296,14 @@ export const BudgetComponent = observer((): JSX.Element => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className={styles.loaderContainer}>
+        <Loader />
+      </div>
+    );
+  }
+
   return (
     <>
       <ItemInfoSubHeader
@@ -328,18 +357,18 @@ export const BudgetComponent = observer((): JSX.Element => {
           </Col>
           <Col flex={'auto'}>
             <Card size={'small'} title="Current month balance state" className={styles.card}>
-              <Space size={'large'}>
+              <Flex justify={'space-around'} gap={8}>
                 <Space direction={'vertical'}>
                   <Statistic
                     title="Left"
                     suffix={'BYN'}
-                    formatter={() => <CountUp start={0} end={toNumber(budgetAnalyticData?.moneyLeft)} />}
+                    formatter={countUpFormatter}
                     value={budgetAnalyticData?.moneyLeft}
                   />
                   <Statistic
                     title="Irregular Expenses"
                     suffix={'BYN'}
-                    formatter={() => <CountUp start={0} end={toNumber(budgetAnalyticData?.irregularExpenses)} />}
+                    formatter={countUpFormatter}
                     value={budgetAnalyticData?.irregularExpenses}
                   />
                 </Space>
@@ -347,35 +376,37 @@ export const BudgetComponent = observer((): JSX.Element => {
                   <Statistic
                     title="Preserved"
                     suffix={'BYN'}
-                    formatter={() => <CountUp start={0} end={toNumber(budgetAnalyticData?.moneyPreserved)} />}
+                    formatter={countUpFormatter}
                     value={budgetAnalyticData?.moneyPreserved}
                   />
                   <Statistic
                     title="Regular expenses"
                     suffix={'BYN'}
-                    formatter={() => <CountUp start={0} end={toNumber(budgetAnalyticData?.regularExpenses)} />}
+                    formatter={countUpFormatter}
                     value={budgetAnalyticData?.regularExpenses}
                   />
                 </Space>
-              </Space>
+              </Flex>
             </Card>
           </Col>
           <Col flex={'auto'}>
             <Card size={'small'} title={'Operations analytic'} className={styles.card}>
-              <Space direction={'vertical'}>
-                <Statistic
-                  formatter={() => <CountUp start={0} end={toNumber(budgetAnalyticData?.averageDailyExpenses)} />}
-                  value={budgetAnalyticData?.averageDailyExpenses}
-                  title="Avg daily expenses"
-                  suffix={'BYN'}
-                />
-                <Statistic
-                  formatter={() => <CountUp start={0} end={toNumber(budgetAnalyticData?.expensesMedian)} />}
-                  value={budgetAnalyticData?.expensesMedian}
-                  title="Expenses median"
-                  suffix={'BYN'}
-                />
-              </Space>
+              <Flex justify={'center'}>
+                <Space direction={'vertical'}>
+                  <Statistic
+                    formatter={countUpFormatter}
+                    value={budgetAnalyticData?.averageDailyExpenses}
+                    title="Avg daily expenses"
+                    suffix={'BYN'}
+                  />
+                  <Statistic
+                    formatter={countUpFormatter}
+                    value={budgetAnalyticData?.expensesMedian}
+                    title="Expenses median"
+                    suffix={'BYN'}
+                  />
+                </Space>
+              </Flex>
             </Card>
           </Col>
           <Col>
@@ -397,9 +428,7 @@ export const BudgetComponent = observer((): JSX.Element => {
               size={'small'}
               title={'Current limits status'}
               extra={
-                <Button onClick={(): void => setIsTagLimitsDrawerOpened(true)} size={'small'}>
-                  Update limits
-                </Button>
+                <Button onClick={(): void => setIsTagLimitsDrawerOpened(true)} icon={<EditOutlined />} size={'small'} />
               }
             >
               <Row>

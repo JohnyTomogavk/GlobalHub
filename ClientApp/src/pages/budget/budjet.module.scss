@@ -1,4 +1,4 @@
-@use "src/styles.module" as *;
+@import "/src/styles.module";
 
 @mixin base-card {
   height: 100%;
@@ -43,4 +43,10 @@
 
 .tagLimitsBlockDivider {
   @include base-card;
+}
+
+.loaderContainer {
+  @extend %loader;
+
+  height: calc(100vh - 6rem);
 }

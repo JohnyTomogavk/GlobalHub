@@ -1,19 +1,19 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { OutputData } from '@editorjs/editorjs';
 import { ItemInfoSubHeader } from '../../components/itemInfoHeader/ItemInfoHeader';
 import styles from './notes.module.scss';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Note } from '../../entities/notes/note';
-import { NOTE_EMPTY_TITLE_PLACEHOLDER } from '../../constants/notesConstants';
-import Title from 'antd/es/typography/Title';
+import { NOTE_EMPTY_TITLE_PLACEHOLDER, NOTE_UPDATE_DEBOUNCE } from '../../constants/notesConstants';
 import { RichTextEditor } from '../../components/richTextEditor/RichTextEditor';
 import * as RoutingConstants from '../../constants/routingConstants';
 import { observer } from 'mobx-react-lite';
-import { theme } from 'antd';
+import { Input, theme } from 'antd';
 import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
 import useBreadcrumbs from '../../hooks/useBreadcrumbs';
 import useNotesAPI from '../../hooks/api/useNotesApi';
 import { Loader } from '../../components/loader/Loader';
+import debounce from 'lodash/debounce';
 
 export const NotesComponent = observer((): JSX.Element => {
   const { notesStore, commonSideMenuStore, sideMenuItems } = SideMenuIndexStore;
@@ -21,7 +21,7 @@ export const NotesComponent = observer((): JSX.Element => {
   const { id } = useParams();
   const location = useLocation();
 
-  const [isLoading, setLoading] = useState<boolean>(false);
+  const [isFetching, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const breadCrumbsItems = useBreadcrumbs(location.pathname, sideMenuItems);
 
@@ -35,30 +35,69 @@ export const NotesComponent = observer((): JSX.Element => {
   } = theme.useToken();
 
   const onEditorContentChange = async (data: OutputData): Promise<void> => {
-    if (!noteRef.current) return;
+    if (!note) return;
 
     setLoading(true);
-    const updateNoteResponse = await notesApi.updateContent(noteRef.current.id, {
+    const { data: updatedNote } = await notesApi.updateContent(note.id, {
       content: JSON.stringify(data),
     });
 
-    setNote(updateNoteResponse.data);
+    if (noteRef && noteRef.current?.id === note.id) {
+      setNote(
+        (prevState) =>
+          prevState && {
+            ...prevState,
+            updatedDate: updatedNote.updatedDate,
+          }
+      );
+    }
 
     setLoading(false);
   };
 
+  const debouncedEditorContentChange = useCallback(
+    debounce(async (data: OutputData): Promise<void> => await onEditorContentChange(data), NOTE_UPDATE_DEBOUNCE),
+    [note?.id]
+  );
+
+  const updateTitleDebounced = useCallback(
+    debounce(async (noteId: string, changedTitle: string): Promise<void> => {
+      if (!note) return;
+
+      setLoading(true);
+
+      const { data: updatedNote } = await notesApi.updateTitle(noteId, { newTitle: changedTitle });
+
+      if (noteRef && noteRef.current?.id === note.id) {
+        setNote(
+          (prevState) =>
+            prevState && {
+              ...prevState,
+              updatedDate: updatedNote.updatedDate,
+            }
+        );
+      }
+
+      notesStore.renameNoteInSideMenu(noteId, changedTitle);
+      setLoading(false);
+    }, NOTE_UPDATE_DEBOUNCE),
+    [note?.id]
+  );
+
   const onTitleUpdate = async (changedTitle: string): Promise<void> => {
     if (!id) return;
 
-    const newTitle = changedTitle.length !== 0 ? changedTitle : NOTE_EMPTY_TITLE_PLACEHOLDER;
+    setNote(
+      (prevState) =>
+        prevState && {
+          ...prevState,
+          title: changedTitle,
+        }
+    );
 
-    if (note?.title === newTitle) return;
+    if (note?.title === changedTitle) return;
 
-    setLoading(true);
-    const { data } = await notesApi.updateTitle(id, { newTitle: newTitle });
-    setNote(data);
-    notesStore.renameNoteInSideMenu(data.id, data.title);
-    setLoading(false);
+    await updateTitleDebounced(id, changedTitle);
   };
 
   const onItemDelete = async (): Promise<void> => {
@@ -73,18 +112,22 @@ export const NotesComponent = observer((): JSX.Element => {
   const loadNote = async (): Promise<void> => {
     if (!id) return;
 
-    const noteResponse = await notesApi.getById(id);
-    setNote(noteResponse.data);
-    noteRef.current = noteResponse.data;
+    const { data: noteData } = await notesApi.getById(id);
+    noteRef.current = noteData;
+    setNote(noteData);
   };
 
-  useEffect((): void => {
-    loadNote();
+  useEffect(() => {
+    loadNote().then(() => {
+      setIsEditorLoading(false);
+    });
+
+    return () => {
+      updateTitleDebounced.flush();
+      debouncedEditorContentChange.flush();
+      setIsEditorLoading(true);
+    };
   }, [id]);
-
-  const onRichTextEditorEditorReadyHandler = (): void => {
-    setIsEditorLoading(false);
-  };
 
   return (
     <div
@@ -92,47 +135,40 @@ export const NotesComponent = observer((): JSX.Element => {
         background: colorBgContainer,
       }}
     >
-      <ItemInfoSubHeader
-        onDeleteCallback={onItemDelete}
-        breadCrumbsItems={breadCrumbsItems}
-        editedAt={note?.updatedDate}
-        createdAt={note?.createdDate ?? new Date()}
-        isLoading={isLoading}
-      />
       {isEditorLoading ? (
         <div className={styles.editorLoader}>
           <Loader />
         </div>
       ) : (
-        <></>
+        <ItemInfoSubHeader
+          onDeleteCallback={onItemDelete}
+          breadCrumbsItems={breadCrumbsItems}
+          editedAt={note?.updatedDate}
+          createdAt={note?.createdDate ?? new Date()}
+          isLoading={isFetching}
+        />
       )}
       <div
         style={{
-          visibility: isEditorLoading ? 'hidden' : 'visible',
+          display: isEditorLoading ? 'none' : 'block',
         }}
         className={styles.pageContent}
       >
         <div className={styles.noteTitleContainer}>
-          <Title
-            editable={{
-              triggerType: ['text'],
-              text: note?.title,
-              onChange: (changedTitle: string) => onTitleUpdate(changedTitle),
-            }}
-            level={2}
+          <Input
+            value={note?.title}
+            placeholder={NOTE_EMPTY_TITLE_PLACEHOLDER}
             className={styles.noteTitle}
-            inputMode={'text'}
-          >
-            {note?.title}
-          </Title>
+            onChange={(e) => onTitleUpdate(e.target.value)}
+            bordered={false}
+          />
         </div>
         {useMemo(
           () =>
-            note && (
+            noteRef.current && (
               <RichTextEditor
-                data={JSON.parse(note.richTextContent)}
-                onChange={onEditorContentChange}
-                onEditorReadyHandler={onRichTextEditorEditorReadyHandler}
+                data={JSON.parse(noteRef.current.richTextContent)}
+                onChange={debouncedEditorContentChange}
               />
             ),
           [note?.id]

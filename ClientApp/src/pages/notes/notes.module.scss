@@ -1,4 +1,4 @@
-@use "src/styles.module" as *;
+@import "/src/styles.module";
 
 .pageContent {
   @include page-content-base;
@@ -6,19 +6,21 @@
   min-height: calc(100vh - 9rem);
 
   .noteTitleContainer {
-    @include page-title-container
+    text-align: center;
+
+    @include page-title-container;
   }
 
   .noteTitle {
-    @include entity-title;
-
-    font-weight: bold;
+    font-size: 2rem;
+    font-weight: bolder;
     width: 75%;
+    padding: 0;
   }
 }
 
 .editorLoader {
-  height: calc(100vh - 9rem);
-  display: flex;
-  justify-content: center;
+  @extend %loader;
+
+  height: calc(100vh - 6rem);
 }

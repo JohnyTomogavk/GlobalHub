@@ -2,6 +2,8 @@ import React, { MouseEventHandler } from 'react';
 import styles from '../components/layout/sideMenu/SideMenu.module.scss';
 import { Button } from 'antd';
 import { MoreOutlined, PlusOutlined } from '@ant-design/icons';
+import { EntityType } from '../enums/entityType';
+import { getUnnamedTitleByNodeType } from './entityHelper';
 
 export const getTopLevelItemTitle = (title: string, onClick?: MouseEventHandler): JSX.Element => (
   <span className={[styles.sideMenuItemTitleContainer, styles.topLevelItem].join(' ')}>
@@ -21,9 +23,9 @@ export const getTopLevelItemTitle = (title: string, onClick?: MouseEventHandler)
   </span>
 );
 
-export const getSecondaryLevelItemTitle = (title: string): JSX.Element => (
+export const getSecondaryLevelItemTitle = (title: string, entityType: EntityType): JSX.Element => (
   <span className={styles.sideMenuItemTitleContainer}>
-    <span className={styles.itemTitle}>{title}</span>
+    <span className={styles.itemTitle}>{title.length === 0 ? getUnnamedTitleByNodeType(entityType) : title}</span>
     <Button
       type={'text'}
       className={styles.sideMenuActionButton}
