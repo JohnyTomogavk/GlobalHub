@@ -4,10 +4,7 @@ import { ItemInfoSubHeader } from '../../components/itemInfoHeader/ItemInfoHeade
 import styles from './notes.module.scss';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Note } from '../../entities/notes/note';
-import {
-  NOTE_EMPTY_TITLE_PLACEHOLDER,
-  NOTE_UPDATE_DEBOUNCE,
-} from '../../constants/notesConstants';
+import { NOTE_EMPTY_TITLE_PLACEHOLDER, NOTE_UPDATE_DEBOUNCE } from '../../constants/notesConstants';
 import { RichTextEditor } from '../../components/richTextEditor/RichTextEditor';
 import * as RoutingConstants from '../../constants/routingConstants';
 import { observer } from 'mobx-react-lite';
@@ -57,7 +54,7 @@ export const NotesComponent = observer((): JSX.Element => {
     }
 
     setLoading(false);
-  }
+  };
 
   const updateTitleDebounced = useCallback(
     debounce(async (noteId: string, changedTitle: string): Promise<void> => {
@@ -161,13 +158,13 @@ export const NotesComponent = observer((): JSX.Element => {
             bordered={false}
           />
         </div>
-        {
-          useMemo(() => note && <RichTextEditor
-            key={note.id}
-            data={JSON.parse(note.richTextContent)}
-            onChange={onNoteContentChange}
-          />, [note?.id])
-        }
+        {useMemo(
+          () =>
+            note && (
+              <RichTextEditor key={note.id} data={JSON.parse(note.richTextContent)} onChange={onNoteContentChange} />
+            ),
+          [note?.id]
+        )}
       </div>
     </div>
   );
