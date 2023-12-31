@@ -16,9 +16,6 @@ import ColorPlugin from 'editorjs-text-color-plugin';
 import Alert from 'editorjs-alert';
 import Paragraph from '@editorjs/paragraph';
 import Code from '@rxpm/editor-js-code';
-import ToggleBlock from 'editorjs-toggle-block';
-import EditorJsColumns from '@calumk/editorjs-columns';
-import EditorJS from '@editorjs/editorjs';
 
 const paragraph = {
   class: Paragraph,
@@ -133,39 +130,6 @@ const alert = {
   inlineToolbar: true,
 };
 
-const toggleBlock = {
-  class: ToggleBlock,
-};
-
-const columnTools = {
-  paragraph,
-  embed,
-  table,
-  nestedList,
-  warning,
-  linkTool: linkTool,
-  header,
-  quote,
-  marker,
-  checkList,
-  delimiter,
-  inlineCode,
-  alignmentTuneTool,
-  color,
-  anyTuneAlignment,
-  code,
-  alert,
-  toggleBlock,
-};
-
-const columns = {
-  class: EditorJsColumns,
-  config: {
-    EditorJsLibrary: EditorJS,
-    tools: columnTools,
-  },
-};
-
 export const editorTools = {
   paragraph,
   embed,
@@ -184,6 +148,4 @@ export const editorTools = {
   anyTuneAlignment,
   code,
   alert,
-  toggleBlock,
-  columns,
 };

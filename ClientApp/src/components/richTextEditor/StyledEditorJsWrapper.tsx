@@ -26,6 +26,7 @@ export const StyledEditorJsWrapper = styled.div<StyledEditorJsProps>`
   .ce-block__content,
   .ce-toolbar__content {
     width: 75%;
+    max-width: initial;
   }
 
   .ce-toolbar__actions {
@@ -53,8 +54,6 @@ export const StyledEditorJsWrapper = styled.div<StyledEditorJsProps>`
     color: ${(props): string => props.$textColor};
   }
 
-  .toggle-block__selector,
-  .toggle-block__icon,
   .cdx-checklist {
     color: ${(props): string => props.$textColor} !important;
   }

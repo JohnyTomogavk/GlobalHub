@@ -34,15 +34,16 @@ export const NotesComponent = observer((): JSX.Element => {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const onEditorContentChange = async (data: OutputData): Promise<void> => {
+  const onNoteContentChange = async (data: OutputData): Promise<void> => {
     if (!note) return;
 
     setLoading(true);
+
     const { data: updatedNote } = await notesApi.updateContent(note.id, {
       content: JSON.stringify(data),
     });
 
-    if (noteRef && noteRef.current?.id === note.id) {
+    if (noteRef.current?.id === note.id) {
       setNote(
         (prevState) =>
           prevState && {
@@ -54,11 +55,6 @@ export const NotesComponent = observer((): JSX.Element => {
 
     setLoading(false);
   };
-
-  const debouncedEditorContentChange = useCallback(
-    debounce(async (data: OutputData): Promise<void> => await onEditorContentChange(data), NOTE_UPDATE_DEBOUNCE),
-    [note?.id]
-  );
 
   const updateTitleDebounced = useCallback(
     debounce(async (noteId: string, changedTitle: string): Promise<void> => {
@@ -124,7 +120,6 @@ export const NotesComponent = observer((): JSX.Element => {
 
     return () => {
       updateTitleDebounced.flush();
-      debouncedEditorContentChange.flush();
       setIsEditorLoading(true);
     };
   }, [id]);
@@ -165,11 +160,8 @@ export const NotesComponent = observer((): JSX.Element => {
         </div>
         {useMemo(
           () =>
-            noteRef.current && (
-              <RichTextEditor
-                data={JSON.parse(noteRef.current.richTextContent)}
-                onChange={debouncedEditorContentChange}
-              />
+            note && (
+              <RichTextEditor key={note.id} data={JSON.parse(note.richTextContent)} onChange={onNoteContentChange} />
             ),
           [note?.id]
         )}
