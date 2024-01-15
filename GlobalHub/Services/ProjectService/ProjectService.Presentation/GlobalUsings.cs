@@ -1,6 +1,14 @@
 ﻿global using Common.ExceptionHandling;
 global using Common.Extensions;
 global using Common.Logging;
+global using Common.Services;
+global using Common.Services.Abstract;
 global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
 global using Microsoft.IdentityModel.Logging;
+global using Microsoft.OpenApi.Models;
+global using ProjectService.Infrastructure.Services;
+global using ProjectService.Infrastructure.Services.Interfaces;
+global using ProjectService.Persistence.Contexts;
+global using ProjectService.Presentation.Config;
 global using Serilog;
