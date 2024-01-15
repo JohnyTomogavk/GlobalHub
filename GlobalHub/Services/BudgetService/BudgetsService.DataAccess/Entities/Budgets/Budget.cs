@@ -1,4 +1,6 @@
-﻿namespace BudgetsService.DataAccess.Entities.Budgets;
+﻿using Common.Interface;
+
+namespace BudgetsService.DataAccess.Entities.Budgets;
 
 /// <summary>
 /// User's budget. Contains common budget's config and info

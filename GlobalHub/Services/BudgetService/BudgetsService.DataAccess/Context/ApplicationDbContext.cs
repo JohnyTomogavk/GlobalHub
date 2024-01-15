@@ -1,4 +1,5 @@
-﻿using Common.Services.Abstract;
+﻿using Common.Interface;
+using Common.Services.Abstract;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace BudgetsService.DataAccess.Context;

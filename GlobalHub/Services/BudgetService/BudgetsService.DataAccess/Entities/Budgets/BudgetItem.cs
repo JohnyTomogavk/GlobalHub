@@ -1,4 +1,6 @@
-﻿namespace BudgetsService.DataAccess.Entities.Budgets;
+﻿using Common.Interface;
+
+namespace BudgetsService.DataAccess.Entities.Budgets;
 
 /// <summary>
 /// Budget item is operation on budget
