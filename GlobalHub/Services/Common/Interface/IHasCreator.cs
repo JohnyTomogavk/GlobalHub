@@ -1,4 +1,4 @@
-﻿namespace BudgetsService.Infrastructure.Interface;
+﻿namespace Common.Interface;
 
 public interface IHasCreator
 {

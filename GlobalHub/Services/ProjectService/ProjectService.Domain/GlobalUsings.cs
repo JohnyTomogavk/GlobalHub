@@ -1,0 +1,9 @@
+﻿global using Common.Interface;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.Metadata.Builders;
+global using ProjectService.Domain.Configurations.Base;
+global using ProjectService.Domain.Entities.Base;
+global using ProjectService.Domain.Entities.ProjectItems;
+global using ProjectService.Domain.Entities.Projects;
+global using ProjectService.Domain.Entities.Tags;
+global using ProjectService.Domain.Enums;
