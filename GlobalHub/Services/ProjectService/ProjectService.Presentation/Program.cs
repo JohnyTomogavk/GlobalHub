@@ -5,7 +5,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Host.UseSerilog(SerilogExtensions.LoggerConfiguration);
 
 builder.Services.AddCors();
-builder.Services.AddControllers();
+builder.Services.AddControllers().RegisterOData();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(action =>
 {
@@ -14,6 +15,8 @@ builder.Services.AddSwaggerGen(action =>
 
 builder.Services.AddScoped<IDateTimeService, DateTimeService>();
 builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
 
 builder.Services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
 {
@@ -27,7 +30,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-
 app.UseSerilogRequestLogging();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsDockerComposeEnvironment())
@@ -35,6 +37,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsDockerComposeEnvironmen
     IdentityModelEventSource.ShowPII = true;
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseODataRouteDebug();
 }
 
 app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
