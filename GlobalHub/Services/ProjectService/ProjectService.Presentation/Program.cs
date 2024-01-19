@@ -13,15 +13,17 @@ builder.Services.AddSwaggerGen(action =>
     action.SwaggerDoc("v1", new OpenApiInfo { Title = "Projects API", Version = "v1" });
 });
 
-builder.Services.AddScoped<IDateTimeService, DateTimeService>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssemblyContaining(typeof(BaseService<>));
+});
 
-builder.Services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
+builder.Services.RegisterInfrastructureServices();
+builder.Services.RegisterServices();
 
 builder.Services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
 {
     var connectionString = Environment.GetEnvironmentVariable(ConfigConstants.ProjectsDbConnectionStringEnvKey);
-
     optionsBuilder.UseSqlServer(connectionString);
 });
 

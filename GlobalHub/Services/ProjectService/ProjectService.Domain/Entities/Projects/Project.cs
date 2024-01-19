@@ -8,7 +8,7 @@ public class Project : BaseEntity, IHasDate, IHasCreator
     /// <summary>
     /// Title of a project
     /// </summary>
-    public string Title { get; set; }
+    public string Title { get; set; } = string.Empty;
 
     /// <summary>
     /// Created tags

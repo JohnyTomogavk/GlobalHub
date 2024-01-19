@@ -24,7 +24,7 @@ public abstract class BaseController<T> : ODataController
     {
         // TODO: Add filtration by user id
 
-        return _baseService.Entities;
+        return _baseService.DbSet;
     }
 
     /// <summary>
@@ -35,9 +35,9 @@ public abstract class BaseController<T> : ODataController
     [EnableQuery]
     public IQueryable<T> Get([FromRoute] long key)
     {
-        var entity = _baseService.Entities.Where(t => t.Id == key).AsQueryable();
+        var entity = _baseService.DbSet.Where(t => t.Id == key).AsQueryable();
 
-        // TODO: Authorize access to entity
+        // TODO: Authorize access to entity when auth service is implemented
 
         if (entity == null)
         {

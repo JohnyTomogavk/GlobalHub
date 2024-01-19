@@ -4,11 +4,21 @@
 public class BaseService<T> : IBaseService<T>
     where T : BaseEntity
 {
-    public DbSet<T> Entities { get; }
+    private readonly ApplicationDbContext _dbContext;
 
+    public DbSet<T> DbSet { get; }
+
+    public async Task<T> Create(T entity)
+    {
+        var createdEntity = await DbSet.AddAsync(entity);
+        await _dbContext.SaveChangesAsync();
+
+        return createdEntity.Entity;
+    }
 
     public BaseService(ApplicationDbContext dbContext)
     {
-        Entities = dbContext.Set<T>();
+        _dbContext = dbContext;
+        DbSet = dbContext.Set<T>();
     }
 }

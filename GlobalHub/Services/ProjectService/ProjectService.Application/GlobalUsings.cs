@@ -1,4 +1,9 @@
-﻿global using Microsoft.EntityFrameworkCore;
+﻿global using MediatR;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.DependencyInjection;
+global using ProjectService.Application.Requests.Projects;
+global using ProjectService.Application.Services;
 global using ProjectService.Application.Services.Abstract;
 global using ProjectService.Domain.Entities.Base;
+global using ProjectService.Domain.Entities.Projects;
 global using ProjectService.Persistence.Contexts;

@@ -10,5 +10,12 @@ public interface IBaseService<T>
     /// <summary>
     /// Collection of entities
     /// </summary>
-    public DbSet<T> Entities { get; }
+    public DbSet<T> DbSet { get; }
+
+    /// <summary>
+    /// Creates new entity
+    /// </summary>
+    /// <param name="entity">Entity to create</param>
+    /// <returns>Created entity id</returns>
+    public Task<T> Create(T entity);
 }
