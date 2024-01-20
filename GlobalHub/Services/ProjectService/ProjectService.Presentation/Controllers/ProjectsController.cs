@@ -19,11 +19,12 @@ public class ProjectsController : BaseController<Project, ProjectDto>
         return StatusCode(StatusCodes.Status201Created, createdProject);
     }
 
-    [HttpPost]
-    public async Task<ActionResult<Project>> Update()
+    [HttpDelete]
+    public async Task<ActionResult<Project>> Delete(long projectId)
     {
-        var createdProject = await _mediator.Send(new CreateProjectRequest());
+        var deleteProjectRequest = new DeleteProjectRequest(projectId);
+        var createdProject = await _mediator.Send(deleteProjectRequest);
 
-        return StatusCode(StatusCodes.Status201Created, createdProject);
+        return StatusCode(StatusCodes.Status200OK, createdProject);
     }
 }
