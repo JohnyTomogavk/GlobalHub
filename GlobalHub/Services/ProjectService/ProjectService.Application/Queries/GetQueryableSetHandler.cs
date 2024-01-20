@@ -1,12 +1,16 @@
 ﻿namespace ProjectService.Application.Queries;
 
-public record QueryableSetRequest<TEntity, TDto> : IRequest<IQueryable<TDto>>
-    where TEntity : BaseEntity
+public record QueryableSetRequest<TDto> : IRequest<IQueryable<TDto>>
 {
     /// <summary>
     /// Represents entity id to filter queryable set by
     /// </summary>
     public long? Key { get; init; }
+
+    /// <summary>
+    /// OData query options
+    /// </summary>
+    public ODataQueryOptions<TDto> QueryOptions { get; init; }
 }
 
 /// <summary>
@@ -15,8 +19,9 @@ public record QueryableSetRequest<TEntity, TDto> : IRequest<IQueryable<TDto>>
 /// <typeparam name="TEntity">Type of entity to pull from data source</typeparam>
 /// <typeparam name="TDto">Dto type to project entities to</typeparam>
 public class GetQueryableSetHandler<TEntity, TDto>
-    : IRequestHandler<QueryableSetRequest<TEntity, TDto>, IQueryable<TDto>>
+    : IRequestHandler<QueryableSetRequest<TDto>, IQueryable<TDto>>
     where TEntity : BaseEntity
+    where TDto : class
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
@@ -27,12 +32,11 @@ public class GetQueryableSetHandler<TEntity, TDto>
         _mapper = mapper;
     }
 
-    public Task<IQueryable<TDto>> Handle(
-        QueryableSetRequest<TEntity, TDto> request,
+    public async Task<IQueryable<TDto>> Handle(
+        QueryableSetRequest<TDto> request,
         CancellationToken cancellationToken)
     {
-        var entities = _dbContext.Set<TEntity>()
-            .AsQueryable();
+        var entities = _dbContext.Set<TEntity>().AsQueryable();
 
         // TODO: Add filtration by user id
 
@@ -41,8 +45,8 @@ public class GetQueryableSetHandler<TEntity, TDto>
             entities = entities.Where(t => t.Id == request.Key);
         }
 
-        var projectedEntities = entities.ProjectTo<TDto>(_mapper.ConfigurationProvider);
+        var odataQuery = await entities.GetQueryAsync(_mapper, request.QueryOptions);
 
-        return Task.FromResult(projectedEntities);
+        return odataQuery;
     }
 }

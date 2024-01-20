@@ -1,6 +1,8 @@
 ﻿global using AutoMapper;
+global using AutoMapper.AspNet.OData;
 global using AutoMapper.QueryableExtensions;
 global using MediatR;
+global using Microsoft.AspNetCore.OData.Query;
 global using Microsoft.Extensions.DependencyInjection;
 global using ProjectService.Application.Dto;
 global using ProjectService.Application.Queries;

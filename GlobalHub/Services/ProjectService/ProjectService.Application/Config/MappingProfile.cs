@@ -4,9 +4,13 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<Project, ProjectDto>();
-        CreateMap<ProjectItem, ProjectItemDto>();
-        CreateMap<Tag, TagDto>();
-        CreateMap<ProjectItemTag, ProjectItemTagDto>();
+        CreateMap<Project, ProjectDto>()
+            .ForAllMembers(opt => opt.ExplicitExpansion());
+        CreateMap<ProjectItem, ProjectItemDto>()
+            .ForAllMembers(opt => opt.ExplicitExpansion());
+        CreateMap<Tag, TagDto>()
+            .ForAllMembers(opt => opt.ExplicitExpansion());
+        CreateMap<ProjectItemTag, ProjectItemTagDto>()
+            .ForAllMembers(opt => opt.ExplicitExpansion());
     }
 }

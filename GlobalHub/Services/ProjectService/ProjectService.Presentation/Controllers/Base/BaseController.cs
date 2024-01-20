@@ -20,10 +20,9 @@ public abstract class BaseController<TEntity, TDto> : ODataController
     /// OData endpoint that returns entities
     /// </summary>
     /// <returns>Collection of entities</returns>
-    [EnableQuery]
-    public async Task<IQueryable<TDto>> Get()
+    public async Task<IQueryable<TDto>> Get(ODataQueryOptions<TDto> query)
     {
-        var request = new QueryableSetRequest<TEntity, TDto>();
+        var request = new QueryableSetRequest<TDto> { QueryOptions = query, };
         var entities = await _mediator.Send(request);
 
         return entities;
@@ -33,11 +32,11 @@ public abstract class BaseController<TEntity, TDto> : ODataController
     /// OData endpoint that gets entity by id
     /// </summary>
     /// <param name="key">Entity Id</param>
+    /// <param name="query">OData query options</param>
     /// <returns>Entity with Id</returns>
-    [EnableQuery]
-    public async Task<IQueryable<TDto>> Get([FromRoute] long key)
+    public async Task<IQueryable<TDto>> Get([FromRoute] long key, ODataQueryOptions<TDto> query)
     {
-        var request = new QueryableSetRequest<TEntity, TDto> { Key = key };
+        var request = new QueryableSetRequest<TDto> { Key = key, QueryOptions = query, };
         var entity = await _mediator.Send(request);
 
         // TODO: Authorize access to entity when auth service is implemented

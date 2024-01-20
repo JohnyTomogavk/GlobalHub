@@ -6,7 +6,7 @@ public static class DependencyConfig
     {
         serviceCollection
             .AddScoped<
-                IRequestHandler<QueryableSetRequest<Project, ProjectDto>, IQueryable<ProjectDto>>,
+                IRequestHandler<QueryableSetRequest<ProjectDto>, IQueryable<ProjectDto>>,
                 GetQueryableSetHandler<Project, ProjectDto>>();
 
         return serviceCollection;

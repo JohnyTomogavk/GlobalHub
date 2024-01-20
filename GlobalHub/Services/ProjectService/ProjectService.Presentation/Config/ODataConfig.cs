@@ -21,9 +21,10 @@ public static class ODataConfig
         var builder = new ODataConventionModelBuilder();
         builder.EnableLowerCamelCase();
 
-        builder.EntitySet<Project>("Projects");
-        builder.EntitySet<ProjectItem>("ProjectItems");
-        builder.EntitySet<Tag>("Tags");
+        builder.EntitySet<ProjectDto>("Projects");
+        builder.EntitySet<ProjectItemDto>("ProjectItems");
+        builder.EntitySet<ProjectItemTagDto>("ProjectItemTags");
+        builder.EntitySet<TagDto>("Tags");
 
         return builder.GetEdmModel();
     }
