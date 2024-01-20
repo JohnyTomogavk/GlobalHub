@@ -6,7 +6,7 @@ public class ProjectsController : BaseController<Project>
 {
     private readonly IMediator _mediator;
 
-    public ProjectsController(IBaseService<Project> baseService, IMediator mediator) : base(baseService)
+    public ProjectsController(IMediator mediator) : base(mediator)
     {
         _mediator = mediator;
     }

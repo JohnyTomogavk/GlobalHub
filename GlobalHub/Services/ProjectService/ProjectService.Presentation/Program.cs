@@ -15,11 +15,11 @@ builder.Services.AddSwaggerGen(action =>
 
 builder.Services.AddMediatR(cfg =>
 {
-    cfg.RegisterServicesFromAssemblyContaining(typeof(BaseService<>));
+    cfg.RegisterServicesFromAssemblyContaining(typeof(CreateProjectRequest));
 });
 
 builder.Services.RegisterInfrastructureServices();
-builder.Services.RegisterServices();
+builder.Services.RegisterRequestHandlers();
 
 builder.Services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
 {

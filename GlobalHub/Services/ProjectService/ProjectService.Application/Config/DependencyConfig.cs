@@ -2,10 +2,11 @@
 
 public static class DependencyConfig
 {
-    public static IServiceCollection RegisterServices(this IServiceCollection serviceCollection)
+    public static IServiceCollection RegisterRequestHandlers(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
-        serviceCollection.AddScoped<IProjectService, Services.ProjectService>();
+        serviceCollection
+            .AddScoped<IRequestHandler<QueryableSetRequest<Project>, IQueryable<Project>>,
+                GetQueryableSetHandler<Project>>();
 
         return serviceCollection;
     }

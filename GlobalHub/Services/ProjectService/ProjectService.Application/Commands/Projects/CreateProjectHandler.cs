@@ -5,18 +5,18 @@
 /// </summary>
 public class CreateProjectHandler : IRequestHandler<CreateProjectRequest, Project>
 {
-    private readonly IProjectService _projectService;
+    private readonly ApplicationDbContext _applicationDbContext;
 
-    public CreateProjectHandler(IProjectService projectService)
+    public CreateProjectHandler(ApplicationDbContext applicationDbContext)
     {
-        _projectService = projectService;
+        _applicationDbContext = applicationDbContext;
     }
 
     public async Task<Project> Handle(CreateProjectRequest request, CancellationToken cancellationToken)
     {
         var project = new Project();
-        var createdProjectId = await _projectService.Create(project);
+        var entityEntry = await _applicationDbContext.AddAsync(project, cancellationToken);
 
-        return createdProjectId;
+        return entityEntry.Entity;
     }
 }

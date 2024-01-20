@@ -8,11 +8,11 @@
 public abstract class BaseController<T> : ODataController
     where T : BaseEntity
 {
-    private readonly IBaseService<T> _baseService;
+    private readonly IMediator _mediator;
 
-    protected BaseController(IBaseService<T> baseService)
+    protected BaseController(IMediator mediator)
     {
-        _baseService = baseService;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -20,11 +20,13 @@ public abstract class BaseController<T> : ODataController
     /// </summary>
     /// <returns>Collection of entities</returns>
     [EnableQuery]
-    public IQueryable<T> Get()
+    public async Task<IQueryable<T>> Get()
     {
         // TODO: Add filtration by user id
+        var request = new QueryableSetRequest<T>();
+        var entities = await _mediator.Send(request);
 
-        return _baseService.DbSet;
+        return entities;
     }
 
     /// <summary>
@@ -33,9 +35,10 @@ public abstract class BaseController<T> : ODataController
     /// <param name="key">Entity Id</param>
     /// <returns>Entity with Id</returns>
     [EnableQuery]
-    public IQueryable<T> Get([FromRoute] long key)
+    public async Task<IQueryable<T>> Get([FromRoute] long key)
     {
-        var entity = _baseService.DbSet.Where(t => t.Id == key).AsQueryable();
+        var request = new QueryableSetRequest<T> { Key = key };
+        var entity = await _mediator.Send(request);
 
         // TODO: Authorize access to entity when auth service is implemented
 
