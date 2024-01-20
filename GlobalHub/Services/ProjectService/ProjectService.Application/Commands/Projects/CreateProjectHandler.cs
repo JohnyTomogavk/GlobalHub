@@ -1,5 +1,7 @@
 ﻿namespace ProjectService.Application.Commands.Projects;
 
+public record CreateProjectRequest() : IRequest<Project>;
+
 /// <summary>
 /// Handles project creating
 /// </summary>
