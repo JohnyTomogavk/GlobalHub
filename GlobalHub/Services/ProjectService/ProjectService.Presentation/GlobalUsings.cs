@@ -14,6 +14,7 @@ global using Microsoft.OData.ModelBuilder;
 global using Microsoft.OpenApi.Models;
 global using ProjectService.Application.Commands.Projects;
 global using ProjectService.Application.Config;
+global using ProjectService.Application.Dto;
 global using ProjectService.Application.Queries;
 global using ProjectService.Domain.Entities.Base;
 global using ProjectService.Domain.Entities.ProjectItems;

@@ -1,6 +1,12 @@
-﻿global using MediatR;
+﻿global using AutoMapper;
+global using AutoMapper.QueryableExtensions;
+global using MediatR;
 global using Microsoft.Extensions.DependencyInjection;
+global using ProjectService.Application.Dto;
 global using ProjectService.Application.Queries;
 global using ProjectService.Domain.Entities.Base;
+global using ProjectService.Domain.Entities.ProjectItems;
 global using ProjectService.Domain.Entities.Projects;
+global using ProjectService.Domain.Entities.Tags;
+global using ProjectService.Domain.Enums;
 global using ProjectService.Persistence.Contexts;

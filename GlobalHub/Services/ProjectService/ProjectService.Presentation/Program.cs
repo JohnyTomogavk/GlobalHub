@@ -18,6 +18,11 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssemblyContaining(typeof(CreateProjectRequest));
 });
 
+builder.Services.AddAutoMapper(config =>
+{
+    config.AddProfile<MappingProfile>();
+});
+
 builder.Services.RegisterInfrastructureServices();
 builder.Services.RegisterRequestHandlers();
 

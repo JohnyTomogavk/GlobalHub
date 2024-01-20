@@ -4,9 +4,10 @@
 /// Base controller for others
 /// Provides base OData endpoints and base services
 /// </summary>
-/// <typeparam name="T">Entity type</typeparam>
-public abstract class BaseController<T> : ODataController
-    where T : BaseEntity
+/// <typeparam name="TEntity">Entity type</typeparam>
+/// <typeparam name="TDto">Entity Dto type to return</typeparam>
+public abstract class BaseController<TEntity, TDto> : ODataController
+    where TEntity : BaseEntity
 {
     private readonly IMediator _mediator;
 
@@ -20,10 +21,9 @@ public abstract class BaseController<T> : ODataController
     /// </summary>
     /// <returns>Collection of entities</returns>
     [EnableQuery]
-    public async Task<IQueryable<T>> Get()
+    public async Task<IQueryable<TDto>> Get()
     {
-        // TODO: Add filtration by user id
-        var request = new QueryableSetRequest<T>();
+        var request = new QueryableSetRequest<TEntity, TDto>();
         var entities = await _mediator.Send(request);
 
         return entities;
@@ -35,9 +35,9 @@ public abstract class BaseController<T> : ODataController
     /// <param name="key">Entity Id</param>
     /// <returns>Entity with Id</returns>
     [EnableQuery]
-    public async Task<IQueryable<T>> Get([FromRoute] long key)
+    public async Task<IQueryable<TDto>> Get([FromRoute] long key)
     {
-        var request = new QueryableSetRequest<T> { Key = key };
+        var request = new QueryableSetRequest<TEntity, TDto> { Key = key };
         var entity = await _mediator.Send(request);
 
         // TODO: Authorize access to entity when auth service is implemented
