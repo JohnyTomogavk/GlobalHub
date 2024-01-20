@@ -1,4 +1,5 @@
-﻿namespace BudgetsService.Infrastructure.Interface;
+﻿namespace Common.Interface;
+
 
 /// <summary>
 /// Tracks created and updated dates

@@ -15,7 +15,6 @@ global using BudgetsService.DataAccess.Enums.Tags;
 global using BudgetsService.DataAccess.Extensions;
 global using BudgetsService.DataAccess.Repository.Interfaces;
 global using BudgetsService.Infrastructure.Extensions;
-global using BudgetsService.Infrastructure.Interface;
 global using BudgetsService.Infrastructure.Models;
 global using Common.Exceptions;
 global using Common.Services.Abstract;

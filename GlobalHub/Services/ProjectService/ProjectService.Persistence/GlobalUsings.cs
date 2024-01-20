@@ -1,0 +1,9 @@
+﻿global using System.Reflection;
+global using Common.Interface;
+global using Common.Services.Abstract;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.ChangeTracking;
+global using ProjectService.Domain.Entities.ProjectItems;
+global using ProjectService.Domain.Entities.Projects;
+global using ProjectService.Domain.Entities.Tags;
+global using ProjectService.Infrastructure.Services.Interfaces;

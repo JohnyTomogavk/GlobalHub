@@ -1,0 +1,14 @@
+﻿global using AutoMapper;
+global using AutoMapper.AspNet.OData;
+global using MediatR;
+global using Microsoft.AspNetCore.OData.Query;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.DependencyInjection;
+global using ProjectService.Application.Dto;
+global using ProjectService.Application.Queries;
+global using ProjectService.Domain.Entities.Base;
+global using ProjectService.Domain.Entities.ProjectItems;
+global using ProjectService.Domain.Entities.Projects;
+global using ProjectService.Domain.Entities.Tags;
+global using ProjectService.Domain.Enums;
+global using ProjectService.Persistence.Contexts;

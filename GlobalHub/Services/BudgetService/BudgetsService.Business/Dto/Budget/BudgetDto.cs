@@ -1,4 +1,6 @@
-﻿namespace BudgetsService.Business.Dto.Budget;
+﻿using Common.Interface;
+
+namespace BudgetsService.Business.Dto.Budget;
 
 public record BudgetDto : IHasDate, IHasCreator
 {

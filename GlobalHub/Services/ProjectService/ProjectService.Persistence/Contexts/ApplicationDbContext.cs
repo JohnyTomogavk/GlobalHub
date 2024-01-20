@@ -1,37 +1,31 @@
-﻿using Common.Interface;
-using Common.Services.Abstract;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-
-namespace BudgetsService.DataAccess.Context;
+﻿namespace ProjectService.Persistence.Contexts;
 
 public class ApplicationDbContext : DbContext
 {
-    private readonly IDateTimeService _dateTimeService;
     private readonly IUserService _userService;
+    private readonly IDateTimeService _dateTimeService;
 
     public ApplicationDbContext(
-        DbContextOptions<ApplicationDbContext> options,
-        IDateTimeService dateTimeService,
-        IUserService userService) :
-        base(options)
+        DbContextOptions<ApplicationDbContext> dbContextOptions,
+        IUserService userService, IDateTimeService dateTimeService) :
+        base(dbContextOptions)
     {
-        _dateTimeService = dateTimeService;
         _userService = userService;
+        _dateTimeService = dateTimeService;
     }
 
-    public DbSet<Budget> Budgets { get; set; }
+    public DbSet<Project> Projects { get; set; }
 
-    public DbSet<BudgetItem> BudgetsItems { get; set; }
+    public DbSet<ProjectItem> ProjectItems { get; set; }
 
-    public DbSet<BudgetItemTag> BudgetItemTags { get; set; }
+    public DbSet<ProjectItemTag> ProjectItemTags { get; set; }
 
     public DbSet<Tag> Tags { get; set; }
 
-    public DbSet<TagLimit> TagLimits { get; set; }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(Tag)));
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
