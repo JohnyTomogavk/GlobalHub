@@ -16,7 +16,9 @@ public class DeleteProjectHandler : IRequestHandler<DeleteProjectRequest, long>
 
     public async Task<long> Handle(DeleteProjectRequest request, CancellationToken cancellationToken)
     {
-        var project = _applicationDbContext.Projects.SingleOrDefault(project => project.Id == request.ProjectId);
+        var project = await _applicationDbContext.Projects.SingleOrDefaultAsync(
+            project => project.Id == request.ProjectId,
+            cancellationToken: cancellationToken);
 
         // TODO: Authorize project delete operation
 
