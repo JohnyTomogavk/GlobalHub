@@ -1,6 +1,6 @@
-import { BudgetItemOperationType } from '../../enums/budgetItemOperationType';
+import { BudgetItemOperationType } from '../../enums/Budgets/budgetItemOperationType';
 import { IHasDate } from '../../interfaces/IHasDate';
-import { BudgetItemRegularityType } from '../../enums/budgetItemRegularityType';
+import { BudgetItemRegularityType } from '../../enums/Budgets/budgetItemRegularityType';
 
 export interface BudgetItemDto extends IHasDate {
   id: number;

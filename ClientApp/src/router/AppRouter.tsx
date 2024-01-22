@@ -9,10 +9,10 @@ import {
   NOTE_ROUTE,
   OPERATION_FAILED_ROUTE,
   REPORTS_ROUTE,
-  TASK_ROUTE,
+  PROJECT_ROUTE,
   WELCOME_PAGE_ROUTE,
 } from '../constants/routingConstants';
-import { TasksComponent } from '../pages/tasks/Tasks';
+import { ProjectComponent } from '../pages/tasks/Tasks';
 import { NotesComponent } from '../pages/notes/Notes';
 import { BudgetComponent } from '../pages/budget/Budget';
 import { NoteList } from '../pages/noteList/NoteList';
@@ -31,7 +31,7 @@ export const AppRouter = (): JSX.Element => (
       <Route path={BUDGET_ROUTE} element={<BudgetComponent />} />
       <Route path={OPERATION_FAILED_ROUTE} element={<OperationFailedComponent />} />
       <Route path={NOT_FOUND_ROUTE} element={<NotFound />} />
-      <Route path={TASK_ROUTE} element={<TasksComponent />} />
+      <Route path={PROJECT_ROUTE} element={<ProjectComponent />} />
       <Route path={REPORTS_ROUTE} element={<DashboardComponent />} />
     </Route>
   </Routes>
