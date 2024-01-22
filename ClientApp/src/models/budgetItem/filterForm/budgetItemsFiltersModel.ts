@@ -1,4 +1,4 @@
-import { BudgetItemOperationType } from '../../../enums/budgetItemOperationType';
+import { BudgetItemOperationType } from '../../../enums/Budgets/budgetItemOperationType';
 
 export interface BudgetItemsFiltersModel {
   budgetItemTitle?: string;

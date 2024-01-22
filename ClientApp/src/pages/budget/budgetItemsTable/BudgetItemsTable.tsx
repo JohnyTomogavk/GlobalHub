@@ -21,7 +21,7 @@ import { BudgetItemsTableAggregationModel } from '../../../models/budgetItem/bud
 import { SorterResult } from 'antd/lib/table/interface';
 import { BudgetItemTableEntry } from '../../../models/budgetItem/budgetItemsTable/budgetItemsTableEntry';
 import { TagDto } from '../../../dto/tags/tagDto';
-import { BudgetItemOperationType, BudgetItemOperationTypeTitle } from '../../../enums/budgetItemOperationType';
+import { BudgetItemOperationType, BudgetItemOperationTypeTitle } from '../../../enums/Budgets/budgetItemOperationType';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import { isArray, toNumber } from 'lodash';
 import { BudgetItemsRequestDto } from '../../../dto/budgetItems/budgetItemsRequestDto';
@@ -38,7 +38,7 @@ import {
   drawerModelToBudgetItemCreateDto,
   drawerModelToBudgetItemUpdateDto,
 } from '../../../helpers/budgetItemHelper';
-import { ColorValues, TagColor } from '../../../enums/tagColor';
+import { ColorValues, BudgetTagColor } from '../../../enums/Budgets/budgetTagColor';
 import dayjs from 'dayjs';
 import { nameof } from '../../../helpers/objectHelper';
 import { HttpStatusCode } from 'axios';
@@ -201,7 +201,7 @@ export const BudgetItemsTable = ({
         <>
           {tagIds.map((tagId: number) => {
             const tagDto = budgetTags.filter((dto: TagDto) => dto.id === tagId)[0];
-            const color = ColorValues[tagDto?.color ?? TagColor.Default];
+            const color = ColorValues[tagDto?.color ?? BudgetTagColor.Default];
 
             return (
               tagDto && (

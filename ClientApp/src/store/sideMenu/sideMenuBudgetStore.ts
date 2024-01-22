@@ -32,11 +32,7 @@ class SideMenuBudgetStore {
     });
   }
 
-  setBudgetMapsToSideMenu(items: BudgetMap[] | undefined): void {
-    if (!items) {
-      return;
-    }
-
+  setBudgetMapsToSideMenu(items: BudgetMap[]): void {
     this.sideMenuBudgetItems = items.map(
       (budgetMap): SideMenuItemModel => ({
         className: styles.sideMenuItem,

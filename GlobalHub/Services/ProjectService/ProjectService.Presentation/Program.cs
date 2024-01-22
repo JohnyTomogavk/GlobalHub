@@ -13,6 +13,31 @@ builder.Services.AddSwaggerGen(action =>
     action.SwaggerDoc("v1", new OpenApiInfo { Title = "Projects API", Version = "v1" });
 });
 
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer(options =>
+    {
+        options.Authority = Environment.GetEnvironmentVariable("IDENTITY_SERVICE_URL");
+        options.Audience = "ProjectsAPI";
+
+        if (builder.Environment.IsDockerComposeEnvironment())
+        {
+            options.TokenValidationParameters.ValidateIssuer = false;
+            options.BackchannelHttpHandler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback =
+                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+        }
+    });
+
+builder.Services.AddAuthorization(options =>
+    options.AddPolicy("ApiScope", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim("scope", "GlobalHub.ProjectsAPI");
+    })
+);
+
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssemblyContaining(typeof(CreateProjectRequest));

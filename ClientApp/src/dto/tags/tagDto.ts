@@ -1,7 +1,7 @@
-import { TagColor } from '../../enums/tagColor';
+import { BudgetTagColor } from '../../enums/Budgets/budgetTagColor';
 
 export interface TagDto {
   id: number;
   label: string;
-  color: TagColor;
+  color: BudgetTagColor;
 }

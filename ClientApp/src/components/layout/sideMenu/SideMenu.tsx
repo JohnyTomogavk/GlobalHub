@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import Title from 'antd/es/typography/Title';
 import { Divider, Space, theme, Tree } from 'antd';
 import {
-  CheckOutlined,
   DashboardOutlined,
   DollarOutlined,
   DownOutlined,
   GlobalOutlined,
   PieChartOutlined,
+  ProjectOutlined,
   ReadOutlined,
 } from '@ant-design/icons';
 import Sider from 'antd/es/layout/Sider';
@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { Key } from 'antd/lib/table/interface';
 import { getClientItemUrl } from '../../../helpers/urlHelper';
 import * as ResourceNameConstants from '../../../constants/resourceConstants';
-import { BUDGET_RESOURCE_NAME, NOTE_RESOURCE_NAME } from '../../../constants/resourceConstants';
+import { BUDGET_RESOURCE_NAME, NOTE_RESOURCE_NAME, PROJECT_RESOURCE_NAME } from '../../../constants/resourceConstants';
 import styles from './SideMenu.module.scss';
 import { NOTE_EMPTY_TITLE_PLACEHOLDER } from '../../../constants/notesConstants';
 import { SideMenuItemModel } from '../../../models/shared/sideMenu/sideMenuItemModel';
@@ -29,11 +29,12 @@ import useNotesAPI from '../../../hooks/api/useNotesApi';
 import useBudgetsApi from '../../../hooks/api/useBudgetsApi';
 import { Loader } from '../../loader/Loader';
 import { EntityType } from '../../../enums/entityType';
+import useProjects from '../../../hooks/api/useProjects';
 
 interface SideMenuItemsLoadingState {
   isNotesLoaded: boolean;
   isBudgetsLoaded: boolean;
-  isTasksLoaded: boolean;
+  isProjectsLoaded: boolean;
 }
 
 const getLoaderNode = (key: Key): SideMenuItemModel => ({
@@ -51,38 +52,27 @@ const getLoaderNode = (key: Key): SideMenuItemModel => ({
 });
 
 export const SideMenu = observer((): JSX.Element => {
-  const { notesStore, budgetStore, commonSideMenuStore } = SideMenuIndexStore;
+  const { notesStore, budgetStore, projectsStore, commonSideMenuStore } = SideMenuIndexStore;
   const { t } = useTranslation();
   const navigation = useNavigate();
   const location = useLocation();
-  const [{ isNotesLoaded, isTasksLoaded, isBudgetsLoaded }, setItemsLoadingState] = useState<SideMenuItemsLoadingState>(
-    {
+  const [{ isNotesLoaded, isProjectsLoaded, isBudgetsLoaded }, setItemsLoadingState] =
+    useState<SideMenuItemsLoadingState>({
       isNotesLoaded: false,
       isBudgetsLoaded: false,
-      isTasksLoaded: false,
-    }
-  );
+      isProjectsLoaded: false,
+    });
 
   const notesApi = useNotesAPI();
   const budgetsApi = useBudgetsApi();
+  const projectsAPI = useProjects();
 
   const {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const initializeActiveMenuItem = (currentPath: string): void => {
-    const pathSegments = currentPath.split('/').filter((item) => item !== '');
-
-    if (pathSegments.length === 1) {
-      commonSideMenuStore.changeSelectedMenuKey([pathSegments[0]]);
-    } else {
-      commonSideMenuStore.changeSelectedMenuKey([pathSegments.join('/')]);
-    }
-  };
-
   const fetchNotesMap = async (): Promise<void> => {
     const notesMapResponse = await notesApi.getNotesMap();
-
     notesStore.setNoteMapsItemsToSideMenu(notesMapResponse.data);
     setItemsLoadingState((prevState) => ({
       ...prevState,
@@ -92,7 +82,6 @@ export const SideMenu = observer((): JSX.Element => {
 
   const fetchBudgetsMap = async (): Promise<void> => {
     const budgetsMapResponse = await budgetsApi.getBudgetsMap();
-
     budgetStore.setBudgetMapsToSideMenu(budgetsMapResponse.data);
     setItemsLoadingState((prevState) => ({
       ...prevState,
@@ -100,18 +89,34 @@ export const SideMenu = observer((): JSX.Element => {
     }));
   };
 
+  const fetchProjectsMap = async (): Promise<void> => {
+    const { data: projectsODataResponse } = await projectsAPI.getUsersProjects();
+    projectsStore.setProjectsToSideMenu(projectsODataResponse.value);
+    setItemsLoadingState((prevState) => ({
+      ...prevState,
+      isProjectsLoaded: true,
+    }));
+  };
+
   useEffect(() => {
     fetchNotesMap();
     fetchBudgetsMap();
-    setItemsLoadingState((prevState) => ({
-      ...prevState,
-      isTasksLoaded: true,
-    }));
+    fetchProjectsMap();
   }, []);
 
   useEffect(() => {
+    const initializeActiveMenuItem = (currentPath: string): void => {
+      const pathSegments = currentPath.split('/').filter((item) => item !== '');
+
+      if (pathSegments.length === 1) {
+        commonSideMenuStore.changeSelectedMenuKey([pathSegments[0]]);
+      } else {
+        commonSideMenuStore.changeSelectedMenuKey([pathSegments.join('/')]);
+      }
+    };
+
     initializeActiveMenuItem(location.pathname);
-  }, [location]);
+  }, [commonSideMenuStore, location]);
 
   const onPageSelected = (keys: Key[]): void => {
     if (keys.length === 0) return;
@@ -120,6 +125,7 @@ export const SideMenu = observer((): JSX.Element => {
   };
 
   const onBudgetItemCreateClick = async (e: React.MouseEvent): Promise<void> => {
+    e.stopPropagation();
     const newBudgetResponse = await budgetsApi.create({
       budgetTitle: BUDGET_DEFAULT_TITLE,
     });
@@ -127,10 +133,10 @@ export const SideMenu = observer((): JSX.Element => {
     const newBudgetUrl = getClientItemUrl(BUDGET_RESOURCE_NAME, newBudgetResponse.data.id);
     commonSideMenuStore.changeSelectedMenuKey([newBudgetUrl]);
     navigation(newBudgetUrl);
-    e.stopPropagation();
   };
 
   const onNoteCreateClick = async (e: React.MouseEvent): Promise<void> => {
+    e.stopPropagation();
     const newNoteResponse = await notesApi.create({
       title: NOTE_EMPTY_TITLE_PLACEHOLDER,
     });
@@ -138,7 +144,15 @@ export const SideMenu = observer((): JSX.Element => {
     notesStore.addNewNoteToSideMenu(newNoteResponse.data);
     commonSideMenuStore.changeSelectedMenuKey([newNoteUrl]);
     navigation(newNoteUrl);
+  };
+
+  const onProjectCreateClick = async (e: React.MouseEvent): Promise<void> => {
     e.stopPropagation();
+    const { data: createdProject } = await projectsAPI.createProject();
+    const newNoteUrl = getClientItemUrl(PROJECT_RESOURCE_NAME, createdProject.id);
+    projectsStore.addProject(createdProject);
+    commonSideMenuStore.changeSelectedMenuKey([newNoteUrl]);
+    navigation(newNoteUrl);
   };
 
   const menuData: SideMenuItemModel[] = [
@@ -146,8 +160,7 @@ export const SideMenu = observer((): JSX.Element => {
       title: getTopLevelItemTitle(t('SIDE_MENU.DASHBOARD')),
       key: ResourceNameConstants.DASHBOARD_RESOURCE_NAME,
       icon: <DashboardOutlined />,
-      switcherIcon: <></>,
-      isLeaf: false,
+      isLeaf: true,
       pageId: ResourceNameConstants.DASHBOARD_RESOURCE_NAME,
       entityType: EntityType.Unknown,
     },
@@ -178,16 +191,15 @@ export const SideMenu = observer((): JSX.Element => {
     },
     {
       className: styles.sideMenuItem,
-      title: getTopLevelItemTitle(t('SIDE_MENU.TASKS'), (e): void => {
-        // TODO: Navigate to tasks page and implement logic of creation there
-        e.stopPropagation();
-      }),
-      key: getClientItemUrl(ResourceNameConstants.TASK_RESOURCE_NAME),
-      icon: <CheckOutlined />,
-      pageId: ResourceNameConstants.TASK_RESOURCE_NAME,
+      title: getTopLevelItemTitle(t('SIDE_MENU.PROJECTS'), onProjectCreateClick),
+      key: getClientItemUrl(ResourceNameConstants.PROJECT_RESOURCE_NAME),
+      icon: <ProjectOutlined />,
+      pageId: ResourceNameConstants.PROJECT_RESOURCE_NAME,
       isLeaf: false,
-      children: isTasksLoaded ? [] : [getLoaderNode(ResourceNameConstants.TASK_RESOURCE_NAME)],
-      entityType: EntityType.Unknown,
+      children: isProjectsLoaded
+        ? projectsStore.sideMenuProjectItems
+        : [getLoaderNode(ResourceNameConstants.PROJECT_RESOURCE_NAME)],
+      entityType: EntityType.Project,
     },
     {
       title: getTopLevelItemTitle(t('SIDE_MENU.REPORTS')),
@@ -221,7 +233,6 @@ export const SideMenu = observer((): JSX.Element => {
           background: uiConfigStore.isDarkTheme ? colorBgContainer : '#fff',
         }}
         switcherIcon={<DownOutlined />}
-        showLine
         showIcon
         onSelect={onPageSelected}
         defaultExpandAll

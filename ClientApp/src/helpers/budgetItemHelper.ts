@@ -2,7 +2,7 @@ import { BudgetItemTableEntry } from '../models/budgetItem/budgetItemsTable/budg
 import { BudgetItemDrawerModel } from '../models/budgetItem/budgetItemDrawer/budgetItemDrawerModel';
 import dayjs from 'dayjs';
 import { BudgetItemCreateDto } from '../dto/budgetItems/budgetItemCreateDto';
-import { BudgetItemRegularityType } from '../enums/budgetItemRegularityType';
+import { BudgetItemRegularityType } from '../enums/Budgets/budgetItemRegularityType';
 import { BudgetItemDto } from '../dto/budgets/budgetItemDto';
 import { BudgetItemUpdateDto } from '../dto/budgetItems/budgetItemUpdateDto';
 import { CURRENCY_PRECISION } from '../constants/budgetConstants';

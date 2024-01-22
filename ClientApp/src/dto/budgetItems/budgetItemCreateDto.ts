@@ -1,5 +1,5 @@
-import { BudgetItemOperationType } from '../../enums/budgetItemOperationType';
-import { BudgetItemRegularityType } from '../../enums/budgetItemRegularityType';
+import { BudgetItemOperationType } from '../../enums/Budgets/budgetItemOperationType';
+import { BudgetItemRegularityType } from '../../enums/Budgets/budgetItemRegularityType';
 
 export interface BudgetItemCreateDto {
   budgetId?: number;

@@ -8,7 +8,7 @@ import styles from './tagSelector.module.scss';
 import { TagFormModel } from '../../models/tags/tagFormModel';
 import { MoreOutlined } from '@ant-design/icons';
 import { ColorSelector } from '../colorSelector/ColorSelector';
-import { ColorValues, TagColor } from '../../enums/tagColor';
+import { ColorValues, BudgetTagColor } from '../../enums/Budgets/budgetTagColor';
 import { isEqual } from 'lodash';
 import { nameof } from '../../helpers/objectHelper';
 import { DefaultOptionType } from 'rc-select/lib/Select';
@@ -37,7 +37,7 @@ export const TagSelector = ({
 }: TagSelectorProps): JSX.Element => {
   const [tagEditForm] = useForm<TagFormModel>();
   const [isTagEditDrawerOpened, setIsTagEditDrawerOpened] = useState(false);
-  const defaultTagColor = ColorValues[TagColor.Default];
+  const defaultTagColor = ColorValues[BudgetTagColor.Default];
 
   const handleTagEditDrawerClose = async (): Promise<void> => {
     if (!onTagUpdated) {

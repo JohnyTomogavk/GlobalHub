@@ -1,5 +1,5 @@
 import { Select, Space, Typography } from 'antd';
-import { ColorLabels, ColorValues, TagColor } from '../../enums/tagColor';
+import { ColorLabels, ColorValues, BudgetTagColor } from '../../enums/Budgets/budgetTagColor';
 import { FontColorsOutlined } from '@ant-design/icons';
 import React from 'react';
 import { getEnumValues } from '../../helpers/enumHelper';
@@ -14,9 +14,9 @@ export const ColorSelector = ({ ...props }): JSX.Element => (
     getPopupContainer={(triggerNode: HTMLElement): HTMLElement => triggerNode.parentElement ?? document.body}
     {...props}
   >
-    {getEnumValues(TagColor).map((colorValue, _) => {
-      const tagLabel = ColorLabels[colorValue as TagColor];
-      const tagColor = ColorValues[colorValue as TagColor];
+    {getEnumValues(BudgetTagColor).map((colorValue, _) => {
+      const tagLabel = ColorLabels[colorValue as BudgetTagColor];
+      const tagColor = ColorValues[colorValue as BudgetTagColor];
 
       return (
         <Option key={colorValue} value={colorValue}>

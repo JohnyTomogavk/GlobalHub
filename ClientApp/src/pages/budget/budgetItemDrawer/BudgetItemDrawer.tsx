@@ -1,5 +1,5 @@
 import { Button, DatePicker, Drawer, Form, Input, Select, Typography } from 'antd';
-import { BudgetItemOperationType } from '../../../enums/budgetItemOperationType';
+import { BudgetItemOperationType } from '../../../enums/Budgets/budgetItemOperationType';
 import { TagSelector } from '../../../components/tagSelector/TagSelector';
 import React, { useEffect, useState } from 'react';
 import { TagDto } from '../../../dto/tags/tagDto';
@@ -8,7 +8,7 @@ import { useForm, useWatch } from 'antd/lib/form/Form';
 import styles from './budgetItemDrawer.module.scss';
 import { tagSelectorValidator } from '../../../validators/tagSelectorValidators';
 import dayjs from 'dayjs';
-import { TagColor } from '../../../enums/tagColor';
+import { BudgetTagColor } from '../../../enums/Budgets/budgetTagColor';
 import { nameof } from '../../../helpers/objectHelper';
 import { InputNumber } from 'antd';
 import useTagsApi from '../../../hooks/api/useTagsApi';
@@ -103,7 +103,7 @@ export const BudgetItemDrawer = ({
     const { data: createdTag } = await tagsApi.createTag({
       budgetId: budgetId,
       label: tagLabel,
-      color: TagColor.Default,
+      color: BudgetTagColor.Default,
     });
 
     onNewTagAdded(createdTag);
