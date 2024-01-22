@@ -12,7 +12,7 @@ interface IProjectsApi {
 }
 
 const useProjects = (): IProjectsApi => {
-  const { httpGet, httpPost, httpPut, httpDelete } = useAxios();
+  const { httpGet, httpPost } = useAxios();
 
   return {
     getUsersProjects: (): Promise<AxiosResponse<OdataResponse<ProjectDto[]>>> => {

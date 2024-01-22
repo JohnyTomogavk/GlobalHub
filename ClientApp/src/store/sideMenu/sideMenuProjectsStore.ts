@@ -6,7 +6,6 @@ import { EntityType } from '../../enums/entityType';
 import { getClientItemUrl } from '../../helpers/urlHelper';
 import * as ResourceNameConstants from '../../constants/resourceConstants';
 import { ProjectDto } from '../../dto/projects/projectDto';
-import { BudgetMap } from '../../dto/sideMenu/budgetMap';
 
 class SideMenuProjectsStore {
   sideMenuProjectItems: SideMenuItemModel[] = [];
