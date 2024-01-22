@@ -49,6 +49,50 @@
       }
     },
     {
+      "UpstreamPathTemplate": "/projects-api/odata/{path}",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+      "DownstreamPathTemplate": "/{path}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5120
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [
+          "GlobalHub.ProjectsAPI"
+        ]
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/projects-api/{path}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "OPTIONS"
+      ],
+      "DownstreamPathTemplate": "/api/v1/{path}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5120
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [
+          "GlobalHub.ProjectsAPI"
+        ]
+      }
+    },
+    {
       "UpstreamPathTemplate": "/identity-api/{path}",
       "UpstreamHttpMethod": [
         "GET",
