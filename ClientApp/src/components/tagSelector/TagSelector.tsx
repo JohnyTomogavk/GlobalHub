@@ -5,7 +5,7 @@ import React, { ReactElement, useState } from 'react';
 
 import { useForm } from 'antd/lib/form/Form';
 import styles from './tagSelector.module.scss';
-import { TagFormModel } from '../../models/tags/tagFormModel';
+import { TagFormModel } from '../../models/budgets/tags/tagFormModel';
 import { MoreOutlined } from '@ant-design/icons';
 import { ColorSelector } from '../colorSelector/ColorSelector';
 import { ColorValues, BudgetTagColor } from '../../enums/Budgets/budgetTagColor';
