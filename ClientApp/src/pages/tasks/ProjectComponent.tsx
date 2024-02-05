@@ -17,6 +17,7 @@ import { ProjectTagDto } from '../../dto/projects/projectTagDto';
 import { HttpStatusCode } from 'axios';
 import { ProjectItemFiltersModel } from '../../models/projects/projectItemFiltersModel';
 import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
+import { GroupingMode } from '../../enums/Projects/groupingMode';
 
 export const ProjectComponent = observer((): JSX.Element => {
   const { sideMenuItems, projectsStore } = SideMenuIndexStore;
@@ -24,6 +25,7 @@ export const ProjectComponent = observer((): JSX.Element => {
   const [project, setProject] = useState<ProjectDto | undefined>();
   const [tags, setTags] = useState<ProjectTagDto[]>([]);
   const [filtersModel, setFiltersModel] = useState<ProjectItemFiltersModel>();
+  const [groupingMode, setGroupingMode] = useState<GroupingMode>();
 
   const { id } = useParams();
   const location = useLocation();
@@ -99,6 +101,11 @@ export const ProjectComponent = observer((): JSX.Element => {
     // TODO: trigger project items fetch
   };
 
+  const onGroupingModeUpdate = (newGroupingMode: GroupingMode): void => {
+    console.log(newGroupingMode);
+    setGroupingMode(newGroupingMode);
+  };
+
   const tabItems = [
     {
       key: '1',
@@ -156,7 +163,7 @@ export const ProjectComponent = observer((): JSX.Element => {
           renderTabBar={(props, DefaultTabBar) => (
             <>
               <DefaultTabBar {...props} />
-              <FiltersHeader tags={tags} onFiltersUpdate={onFiltersUpdate} />
+              <FiltersHeader tags={tags} onFiltersUpdate={onFiltersUpdate} onGroupingUpdate={onGroupingModeUpdate} />
             </>
           )}
         />

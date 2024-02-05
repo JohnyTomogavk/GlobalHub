@@ -19,15 +19,17 @@ import {
 } from '../../../enums/Projects/projectItemPriority';
 import { TaskStatus, TaskStatusBadgeTypes, TaskStatusTitles } from '../../../enums/Projects/taskStatus';
 import { PresetStatusColorType } from 'antd/lib/_util/colors';
+import { GroupingMode, GroupingModeIcons, GroupingModeLabels } from '../../../enums/Projects/groupingMode';
 
 const { RangePicker } = DatePicker;
 
 interface FiltersHeaderProps {
   tags: ProjectTagDto[];
   onFiltersUpdate: (filterModel: ProjectItemFiltersModel) => void;
+  onGroupingUpdate: (groupingMode: GroupingMode) => void;
 }
 
-export const FiltersHeader = ({ tags, onFiltersUpdate }: FiltersHeaderProps): JSX.Element => {
+export const FiltersHeader = ({ tags, onFiltersUpdate, onGroupingUpdate }: FiltersHeaderProps): JSX.Element => {
   const [searchItemsInputValue, setSearchItemsInputValue] = useState<string>('');
   const [filtersForm] = useForm<ProjectItemFiltersModel>();
   const formWatch = useWatch([], filtersForm);
@@ -55,6 +57,11 @@ export const FiltersHeader = ({ tags, onFiltersUpdate }: FiltersHeaderProps): JS
     ),
     []
   );
+
+  const onGroupingModeSelect = (selectedKey: string): void => {
+    const newGroupingMode = GroupingMode[selectedKey as keyof typeof GroupingMode];
+    onGroupingUpdate(newGroupingMode);
+  };
 
   const onSearchFilterUpdate = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
     const searchValue = e.target.value;
@@ -141,23 +148,13 @@ export const FiltersHeader = ({ tags, onFiltersUpdate }: FiltersHeaderProps): JS
           trigger={['click']}
           placement={'bottomRight'}
           menu={{
-            items: [
-              {
-                label: 'None',
-                key: '1',
-              },
-              {
-                label: 'By status',
-                key: '2',
-                icon: <ArrowRightOutlined />,
-              },
-              {
-                label: 'By priority',
-                key: '3',
-                icon: <UpCircleOutlined />,
-              },
-            ],
+            items: getEnumValuesExcluding(GroupingMode, [GroupingMode.Unknown]).map((modeValue) => ({
+              label: GroupingModeLabels[modeValue as keyof typeof GroupingModeLabels],
+              key: modeValue,
+              icon: GroupingModeIcons[modeValue as keyof typeof GroupingModeLabels],
+            })),
             selectable: true,
+            onSelect: ({ key }) => onGroupingModeSelect(key),
             defaultSelectedKeys: ['1'],
           }}
         >

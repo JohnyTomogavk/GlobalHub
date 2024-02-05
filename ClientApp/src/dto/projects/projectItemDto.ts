@@ -3,7 +3,7 @@ import { IHasDate } from '../../interfaces/IHasDate';
 import { ProjectItemType } from '../../enums/Projects/projectItemType';
 import { TaskStatus } from '../../enums/Projects/taskStatus';
 import { ProjectDto } from './projectDto';
-import { ProjectItemTagDto } from '../../enums/Projects/projectItemTagDto';
+import { ProjectItemTagDto } from './projectItemTagDto';
 import { ProjectItemPriority } from '../../enums/Projects/projectItemPriority';
 
 export interface ProjectItemDto extends IHasAuthor, IHasDate {
