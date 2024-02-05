@@ -143,13 +143,17 @@ export const FiltersHeader = ({ tags, onFiltersUpdate }: FiltersHeaderProps): JS
           menu={{
             items: [
               {
-                label: 'By status',
+                label: 'None',
                 key: '1',
+              },
+              {
+                label: 'By status',
+                key: '2',
                 icon: <ArrowRightOutlined />,
               },
               {
                 label: 'By priority',
-                key: '2',
+                key: '3',
                 icon: <UpCircleOutlined />,
               },
             ],

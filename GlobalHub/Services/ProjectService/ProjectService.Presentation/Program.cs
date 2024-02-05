@@ -57,8 +57,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
     optionsBuilder.UseSqlServer(connectionString);
 });
 
-// TODO: Add JWT Bearer authentication after API tested
-
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();

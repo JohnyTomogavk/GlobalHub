@@ -24,10 +24,23 @@ class SideMenuProjectsStore {
     this.sideMenuProjectItems.push({
       pageId: item.id,
       className: styles.sideMenuItem,
-      title: getSecondaryLevelItemTitle(item.title, EntityType.Budget),
+      title: getSecondaryLevelItemTitle(item.title, EntityType.Project),
       textTitle: item.title,
       key: getClientItemUrl(ResourceNameConstants.PROJECT_RESOURCE_NAME, item.id),
       entityType: EntityType.Project,
+    });
+  }
+
+  renameProject(itemId: number, newTitle: string): void {
+    const newTitleElement = getSecondaryLevelItemTitle(newTitle, EntityType.Project);
+
+    this.sideMenuProjectItems = this.sideMenuProjectItems.map((item) => {
+      if (item.pageId === itemId) {
+        item.title = newTitleElement;
+        item.textTitle = newTitle;
+      }
+
+      return item;
     });
   }
 

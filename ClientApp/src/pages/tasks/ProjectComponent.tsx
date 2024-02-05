@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Input, theme, Tabs } from 'antd';
 import styles from './projects.module.scss';
 import { useLocation, useParams } from 'react-router-dom';
@@ -6,20 +6,20 @@ import useProjects from '../../hooks/api/useProjects';
 import { Loader } from '../../components/loader/Loader';
 import useBreadcrumbs from '../../hooks/useBreadcrumbs';
 import { observer } from 'mobx-react-lite';
-import sideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
 import { ItemInfoSubHeader } from '../../components/itemInfoHeader/ItemInfoHeader';
 import { ProjectDto } from '../../dto/projects/projectDto';
-import { PROJECT_DEFAULT_NAME } from '../../constants/projectsConstants';
+import { PROJECT_DEFAULT_NAME, UPDATE_PROJECT_TITLE_DEBOUNCE } from '../../constants/projectsConstants';
 import { GroupOutlined, NodeExpandOutlined, TableOutlined } from '@ant-design/icons';
 import { TableView } from './projectItemsViews/TableView';
-import { toNumber } from 'lodash';
+import { debounce, toNumber } from 'lodash';
 import { FiltersHeader } from './filtersHeader/FiltersHeader';
 import { ProjectTagDto } from '../../dto/projects/projectTagDto';
 import { HttpStatusCode } from 'axios';
 import { ProjectItemFiltersModel } from '../../models/projects/projectItemFiltersModel';
+import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
 
 export const ProjectComponent = observer((): JSX.Element => {
-  const { sideMenuItems } = sideMenuIndexStore;
+  const { sideMenuItems, projectsStore } = SideMenuIndexStore;
   const [isLoading, setIsLoading] = useState(true);
   const [project, setProject] = useState<ProjectDto | undefined>();
   const [tags, setTags] = useState<ProjectTagDto[]>([]);
@@ -50,6 +50,21 @@ export const ProjectComponent = observer((): JSX.Element => {
     }
   };
 
+  const updateTitleDebounced = useCallback(
+    debounce(async (newTitle: string): Promise<void> => {
+      if (!id) return;
+
+      const projectId = toNumber(id);
+      const { data: updatedProject, status } = await projectsApi.renameProject(projectId, newTitle);
+
+      if (status === HttpStatusCode.Ok) {
+        setProject(updatedProject);
+        projectsStore.renameProject(projectId, newTitle);
+      }
+    }, UPDATE_PROJECT_TITLE_DEBOUNCE),
+    [project?.id]
+  );
+
   useEffect(() => {
     fetchProject().then(() => {
       setIsLoading(false);
@@ -59,8 +74,21 @@ export const ProjectComponent = observer((): JSX.Element => {
       setIsLoading(true);
       setTags([]);
       setFiltersModel(undefined);
+      updateTitleDebounced.flush();
     };
   }, [id]);
+
+  const onProjectTitleUpdate = (newTitle: string): void => {
+    setProject(
+      (oldValue) =>
+        oldValue && {
+          ...oldValue,
+          title: newTitle,
+        }
+    );
+
+    updateTitleDebounced(newTitle);
+  };
 
   const onProjectDeleteCallback = async (): Promise<void> => {
     // TODO: Implement delete
@@ -117,6 +145,7 @@ export const ProjectComponent = observer((): JSX.Element => {
       >
         <Input
           value={project?.title}
+          onChange={(e) => onProjectTitleUpdate(e.target.value)}
           className={styles.projectTitle}
           placeholder={PROJECT_DEFAULT_NAME}
           bordered={false}
