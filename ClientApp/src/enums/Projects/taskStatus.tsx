@@ -8,7 +8,7 @@ export enum TaskStatus {
 export const TaskStatusTitles = {
   [TaskStatus.Unknown]: 'Unknown',
   [TaskStatus.Backlog]: 'Backlog',
-  [TaskStatus.InProgress]: 'InProgress',
+  [TaskStatus.InProgress]: 'In Progress',
   [TaskStatus.Done]: 'Done',
 };
 

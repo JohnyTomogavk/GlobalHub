@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Input, theme, Tabs } from 'antd';
 import styles from './projects.module.scss';
 import { useLocation, useParams } from 'react-router-dom';
-import useProjects from '../../hooks/api/useProjects';
+import useProjectsApi from '../../hooks/api/useProjects';
 import { Loader } from '../../components/loader/Loader';
 import useBreadcrumbs from '../../hooks/useBreadcrumbs';
 import { observer } from 'mobx-react-lite';
@@ -18,6 +18,8 @@ import { HttpStatusCode } from 'axios';
 import { ProjectItemFiltersModel } from '../../models/projects/projectItemFiltersModel';
 import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
 import { GroupingMode } from '../../enums/Projects/groupingMode';
+import { ProjectItemDto } from '../../dto/projects/projectItemDto';
+import useProjectItemsApi from '../../hooks/api/useProjectItems';
 
 export const ProjectComponent = observer((): JSX.Element => {
   const { sideMenuItems, projectsStore } = SideMenuIndexStore;
@@ -26,12 +28,14 @@ export const ProjectComponent = observer((): JSX.Element => {
   const [tags, setTags] = useState<ProjectTagDto[]>([]);
   const [filtersModel, setFiltersModel] = useState<ProjectItemFiltersModel>();
   const [groupingMode, setGroupingMode] = useState<GroupingMode>();
+  const [projectItems, setProjectItems] = useState<ProjectItemDto[]>([]);
 
   const { id } = useParams();
   const location = useLocation();
   const breadCrumbsItems = useBreadcrumbs(location.pathname, sideMenuItems);
 
-  const projectsApi = useProjects();
+  const projectsApi = useProjectsApi();
+  const projectItemsApi = useProjectItemsApi();
 
   const {
     token: { colorBgContainer },
@@ -67,9 +71,23 @@ export const ProjectComponent = observer((): JSX.Element => {
     [project?.id]
   );
 
+  const fetchProjectItems = async (): Promise<void> => {
+    const projectId = toNumber(id);
+
+    const {
+      data: { value: items },
+      status,
+    } = await projectItemsApi.get(projectId);
+
+    if (status === HttpStatusCode.Ok) {
+      setProjectItems(items);
+    }
+  };
+
   useEffect(() => {
     fetchProject().then(() => {
       setIsLoading(false);
+      fetchProjectItems();
     });
 
     return () => {
@@ -102,8 +120,8 @@ export const ProjectComponent = observer((): JSX.Element => {
   };
 
   const onGroupingModeUpdate = (newGroupingMode: GroupingMode): void => {
-    console.log(newGroupingMode);
     setGroupingMode(newGroupingMode);
+    // TODO: trigger project items regrouping
   };
 
   const tabItems = [
@@ -111,7 +129,7 @@ export const ProjectComponent = observer((): JSX.Element => {
       key: '1',
       label: 'Table',
       icon: <TableOutlined />,
-      children: <TableView />,
+      children: <TableView projectItems={projectItems} tags={tags} />,
     },
     {
       key: '2',

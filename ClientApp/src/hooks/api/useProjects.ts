@@ -1,6 +1,6 @@
 import useAxios from './useAxios';
 import { getResourceUrl } from '../../helpers/urlHelper';
-import { PROJECTS_API_SUFFIX, PROJECTS_ODATA_API_SUFFIX, RENAME_PROJECT } from '../../constants/apiConstants';
+import { PROJECTS_API_SUFFIX, PROJECTS_ODATA_API_SUFFIX } from '../../constants/apiConstants';
 import * as apiConstants from '../../constants/apiConstants';
 import { AxiosResponse } from 'axios';
 import { ProjectDto } from '../../dto/projects/projectDto';
