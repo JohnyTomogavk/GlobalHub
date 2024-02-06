@@ -8,9 +8,13 @@ import useBreadcrumbs from '../../hooks/useBreadcrumbs';
 import { observer } from 'mobx-react-lite';
 import { ItemInfoSubHeader } from '../../components/itemInfoHeader/ItemInfoHeader';
 import { ProjectDto } from '../../dto/projects/projectDto';
-import { PROJECT_DEFAULT_NAME, UPDATE_PROJECT_TITLE_DEBOUNCE } from '../../constants/projectsConstants';
+import {
+  DEFAULT_PROJECT_PAGINATION_CONFIG,
+  PROJECT_DEFAULT_NAME,
+  UPDATE_PROJECT_TITLE_DEBOUNCE,
+} from '../../constants/projectsConstants';
 import { GroupOutlined, NodeExpandOutlined, TableOutlined } from '@ant-design/icons';
-import { TableView } from './projectItemsViews/TableView';
+import { TableView, TasksTableRowModel } from './projectItemsViews/TableView';
 import { debounce, toNumber } from 'lodash';
 import { FiltersHeader } from './filtersHeader/FiltersHeader';
 import { ProjectTagDto } from '../../dto/projects/projectTagDto';
@@ -20,6 +24,9 @@ import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
 import { GroupingMode } from '../../enums/Projects/groupingMode';
 import { ProjectItemDto } from '../../dto/projects/projectItemDto';
 import useProjectItemsApi from '../../hooks/api/useProjectItems';
+import { TablePaginationConfig } from 'antd/lib/table';
+import { SorterResult } from 'antd/lib/table/interface';
+import { getSingleColumnSorterConfig } from '../../helpers/antTableSorterHelper';
 
 export const ProjectComponent = observer((): JSX.Element => {
   const { sideMenuItems, projectsStore } = SideMenuIndexStore;
@@ -71,13 +78,21 @@ export const ProjectComponent = observer((): JSX.Element => {
     [project?.id]
   );
 
-  const fetchProjectItems = async (): Promise<void> => {
+  const fetchProjectItems = async (
+    paginationConfig: TablePaginationConfig,
+    sorter?: SorterResult<TasksTableRowModel> | SorterResult<TasksTableRowModel>[]
+  ): Promise<void> => {
     const projectId = toNumber(id);
 
     const {
       data: { value: items },
       status,
-    } = await projectItemsApi.get(projectId);
+    } = await projectItemsApi.get(
+      projectId,
+      paginationConfig?.current ?? DEFAULT_PROJECT_PAGINATION_CONFIG.current,
+      paginationConfig?.pageSize ?? DEFAULT_PROJECT_PAGINATION_CONFIG.pageSize,
+      sorter
+    );
 
     if (status === HttpStatusCode.Ok) {
       setProjectItems(items);
@@ -87,7 +102,7 @@ export const ProjectComponent = observer((): JSX.Element => {
   useEffect(() => {
     fetchProject().then(() => {
       setIsLoading(false);
-      fetchProjectItems();
+      fetchProjectItems(DEFAULT_PROJECT_PAGINATION_CONFIG);
     });
 
     return () => {
@@ -129,7 +144,7 @@ export const ProjectComponent = observer((): JSX.Element => {
       key: '1',
       label: 'Table',
       icon: <TableOutlined />,
-      children: <TableView projectItems={projectItems} tags={tags} />,
+      children: <TableView projectItems={projectItems} tags={tags} triggerProjectItemsFetch={fetchProjectItems} />,
     },
     {
       key: '2',

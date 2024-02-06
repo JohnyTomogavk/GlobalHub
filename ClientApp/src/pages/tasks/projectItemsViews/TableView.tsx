@@ -3,7 +3,7 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import Button from 'antd/es/button';
-import { ColumnsType } from 'antd/lib/table';
+import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import { ProjectItemDto } from '../../../dto/projects/projectItemDto';
 import { ProjectTagDto } from '../../../dto/projects/projectTagDto';
 import { ProjectItemIcons, ProjectItemType } from '../../../enums/Projects/projectItemType';
@@ -16,7 +16,8 @@ import { TaskStatus, TaskStatusBadgeTypes, TaskStatusTitles } from '../../../enu
 import type { PresetStatusColorType } from 'antd/es/_util/colors';
 import { GroupingMode } from '../../../enums/Projects/groupingMode';
 import { projectItemDtoToTableViewModel } from '../../../helpers/projectItemHelper';
-import { Key } from 'antd/lib/table/interface';
+import { Key, SorterResult } from 'antd/lib/table/interface';
+import { nameof } from '../../../helpers/objectHelper';
 
 export interface TasksTableRowModel {
   id: number;
@@ -36,9 +37,18 @@ interface IProjectItemsTableView {
   projectItems: ProjectItemDto[];
   tags: ProjectTagDto[];
   groupingCriteria?: GroupingMode;
+  triggerProjectItemsFetch: (
+    pagination: TablePaginationConfig,
+    sorter: SorterResult<TasksTableRowModel> | SorterResult<TasksTableRowModel>[]
+  ) => Promise<void>;
 }
 
-export const TableView = ({ projectItems, tags }: IProjectItemsTableView): JSX.Element => {
+export const TableView = ({
+  projectItems,
+  tags,
+  groupingCriteria,
+  triggerProjectItemsFetch,
+}: IProjectItemsTableView): JSX.Element => {
   const [tableItems, setTableItems] = useState<TasksTableRowModel[]>([]);
 
   const fillChildItems = (currentItem: TasksTableRowModel, allItems: TasksTableRowModel[]): void => {
@@ -58,12 +68,13 @@ export const TableView = ({ projectItems, tags }: IProjectItemsTableView): JSX.E
   }, [projectItems]);
 
   const columns: ColumnsType<TasksTableRowModel> = [
-    { title: 'Title', dataIndex: 'title', key: 'title' },
+    { title: 'Title', dataIndex: nameof<TasksTableRowModel>('title'), key: 'title', sorter: true },
     {
       title: 'Type',
-      dataIndex: 'itemType',
-      key: 'itemType',
+      dataIndex: nameof<TasksTableRowModel>('itemType'),
+      key: nameof<ProjectItemDto>('itemType'),
       align: 'center',
+      sorter: true,
       render: (value: keyof typeof ProjectItemType): ReactNode => {
         const typeEnumValue = ProjectItemType[value];
         const icon = ProjectItemIcons[typeEnumValue];
@@ -73,8 +84,9 @@ export const TableView = ({ projectItems, tags }: IProjectItemsTableView): JSX.E
     },
     {
       title: 'Status',
-      dataIndex: 'taskStatus',
-      key: 'taskStatus',
+      dataIndex: nameof<TasksTableRowModel>('taskStatus'),
+      key: nameof<ProjectItemDto>('taskStatus'),
+      sorter: true,
       render: (itemStatus: keyof typeof TaskStatus): ReactNode => {
         const statusValue = TaskStatus[itemStatus];
         const statusLabel = TaskStatusTitles[statusValue];
@@ -85,8 +97,9 @@ export const TableView = ({ projectItems, tags }: IProjectItemsTableView): JSX.E
     },
     {
       title: 'Priority',
-      dataIndex: 'priority',
-      key: 'priority',
+      dataIndex: nameof<TasksTableRowModel>('priority'),
+      key: nameof<ProjectItemDto>('itemPriority'),
+      sorter: true,
       render: (itemPriority: keyof typeof ProjectItemPriority): ReactNode => {
         const itemValue = ProjectItemPriority[itemPriority];
         const title = ProjectItemPriorityTitles[itemValue];
@@ -105,22 +118,24 @@ export const TableView = ({ projectItems, tags }: IProjectItemsTableView): JSX.E
       children: [
         {
           title: 'Start date',
-          dataIndex: 'startDate',
-          key: 'startDate',
+          dataIndex: nameof<TasksTableRowModel>('startDate'),
+          sorter: true,
+          key: nameof<ProjectItemDto>('startDate'),
           render: (value?: dayjs.Dayjs) => <>{value?.format('DD/MM/YYYY')}</>,
         },
         {
           title: 'Due date',
-          dataIndex: 'dueDate',
-          key: 'dueDate',
+          dataIndex: nameof<TasksTableRowModel>('dueDate'),
+          key: nameof<ProjectItemDto>('dueDate'),
+          sorter: true,
           render: (value?: dayjs.Dayjs) => <>{value?.format('DD/MM/YYYY')}</>,
         },
       ],
     },
     {
       title: 'Tags',
-      dataIndex: 'tagIds',
-      key: 'tagIds',
+      dataIndex: nameof<TasksTableRowModel>('tagIds'),
+      key: nameof<ProjectItemDto>('projectItemTags'),
       render: (tagIds?: number[]) => (
         <Space>
           {tagIds?.map((tagId) => {
@@ -153,8 +168,16 @@ export const TableView = ({ projectItems, tags }: IProjectItemsTableView): JSX.E
     },
   ];
 
+  const onTableChange = async (
+    pagination: TablePaginationConfig,
+    sorter: SorterResult<TasksTableRowModel> | SorterResult<TasksTableRowModel>[]
+  ): Promise<void> => {
+    await triggerProjectItemsFetch(pagination, sorter);
+  };
+
   return (
     <Table
+      onChange={(pagination, _, sorter) => onTableChange(pagination, sorter)}
       size="small"
       bordered={true}
       columns={columns}
