@@ -1,10 +1,7 @@
 import { SorterResult } from 'antd/lib/table/interface';
-import { TasksTableRowModel } from '../pages/tasks/projectItemsViews/TableView';
 import { isArray } from 'lodash';
 
-export const getSingleColumnSorterConfig = (
-  sorter?: SorterResult<TasksTableRowModel> | SorterResult<TasksTableRowModel>[]
-): string | undefined => {
+export const getSingleColumnSorterConfig = <T>(sorter?: SorterResult<T> | SorterResult<T>[]): string | undefined => {
   if (!sorter) return undefined;
 
   const singleColumnConfig = isArray(sorter) ? sorter[0] : sorter;

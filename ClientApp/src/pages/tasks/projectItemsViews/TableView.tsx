@@ -5,7 +5,6 @@ import dayjs from 'dayjs';
 import Button from 'antd/es/button';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import { ProjectItemDto } from '../../../dto/projects/projectItemDto';
-import { ProjectTagDto } from '../../../dto/projects/projectTagDto';
 import { ProjectItemIcons, ProjectItemType } from '../../../enums/Projects/projectItemType';
 import {
   ProjectItemPriority,
@@ -15,76 +14,94 @@ import {
 import { TaskStatus, TaskStatusBadgeTypes, TaskStatusTitles } from '../../../enums/Projects/taskStatus';
 import type { PresetStatusColorType } from 'antd/es/_util/colors';
 import { GroupingMode } from '../../../enums/Projects/groupingMode';
-import { projectItemDtoToTableViewModel } from '../../../helpers/projectItemHelper';
-import { Key, SorterResult } from 'antd/lib/table/interface';
+import { fillChildItems, projectItemDtoToTableViewModel } from '../../../helpers/projectItemHelper';
+import { SorterResult } from 'antd/lib/table/interface';
 import { nameof } from '../../../helpers/objectHelper';
+import { IProjectItemTableViewProps } from './IProjectItemTableViewProps';
+import { ProjectItemGroupHeaderRow } from './models/ProjectItemGroupHeaderRow';
+import { ProjectItemTableRowModel } from './models/ProjectItemTableRowModel';
+import { ProjectItemTableRow } from './models/ProjectItemTableRow';
+import {
+  getProjectItemTableModelsWithStatusGrouping,
+  groupedModelsAlgorithmByGroupingMode,
+} from './helpers/groupingHelper';
 
-export interface TasksTableRowModel {
-  id: number;
-  key: Key;
-  parentProjectItemId?: number;
-  itemType: ProjectItemType;
-  title: string;
-  priority: ProjectItemPriority;
-  tagIds: number[];
-  taskStatus?: TaskStatus;
-  startDate?: dayjs.Dayjs;
-  dueDate?: dayjs.Dayjs;
-  children?: TasksTableRowModel[];
-}
+const onLeadingGroupCell = (data: ProjectItemTableRow): object => {
+  if (nameof<ProjectItemGroupHeaderRow>('isGroupingHeader') in data) {
+    return {
+      colSpan: 8,
+    };
+  }
 
-interface IProjectItemsTableView {
-  projectItems: ProjectItemDto[];
-  tags: ProjectTagDto[];
-  groupingCriteria?: GroupingMode;
-  triggerProjectItemsFetch: (
-    pagination: TablePaginationConfig,
-    sorter: SorterResult<TasksTableRowModel> | SorterResult<TasksTableRowModel>[]
-  ) => Promise<void>;
-}
+  return {};
+};
+
+const onCommonCell = (data: ProjectItemTableRow): object => ({
+  colSpan: nameof<ProjectItemGroupHeaderRow>('isGroupingHeader') in data ? 0 : 1,
+});
 
 export const TableView = ({
   projectItems,
   tags,
   groupingCriteria,
   triggerProjectItemsFetch,
-}: IProjectItemsTableView): JSX.Element => {
-  const [tableItems, setTableItems] = useState<TasksTableRowModel[]>([]);
+}: IProjectItemTableViewProps): JSX.Element => {
+  const [tableItems, setTableItems] = useState<ProjectItemTableRow[]>([]);
 
-  const fillChildItems = (currentItem: TasksTableRowModel, allItems: TasksTableRowModel[]): void => {
-    const childItems = allItems?.filter((item) => item.parentProjectItemId === currentItem.id);
-
-    if (!childItems?.length) return;
-
-    childItems.map((item) => fillChildItems(item, allItems));
-    currentItem.children = childItems;
-  };
-
-  useEffect(() => {
+  const getProjectItemsTableModels = (): ProjectItemTableRowModel[] => {
     const models = projectItems.map(projectItemDtoToTableViewModel);
     const topLevelItems = models.filter((model) => !model.parentProjectItemId);
     topLevelItems.map((model) => fillChildItems(model, models));
-    setTableItems(topLevelItems);
-  }, [projectItems]);
 
-  const columns: ColumnsType<TasksTableRowModel> = [
-    { title: 'Title', dataIndex: nameof<TasksTableRowModel>('title'), key: 'title', sorter: true },
+    return topLevelItems;
+  };
+
+  const initTable = (): void => {
+    if (groupingCriteria !== GroupingMode.None) {
+      const groupingFunction =
+        groupedModelsAlgorithmByGroupingMode[groupingCriteria as keyof typeof groupedModelsAlgorithmByGroupingMode];
+      const groupedItems: ProjectItemGroupHeaderRow[] = groupingFunction(projectItems);
+      setTableItems(groupedItems);
+
+      return;
+    }
+
+    const items = getProjectItemsTableModels();
+    setTableItems(items);
+  };
+
+  useEffect(() => {
+    initTable();
+  }, [projectItems, groupingCriteria]);
+
+  const columns: ColumnsType<ProjectItemTableRow> = [
+    {
+      title: 'Title',
+      dataIndex: nameof<ProjectItemTableRowModel>('title'),
+      key: 'title',
+      width: 300,
+      sorter: true,
+      ellipsis: true,
+      onCell: (data) => onLeadingGroupCell(data),
+    },
     {
       title: 'Type',
-      dataIndex: nameof<TasksTableRowModel>('itemType'),
+      dataIndex: nameof<ProjectItemTableRowModel>('itemType'),
       key: nameof<ProjectItemDto>('itemType'),
       align: 'center',
       sorter: true,
+      width: '5%',
       render: (value: keyof typeof ProjectItemType): ReactNode => {
         const typeEnumValue = ProjectItemType[value];
         const icon = ProjectItemIcons[typeEnumValue];
 
         return <>{icon}</>;
       },
+      onCell: (data) => onCommonCell(data),
     },
     {
       title: 'Status',
-      dataIndex: nameof<TasksTableRowModel>('taskStatus'),
+      dataIndex: nameof<ProjectItemTableRowModel>('taskStatus'),
       key: nameof<ProjectItemDto>('taskStatus'),
       sorter: true,
       render: (itemStatus: keyof typeof TaskStatus): ReactNode => {
@@ -94,10 +111,11 @@ export const TableView = ({
 
         return <Badge status={badgeColor} text={statusLabel} />;
       },
+      onCell: (data) => onCommonCell(data),
     },
     {
       title: 'Priority',
-      dataIndex: nameof<TasksTableRowModel>('priority'),
+      dataIndex: nameof<ProjectItemTableRowModel>('priority'),
       key: nameof<ProjectItemDto>('itemPriority'),
       sorter: true,
       render: (itemPriority: keyof typeof ProjectItemPriority): ReactNode => {
@@ -112,32 +130,37 @@ export const TableView = ({
           </Space>
         );
       },
+      onCell: (data) => onCommonCell(data),
     },
     {
       title: 'Date range',
       children: [
         {
           title: 'Start date',
-          dataIndex: nameof<TasksTableRowModel>('startDate'),
+          dataIndex: nameof<ProjectItemTableRowModel>('startDate'),
           sorter: true,
           key: nameof<ProjectItemDto>('startDate'),
           render: (value?: dayjs.Dayjs) => <>{value?.format('DD/MM/YYYY')}</>,
+          onCell: (data) => onCommonCell(data),
         },
         {
           title: 'Due date',
-          dataIndex: nameof<TasksTableRowModel>('dueDate'),
+          dataIndex: nameof<ProjectItemTableRowModel>('dueDate'),
           key: nameof<ProjectItemDto>('dueDate'),
           sorter: true,
           render: (value?: dayjs.Dayjs) => <>{value?.format('DD/MM/YYYY')}</>,
+          onCell: (data) => onCommonCell(data),
         },
       ],
+      onCell: (data) => onCommonCell(data),
     },
     {
       title: 'Tags',
-      dataIndex: nameof<TasksTableRowModel>('tagIds'),
+      dataIndex: nameof<ProjectItemTableRowModel>('tagIds'),
       key: nameof<ProjectItemDto>('projectItemTags'),
+      ellipsis: true,
       render: (tagIds?: number[]) => (
-        <Space>
+        <span>
           {tagIds?.map((tagId) => {
             const tagDto = tags.filter((tag) => tag.id === tagId)[0];
 
@@ -149,28 +172,32 @@ export const TableView = ({
               </Tag>
             );
           })}
-        </Space>
+        </span>
       ),
+      onCell: (data) => onCommonCell(data),
     },
     {
-      title: 'Action',
-      dataIndex: '',
       key: 'x',
-      render: () => (
-        <Space size={'small'}>
-          <Button type="link">Edit</Button>
+      title: 'Actions',
+      render: (record: ProjectItemTableRow): JSX.Element => {
+        if (nameof<ProjectItemGroupHeaderRow>('isGroupingHeader') in record) {
+          return <></>;
+        }
+
+        return (
           <Button type="link">
             More
             <DownOutlined />
           </Button>
-        </Space>
-      ),
+        );
+      },
+      onCell: (data) => onCommonCell(data),
     },
   ];
 
   const onTableChange = async (
     pagination: TablePaginationConfig,
-    sorter: SorterResult<TasksTableRowModel> | SorterResult<TasksTableRowModel>[]
+    sorter: SorterResult<ProjectItemTableRow> | SorterResult<ProjectItemTableRow>[]
   ): Promise<void> => {
     await triggerProjectItemsFetch(pagination, sorter);
   };
@@ -179,11 +206,14 @@ export const TableView = ({
     <Table
       onChange={(pagination, _, sorter) => onTableChange(pagination, sorter)}
       size="small"
+      sticky={true}
+      tableLayout={'fixed'}
       bordered={true}
       columns={columns}
       rowSelection={{
         type: 'checkbox',
       }}
+      scroll={{ x: 1200, y: 800 }}
       expandable={{
         indentSize: 25,
       }}

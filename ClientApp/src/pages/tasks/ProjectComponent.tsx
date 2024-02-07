@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Input, theme, Tabs } from 'antd';
+import { Input, Tabs, theme } from 'antd';
 import styles from './projects.module.scss';
 import { useLocation, useParams } from 'react-router-dom';
 import useProjectsApi from '../../hooks/api/useProjects';
@@ -14,7 +14,7 @@ import {
   UPDATE_PROJECT_TITLE_DEBOUNCE,
 } from '../../constants/projectsConstants';
 import { GroupOutlined, NodeExpandOutlined, TableOutlined } from '@ant-design/icons';
-import { TableView, TasksTableRowModel } from './projectItemsViews/TableView';
+import { TableView } from './projectItemsViews/TableView';
 import { debounce, toNumber } from 'lodash';
 import { FiltersHeader } from './filtersHeader/FiltersHeader';
 import { ProjectTagDto } from '../../dto/projects/projectTagDto';
@@ -27,6 +27,8 @@ import useProjectItemsApi from '../../hooks/api/useProjectItems';
 import { TablePaginationConfig } from 'antd/lib/table';
 import { SorterResult } from 'antd/lib/table/interface';
 import { getSingleColumnSorterConfig } from '../../helpers/antTableSorterHelper';
+import { ProjectItemTableRowModel } from './projectItemsViews/models/ProjectItemTableRowModel';
+import { ProjectItemTableRow } from './projectItemsViews/models/ProjectItemTableRow';
 
 export const ProjectComponent = observer((): JSX.Element => {
   const { sideMenuItems, projectsStore } = SideMenuIndexStore;
@@ -34,7 +36,7 @@ export const ProjectComponent = observer((): JSX.Element => {
   const [project, setProject] = useState<ProjectDto | undefined>();
   const [tags, setTags] = useState<ProjectTagDto[]>([]);
   const [filtersModel, setFiltersModel] = useState<ProjectItemFiltersModel>();
-  const [groupingMode, setGroupingMode] = useState<GroupingMode>();
+  const [groupingMode, setGroupingMode] = useState<GroupingMode>(GroupingMode.None);
   const [projectItems, setProjectItems] = useState<ProjectItemDto[]>([]);
 
   const { id } = useParams();
@@ -80,9 +82,10 @@ export const ProjectComponent = observer((): JSX.Element => {
 
   const fetchProjectItems = async (
     paginationConfig: TablePaginationConfig,
-    sorter?: SorterResult<TasksTableRowModel> | SorterResult<TasksTableRowModel>[]
+    sorter?: SorterResult<ProjectItemTableRow> | SorterResult<ProjectItemTableRow>[]
   ): Promise<void> => {
     const projectId = toNumber(id);
+    const orderByString = getSingleColumnSorterConfig(sorter);
 
     const {
       data: { value: items },
@@ -91,7 +94,7 @@ export const ProjectComponent = observer((): JSX.Element => {
       projectId,
       paginationConfig?.current ?? DEFAULT_PROJECT_PAGINATION_CONFIG.current,
       paginationConfig?.pageSize ?? DEFAULT_PROJECT_PAGINATION_CONFIG.pageSize,
-      sorter
+      orderByString
     );
 
     if (status === HttpStatusCode.Ok) {
@@ -108,6 +111,7 @@ export const ProjectComponent = observer((): JSX.Element => {
     return () => {
       setIsLoading(true);
       setTags([]);
+      setProjectItems([]);
       setFiltersModel(undefined);
       updateTitleDebounced.flush();
     };
@@ -144,7 +148,14 @@ export const ProjectComponent = observer((): JSX.Element => {
       key: '1',
       label: 'Table',
       icon: <TableOutlined />,
-      children: <TableView projectItems={projectItems} tags={tags} triggerProjectItemsFetch={fetchProjectItems} />,
+      children: (
+        <TableView
+          projectItems={projectItems}
+          tags={tags}
+          groupingCriteria={groupingMode}
+          triggerProjectItemsFetch={fetchProjectItems}
+        />
+      ),
     },
     {
       key: '2',

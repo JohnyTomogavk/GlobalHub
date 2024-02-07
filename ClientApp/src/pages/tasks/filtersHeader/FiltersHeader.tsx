@@ -1,10 +1,10 @@
 import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { Badge, Col, DatePicker, Dropdown, Flex, Form, Input, Popover, Row, Space } from 'antd';
 import styles from './fitlersHeader.module.scss';
-import { ArrowRightOutlined, FilterOutlined, GroupOutlined, UpCircleOutlined } from '@ant-design/icons';
+import { FilterOutlined, GroupOutlined } from '@ant-design/icons';
 import Button from 'antd/es/button';
 import { Checkbox } from 'antd';
-import { debounce } from 'lodash';
+import { debounce, toNumber } from 'lodash';
 import { SEARCH_FILTER_DEBOUNCE } from '../../../constants/projectsConstants';
 import { ProjectTagDto } from '../../../dto/projects/projectTagDto';
 import { useForm, useWatch } from 'antd/lib/form/Form';
@@ -59,7 +59,7 @@ export const FiltersHeader = ({ tags, onFiltersUpdate, onGroupingUpdate }: Filte
   );
 
   const onGroupingModeSelect = (selectedKey: string): void => {
-    const newGroupingMode = GroupingMode[selectedKey as keyof typeof GroupingMode];
+    const newGroupingMode = toNumber(selectedKey) as GroupingMode;
     onGroupingUpdate(newGroupingMode);
   };
 
@@ -155,7 +155,7 @@ export const FiltersHeader = ({ tags, onFiltersUpdate, onGroupingUpdate }: Filte
             })),
             selectable: true,
             onSelect: ({ key }) => onGroupingModeSelect(key),
-            defaultSelectedKeys: ['1'],
+            defaultSelectedKeys: [GroupingMode.None.toString()],
           }}
         >
           <Button type={'text'} icon={<GroupOutlined />}>

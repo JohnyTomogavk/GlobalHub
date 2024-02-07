@@ -5,17 +5,17 @@ import { ProjectItemDto } from '../../dto/projects/projectItemDto';
 import { getResourceUrl } from '../../helpers/urlHelper';
 import { PROJECTS_ODATA_API_SUFFIX } from '../../constants/apiConstants';
 import * as apiConstants from '../../constants/apiConstants';
-import buildQuery, { OrderBy } from 'odata-query';
+import buildQuery from 'odata-query';
 import { SorterResult } from 'antd/lib/table/interface';
-import { TasksTableRowModel } from '../../pages/tasks/projectItemsViews/TableView';
-import { getSingleColumnSorterConfig } from '../../helpers/antTableSorterHelper';
+
+import { ProjectItemTableRowModel } from '../../pages/tasks/projectItemsViews/models/ProjectItemTableRowModel';
 
 interface IProjectItemsApi {
   get: (
     projectId: number,
     currentPage: number,
     pageSize: number,
-    orderByCondition?: SorterResult<TasksTableRowModel> | SorterResult<TasksTableRowModel>[]
+    orderByString?: string
   ) => Promise<AxiosResponse<OdataResponse<ProjectItemDto[]>>>;
 }
 
@@ -27,10 +27,8 @@ const useProjectItems = (): IProjectItemsApi => {
       projectId: number,
       currentPage: number,
       pageSize: number,
-      orderByConfig?: SorterResult<TasksTableRowModel> | SorterResult<TasksTableRowModel>[]
+      orderByString?: string
     ): Promise<AxiosResponse<OdataResponse<ProjectItemDto[]>>> => {
-      const sortConfig = getSingleColumnSorterConfig(orderByConfig);
-
       const query = buildQuery<ProjectItemDto>({
         filter: {
           projectId,
@@ -38,7 +36,7 @@ const useProjectItems = (): IProjectItemsApi => {
         top: currentPage * pageSize,
         skip: pageSize * (currentPage - 1),
         count: true,
-        orderBy: sortConfig,
+        orderBy: orderByString,
         expand: 'projectItemTags',
       });
 
