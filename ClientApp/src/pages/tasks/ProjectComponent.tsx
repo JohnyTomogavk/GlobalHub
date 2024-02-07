@@ -8,11 +8,7 @@ import useBreadcrumbs from '../../hooks/useBreadcrumbs';
 import { observer } from 'mobx-react-lite';
 import { ItemInfoSubHeader } from '../../components/itemInfoHeader/ItemInfoHeader';
 import { ProjectDto } from '../../dto/projects/projectDto';
-import {
-  DEFAULT_PROJECT_PAGINATION_CONFIG,
-  PROJECT_DEFAULT_NAME,
-  UPDATE_PROJECT_TITLE_DEBOUNCE,
-} from '../../constants/projectsConstants';
+import { PROJECT_DEFAULT_NAME, UPDATE_PROJECT_TITLE_DEBOUNCE } from '../../constants/projectsConstants';
 import { GroupOutlined, NodeExpandOutlined, TableOutlined } from '@ant-design/icons';
 import { TableView } from './projectItemsViews/TableView';
 import { debounce, toNumber } from 'lodash';
@@ -24,21 +20,31 @@ import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
 import { GroupingMode } from '../../enums/Projects/groupingMode';
 import { ProjectItemDto } from '../../dto/projects/projectItemDto';
 import useProjectItemsApi from '../../hooks/api/useProjectItems';
-import { TablePaginationConfig } from 'antd/lib/table';
 import { SorterResult } from 'antd/lib/table/interface';
 import { getSingleColumnSorterConfig } from '../../helpers/antTableSorterHelper';
-import { ProjectItemTableRowModel } from './projectItemsViews/models/ProjectItemTableRowModel';
 import { ProjectItemTableRow } from './projectItemsViews/models/ProjectItemTableRow';
+
+interface SearchParams {
+  groupingMode: GroupingMode;
+  orderByOption?: string;
+  filtersModel?: ProjectItemFiltersModel;
+}
+
+const defaultSearchParams = {
+  groupingMode: GroupingMode.None,
+  orderByOption: undefined,
+  filtersModel: undefined,
+} as SearchParams;
 
 export const ProjectComponent = observer((): JSX.Element => {
   const { sideMenuItems, projectsStore } = SideMenuIndexStore;
   const [isLoading, setIsLoading] = useState(true);
+
   const [project, setProject] = useState<ProjectDto | undefined>();
   const [tags, setTags] = useState<ProjectTagDto[]>([]);
-  const [filtersModel, setFiltersModel] = useState<ProjectItemFiltersModel>();
-  const [groupingMode, setGroupingMode] = useState<GroupingMode>(GroupingMode.None);
   const [projectItems, setProjectItems] = useState<ProjectItemDto[]>([]);
-  const [orderByOption, setOrderByOption] = useState<string | undefined>();
+
+  const [searchParams, setSearchParams] = useState<SearchParams>(defaultSearchParams);
 
   const { id } = useParams();
   const location = useLocation();
@@ -81,23 +87,13 @@ export const ProjectComponent = observer((): JSX.Element => {
     [project?.id]
   );
 
-  const fetchProjectItems = async (
-    paginationConfig: TablePaginationConfig,
-    orderByOptions?: string,
-    filters?: ProjectItemFiltersModel
-  ): Promise<void> => {
+  const fetchProjectItems = async (orderByOptions?: string, filters?: ProjectItemFiltersModel): Promise<void> => {
     const projectId = toNumber(id);
 
     const {
       data: { value: items },
       status,
-    } = await projectItemsApi.get(
-      projectId,
-      paginationConfig?.current ?? DEFAULT_PROJECT_PAGINATION_CONFIG.current,
-      paginationConfig?.pageSize ?? DEFAULT_PROJECT_PAGINATION_CONFIG.pageSize,
-      orderByOptions,
-      filters
-    );
+    } = await projectItemsApi.get(projectId, orderByOptions, filters);
 
     if (status === HttpStatusCode.Ok) {
       setProjectItems(items);
@@ -107,14 +103,14 @@ export const ProjectComponent = observer((): JSX.Element => {
   useEffect(() => {
     fetchProject().then(() => {
       setIsLoading(false);
-      fetchProjectItems(DEFAULT_PROJECT_PAGINATION_CONFIG, orderByOption, filtersModel);
+      fetchProjectItems(searchParams.orderByOption, searchParams.filtersModel);
     });
 
     return () => {
       setIsLoading(true);
       setTags([]);
       setProjectItems([]);
-      setFiltersModel(undefined);
+      setSearchParams(defaultSearchParams);
       updateTitleDebounced.flush();
     };
   }, [id]);
@@ -136,23 +132,31 @@ export const ProjectComponent = observer((): JSX.Element => {
   };
 
   const onFiltersUpdate = async (filters: ProjectItemFiltersModel): Promise<void> => {
-    setFiltersModel(filters);
-    await fetchProjectItems(DEFAULT_PROJECT_PAGINATION_CONFIG, orderByOption, filters);
+    setSearchParams((prevState) => ({
+      ...prevState,
+      filtersModel: filters,
+    }));
+    await fetchProjectItems(searchParams.orderByOption, filters);
   };
 
   const onGroupingModeUpdate = (newGroupingMode: GroupingMode): void => {
-    setGroupingMode(newGroupingMode);
-    // TODO: trigger project items regrouping
+    setSearchParams((prevState) => ({
+      ...prevState,
+      groupingMode: newGroupingMode,
+    }));
   };
 
-  const onSortingUpdate = async (
-    paginationConfig: TablePaginationConfig,
+  const onTableSearchParamsChange = async (
     sorter?: SorterResult<ProjectItemTableRow> | SorterResult<ProjectItemTableRow>[]
-  ) => {
+  ): Promise<void> => {
     const orderByString = getSingleColumnSorterConfig(sorter);
-    setOrderByOption(orderByString);
 
-    await fetchProjectItems(paginationConfig, orderByString);
+    setSearchParams((prevState) => ({
+      ...prevState,
+      orderByOption: orderByString,
+    }));
+
+    await fetchProjectItems(orderByString, searchParams.filtersModel);
   };
 
   const tabItems = [
@@ -164,8 +168,8 @@ export const ProjectComponent = observer((): JSX.Element => {
         <TableView
           projectItems={projectItems}
           tags={tags}
-          groupingCriteria={groupingMode}
-          triggerProjectItemsFetch={onSortingUpdate}
+          groupingCriteria={searchParams.groupingMode}
+          onTableSearchParamsChange={onTableSearchParamsChange}
         />
       ),
     },

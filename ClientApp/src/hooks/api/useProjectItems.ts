@@ -1,6 +1,5 @@
 import useAxios from './useAxios';
 import { AxiosResponse } from 'axios';
-import { OdataResponse } from '../../models/shared/odataResponse';
 import { ProjectItemDto } from '../../dto/projects/projectItemDto';
 import { getResourceUrl } from '../../helpers/urlHelper';
 import { PROJECTS_ODATA_API_SUFFIX } from '../../constants/apiConstants';
@@ -8,16 +7,16 @@ import * as apiConstants from '../../constants/apiConstants';
 import buildQuery from 'odata-query';
 
 import { ProjectItemFiltersModel } from '../../models/projects/projectItemFiltersModel';
-import { isEmpty } from 'lodash';
+
+import { OdataCountedResponse } from '../../models/shared/odataCountedResponse';
 
 interface IProjectItemsApi {
   get: (
     projectId: number,
-    currentPage: number,
-    pageSize: number,
+
     orderByString?: string,
     filters?: ProjectItemFiltersModel
-  ) => Promise<AxiosResponse<OdataResponse<ProjectItemDto[]>>>;
+  ) => Promise<AxiosResponse<OdataCountedResponse<ProjectItemDto[]>>>;
 }
 
 const useProjectItems = (): IProjectItemsApi => {
@@ -26,11 +25,9 @@ const useProjectItems = (): IProjectItemsApi => {
   return {
     get: (
       projectId: number,
-      currentPage: number,
-      pageSize: number,
       orderByString?: string,
       filters?: ProjectItemFiltersModel
-    ): Promise<AxiosResponse<OdataResponse<ProjectItemDto[]>>> => {
+    ): Promise<AxiosResponse<OdataCountedResponse<ProjectItemDto[]>>> => {
       const query = buildQuery<ProjectItemDto>({
         filter: {
           projectId,
@@ -62,8 +59,6 @@ const useProjectItems = (): IProjectItemsApi => {
             in: filters?.statuses?.length ? filters?.statuses.map((status) => status.toString()) : undefined,
           },
         },
-        top: currentPage * pageSize,
-        skip: pageSize * (currentPage - 1),
         count: true,
         orderBy: orderByString,
         expand: 'projectItemTags',

@@ -1,6 +1,6 @@
-import { Badge, Space, Table, Tag } from 'antd';
+import { Affix, Badge, Space, Table, Tag } from 'antd';
 import React, { ReactNode, useEffect, useState } from 'react';
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import Button from 'antd/es/button';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
@@ -41,7 +41,7 @@ export const TableView = ({
   projectItems,
   tags,
   groupingCriteria,
-  triggerProjectItemsFetch,
+  onTableSearchParamsChange,
 }: IProjectItemTableViewProps): JSX.Element => {
   const [tableItems, setTableItems] = useState<ProjectItemTableRow[]>([]);
 
@@ -87,7 +87,6 @@ export const TableView = ({
       key: nameof<ProjectItemDto>('itemType'),
       align: 'center',
       sorter: true,
-      width: '5%',
       render: (value: keyof typeof ProjectItemType): ReactNode => {
         const typeEnumValue = ProjectItemType[value];
 
@@ -113,18 +112,14 @@ export const TableView = ({
       title: 'Priority',
       dataIndex: nameof<ProjectItemTableRowModel>('priority'),
       key: nameof<ProjectItemDto>('itemPriority'),
+      align: 'center',
       sorter: true,
       render: (itemPriority: keyof typeof ProjectItemPriority): ReactNode => {
         const itemValue = ProjectItemPriority[itemPriority];
         const title = ProjectItemPriorityTitles[itemValue];
         const icon = ProjectItemPriorityIcons[itemValue as keyof typeof ProjectItemPriorityIcons];
 
-        return (
-          <Space>
-            {icon}
-            {title}
-          </Space>
-        );
+        return <span title={title}>{icon}</span>;
       },
       onCell: (data) => onCommonCell(data),
     },
@@ -193,30 +188,29 @@ export const TableView = ({
   ];
 
   const onTableChange = async (
-    pagination: TablePaginationConfig,
     sorter: SorterResult<ProjectItemTableRow> | SorterResult<ProjectItemTableRow>[]
   ): Promise<void> => {
-    await triggerProjectItemsFetch(pagination, sorter);
+    await onTableSearchParamsChange(sorter);
   };
 
   return (
     <Table
-      onChange={(pagination, _, sorter) => onTableChange(pagination, sorter)}
+      onChange={(__, _, sorter) => onTableChange(sorter)}
       size="small"
       sticky={true}
-      tableLayout={'fixed'}
       bordered={true}
       columns={columns}
       rowSelection={{
         type: 'checkbox',
       }}
-      scroll={{ x: 1200, y: 800 }}
+      pagination={false}
+      scroll={{ y: '50vh', x: '80vw' }}
       expandable={{
         indentSize: 25,
       }}
       dataSource={tableItems}
       footer={() => (
-        <Button size="small" block type="dashed">
+        <Button icon={<PlusOutlined />} block type={'default'}>
           Create new item
         </Button>
       )}
