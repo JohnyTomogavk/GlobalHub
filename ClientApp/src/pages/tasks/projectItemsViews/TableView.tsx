@@ -21,10 +21,7 @@ import { IProjectItemTableViewProps } from './IProjectItemTableViewProps';
 import { ProjectItemGroupHeaderRow } from './models/ProjectItemGroupHeaderRow';
 import { ProjectItemTableRowModel } from './models/ProjectItemTableRowModel';
 import { ProjectItemTableRow } from './models/ProjectItemTableRow';
-import {
-  getProjectItemTableModelsWithStatusGrouping,
-  groupedModelsAlgorithmByGroupingMode,
-} from './helpers/groupingHelper';
+import { groupedModelsAlgorithmByGroupingMode } from './helpers/groupingHelper';
 
 const onLeadingGroupCell = (data: ProjectItemTableRow): object => {
   if (nameof<ProjectItemGroupHeaderRow>('isGroupingHeader') in data) {
@@ -93,9 +90,8 @@ export const TableView = ({
       width: '5%',
       render: (value: keyof typeof ProjectItemType): ReactNode => {
         const typeEnumValue = ProjectItemType[value];
-        const icon = ProjectItemIcons[typeEnumValue];
 
-        return <>{icon}</>;
+        return ProjectItemIcons[typeEnumValue];
       },
       onCell: (data) => onCommonCell(data),
     },
@@ -159,6 +155,7 @@ export const TableView = ({
       dataIndex: nameof<ProjectItemTableRowModel>('tagIds'),
       key: nameof<ProjectItemDto>('projectItemTags'),
       ellipsis: true,
+      width: '20%',
       render: (tagIds?: number[]) => (
         <span>
           {tagIds?.map((tagId) => {

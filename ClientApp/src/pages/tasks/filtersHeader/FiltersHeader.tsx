@@ -34,9 +34,9 @@ export const FiltersHeader = ({ tags, onFiltersUpdate, onGroupingUpdate }: Filte
   const [filtersForm] = useForm<ProjectItemFiltersModel>();
   const formWatch = useWatch([], filtersForm);
 
-  const getFilterValues = (): ProjectItemFiltersModel => ({
+  const getFilterValues = (titleFilter?: string): ProjectItemFiltersModel => ({
     ...filtersForm.getFieldsValue(),
-    searchTitle: searchItemsInputValue,
+    searchTitle: titleFilter ?? searchItemsInputValue,
   });
 
   useEffect(() => {
@@ -45,16 +45,10 @@ export const FiltersHeader = ({ tags, onFiltersUpdate, onGroupingUpdate }: Filte
   }, [formWatch]);
 
   const onSearchFilterUpdateDebounced = useCallback(
-    debounce(
-      (): void => {
-        const filters = getFilterValues();
-        onFiltersUpdate(filters);
-      },
-      SEARCH_FILTER_DEBOUNCE,
-      {
-        leading: true,
-      }
-    ),
+    debounce((searchValue: string): void => {
+      const filters = getFilterValues(searchValue);
+      onFiltersUpdate(filters);
+    }, SEARCH_FILTER_DEBOUNCE),
     []
   );
 
@@ -66,7 +60,7 @@ export const FiltersHeader = ({ tags, onFiltersUpdate, onGroupingUpdate }: Filte
   const onSearchFilterUpdate = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
     const searchValue = e.target.value;
     setSearchItemsInputValue(searchValue);
-    onSearchFilterUpdateDebounced();
+    onSearchFilterUpdateDebounced(searchValue);
   };
 
   const onFiltersClear = (): void => {
@@ -82,6 +76,7 @@ export const FiltersHeader = ({ tags, onFiltersUpdate, onGroupingUpdate }: Filte
         <Popover
           placement={'bottomRight'}
           arrow={false}
+          overlayStyle={{ width: 300 }}
           title={
             <Flex justify={'space-between'} align={'center'}>
               <span>Filter by</span>

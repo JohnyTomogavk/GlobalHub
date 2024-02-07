@@ -6,16 +6,17 @@ import { getResourceUrl } from '../../helpers/urlHelper';
 import { PROJECTS_ODATA_API_SUFFIX } from '../../constants/apiConstants';
 import * as apiConstants from '../../constants/apiConstants';
 import buildQuery from 'odata-query';
-import { SorterResult } from 'antd/lib/table/interface';
 
-import { ProjectItemTableRowModel } from '../../pages/tasks/projectItemsViews/models/ProjectItemTableRowModel';
+import { ProjectItemFiltersModel } from '../../models/projects/projectItemFiltersModel';
+import { isEmpty } from 'lodash';
 
 interface IProjectItemsApi {
   get: (
     projectId: number,
     currentPage: number,
     pageSize: number,
-    orderByString?: string
+    orderByString?: string,
+    filters?: ProjectItemFiltersModel
   ) => Promise<AxiosResponse<OdataResponse<ProjectItemDto[]>>>;
 }
 
@@ -27,11 +28,39 @@ const useProjectItems = (): IProjectItemsApi => {
       projectId: number,
       currentPage: number,
       pageSize: number,
-      orderByString?: string
+      orderByString?: string,
+      filters?: ProjectItemFiltersModel
     ): Promise<AxiosResponse<OdataResponse<ProjectItemDto[]>>> => {
       const query = buildQuery<ProjectItemDto>({
         filter: {
           projectId,
+          title: {
+            contains: filters?.searchTitle,
+          },
+          startDate: {
+            ge: filters?.dateRange?.at(0)?.toDate(),
+          },
+          dueDate: {
+            le: filters?.dateRange?.at(1)?.toDate(),
+          },
+          itemType: {
+            in: filters?.itemTypes?.length ? filters?.itemTypes.map((type) => type.toString()) : undefined,
+          },
+          projectItemTags: filters?.tagIds?.length
+            ? {
+                any: {
+                  tagId: {
+                    in: filters?.tagIds,
+                  },
+                },
+              }
+            : undefined,
+          itemPriority: {
+            in: filters?.priorities?.length ? filters?.priorities.map((priority) => priority.toString()) : undefined,
+          },
+          taskStatus: {
+            in: filters?.statuses?.length ? filters?.statuses.map((status) => status.toString()) : undefined,
+          },
         },
         top: currentPage * pageSize,
         skip: pageSize * (currentPage - 1),

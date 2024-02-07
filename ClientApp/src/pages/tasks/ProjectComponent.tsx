@@ -38,6 +38,7 @@ export const ProjectComponent = observer((): JSX.Element => {
   const [filtersModel, setFiltersModel] = useState<ProjectItemFiltersModel>();
   const [groupingMode, setGroupingMode] = useState<GroupingMode>(GroupingMode.None);
   const [projectItems, setProjectItems] = useState<ProjectItemDto[]>([]);
+  const [orderByOption, setOrderByOption] = useState<string | undefined>();
 
   const { id } = useParams();
   const location = useLocation();
@@ -82,10 +83,10 @@ export const ProjectComponent = observer((): JSX.Element => {
 
   const fetchProjectItems = async (
     paginationConfig: TablePaginationConfig,
-    sorter?: SorterResult<ProjectItemTableRow> | SorterResult<ProjectItemTableRow>[]
+    orderByOptions?: string,
+    filters?: ProjectItemFiltersModel
   ): Promise<void> => {
     const projectId = toNumber(id);
-    const orderByString = getSingleColumnSorterConfig(sorter);
 
     const {
       data: { value: items },
@@ -94,7 +95,8 @@ export const ProjectComponent = observer((): JSX.Element => {
       projectId,
       paginationConfig?.current ?? DEFAULT_PROJECT_PAGINATION_CONFIG.current,
       paginationConfig?.pageSize ?? DEFAULT_PROJECT_PAGINATION_CONFIG.pageSize,
-      orderByString
+      orderByOptions,
+      filters
     );
 
     if (status === HttpStatusCode.Ok) {
@@ -105,7 +107,7 @@ export const ProjectComponent = observer((): JSX.Element => {
   useEffect(() => {
     fetchProject().then(() => {
       setIsLoading(false);
-      fetchProjectItems(DEFAULT_PROJECT_PAGINATION_CONFIG);
+      fetchProjectItems(DEFAULT_PROJECT_PAGINATION_CONFIG, orderByOption, filtersModel);
     });
 
     return () => {
@@ -133,14 +135,24 @@ export const ProjectComponent = observer((): JSX.Element => {
     // TODO: Implement delete
   };
 
-  const onFiltersUpdate = (filter: ProjectItemFiltersModel): void => {
-    setFiltersModel(filter);
-    // TODO: trigger project items fetch
+  const onFiltersUpdate = async (filters: ProjectItemFiltersModel): Promise<void> => {
+    setFiltersModel(filters);
+    await fetchProjectItems(DEFAULT_PROJECT_PAGINATION_CONFIG, orderByOption, filters);
   };
 
   const onGroupingModeUpdate = (newGroupingMode: GroupingMode): void => {
     setGroupingMode(newGroupingMode);
     // TODO: trigger project items regrouping
+  };
+
+  const onSortingUpdate = async (
+    paginationConfig: TablePaginationConfig,
+    sorter?: SorterResult<ProjectItemTableRow> | SorterResult<ProjectItemTableRow>[]
+  ) => {
+    const orderByString = getSingleColumnSorterConfig(sorter);
+    setOrderByOption(orderByString);
+
+    await fetchProjectItems(paginationConfig, orderByString);
   };
 
   const tabItems = [
@@ -153,7 +165,7 @@ export const ProjectComponent = observer((): JSX.Element => {
           projectItems={projectItems}
           tags={tags}
           groupingCriteria={groupingMode}
-          triggerProjectItemsFetch={fetchProjectItems}
+          triggerProjectItemsFetch={onSortingUpdate}
         />
       ),
     },
