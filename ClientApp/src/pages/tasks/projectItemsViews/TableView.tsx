@@ -1,9 +1,9 @@
-import { Affix, Badge, Space, Table, Tag } from 'antd';
+import { Badge, Table, Tag } from 'antd';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import Button from 'antd/es/button';
-import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
+import { ColumnsType } from 'antd/lib/table';
 import { ProjectItemDto } from '../../../dto/projects/projectItemDto';
 import { ProjectItemIcons, ProjectItemType } from '../../../enums/Projects/projectItemType';
 import {

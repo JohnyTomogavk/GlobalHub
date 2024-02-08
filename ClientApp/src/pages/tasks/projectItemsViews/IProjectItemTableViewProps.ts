@@ -4,8 +4,6 @@ import { GroupingMode } from '../../../enums/Projects/groupingMode';
 import { SorterResult } from 'antd/lib/table/interface';
 
 import { ProjectItemTableRow } from './models/ProjectItemTableRow';
-import { TablePaginationConfig } from 'antd/lib/table';
-import { AppTablePaginationConfig } from '../../../models/shared/tablePaginationConfig';
 
 export interface IProjectItemTableViewProps {
   projectItems: ProjectItemDto[];
