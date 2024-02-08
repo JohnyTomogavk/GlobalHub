@@ -12,7 +12,7 @@ import {
   PROJECT_ROUTE,
   WELCOME_PAGE_ROUTE,
 } from '../constants/routingConstants';
-import { ProjectComponent } from '../pages/tasks/Tasks';
+import { ProjectComponent } from '../pages/tasks/ProjectComponent';
 import { NotesComponent } from '../pages/notes/Notes';
 import { BudgetComponent } from '../pages/budget/Budget';
 import { NoteList } from '../pages/noteList/NoteList';

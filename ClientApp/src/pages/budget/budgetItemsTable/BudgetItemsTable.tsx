@@ -31,7 +31,6 @@ import { PlusOutlined } from '@ant-design/icons';
 import { TagSelector } from '../../../components/tagSelector/TagSelector';
 import { BudgetItemDrawer } from '../budgetItemDrawer/BudgetItemDrawer';
 import { BudgetItemDrawerModel } from '../../../models/budgetItem/budgetItemDrawer/budgetItemDrawerModel';
-import { BudgetItemDrawerConfig } from '../../../models/budgetItemDrawer/budgetItemDrawerConfig';
 import {
   budgetItemDtoToTableEntry,
   budgetItemTableEntryToDrawerModel,
@@ -43,15 +42,11 @@ import dayjs from 'dayjs';
 import { nameof } from '../../../helpers/objectHelper';
 import { HttpStatusCode } from 'axios';
 import useBudgetsItemsApi from '../../../hooks/api/useBudgetsItemsApi';
+import { BudgetItemDrawerConfig } from '../../../models/budgets/budgetItemDrawer/budgetItemDrawerConfig';
+import { AppTablePaginationConfig } from '../../../models/shared/tablePaginationConfig';
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
-
-interface BudgetItemsPaginationConfig {
-  currentPage: number;
-  itemsPerPage: number;
-  totalItems: number;
-}
 
 interface BudgetItemTableProps {
   budgetId: number;
@@ -97,7 +92,7 @@ export const BudgetItemsTable = ({
       totalExpenses: '0',
     });
 
-  const [budgetItemsPaginationConfig, setBudgetItemsPaginationConfig] = useState<BudgetItemsPaginationConfig>({
+  const [budgetItemsPaginationConfig, setBudgetItemsPaginationConfig] = useState<AppTablePaginationConfig>({
     currentPage: 1,
     itemsPerPage: 5,
     totalItems: 0,

@@ -1,5 +1,5 @@
-import { ProjectItemDto } from '../../dto/projects/projectItemDto';
-import { ProjectTagDto } from '../../dto/projects/projectTagDto';
+import { ProjectItemDto } from './projectItemDto';
+import { ProjectTagDto } from './projectTagDto';
 
 export interface ProjectItemTagDto {
   id: number;

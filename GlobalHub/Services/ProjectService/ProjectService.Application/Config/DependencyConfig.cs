@@ -8,6 +8,14 @@ public static class DependencyConfig
             .AddScoped<
                 IRequestHandler<QueryableSetRequest<ProjectDto>, IQueryable<ProjectDto>>,
                 GetQueryableSetHandler<Project, ProjectDto>>();
+        serviceCollection
+            .AddScoped<
+                IRequestHandler<QueryableSetRequest<ProjectItemDto>, IQueryable<ProjectItemDto>>,
+                GetQueryableSetHandler<ProjectItem, ProjectItemDto>>();
+        serviceCollection
+            .AddScoped<
+                IRequestHandler<QueryableSetRequest<TagDto>, IQueryable<TagDto>>,
+                GetQueryableSetHandler<Tag, TagDto>>();
 
         return serviceCollection;
     }

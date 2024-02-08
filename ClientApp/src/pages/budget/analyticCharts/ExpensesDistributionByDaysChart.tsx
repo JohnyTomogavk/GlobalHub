@@ -6,7 +6,7 @@ import { Empty } from 'antd';
 import { BudgetItemDto } from '../../../dto/budgets/budgetItemDto';
 import { forOwn, groupBy, sumBy } from 'lodash';
 import { BudgetItemExpenseSumByDay } from '../../../dto/budgetItems/budgetItemExpenseSumByDay';
-import { ExpenseDistributionByDaysChartEntry } from '../../../models/analyticCharts/ExpenseDistributionByDaysChartEntry';
+import { ExpenseDistributionByDaysChartEntry } from '../../../models/budgets/analyticCharts/ExpenseDistributionByDaysChartEntry';
 import { Line } from '@ant-design/plots/lib';
 import useBudgetsItemsApi from '../../../hooks/api/useBudgetsItemsApi';
 

@@ -199,7 +199,7 @@ export const SideMenu = observer((): JSX.Element => {
       children: isProjectsLoaded
         ? projectsStore.sideMenuProjectItems
         : [getLoaderNode(ResourceNameConstants.PROJECT_RESOURCE_NAME)],
-      entityType: EntityType.Project,
+      entityType: EntityType.Unknown,
     },
     {
       title: getTopLevelItemTitle(t('SIDE_MENU.REPORTS')),
