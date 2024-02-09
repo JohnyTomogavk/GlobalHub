@@ -1,10 +1,10 @@
 import { ProjectDto } from './projectDto';
-import { ProjectTagColor } from '../../enums/Projects/projectTagColor';
+import { TagColor } from '../../enums/shared/tagColor';
 
 export interface ProjectTagDto {
   id: number;
-  title: string;
-  color: ProjectTagColor;
+  label: string;
+  color: TagColor;
   projectId: number;
   project?: ProjectDto;
 }

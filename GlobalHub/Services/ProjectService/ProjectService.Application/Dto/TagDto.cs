@@ -4,7 +4,7 @@ public record TagDto
 {
     public long Id { get; init; }
 
-    public string Title { get; init; }
+    public string Label { get; init; }
 
     public ETagColor Color { get; init; }
 

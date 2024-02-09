@@ -8,13 +8,14 @@ import styles from './tagSelector.module.scss';
 import { TagFormModel } from '../../models/budgets/tags/tagFormModel';
 import { MoreOutlined } from '@ant-design/icons';
 import { ColorSelector } from '../colorSelector/ColorSelector';
-import { ColorValues, BudgetTagColor } from '../../enums/Budgets/budgetTagColor';
 import { isEqual } from 'lodash';
 import { nameof } from '../../helpers/objectHelper';
 import { DefaultOptionType } from 'rc-select/lib/Select';
+import { ColorValues, TagColor } from '../../enums/shared/tagColor';
+import { ProjectTagDto } from '../../dto/projects/projectTagDto';
 
 interface TagSelectorProps {
-  tags: TagDto[];
+  tags: (TagDto | ProjectTagDto)[];
   isTagCreatorEnabled?: boolean;
   onTagUpdated?: (tagData: TagDto) => Promise<void>;
   onTagDelete?: (tagId: number) => Promise<void>;
@@ -37,7 +38,7 @@ export const TagSelector = ({
 }: TagSelectorProps): JSX.Element => {
   const [tagEditForm] = useForm<TagFormModel>();
   const [isTagEditDrawerOpened, setIsTagEditDrawerOpened] = useState(false);
-  const defaultTagColor = ColorValues[BudgetTagColor.Default];
+  const defaultTagColor = ColorValues[TagColor.Default];
 
   const handleTagEditDrawerClose = async (): Promise<void> => {
     if (!onTagUpdated) {
@@ -127,7 +128,10 @@ export const TagSelector = ({
 
           if (!tagDto) return <></>;
 
-          const tagColor = isTagJustCreated ? defaultTagColor : ColorValues[tagDto.color];
+          const tagColorEnumValue =
+            typeof tagDto.color === 'number' ? tagDto.color : TagColor[tagDto.color as keyof typeof TagColor];
+          const tagColor = isTagJustCreated ? defaultTagColor : ColorValues[tagColorEnumValue];
+
           const tagLabel = isTagJustCreated ? tagProps.label : tagDto.label;
 
           return (
