@@ -166,94 +166,100 @@ export const BudgetItemDrawer = ({
         )
       }
     >
-      {isLoading ? (
-        <div className={styles.loaderContainer}>
-          <Loader />
-        </div>
-      ) : (
-        <Form
-          form={budgetItemForm}
-          initialValues={initFormValues}
-          size={'small'}
-          disabled={isDisabled}
-          layout="vertical"
-        >
-          <Form.Item
-            rules={[{ required: true, message: 'Budget Item title required' }]}
-            name={nameof<BudgetItemDrawerModel>('title')}
-            label={'Title'}
+      {((): JSX.Element => {
+        if (isLoading) {
+          return (
+            <div className={styles.loaderContainer}>
+              <Loader />
+            </div>
+          );
+        }
+
+        return (
+          <Form
+            form={budgetItemForm}
+            initialValues={initFormValues}
+            size={'small'}
+            disabled={isDisabled}
+            layout="vertical"
           >
-            <Input placeholder={'Title'} />
-          </Form.Item>
-          <Form.Item
-            rules={[{ required: true, message: 'Operation Date is required' }]}
-            initialValue={todayDate}
-            name={nameof<BudgetItemDrawerModel>('operationDate')}
-            label={'Operation Date'}
-          >
-            <DatePicker
-              showSecond={false}
-              showTime={{ format: 'HH:mm' }}
-              format="YYYY-MM-DD HH:mm"
-              style={{
-                width: '100%',
-              }}
-            />
-          </Form.Item>
-          <Form.Item
-            rules={[{ required: true, message: 'Operation Cost is required' }]}
-            name={nameof<BudgetItemDrawerModel>('operationCost')}
-            label={'Operation Cost'}
-          >
-            <InputNumber
-              addonBefore={<Text>BYN</Text>}
-              size={'small'}
-              step={10}
-              min={0}
-              style={{
-                width: '100%',
-              }}
-              disabled={isDisabled}
-            />
-          </Form.Item>
-          <Form.Item
-            rules={[{ required: true, message: 'Operation type is required' }]}
-            name={nameof<BudgetItemDrawerModel>('operationType')}
-            label={'Operation Type'}
-          >
-            <Select
-              allowClear
-              placeholder={'Select operation type'}
-              options={[
-                { value: BudgetItemOperationType.Incoming, label: 'Incoming' },
-                { value: BudgetItemOperationType.Outgoing, label: 'Outgoing' },
+            <Form.Item
+              rules={[{ required: true, message: 'Budget Item title required' }]}
+              name={nameof<BudgetItemDrawerModel>('title')}
+              label={'Title'}
+            >
+              <Input placeholder={'Title'} />
+            </Form.Item>
+            <Form.Item
+              rules={[{ required: true, message: 'Operation Date is required' }]}
+              initialValue={todayDate}
+              name={nameof<BudgetItemDrawerModel>('operationDate')}
+              label={'Operation Date'}
+            >
+              <DatePicker
+                showSecond={false}
+                showTime={{ format: 'HH:mm' }}
+                format="YYYY-MM-DD HH:mm"
+                style={{
+                  width: '100%',
+                }}
+              />
+            </Form.Item>
+            <Form.Item
+              rules={[{ required: true, message: 'Operation Cost is required' }]}
+              name={nameof<BudgetItemDrawerModel>('operationCost')}
+              label={'Operation Cost'}
+            >
+              <InputNumber
+                addonBefore={<Text>BYN</Text>}
+                size={'small'}
+                step={10}
+                min={0}
+                style={{
+                  width: '100%',
+                }}
+                disabled={isDisabled}
+              />
+            </Form.Item>
+            <Form.Item
+              rules={[{ required: true, message: 'Operation type is required' }]}
+              name={nameof<BudgetItemDrawerModel>('operationType')}
+              label={'Operation Type'}
+            >
+              <Select
+                allowClear
+                placeholder={'Select operation type'}
+                options={[
+                  { value: BudgetItemOperationType.Incoming, label: 'Incoming' },
+                  { value: BudgetItemOperationType.Outgoing, label: 'Outgoing' },
+                ]}
+              />
+            </Form.Item>
+            <Form.Item
+              rules={[
+                {
+                  message: 'You have not selected any tags',
+                  warningOnly: true,
+                  validator: (_, values) => tagSelectorValidator(values),
+                },
               ]}
-            />
-          </Form.Item>
-          <Form.Item
-            rules={[
-              {
-                message: 'You have not selected any tags',
-                warningOnly: true,
-                validator: (_, values) => tagSelectorValidator(values),
-              },
-            ]}
-            name={nameof<BudgetItemDrawerModel>('selectedTags')}
-            tooltip={'Tags help to classify your expenses and perform analytic on them'}
-            label={'Tags'}
-          >
-            <TagSelector
-              onTagUpdated={onTagEdit}
-              onTagDelete={onTagDelete}
-              isTagCreatorEnabled={!isDisabled}
-              tags={budgetItemTags ?? []}
-            />
-          </Form.Item>
-          <Form.Item name={nameof<BudgetItemDrawerModel>('description')} label={'Description'}>
-            <TextArea rows={3} disabled={isDisabled} placeholder={'Description'} />
-          </Form.Item>
-        </Form>
-      )}
+              name={nameof<BudgetItemDrawerModel>('selectedTags')}
+              tooltip={'Tags help to classify your expenses and perform analytic on them'}
+              label={'Tags'}
+            >
+              <TagSelector
+                onTagUpdated={onTagEdit}
+                onTagDelete={onTagDelete}
+                isTagCreatorEnabled={!isDisabled}
+                tags={budgetItemTags ?? []}
+              />
+            </Form.Item>
+            <Form.Item name={nameof<BudgetItemDrawerModel>('description')} label={'Description'}>
+              <TextArea rows={3} disabled={isDisabled} placeholder={'Description'} />
+            </Form.Item>
+          </Form>
+        );
+      })()}
     </Drawer>
   );
 };

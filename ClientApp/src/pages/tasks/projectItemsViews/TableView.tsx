@@ -1,6 +1,6 @@
 import { Badge, Table, Tag } from 'antd';
 import React, { ReactNode, useEffect, useState } from 'react';
-import { DownOutlined, PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import Button from 'antd/es/button';
 import { ColumnsType } from 'antd/lib/table';
@@ -166,23 +166,6 @@ export const TableView = ({
           })}
         </span>
       ),
-      onCell: (data) => onCommonCell(data),
-    },
-    {
-      key: 'x',
-      title: 'Actions',
-      render: (record: ProjectItemTableRow): JSX.Element => {
-        if (nameof<ProjectItemGroupHeaderRow>('isGroupingHeader') in record) {
-          return <></>;
-        }
-
-        return (
-          <Button type="link">
-            More
-            <DownOutlined />
-          </Button>
-        );
-      },
       onCell: (data) => onCommonCell(data),
     },
   ];
