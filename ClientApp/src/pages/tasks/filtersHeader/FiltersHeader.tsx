@@ -6,7 +6,6 @@ import Button from 'antd/es/button';
 import { Checkbox } from 'antd';
 import { debounce, toNumber } from 'lodash';
 import { SEARCH_FILTER_DEBOUNCE } from '../../../constants/projectsConstants';
-import { ProjectTagDto } from '../../../dto/projects/tags/projectTagDto';
 import { useForm, useWatch } from 'antd/lib/form/Form';
 import { ProjectItemFiltersModel } from '../../../models/projects/projectItemFiltersModel';
 import { nameof } from '../../../helpers/objectHelper';

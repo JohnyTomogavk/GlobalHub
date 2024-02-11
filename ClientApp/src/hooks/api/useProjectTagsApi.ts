@@ -4,10 +4,8 @@ import { getResourceUrl } from '../../helpers/urlHelper';
 import {
   CREATE_PROJECT_TAG,
   DELETE_PROJECT_TAG,
-  DELETE_TAG,
   PROJECTS_API_SUFFIX,
   UPDATE_PROJECT_TAG,
-  UPDATE_TAG,
 } from '../../constants/apiConstants';
 import { CreateTagDto } from '../../dto/projects/tags/createTagDto';
 import { ProjectTagDto } from '../../dto/projects/tags/projectTagDto';

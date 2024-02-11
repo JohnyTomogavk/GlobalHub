@@ -3,7 +3,6 @@ import { Badge, Button, DatePicker, Drawer, Form, Input, Select, Space, TreeSele
 import styles from './projectItemDrawer.module.scss';
 import { useForm, useWatch } from 'antd/lib/form/Form';
 import { Loader } from '../../../components/loader/Loader';
-import { ProjectTagDto } from '../../../dto/projects/tags/projectTagDto';
 import { nameof } from '../../../helpers/objectHelper';
 import { getEnumValuesExcluding } from '../../../helpers/enumHelper';
 import { ProjectItemType, ProjectItemTypeIcons, ProjectItemTypeLabels } from '../../../enums/Projects/projectItemType';
@@ -21,8 +20,6 @@ import { TagSelector } from '../../../components/tagSelector/TagSelector';
 import { TagDto } from '../../../dto/tags/tagDto';
 import { ProjectItemDto } from '../../../dto/projects/projectItemDto';
 import { fillChildItems } from '../../../helpers/projectItemHelper';
-import { BudgetItemDrawerModel } from '../../../models/budgetItem/budgetItemDrawer/budgetItemDrawerModel';
-import { BudgetTagCreateDto } from '../../../dto/tags/budgetTagCreateDto';
 import { TagColor } from '../../../enums/shared/tagColor';
 import useProjectTagsApi from '../../../hooks/api/useProjectTagsApi';
 import { HttpStatusCode } from 'axios';
@@ -165,7 +162,7 @@ export const ProjectItemDrawer = ({
     onClose();
   };
 
-  const onTagUpdated = async (updatedTag: TagDto) => {
+  const onTagUpdated = async (updatedTag: TagDto): Promise<void> => {
     const { status } = await projectTagsApi.updateTag({
       ...updatedTag,
       projectId: projectId,
@@ -176,12 +173,12 @@ export const ProjectItemDrawer = ({
     }
   };
 
-  const onTagDeleted = async (tagId: number) => {
+  const onTagDeleted = async (tagId: number): Promise<void> => {
     const { status } = await projectTagsApi.deleteTag(tagId);
 
     if (status === HttpStatusCode.Ok) {
       const selectedTags = projectItemFormInstance.getFieldsValue().tagIds;
-      const newSelectedTagsValues = selectedTags.filter((tagId) => tagId !== tagId);
+      const newSelectedTagsValues = selectedTags.filter((tagId: number) => tagId !== tagId);
       projectItemFormInstance.setFieldValue(nameof<ProjectItemFormModel>('tagIds'), newSelectedTagsValues);
 
       await onTagDelete(tagId);

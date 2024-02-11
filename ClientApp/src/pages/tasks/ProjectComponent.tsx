@@ -13,7 +13,6 @@ import { GroupOutlined, NodeExpandOutlined, TableOutlined } from '@ant-design/ic
 import { TableView } from './projectItemsViews/TableView';
 import { debounce, toNumber } from 'lodash';
 import { FiltersHeader } from './filtersHeader/FiltersHeader';
-import { ProjectTagDto } from '../../dto/projects/tags/projectTagDto';
 import { HttpStatusCode } from 'axios';
 import { ProjectItemFiltersModel } from '../../models/projects/projectItemFiltersModel';
 import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
@@ -24,7 +23,6 @@ import { SorterResult } from 'antd/lib/table/interface';
 import { getSingleColumnSorterConfig } from '../../helpers/antTableSorterHelper';
 import { ProjectItemTableRow } from './projectItemsViews/models/ProjectItemTableRow';
 import { ProjectItemDrawer } from './projectItemDrawer/ProjectItemDrawer';
-import { ProjectItemTableRowModel } from './projectItemsViews/models/ProjectItemTableRowModel';
 import { ProjectItemFormModel } from './projectItemDrawer/projectItemFormModel';
 import { TagDto } from '../../dto/tags/tagDto';
 
@@ -203,7 +201,6 @@ export const ProjectComponent = observer((): JSX.Element => {
   };
 
   const onProjectItemFormSubmit = (formData: ProjectItemFormModel): void => {
-    console.log(formData);
     // TODO: Implement task / event creation
   };
 

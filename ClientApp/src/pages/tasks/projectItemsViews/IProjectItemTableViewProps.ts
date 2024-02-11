@@ -1,5 +1,4 @@
 import { ProjectItemDto } from '../../../dto/projects/projectItemDto';
-import { ProjectTagDto } from '../../../dto/projects/tags/projectTagDto';
 import { GroupingMode } from '../../../enums/Projects/groupingMode';
 import { SorterResult } from 'antd/lib/table/interface';
 
