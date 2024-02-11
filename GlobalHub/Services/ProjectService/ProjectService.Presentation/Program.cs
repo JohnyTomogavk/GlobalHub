@@ -43,6 +43,8 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssemblyContaining(typeof(CreateProjectRequest));
 });
 
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(BaseTagValidator<>));
+
 builder.Services.AddAutoMapper(config =>
 {
     config.AddProfile<MappingProfile>();

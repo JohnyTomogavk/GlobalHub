@@ -1,17 +1,27 @@
 ﻿namespace ProjectService.Application.Config;
 
+/// <inheritdoc />
 public class MappingProfile : Profile
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MappingProfile"/> class.
+    /// </summary>
     public MappingProfile()
     {
-        CreateMap<Project, ProjectDto>()
+        this.CreateMap<Project, ProjectDto>()
             .ForAllMembers(opt => opt.ExplicitExpansion());
-        CreateMap<ProjectItem, ProjectItemDto>()
+        this.CreateMap<ProjectItem, ProjectItemDto>()
             .ForAllMembers(opt => opt.ExplicitExpansion());
-        CreateMap<Tag, TagDto>()
-            .ForMember(dto => dto.Label, config => config.MapFrom(src => src.Title))
+        this.CreateMap<Tag, TagDto>()
+            .ForMember(
+                dto => dto.Label,
+                config => config.MapFrom(src => src.Title))
             .ForAllMembers(opt => opt.ExplicitExpansion());
-        CreateMap<ProjectItemTag, ProjectItemTagDto>()
+        this.CreateMap<ProjectItemTag, ProjectItemTagDto>()
             .ForAllMembers(opt => opt.ExplicitExpansion());
+        this.CreateMap<CreateTagRequest, Tag>()
+            .ForMember(
+                dst => dst.Title,
+                cfg => cfg.MapFrom(src => src.Label));
     }
 }
