@@ -6,8 +6,13 @@
         "db"
       ]
     },
-    "orderingRules": {
-      "blankLinesBetweenUsingGroups": "omit"
+    "documentationRules": {
+      "documentExposedElements": false,
+      "xmlHeader": false,
+      "documentInterfaces": false
+    },
+    "layoutRules": {
+      "newlineAtEndOfFile": "require"
     }
   }
 }

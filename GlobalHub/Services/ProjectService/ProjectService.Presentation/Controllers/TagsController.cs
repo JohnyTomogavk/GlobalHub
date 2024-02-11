@@ -31,4 +31,30 @@ public class TagsController : BaseController<Tag, TagDto>
 
         return this.StatusCode(StatusCodes.Status201Created, createdTag);
     }
+
+    /// <summary>
+    /// Updates tag
+    /// </summary>
+    /// <param name="request">Tag data to update.</param>
+    /// <returns>Updated tag dto.</returns>
+    [HttpPut]
+    public async Task<ActionResult<TagDto>> Update(UpdateTagRequest request)
+    {
+        var tagDto = await this._mediator.Send(request);
+
+        return this.StatusCode(StatusCodes.Status200OK, tagDto);
+    }
+
+    /// <summary>
+    /// Deletes project's tag
+    /// </summary>
+    /// <param name="request">Tag data to delete.</param>
+    /// <returns>Id of deleted tag.</returns>
+    [HttpDelete]
+    public async Task<ActionResult<long>> Delete([FromQuery]DeleteTagRequest request)
+    {
+        var deletedTagId = await this._mediator.Send(request);
+
+        return this.StatusCode(StatusCodes.Status200OK, deletedTagId);
+    }
 }

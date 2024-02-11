@@ -23,5 +23,9 @@ public class MappingProfile : Profile
             .ForMember(
                 dst => dst.Title,
                 cfg => cfg.MapFrom(src => src.Label));
+        this.CreateMap<UpdateTagRequest, Tag>()
+            .ForMember(
+                dst => dst.Title,
+                cfg => cfg.MapFrom(src => src.Label));
     }
 }
