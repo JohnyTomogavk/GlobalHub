@@ -7,13 +7,13 @@ export enum ProjectItemType {
   Event,
 }
 
-export const ProjectItemLabels = {
+export const ProjectItemTypeLabels = {
   [ProjectItemType.Unknown]: 'Unknown',
   [ProjectItemType.Task]: 'Task',
   [ProjectItemType.Event]: 'Event',
 };
 
-export const ProjectItemIcons = {
+export const ProjectItemTypeIcons = {
   [ProjectItemType.Unknown]: undefined,
   [ProjectItemType.Task]: <CheckSquareOutlined />,
   [ProjectItemType.Event]: <BellOutlined />,

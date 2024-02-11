@@ -13,7 +13,7 @@ import { GroupOutlined, NodeExpandOutlined, TableOutlined } from '@ant-design/ic
 import { TableView } from './projectItemsViews/TableView';
 import { debounce, toNumber } from 'lodash';
 import { FiltersHeader } from './filtersHeader/FiltersHeader';
-import { ProjectTagDto } from '../../dto/projects/projectTagDto';
+import { ProjectTagDto } from '../../dto/projects/tags/projectTagDto';
 import { HttpStatusCode } from 'axios';
 import { ProjectItemFiltersModel } from '../../models/projects/projectItemFiltersModel';
 import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
@@ -23,6 +23,10 @@ import useProjectItemsApi from '../../hooks/api/useProjectItems';
 import { SorterResult } from 'antd/lib/table/interface';
 import { getSingleColumnSorterConfig } from '../../helpers/antTableSorterHelper';
 import { ProjectItemTableRow } from './projectItemsViews/models/ProjectItemTableRow';
+import { ProjectItemDrawer } from './projectItemDrawer/ProjectItemDrawer';
+import { ProjectItemTableRowModel } from './projectItemsViews/models/ProjectItemTableRowModel';
+import { ProjectItemFormModel } from './projectItemDrawer/projectItemFormModel';
+import { TagDto } from '../../dto/tags/tagDto';
 
 interface SearchParams {
   groupingMode: GroupingMode;
@@ -41,8 +45,10 @@ export const ProjectComponent = observer((): JSX.Element => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [project, setProject] = useState<ProjectDto | undefined>();
-  const [tags, setTags] = useState<ProjectTagDto[]>([]);
+  const [tags, setTags] = useState<TagDto[]>([]);
   const [projectItems, setProjectItems] = useState<ProjectItemDto[]>([]);
+
+  const [isProjectItemDrawerOpened, setIsProjectItemDrawerOpened] = useState(false);
 
   const [searchParams, setSearchParams] = useState<SearchParams>(defaultSearchParams);
 
@@ -159,6 +165,10 @@ export const ProjectComponent = observer((): JSX.Element => {
     await fetchProjectItems(orderByString, searchParams.filtersModel);
   };
 
+  const onCreateNewProjectItemButtonClick = (): void => {
+    setIsProjectItemDrawerOpened(true);
+  };
+
   const tabItems = [
     {
       key: '1',
@@ -170,6 +180,7 @@ export const ProjectComponent = observer((): JSX.Element => {
           tags={tags}
           groupingCriteria={searchParams.groupingMode}
           onTableSearchParamsChange={onTableSearchParamsChange}
+          onCreateNewProjectItemClick={onCreateNewProjectItemButtonClick}
         />
       ),
     },
@@ -186,6 +197,27 @@ export const ProjectComponent = observer((): JSX.Element => {
       children: <>Tbd...</>,
     },
   ];
+
+  const onProjectItemDrawerClose = (): void => {
+    setIsProjectItemDrawerOpened(false);
+  };
+
+  const onProjectItemFormSubmit = (formData: ProjectItemFormModel): void => {
+    console.log(formData);
+    // TODO: Implement task / event creation
+  };
+
+  const onProjectItemDrawerTagDelete = async (tagId: number): Promise<void> => {
+    setTags((prevState) => prevState.filter((tag) => tag.id !== tagId));
+  };
+
+  const onProjectItemDrawerTagEdit = async (tagData: TagDto): Promise<void> => {
+    setTags((prevState) => prevState.map((tag) => (tag.id === tagData.id ? tagData : tag)));
+  };
+
+  const onTagCreated = async (tag: TagDto): Promise<void> => {
+    setTags((prevState) => [...prevState, tag]);
+  };
 
   if (isLoading) {
     return (
@@ -226,6 +258,17 @@ export const ProjectComponent = observer((): JSX.Element => {
               <FiltersHeader tags={tags} onFiltersUpdate={onFiltersUpdate} onGroupingUpdate={onGroupingModeUpdate} />
             </>
           )}
+        />
+        <ProjectItemDrawer
+          projectId={toNumber(project?.id)}
+          isDrawerOpened={isProjectItemDrawerOpened}
+          projectTags={tags}
+          projectItems={projectItems}
+          onClose={onProjectItemDrawerClose}
+          onFormSubmit={onProjectItemFormSubmit}
+          onTagCreated={onTagCreated}
+          onTagDelete={onProjectItemDrawerTagDelete}
+          onTagEdit={onProjectItemDrawerTagEdit}
         />
       </div>
     </>

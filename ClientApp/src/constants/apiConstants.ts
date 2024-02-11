@@ -53,3 +53,8 @@ export const RENAME_PROJECT = '/Projects/UpdateTitle';
 
 // Constants related to projects
 export const GET_PROJECT_ITEMS = '/ProjectItems';
+
+// Constants related to project tags
+export const CREATE_PROJECT_TAG = '/Tags/Create';
+export const UPDATE_PROJECT_TAG = '/Tags/Update';
+export const DELETE_PROJECT_TAG = '/Tags/Delete';

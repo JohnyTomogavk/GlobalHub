@@ -17,8 +17,14 @@ export const projectItemDtoToTableViewModel = (item: ProjectItemDto): ProjectIte
   children: undefined,
 });
 
+interface IChildFull {
+  id: number;
+  parentProjectItemId?: number;
+  children?: IChildFull[];
+}
+
 // Function recursively restores child items on currentItem
-export const fillChildItems = (currentItem: ProjectItemTableRowModel, allItems: ProjectItemTableRowModel[]): void => {
+export const fillChildItems = <T extends IChildFull>(currentItem: T, allItems: T[]): void => {
   const childItems = allItems?.filter((item) => item.parentProjectItemId === currentItem.id);
 
   if (!childItems?.length) return;

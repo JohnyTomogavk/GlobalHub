@@ -37,13 +37,13 @@ import {
   drawerModelToBudgetItemCreateDto,
   drawerModelToBudgetItemUpdateDto,
 } from '../../../helpers/budgetItemHelper';
-import { ColorValues, BudgetTagColor } from '../../../enums/Budgets/budgetTagColor';
 import dayjs from 'dayjs';
 import { nameof } from '../../../helpers/objectHelper';
 import { HttpStatusCode } from 'axios';
 import useBudgetsItemsApi from '../../../hooks/api/useBudgetsItemsApi';
 import { BudgetItemDrawerConfig } from '../../../models/budgets/budgetItemDrawer/budgetItemDrawerConfig';
 import { AppTablePaginationConfig } from '../../../models/shared/tablePaginationConfig';
+import { TagColor } from '../../../enums/shared/tagColor';
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -196,7 +196,7 @@ export const BudgetItemsTable = ({
         <>
           {tagIds.map((tagId: number) => {
             const tagDto = budgetTags.filter((dto: TagDto) => dto.id === tagId)[0];
-            const color = ColorValues[tagDto?.color ?? BudgetTagColor.Default];
+            const color = TagColor[tagDto?.color ?? TagColor.Default];
 
             return (
               tagDto && (

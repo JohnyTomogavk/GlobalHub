@@ -8,11 +8,11 @@ import { useForm, useWatch } from 'antd/lib/form/Form';
 import styles from './budgetItemDrawer.module.scss';
 import { tagSelectorValidator } from '../../../validators/tagSelectorValidators';
 import dayjs from 'dayjs';
-import { BudgetTagColor } from '../../../enums/Budgets/budgetTagColor';
 import { nameof } from '../../../helpers/objectHelper';
 import { InputNumber } from 'antd';
 import useTagsApi from '../../../hooks/api/useTagsApi';
 import { Loader } from '../../../components/loader/Loader';
+import { TagColor } from '../../../enums/shared/tagColor';
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -103,7 +103,7 @@ export const BudgetItemDrawer = ({
     const { data: createdTag } = await tagsApi.createTag({
       budgetId: budgetId,
       label: tagLabel,
-      color: BudgetTagColor.Default,
+      color: TagColor.Default,
     });
 
     onNewTagAdded(createdTag);
@@ -111,6 +111,7 @@ export const BudgetItemDrawer = ({
     return createdTag;
   };
 
+  // TODO: Extract ot hook
   const handleJustCreatedTag = async (selectedTags: (number | string)[]): Promise<void> => {
     const newTagLabel = selectedTags.filter((tag) => typeof tag === 'string')[0] as string;
 

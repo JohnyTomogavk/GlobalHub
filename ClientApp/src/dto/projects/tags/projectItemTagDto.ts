@@ -1,4 +1,4 @@
-import { ProjectItemDto } from './projectItemDto';
+import { ProjectItemDto } from '../projectItemDto';
 import { ProjectTagDto } from './projectTagDto';
 
 export interface ProjectItemTagDto {
