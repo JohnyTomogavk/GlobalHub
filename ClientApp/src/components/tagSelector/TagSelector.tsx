@@ -12,10 +12,9 @@ import { isEqual } from 'lodash';
 import { nameof } from '../../helpers/objectHelper';
 import { DefaultOptionType } from 'rc-select/lib/Select';
 import { ColorValues, TagColor } from '../../enums/shared/tagColor';
-import { ProjectTagDto } from '../../dto/projects/projectTagDto';
 
 interface TagSelectorProps {
-  tags: (TagDto | ProjectTagDto)[];
+  tags: TagDto[];
   isTagCreatorEnabled?: boolean;
   onTagUpdated?: (tagData: TagDto) => Promise<void>;
   onTagDelete?: (tagId: number) => Promise<void>;
@@ -166,10 +165,14 @@ export const TagSelector = ({
                         event.stopPropagation();
 
                         const tagModel = tags.filter((tagDto) => tagDto.id == tag.id)[0];
+
                         tagEditForm.setFieldsValue({
                           id: tag.id,
                           label: tagModel.label,
-                          color: tagModel.color,
+                          color:
+                            typeof tagModel.color === 'number'
+                              ? tagModel.color
+                              : TagColor[tagModel.color as keyof typeof TagColor],
                         });
 
                         setIsTagEditDrawerOpened(true);

@@ -15,7 +15,7 @@ export const ColorSelector = ({ ...props }): JSX.Element => (
     getPopupContainer={(triggerNode: HTMLElement): HTMLElement => triggerNode.parentElement ?? document.body}
     {...props}
   >
-    {getEnumValues(TagColor).map((colorValue, _) => {
+    {getEnumValues(TagColor).map((colorValue: number, _) => {
       const tagLabel = ColorLabels[colorValue as TagColor];
       const tagColor = ColorValues[colorValue as TagColor];
 
