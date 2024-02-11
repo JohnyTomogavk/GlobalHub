@@ -21,8 +21,8 @@ import { ProjectItemDto } from '../../dto/projects/projectItemDto';
 import useProjectItemsApi from '../../hooks/api/useProjectItems';
 import { SorterResult } from 'antd/lib/table/interface';
 import { getSingleColumnSorterConfig } from '../../helpers/antTableSorterHelper';
-import { ProjectItemTableRow } from './projectItemsViews/models/ProjectItemTableRow';
-import { ProjectItemDrawer } from './projectItemDrawer/ProjectItemDrawer';
+import { ProjectItemTableRow } from '../../models/projects/ProjectItemTableRow';
+import { ProjectItemDrawer } from '../../models/projects/ProjectItemDrawer';
 import { ProjectItemFormModel } from './projectItemDrawer/projectItemFormModel';
 import { TagDto } from '../../dto/tags/tagDto';
 

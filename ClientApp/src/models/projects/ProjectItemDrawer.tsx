@@ -1,28 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { Badge, Button, DatePicker, Drawer, Form, Input, Select, Space, TreeSelect } from 'antd';
-import styles from './projectItemDrawer.module.scss';
-import { useForm, useWatch } from 'antd/lib/form/Form';
-import { Loader } from '../../../components/loader/Loader';
-import { nameof } from '../../../helpers/objectHelper';
-import { getEnumValuesExcluding } from '../../../helpers/enumHelper';
-import { ProjectItemType, ProjectItemTypeIcons, ProjectItemTypeLabels } from '../../../enums/Projects/projectItemType';
-import { ProjectItemFormModel } from './projectItemFormModel';
+import styles from '../../pages/tasks/projectItemDrawer/projectItemDrawer.module.scss';
+import { useForm } from 'antd/lib/form/Form';
+import { Loader } from '../../components/loader/Loader';
+import { nameof } from '../../helpers/objectHelper';
+import { getEnumValuesExcluding } from '../../helpers/enumHelper';
+import { ProjectItemType, ProjectItemTypeIcons, ProjectItemTypeLabels } from '../../enums/Projects/projectItemType';
+import { ProjectItemFormModel } from '../../pages/tasks/projectItemDrawer/projectItemFormModel';
 import {
   ProjectItemPriority,
   ProjectItemPriorityIcons,
   ProjectItemPriorityTitles,
-} from '../../../enums/Projects/projectItemPriority';
-import { TaskStatus, TaskStatusBadgeTypes, TaskStatusTitles } from '../../../enums/Projects/taskStatus';
+} from '../../enums/Projects/projectItemPriority';
+import { TaskStatus, TaskStatusBadgeTypes, TaskStatusTitles } from '../../enums/Projects/taskStatus';
 import { PresetStatusColorType } from 'antd/lib/_util/colors';
 import { toNumber } from 'lodash';
-import { tagSelectorValidator } from '../../../validators/tagSelectorValidators';
-import { TagSelector } from '../../../components/tagSelector/TagSelector';
-import { TagDto } from '../../../dto/tags/tagDto';
-import { ProjectItemDto } from '../../../dto/projects/projectItemDto';
-import { fillChildItems } from '../../../helpers/projectItemHelper';
-import { TagColor } from '../../../enums/shared/tagColor';
-import useProjectTagsApi from '../../../hooks/api/useProjectTagsApi';
+import { tagSelectorValidator } from '../../validators/tagSelectorValidators';
+import { TagSelector } from '../../components/tagSelector/TagSelector';
+import { TagDto } from '../../dto/tags/tagDto';
+import { ProjectItemDto } from '../../dto/projects/projectItemDto';
+import { fillChildItems } from '../../helpers/projectItemHelper';
+import { TagColor } from '../../enums/shared/tagColor';
+import useProjectTagsApi from '../../hooks/api/useProjectTagsApi';
 import { HttpStatusCode } from 'axios';
+import useNewTagFormWatcher from '../../hooks/api/useNewTagFormWatcher';
 
 const { TextArea } = Input;
 
@@ -87,7 +88,6 @@ export const ProjectItemDrawer = ({
   const [isLoading, setIsLoading] = useState(false);
   const [projectItemFormInstance] = useForm<ProjectItemFormModel>();
   const [projectItemsTreeData, setProjectItemsTreeData] = useState<TreeSelectEntry[] | undefined>(undefined);
-  const selectedTagsWatcher = useWatch(nameof<ProjectItemFormModel>('tagIds'), projectItemFormInstance);
 
   const projectTagsApi = useProjectTagsApi();
 
@@ -103,29 +103,7 @@ export const ProjectItemDrawer = ({
     return createdTag;
   };
 
-  // TODO: Extract ot hook
-  const handleJustCreatedTag = async (selectedTags: (number | string)[]): Promise<void> => {
-    const newTagLabel = selectedTags.filter((tag) => typeof tag === 'string')[0] as string;
-
-    if (!newTagLabel) return;
-
-    const createdTag = await createNewTag(newTagLabel);
-
-    const selectedTagIds = selectedTags.map((tag) => {
-      if (typeof tag === 'string' && tag === createdTag.label) {
-        return createdTag.id;
-      }
-
-      return tag;
-    });
-
-    projectItemFormInstance.setFieldValue(nameof<ProjectItemFormModel>('tagIds'), selectedTagIds);
-  };
-
-  useEffect(() => {
-    const selectedTags = projectItemFormInstance.getFieldsValue().tagIds ?? [];
-    handleJustCreatedTag(selectedTags);
-  }, [selectedTagsWatcher]);
+  useNewTagFormWatcher(projectItemFormInstance, nameof<ProjectItemFormModel>('tagIds'), createNewTag);
 
   useEffect(() => {
     setIsLoading(false);
@@ -173,15 +151,15 @@ export const ProjectItemDrawer = ({
     }
   };
 
-  const onTagDeleted = async (tagId: number): Promise<void> => {
-    const { status } = await projectTagsApi.deleteTag(tagId);
+  const onTagDeleted = async (tagIdToDelete: number): Promise<void> => {
+    const { status } = await projectTagsApi.deleteTag(tagIdToDelete);
 
     if (status === HttpStatusCode.Ok) {
       const selectedTags = projectItemFormInstance.getFieldsValue().tagIds;
       const newSelectedTagsValues = selectedTags.filter((tagId: number) => tagId !== tagId);
       projectItemFormInstance.setFieldValue(nameof<ProjectItemFormModel>('tagIds'), newSelectedTagsValues);
 
-      await onTagDelete(tagId);
+      await onTagDelete(tagIdToDelete);
     }
   };
 

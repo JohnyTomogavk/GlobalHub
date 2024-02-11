@@ -1,10 +1,10 @@
 import { Button, DatePicker, Drawer, Form, Input, Select, Typography } from 'antd';
 import { BudgetItemOperationType } from '../../../enums/Budgets/budgetItemOperationType';
 import { TagSelector } from '../../../components/tagSelector/TagSelector';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { TagDto } from '../../../dto/tags/tagDto';
 import { BudgetItemDrawerModel } from '../../../models/budgetItem/budgetItemDrawer/budgetItemDrawerModel';
-import { useForm, useWatch } from 'antd/lib/form/Form';
+import { useForm } from 'antd/lib/form/Form';
 import styles from './budgetItemDrawer.module.scss';
 import { tagSelectorValidator } from '../../../validators/tagSelectorValidators';
 import dayjs from 'dayjs';
@@ -13,6 +13,7 @@ import { InputNumber } from 'antd';
 import useTagsApi from '../../../hooks/api/useTagsApi';
 import { Loader } from '../../../components/loader/Loader';
 import { TagColor } from '../../../enums/shared/tagColor';
+import useNewTagFormWatcher from '../../../hooks/api/useNewTagFormWatcher';
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -46,10 +47,23 @@ export const BudgetItemDrawer = ({
 }: BudgetItemDrawerProps): JSX.Element => {
   const [budgetItemForm] = useForm<BudgetItemDrawerModel>();
   const [isLoading, setIsLoading] = useState(true);
-  const selectedTagsWatcher = useWatch(nameof<BudgetItemDrawerModel>('selectedTags'), budgetItemForm);
   const tagsApi = useTagsApi();
 
   const todayDate = dayjs(new Date());
+
+  const createNewTag = async (tagLabel: string): Promise<TagDto> => {
+    const { data: createdTag } = await tagsApi.createTag({
+      budgetId: budgetId,
+      label: tagLabel,
+      color: TagColor.Default,
+    });
+
+    onNewTagAdded(createdTag);
+
+    return createdTag;
+  };
+
+  useNewTagFormWatcher(budgetItemForm, nameof<BudgetItemDrawerModel>('selectedTags'), createNewTag);
 
   const isFormValid = async (): Promise<boolean> => {
     try {
@@ -98,43 +112,6 @@ export const BudgetItemDrawer = ({
 
     setIsLoading(false);
   };
-
-  const createNewTag = async (tagLabel: string): Promise<TagDto> => {
-    const { data: createdTag } = await tagsApi.createTag({
-      budgetId: budgetId,
-      label: tagLabel,
-      color: TagColor.Default,
-    });
-
-    onNewTagAdded(createdTag);
-
-    return createdTag;
-  };
-
-  // TODO: Extract ot hook
-  const handleJustCreatedTag = async (selectedTags: (number | string)[]): Promise<void> => {
-    const newTagLabel = selectedTags.filter((tag) => typeof tag === 'string')[0] as string;
-
-    if (!newTagLabel) return;
-
-    const createdTag = await createNewTag(newTagLabel);
-
-    const selectedTagIds = selectedTags.map((tag) => {
-      if (typeof tag === 'string' && tag === createdTag.label) {
-        return createdTag.id;
-      }
-
-      return tag;
-    });
-
-    budgetItemForm.setFieldValue(nameof<BudgetItemDrawerModel>('selectedTags'), selectedTagIds);
-  };
-
-  useEffect(() => {
-    const selectedTags = budgetItemForm.getFieldsValue().selectedTags ?? [];
-
-    handleJustCreatedTag(selectedTags);
-  }, [selectedTagsWatcher]);
 
   const onTagEdit = async (tagData: TagDto): Promise<void> => {
     const { data: updatedTag } = await tagsApi.updateBudgetTag(tagData);

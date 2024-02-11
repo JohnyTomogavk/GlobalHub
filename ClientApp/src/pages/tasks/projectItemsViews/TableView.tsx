@@ -18,10 +18,10 @@ import { fillChildItems, projectItemDtoToTableViewModel } from '../../../helpers
 import { SorterResult } from 'antd/lib/table/interface';
 import { nameof } from '../../../helpers/objectHelper';
 import { IProjectItemTableViewProps } from './IProjectItemTableViewProps';
-import { ProjectItemGroupHeaderRow } from './models/ProjectItemGroupHeaderRow';
-import { ProjectItemTableRowModel } from './models/ProjectItemTableRowModel';
-import { ProjectItemTableRow } from './models/ProjectItemTableRow';
-import { groupedModelsAlgorithmByGroupingMode } from './helpers/groupingHelper';
+import { ProjectItemGroupHeaderRow } from '../../../models/projects/ProjectItemGroupHeaderRow';
+import { ProjectItemTableRowModel } from '../../../models/projects/ProjectItemTableRowModel';
+import { ProjectItemTableRow } from '../../../models/projects/ProjectItemTableRow';
+import { groupedModelsAlgorithmByGroupingMode } from '../../../helpers/groupingHelper';
 
 const onLeadingGroupCell = (data: ProjectItemTableRow): object => {
   if (nameof<ProjectItemGroupHeaderRow>('isGroupingHeader') in data) {

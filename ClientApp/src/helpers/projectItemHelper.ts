@@ -1,7 +1,7 @@
 import { ProjectItemDto } from '../dto/projects/projectItemDto';
 import dayjs from 'dayjs';
 
-import { ProjectItemTableRowModel } from '../pages/tasks/projectItemsViews/models/ProjectItemTableRowModel';
+import { ProjectItemTableRowModel } from '../models/projects/ProjectItemTableRowModel';
 
 export const projectItemDtoToTableViewModel = (item: ProjectItemDto): ProjectItemTableRowModel => ({
   id: item.id,
