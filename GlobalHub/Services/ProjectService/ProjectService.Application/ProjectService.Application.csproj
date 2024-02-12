@@ -24,9 +24,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\..\..\stylecop.json">
-        <Link>stylecop.json</Link>
-      </Content>
+      <AdditionalFiles Include="..\..\..\stylecop.json" Link="stylecop.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Commands\ProjectItems\" />
     </ItemGroup>
 
 </Project>

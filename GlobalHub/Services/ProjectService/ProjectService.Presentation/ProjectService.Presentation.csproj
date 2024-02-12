@@ -42,9 +42,10 @@
       <Content Update="appsettings.Production.json">
         <DependentUpon>appsettings.json</DependentUpon>
       </Content>
-      <Content Include="..\..\..\stylecop.json">
-        <Link>stylecop.json</Link>
-      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="..\..\..\stylecop.json" Link="stylecop.json" />
     </ItemGroup>
 
 </Project>
