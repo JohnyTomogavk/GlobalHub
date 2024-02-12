@@ -2,7 +2,7 @@
 
 public enum ETagColor
 {
-    Unknown = 0,
+    Default = 0,
     Red = 1,
     Magenta = 2,
     Volcano = 3,
