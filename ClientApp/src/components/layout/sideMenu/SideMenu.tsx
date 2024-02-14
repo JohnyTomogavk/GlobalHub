@@ -10,7 +10,6 @@ import {
   ProjectOutlined,
   ReadOutlined,
 } from '@ant-design/icons';
-import Sider from 'antd/es/layout/Sider';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Key } from 'antd/lib/table/interface';
@@ -30,6 +29,8 @@ import useBudgetsApi from '../../../hooks/api/useBudgetsApi';
 import { Loader } from '../../loader/Loader';
 import { EntityType } from '../../../enums/entityType';
 import useProjects from '../../../hooks/api/useProjects';
+import Sider from 'antd/lib/layout/Sider';
+import { HttpStatusCode } from 'axios';
 
 interface SideMenuItemsLoadingState {
   isNotesLoaded: boolean;
@@ -72,8 +73,12 @@ export const SideMenu = observer((): JSX.Element => {
   } = theme.useToken();
 
   const fetchNotesMap = async (): Promise<void> => {
-    const notesMapResponse = await notesApi.getNotesMap();
-    notesStore.setNoteMapsItemsToSideMenu(notesMapResponse.data);
+    const { status, data: notesMap } = await notesApi.getNotesMap();
+
+    if (status === HttpStatusCode.Ok) {
+      notesStore.setNoteMapsItemsToSideMenu(notesMap);
+    }
+
     setItemsLoadingState((prevState) => ({
       ...prevState,
       isNotesLoaded: true,
@@ -81,8 +86,12 @@ export const SideMenu = observer((): JSX.Element => {
   };
 
   const fetchBudgetsMap = async (): Promise<void> => {
-    const budgetsMapResponse = await budgetsApi.getBudgetsMap();
-    budgetStore.setBudgetMapsToSideMenu(budgetsMapResponse.data);
+    const { status, data: budgetsMap } = await budgetsApi.getBudgetsMap();
+
+    if (status === HttpStatusCode.Ok) {
+      budgetStore.setBudgetMapsToSideMenu(budgetsMap);
+    }
+
     setItemsLoadingState((prevState) => ({
       ...prevState,
       isBudgetsLoaded: true,
@@ -90,8 +99,12 @@ export const SideMenu = observer((): JSX.Element => {
   };
 
   const fetchProjectsMap = async (): Promise<void> => {
-    const { data: projectsODataResponse } = await projectsAPI.getUsersProjects();
-    projectsStore.setProjectsToSideMenu(projectsODataResponse.value);
+    const { data: projectsODataResponse, status } = await projectsAPI.getUsersProjects();
+
+    if (status === HttpStatusCode.Ok) {
+      projectsStore.setProjectsToSideMenu(projectsODataResponse.value);
+    }
+
     setItemsLoadingState((prevState) => ({
       ...prevState,
       isProjectsLoaded: true,

@@ -1,6 +1,5 @@
 import useAxios from './useAxios';
 import { AxiosResponse } from 'axios';
-import { TagDto } from '../../dto/tags/tagDto';
 import { getResourceUrl } from '../../helpers/urlHelper';
 import {
   BUDGETS_API_SUFFIX,
@@ -9,16 +8,17 @@ import {
   GET_BUDGET_TAGS_BY_ID,
   UPDATE_TAG,
 } from '../../constants/apiConstants';
-import { TagCreateDto } from '../../dto/tags/tagCreateDto';
+import { TagDto } from 'dto/budgetTags/tagDto';
+import { BudgetTagCreateDto } from '../../dto/budgetTags/budgetTagCreateDto';
 
-interface IUserApi {
+interface ITagsApi {
   getTags: (budgetId: number) => Promise<AxiosResponse<TagDto[]>>;
-  createTag: (createDto: TagCreateDto) => Promise<AxiosResponse<TagDto>>;
+  createTag: (createDto: BudgetTagCreateDto) => Promise<AxiosResponse<TagDto>>;
   updateBudgetTag: (updateDto: TagDto) => Promise<AxiosResponse<TagDto>>;
   deleteTag: (tagId: number) => Promise<AxiosResponse<number>>;
 }
 
-const useTagsApi = (): IUserApi => {
+const useTagsApi = (): ITagsApi => {
   const { httpGet, httpPost, httpPut, httpDelete } = useAxios();
 
   return {
@@ -31,7 +31,7 @@ const useTagsApi = (): IUserApi => {
         },
       });
     },
-    createTag: (createDto: TagCreateDto): Promise<AxiosResponse<TagDto>> => {
+    createTag: (createDto: BudgetTagCreateDto): Promise<AxiosResponse<TagDto>> => {
       const url = getResourceUrl(BUDGETS_API_SUFFIX, CREATE_TAG);
 
       return httpPost(url, createDto);

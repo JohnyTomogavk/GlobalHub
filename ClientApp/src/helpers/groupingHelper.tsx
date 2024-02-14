@@ -1,8 +1,8 @@
-import { ProjectItemGroupHeaderRow } from '../models/ProjectItemGroupHeaderRow';
-import { ProjectItemDto } from '../../../../dto/projects/projectItemDto';
-import { getEnumValuesExcluding } from '../../../../helpers/enumHelper';
-import { TaskStatus, TaskStatusBadgeTypes, TaskStatusTitles } from '../../../../enums/Projects/taskStatus';
-import { fillChildItems, projectItemDtoToTableViewModel } from '../../../../helpers/projectItemHelper';
+import { ProjectItemGroupHeaderRow } from '../models/projects/ProjectItemGroupHeaderRow';
+import { ProjectItemDto } from '../dto/projects/projectItems/projectItemDto';
+import { getEnumValuesExcluding } from './enumHelper';
+import { TaskStatus, TaskStatusBadgeTypes, TaskStatusTitles } from '../enums/Projects/taskStatus';
+import { fillChildItems, projectItemDtoToTableViewModel } from './projectItemHelper';
 import { groupBy } from 'lodash';
 import { Badge, Space } from 'antd';
 import React from 'react';
@@ -11,8 +11,8 @@ import {
   ProjectItemPriority,
   ProjectItemPriorityIcons,
   ProjectItemPriorityTitles,
-} from '../../../../enums/Projects/projectItemPriority';
-import { GroupingMode } from '../../../../enums/Projects/groupingMode';
+} from '../enums/Projects/projectItemPriority';
+import { GroupingMode } from '../enums/Projects/groupingMode';
 
 export const getProjectItemTableModelsWithStatusGrouping = (
   projectItems: ProjectItemDto[]

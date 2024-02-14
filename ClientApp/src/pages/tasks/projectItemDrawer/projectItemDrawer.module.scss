@@ -1,0 +1,7 @@
+@import "/src/styles.module";
+
+.loaderContainer {
+  @extend %loader;
+
+  height: 80vh;
+}

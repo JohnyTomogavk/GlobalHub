@@ -51,5 +51,11 @@ export const GET_USER_PROJECTS = '/Projects';
 export const CREATE_PROJECT = '/Projects/Create';
 export const RENAME_PROJECT = '/Projects/UpdateTitle';
 
-// Constants related to projects
+// Constants related to project items
 export const GET_PROJECT_ITEMS = '/ProjectItems';
+export const CREATE_PROJECT_TASK = '/ProjectItems/CreateProjectTask';
+
+// Constants related to project tags
+export const CREATE_PROJECT_TAG = '/Tags/Create';
+export const UPDATE_PROJECT_TAG = '/Tags/Update';
+export const DELETE_PROJECT_TAG = '/Tags/Delete';

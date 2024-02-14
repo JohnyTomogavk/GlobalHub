@@ -20,7 +20,6 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { BudgetItemsTableAggregationModel } from '../../../models/budgetItem/budgetItemsTable/budgetItemsTableAggregationModel';
 import { SorterResult } from 'antd/lib/table/interface';
 import { BudgetItemTableEntry } from '../../../models/budgetItem/budgetItemsTable/budgetItemsTableEntry';
-import { TagDto } from '../../../dto/tags/tagDto';
 import { BudgetItemOperationType, BudgetItemOperationTypeTitle } from '../../../enums/Budgets/budgetItemOperationType';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import { isArray, toNumber } from 'lodash';
@@ -37,13 +36,14 @@ import {
   drawerModelToBudgetItemCreateDto,
   drawerModelToBudgetItemUpdateDto,
 } from '../../../helpers/budgetItemHelper';
-import { ColorValues, BudgetTagColor } from '../../../enums/Budgets/budgetTagColor';
 import dayjs from 'dayjs';
 import { nameof } from '../../../helpers/objectHelper';
 import { HttpStatusCode } from 'axios';
 import useBudgetsItemsApi from '../../../hooks/api/useBudgetsItemsApi';
 import { BudgetItemDrawerConfig } from '../../../models/budgets/budgetItemDrawer/budgetItemDrawerConfig';
 import { AppTablePaginationConfig } from '../../../models/shared/tablePaginationConfig';
+import { TagColor } from '../../../enums/shared/tagColor';
+import { TagDto } from '../../../dto/budgetTags/tagDto';
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -196,7 +196,7 @@ export const BudgetItemsTable = ({
         <>
           {tagIds.map((tagId: number) => {
             const tagDto = budgetTags.filter((dto: TagDto) => dto.id === tagId)[0];
-            const color = ColorValues[tagDto?.color ?? BudgetTagColor.Default];
+            const color = TagColor[tagDto?.color ?? TagColor.Default];
 
             return (
               tagDto && (
@@ -418,7 +418,7 @@ export const BudgetItemsTable = ({
           <Table.Summary fixed>
             <Table.Summary.Row>
               <Table.Summary.Cell index={0} colSpan={6}>
-                <Button size={'small'} block type={'dashed'} icon={<PlusOutlined />} onClick={onBudgetItemCreateClick}>
+                <Button block icon={<PlusOutlined />} onClick={onBudgetItemCreateClick}>
                   Add new item
                 </Button>
               </Table.Summary.Cell>

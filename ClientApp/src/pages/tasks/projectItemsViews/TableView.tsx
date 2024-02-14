@@ -1,11 +1,11 @@
 import { Badge, Table, Tag } from 'antd';
 import React, { ReactNode, useEffect, useState } from 'react';
-import { DownOutlined, PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import Button from 'antd/es/button';
 import { ColumnsType } from 'antd/lib/table';
-import { ProjectItemDto } from '../../../dto/projects/projectItemDto';
-import { ProjectItemIcons, ProjectItemType } from '../../../enums/Projects/projectItemType';
+import { ProjectItemDto } from '../../../dto/projects/projectItems/projectItemDto';
+import { ProjectItemTypeIcons, ProjectItemType } from '../../../enums/Projects/projectItemType';
 import {
   ProjectItemPriority,
   ProjectItemPriorityIcons,
@@ -18,15 +18,15 @@ import { fillChildItems, projectItemDtoToTableViewModel } from '../../../helpers
 import { SorterResult } from 'antd/lib/table/interface';
 import { nameof } from '../../../helpers/objectHelper';
 import { IProjectItemTableViewProps } from './IProjectItemTableViewProps';
-import { ProjectItemGroupHeaderRow } from './models/ProjectItemGroupHeaderRow';
-import { ProjectItemTableRowModel } from './models/ProjectItemTableRowModel';
-import { ProjectItemTableRow } from './models/ProjectItemTableRow';
-import { groupedModelsAlgorithmByGroupingMode } from './helpers/groupingHelper';
+import { ProjectItemGroupHeaderRow } from '../../../models/projects/ProjectItemGroupHeaderRow';
+import { ProjectItemTableRowModel } from '../../../models/projects/ProjectItemTableRowModel';
+import { ProjectItemTableRow } from '../../../models/projects/ProjectItemTableRow';
+import { groupedModelsAlgorithmByGroupingMode } from '../../../helpers/groupingHelper';
 
 const onLeadingGroupCell = (data: ProjectItemTableRow): object => {
   if (nameof<ProjectItemGroupHeaderRow>('isGroupingHeader') in data) {
     return {
-      colSpan: 8,
+      colSpan: 7,
     };
   }
 
@@ -42,6 +42,7 @@ export const TableView = ({
   tags,
   groupingCriteria,
   onTableSearchParamsChange,
+  onCreateNewProjectItemClick,
 }: IProjectItemTableViewProps): JSX.Element => {
   const [tableItems, setTableItems] = useState<ProjectItemTableRow[]>([]);
 
@@ -90,7 +91,7 @@ export const TableView = ({
       render: (value: keyof typeof ProjectItemType): ReactNode => {
         const typeEnumValue = ProjectItemType[value];
 
-        return ProjectItemIcons[typeEnumValue];
+        return ProjectItemTypeIcons[typeEnumValue];
       },
       onCell: (data) => onCommonCell(data),
     },
@@ -160,29 +161,12 @@ export const TableView = ({
 
             return (
               <Tag key={tagDto.id} color={tagDto.color.toString()}>
-                {tagDto.title}
+                {tagDto.label}
               </Tag>
             );
           })}
         </span>
       ),
-      onCell: (data) => onCommonCell(data),
-    },
-    {
-      key: 'x',
-      title: 'Actions',
-      render: (record: ProjectItemTableRow): JSX.Element => {
-        if (nameof<ProjectItemGroupHeaderRow>('isGroupingHeader') in record) {
-          return <></>;
-        }
-
-        return (
-          <Button type="link">
-            More
-            <DownOutlined />
-          </Button>
-        );
-      },
       onCell: (data) => onCommonCell(data),
     },
   ];
@@ -210,7 +194,7 @@ export const TableView = ({
       }}
       dataSource={tableItems}
       footer={() => (
-        <Button icon={<PlusOutlined />} block type={'default'}>
+        <Button icon={<PlusOutlined />} block type={'default'} onClick={onCreateNewProjectItemClick}>
           Create new item
         </Button>
       )}

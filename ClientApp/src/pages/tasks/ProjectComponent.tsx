@@ -13,16 +13,20 @@ import { GroupOutlined, NodeExpandOutlined, TableOutlined } from '@ant-design/ic
 import { TableView } from './projectItemsViews/TableView';
 import { debounce, toNumber } from 'lodash';
 import { FiltersHeader } from './filtersHeader/FiltersHeader';
-import { ProjectTagDto } from '../../dto/projects/projectTagDto';
 import { HttpStatusCode } from 'axios';
 import { ProjectItemFiltersModel } from '../../models/projects/projectItemFiltersModel';
 import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
 import { GroupingMode } from '../../enums/Projects/groupingMode';
-import { ProjectItemDto } from '../../dto/projects/projectItemDto';
+import { ProjectItemDto } from '../../dto/projects/projectItems/projectItemDto';
 import useProjectItemsApi from '../../hooks/api/useProjectItems';
 import { SorterResult } from 'antd/lib/table/interface';
 import { getSingleColumnSorterConfig } from '../../helpers/antTableSorterHelper';
-import { ProjectItemTableRow } from './projectItemsViews/models/ProjectItemTableRow';
+import { ProjectItemTableRow } from '../../models/projects/ProjectItemTableRow';
+import { ProjectItemDrawer } from '../../models/projects/ProjectItemDrawer';
+import { ProjectItemFormModel } from './projectItemDrawer/projectItemFormModel';
+import { ProjectItemType } from '../../enums/Projects/projectItemType';
+import { TagDto } from '../../dto/budgetTags/tagDto';
+import { projectItemFormModelToCreateTaskDto } from '../../helpers/projectItemHelper';
 
 interface SearchParams {
   groupingMode: GroupingMode;
@@ -41,8 +45,10 @@ export const ProjectComponent = observer((): JSX.Element => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [project, setProject] = useState<ProjectDto | undefined>();
-  const [tags, setTags] = useState<ProjectTagDto[]>([]);
+  const [tags, setTags] = useState<TagDto[]>([]);
   const [projectItems, setProjectItems] = useState<ProjectItemDto[]>([]);
+
+  const [isProjectItemDrawerOpened, setIsProjectItemDrawerOpened] = useState(false);
 
   const [searchParams, setSearchParams] = useState<SearchParams>(defaultSearchParams);
 
@@ -159,6 +165,10 @@ export const ProjectComponent = observer((): JSX.Element => {
     await fetchProjectItems(orderByString, searchParams.filtersModel);
   };
 
+  const onCreateNewProjectItemButtonClick = (): void => {
+    setIsProjectItemDrawerOpened(true);
+  };
+
   const tabItems = [
     {
       key: '1',
@@ -170,6 +180,7 @@ export const ProjectComponent = observer((): JSX.Element => {
           tags={tags}
           groupingCriteria={searchParams.groupingMode}
           onTableSearchParamsChange={onTableSearchParamsChange}
+          onCreateNewProjectItemClick={onCreateNewProjectItemButtonClick}
         />
       ),
     },
@@ -186,6 +197,54 @@ export const ProjectComponent = observer((): JSX.Element => {
       children: <>Tbd...</>,
     },
   ];
+
+  const onProjectItemDrawerClose = (): void => {
+    setIsProjectItemDrawerOpened(false);
+  };
+
+  const createProjectTask = async (formData: ProjectItemFormModel, projectId: number): Promise<HttpStatusCode> => {
+    const taskDto = projectItemFormModelToCreateTaskDto(formData, projectId);
+    const { status } = await projectItemsApi.createTask(taskDto);
+
+    return status;
+  };
+
+  const createProjectEvent = async (formData: ProjectItemFormModel, projectId: number): Promise<HttpStatusCode> => {
+    // TODO: implement event creation
+    const taskDto = projectItemFormModelToCreateTaskDto(formData, projectId);
+    const { status } = await projectItemsApi.createTask(taskDto);
+
+    return status;
+  };
+
+  const onProjectItemFormSubmit = async (formData: ProjectItemFormModel): Promise<void> => {
+    if (!project) return;
+
+    let creationResult: HttpStatusCode;
+
+    if (toNumber(formData.itemType) === ProjectItemType.Task) {
+      creationResult = await createProjectTask(formData, project.id);
+    } else {
+      // TODO: Replace by event creation
+      creationResult = await createProjectEvent(formData, project.id);
+    }
+
+    if (creationResult === HttpStatusCode.Created) {
+      await fetchProjectItems(searchParams.orderByOption, searchParams.filtersModel);
+    }
+  };
+
+  const onProjectItemDrawerTagDelete = async (tagId: number): Promise<void> => {
+    setTags((prevState) => prevState.filter((tag) => tag.id !== tagId));
+  };
+
+  const onProjectItemDrawerTagEdit = async (tagData: TagDto): Promise<void> => {
+    setTags((prevState) => prevState.map((tag) => (tag.id === tagData.id ? tagData : tag)));
+  };
+
+  const onTagCreated = async (tag: TagDto): Promise<void> => {
+    setTags((prevState) => [...prevState, tag]);
+  };
 
   if (isLoading) {
     return (
@@ -226,6 +285,17 @@ export const ProjectComponent = observer((): JSX.Element => {
               <FiltersHeader tags={tags} onFiltersUpdate={onFiltersUpdate} onGroupingUpdate={onGroupingModeUpdate} />
             </>
           )}
+        />
+        <ProjectItemDrawer
+          projectId={toNumber(project?.id)}
+          isDrawerOpened={isProjectItemDrawerOpened}
+          projectTags={tags}
+          projectItems={projectItems}
+          onClose={onProjectItemDrawerClose}
+          onFormSubmit={onProjectItemFormSubmit}
+          onTagCreated={onTagCreated}
+          onTagDelete={onProjectItemDrawerTagDelete}
+          onTagEdit={onProjectItemDrawerTagEdit}
         />
       </div>
     </>

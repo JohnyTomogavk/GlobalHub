@@ -1,7 +1,7 @@
-import { BudgetTagColor } from '../../../enums/Budgets/budgetTagColor';
+import { TagColor } from '../../../enums/shared/tagColor';
 
 export interface TagFormModel {
   id: number;
   label: string;
-  color: BudgetTagColor;
+  color: TagColor;
 }

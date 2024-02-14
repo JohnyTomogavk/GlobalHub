@@ -6,12 +6,11 @@ import Button from 'antd/es/button';
 import { Checkbox } from 'antd';
 import { debounce, toNumber } from 'lodash';
 import { SEARCH_FILTER_DEBOUNCE } from '../../../constants/projectsConstants';
-import { ProjectTagDto } from '../../../dto/projects/projectTagDto';
 import { useForm, useWatch } from 'antd/lib/form/Form';
 import { ProjectItemFiltersModel } from '../../../models/projects/projectItemFiltersModel';
 import { nameof } from '../../../helpers/objectHelper';
 import { getEnumValuesExcluding } from '../../../helpers/enumHelper';
-import { ProjectItemLabels, ProjectItemType } from '../../../enums/Projects/projectItemType';
+import { ProjectItemTypeLabels, ProjectItemType } from '../../../enums/Projects/projectItemType';
 import {
   ProjectItemPriority,
   ProjectItemPriorityIcons,
@@ -20,11 +19,12 @@ import {
 import { TaskStatus, TaskStatusBadgeTypes, TaskStatusTitles } from '../../../enums/Projects/taskStatus';
 import { PresetStatusColorType } from 'antd/lib/_util/colors';
 import { GroupingMode, GroupingModeIcons, GroupingModeLabels } from '../../../enums/Projects/groupingMode';
+import { TagDto } from '../../../dto/budgetTags/tagDto';
 
 const { RangePicker } = DatePicker;
 
 interface FiltersHeaderProps {
-  tags: ProjectTagDto[];
+  tags: TagDto[];
   onFiltersUpdate: (filterModel: ProjectItemFiltersModel) => void;
   onGroupingUpdate: (groupingMode: GroupingMode) => void;
 }
@@ -94,13 +94,13 @@ export const FiltersHeader = ({ tags, onFiltersUpdate, onGroupingUpdate }: Filte
               <Form.Item label={'Item types'} name={nameof<ProjectItemFiltersModel>('itemTypes')}>
                 <Checkbox.Group
                   options={getEnumValuesExcluding(ProjectItemType, [ProjectItemType.Unknown]).map((enumValue) => ({
-                    label: ProjectItemLabels[enumValue as keyof typeof ProjectItemLabels],
+                    label: ProjectItemTypeLabels[enumValue as keyof typeof ProjectItemTypeLabels],
                     value: enumValue,
                   }))}
                 />
               </Form.Item>
               <Form.Item label={'Tags'} name={nameof<ProjectItemFiltersModel>('tagIds')}>
-                <Checkbox.Group options={tags.map((tag) => ({ label: tag.title, value: tag.id }))} />
+                <Checkbox.Group options={tags.map((tag) => ({ label: tag.label, value: tag.id }))} />
               </Form.Item>
               <Form.Item label={'Priorities'} name={nameof<ProjectItemFiltersModel>('priorities')}>
                 <Checkbox.Group

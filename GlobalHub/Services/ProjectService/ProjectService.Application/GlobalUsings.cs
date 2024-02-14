@@ -1,11 +1,16 @@
 ﻿global using AutoMapper;
 global using AutoMapper.AspNet.OData;
+global using FluentValidation;
 global using MediatR;
 global using Microsoft.AspNetCore.OData.Query;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.DependencyInjection;
+global using ProjectService.Application.Commands.ProjectItems;
+global using ProjectService.Application.Commands.Tags;
 global using ProjectService.Application.Dto;
+global using ProjectService.Application.Interfaces;
 global using ProjectService.Application.Queries;
+global using ProjectService.Application.Requests;
 global using ProjectService.Domain.Entities.Base;
 global using ProjectService.Domain.Entities.ProjectItems;
 global using ProjectService.Domain.Entities.Projects;

@@ -1,18 +1,19 @@
 import { Button, DatePicker, Drawer, Form, Input, Select, Typography } from 'antd';
 import { BudgetItemOperationType } from '../../../enums/Budgets/budgetItemOperationType';
 import { TagSelector } from '../../../components/tagSelector/TagSelector';
-import React, { useEffect, useState } from 'react';
-import { TagDto } from '../../../dto/tags/tagDto';
+import React, { useState } from 'react';
 import { BudgetItemDrawerModel } from '../../../models/budgetItem/budgetItemDrawer/budgetItemDrawerModel';
-import { useForm, useWatch } from 'antd/lib/form/Form';
+import { useForm } from 'antd/lib/form/Form';
 import styles from './budgetItemDrawer.module.scss';
 import { tagSelectorValidator } from '../../../validators/tagSelectorValidators';
 import dayjs from 'dayjs';
-import { BudgetTagColor } from '../../../enums/Budgets/budgetTagColor';
 import { nameof } from '../../../helpers/objectHelper';
 import { InputNumber } from 'antd';
 import useTagsApi from '../../../hooks/api/useTagsApi';
 import { Loader } from '../../../components/loader/Loader';
+import { TagColor } from '../../../enums/shared/tagColor';
+import useNewTagFormWatcher from '../../../hooks/api/useNewTagFormWatcher';
+import { TagDto } from '../../../dto/budgetTags/tagDto';
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -46,10 +47,23 @@ export const BudgetItemDrawer = ({
 }: BudgetItemDrawerProps): JSX.Element => {
   const [budgetItemForm] = useForm<BudgetItemDrawerModel>();
   const [isLoading, setIsLoading] = useState(true);
-  const selectedTagsWatcher = useWatch(nameof<BudgetItemDrawerModel>('selectedTags'), budgetItemForm);
   const tagsApi = useTagsApi();
 
   const todayDate = dayjs(new Date());
+
+  const createNewTag = async (tagLabel: string): Promise<TagDto> => {
+    const { data: createdTag } = await tagsApi.createTag({
+      budgetId: budgetId,
+      label: tagLabel,
+      color: TagColor.Default,
+    });
+
+    onNewTagAdded(createdTag);
+
+    return createdTag;
+  };
+
+  useNewTagFormWatcher(budgetItemForm, nameof<BudgetItemDrawerModel>('selectedTags'), createNewTag);
 
   const isFormValid = async (): Promise<boolean> => {
     try {
@@ -99,42 +113,6 @@ export const BudgetItemDrawer = ({
     setIsLoading(false);
   };
 
-  const createNewTag = async (tagLabel: string): Promise<TagDto> => {
-    const { data: createdTag } = await tagsApi.createTag({
-      budgetId: budgetId,
-      label: tagLabel,
-      color: BudgetTagColor.Default,
-    });
-
-    onNewTagAdded(createdTag);
-
-    return createdTag;
-  };
-
-  const handleJustCreatedTag = async (selectedTags: (number | string)[]): Promise<void> => {
-    const newTagLabel = selectedTags.filter((tag) => typeof tag === 'string')[0] as string;
-
-    if (!newTagLabel) return;
-
-    const createdTag = await createNewTag(newTagLabel);
-
-    const selectedTagIds = selectedTags.map((tag) => {
-      if (typeof tag === 'string' && tag === createdTag.label) {
-        return createdTag.id;
-      }
-
-      return tag;
-    });
-
-    budgetItemForm.setFieldValue(nameof<BudgetItemDrawerModel>('selectedTags'), selectedTagIds);
-  };
-
-  useEffect(() => {
-    const selectedTags = budgetItemForm.getFieldsValue().selectedTags ?? [];
-
-    handleJustCreatedTag(selectedTags);
-  }, [selectedTagsWatcher]);
-
   const onTagEdit = async (tagData: TagDto): Promise<void> => {
     const { data: updatedTag } = await tagsApi.updateBudgetTag(tagData);
     setBudgetTags((prevState) => prevState.map((tag) => (tag.id === updatedTag.id ? updatedTag : tag)));
@@ -166,94 +144,100 @@ export const BudgetItemDrawer = ({
         )
       }
     >
-      {isLoading ? (
-        <div className={styles.loaderContainer}>
-          <Loader />
-        </div>
-      ) : (
-        <Form
-          form={budgetItemForm}
-          initialValues={initFormValues}
-          size={'small'}
-          disabled={isDisabled}
-          layout="vertical"
-        >
-          <Form.Item
-            rules={[{ required: true, message: 'Budget Item title required' }]}
-            name={nameof<BudgetItemDrawerModel>('title')}
-            label={'Title'}
+      {((): JSX.Element => {
+        if (isLoading) {
+          return (
+            <div className={styles.loaderContainer}>
+              <Loader />
+            </div>
+          );
+        }
+
+        return (
+          <Form
+            form={budgetItemForm}
+            initialValues={initFormValues}
+            size={'small'}
+            disabled={isDisabled}
+            layout="vertical"
           >
-            <Input placeholder={'Title'} />
-          </Form.Item>
-          <Form.Item
-            rules={[{ required: true, message: 'Operation Date is required' }]}
-            initialValue={todayDate}
-            name={nameof<BudgetItemDrawerModel>('operationDate')}
-            label={'Operation Date'}
-          >
-            <DatePicker
-              showSecond={false}
-              showTime={{ format: 'HH:mm' }}
-              format="YYYY-MM-DD HH:mm"
-              style={{
-                width: '100%',
-              }}
-            />
-          </Form.Item>
-          <Form.Item
-            rules={[{ required: true, message: 'Operation Cost is required' }]}
-            name={nameof<BudgetItemDrawerModel>('operationCost')}
-            label={'Operation Cost'}
-          >
-            <InputNumber
-              addonBefore={<Text>BYN</Text>}
-              size={'small'}
-              step={10}
-              min={0}
-              style={{
-                width: '100%',
-              }}
-              disabled={isDisabled}
-            />
-          </Form.Item>
-          <Form.Item
-            rules={[{ required: true, message: 'Operation type is required' }]}
-            name={nameof<BudgetItemDrawerModel>('operationType')}
-            label={'Operation Type'}
-          >
-            <Select
-              allowClear
-              placeholder={'Select operation type'}
-              options={[
-                { value: BudgetItemOperationType.Incoming, label: 'Incoming' },
-                { value: BudgetItemOperationType.Outgoing, label: 'Outgoing' },
+            <Form.Item
+              rules={[{ required: true, message: 'Budget Item title required' }]}
+              name={nameof<BudgetItemDrawerModel>('title')}
+              label={'Title'}
+            >
+              <Input placeholder={'Title'} />
+            </Form.Item>
+            <Form.Item
+              rules={[{ required: true, message: 'Operation Date is required' }]}
+              initialValue={todayDate}
+              name={nameof<BudgetItemDrawerModel>('operationDate')}
+              label={'Operation Date'}
+            >
+              <DatePicker
+                showSecond={false}
+                showTime={{ format: 'HH:mm' }}
+                format="YYYY-MM-DD HH:mm"
+                style={{
+                  width: '100%',
+                }}
+              />
+            </Form.Item>
+            <Form.Item
+              rules={[{ required: true, message: 'Operation Cost is required' }]}
+              name={nameof<BudgetItemDrawerModel>('operationCost')}
+              label={'Operation Cost'}
+            >
+              <InputNumber
+                addonBefore={<Text>BYN</Text>}
+                size={'small'}
+                step={10}
+                min={0}
+                style={{
+                  width: '100%',
+                }}
+                disabled={isDisabled}
+              />
+            </Form.Item>
+            <Form.Item
+              rules={[{ required: true, message: 'Operation type is required' }]}
+              name={nameof<BudgetItemDrawerModel>('operationType')}
+              label={'Operation Type'}
+            >
+              <Select
+                allowClear
+                placeholder={'Select operation type'}
+                options={[
+                  { value: BudgetItemOperationType.Incoming, label: 'Incoming' },
+                  { value: BudgetItemOperationType.Outgoing, label: 'Outgoing' },
+                ]}
+              />
+            </Form.Item>
+            <Form.Item
+              rules={[
+                {
+                  message: 'You have not selected any tags',
+                  warningOnly: true,
+                  validator: (_, values) => tagSelectorValidator(values),
+                },
               ]}
-            />
-          </Form.Item>
-          <Form.Item
-            rules={[
-              {
-                message: 'You have not selected any tags',
-                warningOnly: true,
-                validator: (_, values) => tagSelectorValidator(values),
-              },
-            ]}
-            name={nameof<BudgetItemDrawerModel>('selectedTags')}
-            tooltip={'Tags help to classify your expenses and perform analytic on them'}
-            label={'Tags'}
-          >
-            <TagSelector
-              onTagUpdated={onTagEdit}
-              onTagDelete={onTagDelete}
-              isTagCreatorEnabled={!isDisabled}
-              tags={budgetItemTags ?? []}
-            />
-          </Form.Item>
-          <Form.Item name={nameof<BudgetItemDrawerModel>('description')} label={'Description'}>
-            <TextArea rows={3} disabled={isDisabled} placeholder={'Description'} />
-          </Form.Item>
-        </Form>
-      )}
+              name={nameof<BudgetItemDrawerModel>('selectedTags')}
+              tooltip={'Tags help to classify your expenses and perform analytic on them'}
+              label={'Tags'}
+            >
+              <TagSelector
+                onTagUpdated={onTagEdit}
+                onTagDelete={onTagDelete}
+                isTagCreatorEnabled={!isDisabled}
+                tags={budgetItemTags ?? []}
+              />
+            </Form.Item>
+            <Form.Item name={nameof<BudgetItemDrawerModel>('description')} label={'Description'}>
+              <TextArea rows={3} disabled={isDisabled} placeholder={'Description'} />
+            </Form.Item>
+          </Form>
+        );
+      })()}
     </Drawer>
   );
 };

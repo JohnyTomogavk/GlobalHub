@@ -1,4 +1,3 @@
-import { TagDto } from '../../dto/tags/tagDto';
 import { Button, Col, Drawer, Form, Input, Popconfirm, Row, Select, Tag, Typography } from 'antd';
 import { CustomTagProps } from 'rc-select/lib/BaseSelect';
 import React, { ReactElement, useState } from 'react';
@@ -8,10 +7,11 @@ import styles from './tagSelector.module.scss';
 import { TagFormModel } from '../../models/budgets/tags/tagFormModel';
 import { MoreOutlined } from '@ant-design/icons';
 import { ColorSelector } from '../colorSelector/ColorSelector';
-import { ColorValues, BudgetTagColor } from '../../enums/Budgets/budgetTagColor';
 import { isEqual } from 'lodash';
 import { nameof } from '../../helpers/objectHelper';
 import { DefaultOptionType } from 'rc-select/lib/Select';
+import { ColorValues, TagColor } from '../../enums/shared/tagColor';
+import { TagDto } from '../../dto/budgetTags/tagDto';
 
 interface TagSelectorProps {
   tags: TagDto[];
@@ -37,7 +37,7 @@ export const TagSelector = ({
 }: TagSelectorProps): JSX.Element => {
   const [tagEditForm] = useForm<TagFormModel>();
   const [isTagEditDrawerOpened, setIsTagEditDrawerOpened] = useState(false);
-  const defaultTagColor = ColorValues[BudgetTagColor.Default];
+  const defaultTagColor = ColorValues[TagColor.Default];
 
   const handleTagEditDrawerClose = async (): Promise<void> => {
     if (!onTagUpdated) {
@@ -127,7 +127,10 @@ export const TagSelector = ({
 
           if (!tagDto) return <></>;
 
-          const tagColor = isTagJustCreated ? defaultTagColor : ColorValues[tagDto.color];
+          const tagColorEnumValue =
+            typeof tagDto.color === 'number' ? tagDto.color : TagColor[tagDto.color as keyof typeof TagColor];
+          const tagColor = isTagJustCreated ? defaultTagColor : ColorValues[tagColorEnumValue];
+
           const tagLabel = isTagJustCreated ? tagProps.label : tagDto.label;
 
           return (
@@ -162,10 +165,14 @@ export const TagSelector = ({
                         event.stopPropagation();
 
                         const tagModel = tags.filter((tagDto) => tagDto.id == tag.id)[0];
+
                         tagEditForm.setFieldsValue({
                           id: tag.id,
                           label: tagModel.label,
-                          color: tagModel.color,
+                          color:
+                            typeof tagModel.color === 'number'
+                              ? tagModel.color
+                              : TagColor[tagModel.color as keyof typeof TagColor],
                         });
 
                         setIsTagEditDrawerOpened(true);
