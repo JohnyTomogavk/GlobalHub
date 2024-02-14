@@ -1,7 +1,7 @@
 import { FormInstance } from 'antd';
 import { useEffect } from 'react';
 import { useWatch } from 'antd/lib/form/Form';
-import { TagDto } from '../../dto/tags/tagDto';
+import { TagDto } from '../../dto/budgetTags/tagDto';
 
 const useNewTagFormWatcher = <TFormModel>(
   formInstance: FormInstance<TFormModel>,

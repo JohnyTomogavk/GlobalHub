@@ -4,7 +4,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import Button from 'antd/es/button';
 import { ColumnsType } from 'antd/lib/table';
-import { ProjectItemDto } from '../../../dto/projects/projectItemDto';
+import { ProjectItemDto } from '../../../dto/projects/projectItems/projectItemDto';
 import { ProjectItemTypeIcons, ProjectItemType } from '../../../enums/Projects/projectItemType';
 import {
   ProjectItemPriority,

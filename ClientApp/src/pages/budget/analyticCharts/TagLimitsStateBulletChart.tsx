@@ -1,5 +1,4 @@
 import React from 'react';
-import { TagDto } from '../../../dto/tags/tagDto';
 import { TagLimitDto } from '../../../dto/tagLimit/tagLimitDto';
 import { ExpenseOperationsSumDto } from '../../../dto/budgetItems/expenseOperationsSumDto';
 import { max, maxBy } from 'lodash';
@@ -7,6 +6,7 @@ import { nameof } from '../../../helpers/objectHelper';
 import { PERCENT_LEFT_BEFORE_REACHING_TAG_LIMIT_TO_SHOW_WARNING } from '../../../constants/budgetConstants';
 import Bullet from '@ant-design/plots/lib/components/bullet';
 import { BulletConfig } from '@ant-design/plots';
+import { TagDto } from '../../../dto/budgetTags/tagDto';
 
 interface TagLimitsStateBulletChartProps {
   tags: TagDto[];

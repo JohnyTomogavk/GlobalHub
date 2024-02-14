@@ -25,7 +25,6 @@ import { EditOutlined } from '@ant-design/icons';
 import { ItemInfoSubHeader } from '../../components/itemInfoHeader/ItemInfoHeader';
 import Paragraph from 'antd/es/typography/Paragraph';
 import { BudgetAnalyticDto } from '../../dto/budgets/budgetAnalyticDto';
-import { TagDto } from '../../dto/tags/tagDto';
 import { BudgetItemsTable } from './budgetItemsTable/BudgetItemsTable';
 import { ExpensesDistributionByDaysChart } from './analyticCharts/ExpensesDistributionByDaysChart';
 import { TagLimitsStateBulletChart } from './analyticCharts/TagLimitsStateBulletChart';
@@ -51,6 +50,7 @@ import useTagLimitsApi from '../../hooks/api/useTagLimitsApi';
 import CountUp from 'react-countup';
 import { FormatConfig, Formatter } from 'antd/lib/statistic/utils';
 import { Loader } from '../../components/loader/Loader';
+import { TagDto } from 'dto/budgetTags/tagDto';
 
 const { Text } = Typography;
 

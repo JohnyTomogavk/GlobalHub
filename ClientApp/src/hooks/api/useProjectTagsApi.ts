@@ -9,8 +9,8 @@ import {
 } from '../../constants/apiConstants';
 import { CreateTagDto } from '../../dto/projects/tags/createTagDto';
 import { ProjectTagDto } from '../../dto/projects/tags/projectTagDto';
-import { TagDto } from '../../dto/tags/tagDto';
 import { UpdateTagDto } from '../../dto/projects/tags/updateTagDto';
+import { TagDto } from '../../dto/budgetTags/tagDto';
 
 interface IProjectTagsApi {
   createTag: (createDto: CreateTagDto) => Promise<AxiosResponse<TagDto>>;

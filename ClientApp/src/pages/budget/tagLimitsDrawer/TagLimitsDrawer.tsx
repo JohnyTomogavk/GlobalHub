@@ -4,9 +4,9 @@ import { TagLimitDto } from '../../../dto/tagLimit/tagLimitDto';
 import { useForm, useWatch } from 'antd/lib/form/Form';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { nameof } from '../../../helpers/objectHelper';
-import { TagDto } from '../../../dto/tags/tagDto';
 import styles from './tagLimitsDrawer.module.scss';
 import { Loader } from '../../../components/loader/Loader';
+import { TagDto } from '../../../dto/budgetTags/tagDto';
 
 interface TagLimitsDrawerProps {
   open: boolean;

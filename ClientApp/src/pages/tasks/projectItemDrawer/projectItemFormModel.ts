@@ -4,7 +4,6 @@ import { TaskStatus } from '../../../enums/Projects/taskStatus';
 import dayjs from 'dayjs';
 
 export interface ProjectItemFormModel {
-  id?: number;
   title: string;
   description: string;
   itemType: ProjectItemType;

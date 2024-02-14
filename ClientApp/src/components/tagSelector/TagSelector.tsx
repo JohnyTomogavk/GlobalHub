@@ -1,4 +1,3 @@
-import { TagDto } from '../../dto/tags/tagDto';
 import { Button, Col, Drawer, Form, Input, Popconfirm, Row, Select, Tag, Typography } from 'antd';
 import { CustomTagProps } from 'rc-select/lib/BaseSelect';
 import React, { ReactElement, useState } from 'react';
@@ -12,6 +11,7 @@ import { isEqual } from 'lodash';
 import { nameof } from '../../helpers/objectHelper';
 import { DefaultOptionType } from 'rc-select/lib/Select';
 import { ColorValues, TagColor } from '../../enums/shared/tagColor';
+import { TagDto } from '../../dto/budgetTags/tagDto';
 
 interface TagSelectorProps {
   tags: TagDto[];

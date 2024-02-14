@@ -17,13 +17,13 @@ import { PresetStatusColorType } from 'antd/lib/_util/colors';
 import { toNumber } from 'lodash';
 import { tagSelectorValidator } from '../../validators/tagSelectorValidators';
 import { TagSelector } from '../../components/tagSelector/TagSelector';
-import { TagDto } from '../../dto/tags/tagDto';
-import { ProjectItemDto } from '../../dto/projects/projectItemDto';
+import { ProjectItemDto } from '../../dto/projects/projectItems/projectItemDto';
 import { fillChildItems } from '../../helpers/projectItemHelper';
 import { TagColor } from '../../enums/shared/tagColor';
 import useProjectTagsApi from '../../hooks/api/useProjectTagsApi';
 import { HttpStatusCode } from 'axios';
 import useNewTagFormWatcher from '../../hooks/api/useNewTagFormWatcher';
+import { TagDto } from '../../dto/budgetTags/tagDto';
 
 const { TextArea } = Input;
 
@@ -193,11 +193,6 @@ export const ProjectItemDrawer = ({
             labelAlign={'left'}
           >
             <Form.Item
-              name={nameof<ProjectItemFormModel>('id')}
-              style={{ display: 'none' }}
-              initialValue={initialFormData?.id}
-            />
-            <Form.Item
               rules={[{ required: true, message: 'Title is required' }]}
               name={nameof<ProjectItemFormModel>('title')}
               label={'Title'}
@@ -220,12 +215,33 @@ export const ProjectItemDrawer = ({
                 ))}
               </Select>
             </Form.Item>
-            <Form.Item name={nameof<ProjectItemFormModel>('dateRange')} label={'Date range'}>
-              <RangePicker
-                style={{ width: '100%' }}
-                placeholder={['Start date', 'Due date']}
-                allowEmpty={[true, true]}
-              />
+            <Form.Item
+              noStyle
+              shouldUpdate={(prevValues, currentValues) => prevValues.itemType !== currentValues.itemType}
+            >
+              {({ getFieldValue }) => {
+                const isEvent =
+                  toNumber(getFieldValue(nameof<ProjectItemFormModel>('itemType'))) === ProjectItemType.Event;
+
+                return (
+                  <Form.Item
+                    name={nameof<ProjectItemFormModel>('dateRange')}
+                    label={'Date range'}
+                    rules={[
+                      isEvent ? { required: true, message: 'Date range is required for events' } : { required: false },
+                    ]}
+                  >
+                    <RangePicker
+                      showSecond
+                      showTime={{ format: 'HH:mm' }}
+                      format="YYYY-MM-DD HH:mm"
+                      style={{ width: '100%' }}
+                      placeholder={['Start date', 'Due date']}
+                      allowEmpty={[true, true]}
+                    />
+                  </Form.Item>
+                );
+              }}
             </Form.Item>
             <Form.Item
               rules={[
@@ -253,7 +269,7 @@ export const ProjectItemDrawer = ({
             >
               <Select placeholder={'Item priority'}>
                 {getEnumValuesExcluding(ProjectItemPriority, [ProjectItemPriority.Unknown]).map((itemPriority) => (
-                  <Option key={itemPriority}>
+                  <Option key={itemPriority as number}>
                     <Space>
                       {ProjectItemPriorityIcons[itemPriority as keyof typeof ProjectItemPriorityIcons]}
                       {ProjectItemPriorityTitles[itemPriority as keyof typeof ProjectItemPriorityTitles]}
@@ -276,7 +292,7 @@ export const ProjectItemDrawer = ({
                     >
                       <Select placeholder={'Status'}>
                         {getEnumValuesExcluding(TaskStatus, [TaskStatus.Unknown]).map((statusValue) => (
-                          <Option key={statusValue}>
+                          <Option key={statusValue as number}>
                             <Badge
                               status={
                                 TaskStatusBadgeTypes[

@@ -19,7 +19,7 @@ import {
 import { TaskStatus, TaskStatusBadgeTypes, TaskStatusTitles } from '../../../enums/Projects/taskStatus';
 import { PresetStatusColorType } from 'antd/lib/_util/colors';
 import { GroupingMode, GroupingModeIcons, GroupingModeLabels } from '../../../enums/Projects/groupingMode';
-import { TagDto } from '../../../dto/tags/tagDto';
+import { TagDto } from '../../../dto/budgetTags/tagDto';
 
 const { RangePicker } = DatePicker;
 

@@ -20,6 +20,7 @@ public abstract class BaseController<TEntity, TDto> : ODataController
     /// OData endpoint that returns entities
     /// </summary>
     /// <returns>Collection of entities</returns>
+    [ApiExplorerSettings(IgnoreApi = true)]
     public async Task<IQueryable<TDto>> Get(ODataQueryOptions<TDto> query)
     {
         var request = new QueryableSetRequest<TDto> { QueryOptions = query, };
@@ -34,6 +35,7 @@ public abstract class BaseController<TEntity, TDto> : ODataController
     /// <param name="key">Entity Id</param>
     /// <param name="query">OData query options</param>
     /// <returns>Entity with Id</returns>
+    [ApiExplorerSettings(IgnoreApi = true)]
     public async Task<IQueryable<TDto>> Get([FromRoute] long key, ODataQueryOptions<TDto> query)
     {
         var request = new QueryableSetRequest<TDto> { Key = key, QueryOptions = query, };

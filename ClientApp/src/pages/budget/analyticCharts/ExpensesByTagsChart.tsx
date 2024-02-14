@@ -1,7 +1,7 @@
 import { Pie } from '@ant-design/plots';
 import React from 'react';
-import { TagDto } from '../../../dto/tags/tagDto';
 import { ExpenseOperationsSumDto } from '../../../dto/budgetItems/expenseOperationsSumDto';
+import { TagDto } from '../../../dto/budgetTags/tagDto';
 
 const spendsByTagsChartConfig = {
   appendPadding: 10,

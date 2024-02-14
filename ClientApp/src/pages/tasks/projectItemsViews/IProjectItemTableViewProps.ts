@@ -1,9 +1,9 @@
-import { ProjectItemDto } from '../../../dto/projects/projectItemDto';
+import { ProjectItemDto } from '../../../dto/projects/projectItems/projectItemDto';
 import { GroupingMode } from '../../../enums/Projects/groupingMode';
 import { SorterResult } from 'antd/lib/table/interface';
 
 import { ProjectItemTableRow } from '../../../models/projects/ProjectItemTableRow';
-import { TagDto } from '../../../dto/tags/tagDto';
+import { TagDto } from '../../../dto/budgetTags/tagDto';
 
 export interface IProjectItemTableViewProps {
   projectItems: ProjectItemDto[];

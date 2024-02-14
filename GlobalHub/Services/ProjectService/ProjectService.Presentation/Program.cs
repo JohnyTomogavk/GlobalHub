@@ -11,6 +11,25 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(action =>
 {
     action.SwaggerDoc("v1", new OpenApiInfo { Title = "Projects API", Version = "v1" });
+    action.AddSecurityDefinition(
+        "bearerAuth",
+        new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            Description = "JWT Authorization header using the Bearer scheme.",
+        });
+    action.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearerAuth" },
+            },
+            Array.Empty<string>()
+        },
+    });
 });
 
 builder.Services.AddAuthentication("Bearer")
@@ -35,12 +54,12 @@ builder.Services.AddAuthorization(options =>
     {
         policy.RequireAuthenticatedUser();
         policy.RequireClaim("scope", "GlobalHub.ProjectsAPI");
-    })
-);
+    }));
 
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssemblyContaining(typeof(CreateProjectRequest));
+    cfg.AddOpenBehavior(typeof(DbTransactionBehavior<,>));
 });
 
 builder.Services.AddValidatorsFromAssemblyContaining(typeof(BaseTagValidator<>));

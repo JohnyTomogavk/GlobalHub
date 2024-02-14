@@ -22,11 +22,9 @@ public record ProjectItemDto
 
     public long? ParentProjectItemId { get; init; }
 
-    public ProjectItem? ParentProjectItem { get; init; }
+    public ProjectItemDto? ParentProjectItem { get; init; }
 
     public long ProjectId { get; init; }
-
-    public ProjectDto? Project { get; init; }
 
     public DateTime CreatedDate { get; init; }
 

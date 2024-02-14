@@ -2,7 +2,6 @@ import { Button, DatePicker, Drawer, Form, Input, Select, Typography } from 'ant
 import { BudgetItemOperationType } from '../../../enums/Budgets/budgetItemOperationType';
 import { TagSelector } from '../../../components/tagSelector/TagSelector';
 import React, { useState } from 'react';
-import { TagDto } from '../../../dto/tags/tagDto';
 import { BudgetItemDrawerModel } from '../../../models/budgetItem/budgetItemDrawer/budgetItemDrawerModel';
 import { useForm } from 'antd/lib/form/Form';
 import styles from './budgetItemDrawer.module.scss';
@@ -14,6 +13,7 @@ import useTagsApi from '../../../hooks/api/useTagsApi';
 import { Loader } from '../../../components/loader/Loader';
 import { TagColor } from '../../../enums/shared/tagColor';
 import useNewTagFormWatcher from '../../../hooks/api/useNewTagFormWatcher';
+import { TagDto } from '../../../dto/budgetTags/tagDto';
 
 const { Text } = Typography;
 const { TextArea } = Input;

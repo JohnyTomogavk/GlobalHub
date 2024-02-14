@@ -1,5 +1,5 @@
 import { ProjectItemGroupHeaderRow } from '../models/projects/ProjectItemGroupHeaderRow';
-import { ProjectItemDto } from '../dto/projects/projectItemDto';
+import { ProjectItemDto } from '../dto/projects/projectItems/projectItemDto';
 import { getEnumValuesExcluding } from './enumHelper';
 import { TaskStatus, TaskStatusBadgeTypes, TaskStatusTitles } from '../enums/Projects/taskStatus';
 import { fillChildItems, projectItemDtoToTableViewModel } from './projectItemHelper';

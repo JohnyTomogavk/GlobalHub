@@ -17,14 +17,16 @@ import { HttpStatusCode } from 'axios';
 import { ProjectItemFiltersModel } from '../../models/projects/projectItemFiltersModel';
 import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
 import { GroupingMode } from '../../enums/Projects/groupingMode';
-import { ProjectItemDto } from '../../dto/projects/projectItemDto';
+import { ProjectItemDto } from '../../dto/projects/projectItems/projectItemDto';
 import useProjectItemsApi from '../../hooks/api/useProjectItems';
 import { SorterResult } from 'antd/lib/table/interface';
 import { getSingleColumnSorterConfig } from '../../helpers/antTableSorterHelper';
 import { ProjectItemTableRow } from '../../models/projects/ProjectItemTableRow';
 import { ProjectItemDrawer } from '../../models/projects/ProjectItemDrawer';
 import { ProjectItemFormModel } from './projectItemDrawer/projectItemFormModel';
-import { TagDto } from '../../dto/tags/tagDto';
+import { ProjectItemType } from '../../enums/Projects/projectItemType';
+import { TagDto } from '../../dto/budgetTags/tagDto';
+import { projectItemFormModelToCreateTaskDto } from '../../helpers/projectItemHelper';
 
 interface SearchParams {
   groupingMode: GroupingMode;
@@ -200,8 +202,36 @@ export const ProjectComponent = observer((): JSX.Element => {
     setIsProjectItemDrawerOpened(false);
   };
 
-  const onProjectItemFormSubmit = (formData: ProjectItemFormModel): void => {
-    // TODO: Implement task / event creation
+  const createProjectTask = async (formData: ProjectItemFormModel, projectId: number): Promise<HttpStatusCode> => {
+    const taskDto = projectItemFormModelToCreateTaskDto(formData, projectId);
+    const { status } = await projectItemsApi.createTask(taskDto);
+
+    return status;
+  };
+
+  const createProjectEvent = async (formData: ProjectItemFormModel, projectId: number): Promise<HttpStatusCode> => {
+    // TODO: implement event creation
+    const taskDto = projectItemFormModelToCreateTaskDto(formData, projectId);
+    const { status } = await projectItemsApi.createTask(taskDto);
+
+    return status;
+  };
+
+  const onProjectItemFormSubmit = async (formData: ProjectItemFormModel): Promise<void> => {
+    if (!project) return;
+
+    let creationResult: HttpStatusCode;
+
+    if (toNumber(formData.itemType) === ProjectItemType.Task) {
+      creationResult = await createProjectTask(formData, project.id);
+    } else {
+      // TODO: Replace by event creation
+      creationResult = await createProjectEvent(formData, project.id);
+    }
+
+    if (creationResult === HttpStatusCode.Created) {
+      await fetchProjectItems(searchParams.orderByOption, searchParams.filtersModel);
+    }
   };
 
   const onProjectItemDrawerTagDelete = async (tagId: number): Promise<void> => {
