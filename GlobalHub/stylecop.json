@@ -6,6 +6,9 @@
         "db"
       ]
     },
+    "orderingRules": {
+      "usingDirectivesPlacement": "outsideNamespace"
+    },
     "documentationRules": {
       "documentExposedElements": false,
       "xmlHeader": false,

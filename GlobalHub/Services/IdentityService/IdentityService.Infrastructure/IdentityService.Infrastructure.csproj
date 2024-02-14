@@ -14,4 +14,8 @@
       <ProjectReference Include="..\IdentityService.Domain\IdentityService.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <AdditionalFiles Include="..\..\..\stylecop.json" Link="stylecop.json" />
+    </ItemGroup>
+
 </Project>

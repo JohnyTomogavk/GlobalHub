@@ -32,15 +32,16 @@
       <Content Include="..\..\..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
-      <Content Include="..\..\..\stylecop.json">
-        <Link>stylecop.json</Link>
-      </Content>
       <Content Update="appsettings.Production.json">
         <DependentUpon>appsettings.json</DependentUpon>
       </Content>
       <Content Update="appsettings.DOCKER_COMPOSE_DEMO.json">
         <DependentUpon>appsettings.json</DependentUpon>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="..\..\..\stylecop.json" Link="stylecop.json" />
     </ItemGroup>
 
 </Project>
