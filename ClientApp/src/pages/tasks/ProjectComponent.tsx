@@ -26,7 +26,10 @@ import { ProjectItemDrawer } from '../../models/projects/ProjectItemDrawer';
 import { ProjectItemFormModel } from './projectItemDrawer/projectItemFormModel';
 import { ProjectItemType } from '../../enums/Projects/projectItemType';
 import { TagDto } from '../../dto/budgetTags/tagDto';
-import { projectItemFormModelToCreateTaskDto } from '../../helpers/projectItemHelper';
+import {
+  projectItemFormModelToCreateEventDto,
+  projectItemFormModelToCreateTaskDto,
+} from '../../helpers/projectItemHelper';
 
 interface SearchParams {
   groupingMode: GroupingMode;
@@ -210,9 +213,8 @@ export const ProjectComponent = observer((): JSX.Element => {
   };
 
   const createProjectEvent = async (formData: ProjectItemFormModel, projectId: number): Promise<HttpStatusCode> => {
-    // TODO: implement event creation
-    const taskDto = projectItemFormModelToCreateTaskDto(formData, projectId);
-    const { status } = await projectItemsApi.createTask(taskDto);
+    const eventDto = projectItemFormModelToCreateEventDto(formData, projectId);
+    const { status } = await projectItemsApi.createEvent(eventDto);
 
     return status;
   };
@@ -225,7 +227,6 @@ export const ProjectComponent = observer((): JSX.Element => {
     if (toNumber(formData.itemType) === ProjectItemType.Task) {
       creationResult = await createProjectTask(formData, project.id);
     } else {
-      // TODO: Replace by event creation
       creationResult = await createProjectEvent(formData, project.id);
     }
 

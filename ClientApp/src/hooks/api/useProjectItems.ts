@@ -10,6 +10,7 @@ import { ProjectItemFiltersModel } from '../../models/projects/projectItemFilter
 
 import { OdataCountedResponse } from '../../models/shared/odataCountedResponse';
 import { CreateTaskDto } from '../../dto/projects/projectItems/createTaskDto';
+import { CreateEventDto } from '../../dto/projects/projectItems/createEventDto';
 
 interface IProjectItemsApi {
   get: (
@@ -18,6 +19,7 @@ interface IProjectItemsApi {
     filters?: ProjectItemFiltersModel
   ) => Promise<AxiosResponse<OdataCountedResponse<ProjectItemDto[]>>>;
   createTask: (createTaskDto: CreateTaskDto) => Promise<AxiosResponse<ProjectItemDto>>;
+  createEvent: (createEventDto: CreateEventDto) => Promise<AxiosResponse<ProjectItemDto>>;
 }
 
 const useProjectItems = (): IProjectItemsApi => {
@@ -73,6 +75,11 @@ const useProjectItems = (): IProjectItemsApi => {
       const url = getResourceUrl(PROJECTS_API_SUFFIX, apiConstants.CREATE_PROJECT_TASK);
 
       return httpPost(url, createTaskDto);
+    },
+    createEvent: (createEventDto): Promise<AxiosResponse<ProjectItemDto>> => {
+      const url = getResourceUrl(PROJECTS_API_SUFFIX, apiConstants.CREATE_PROJECT_EVENT);
+
+      return httpPost(url, createEventDto);
     },
   };
 };

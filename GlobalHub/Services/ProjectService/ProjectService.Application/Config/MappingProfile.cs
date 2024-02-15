@@ -34,5 +34,7 @@ public class MappingProfile : Profile
                 cfg => cfg.MapFrom(src => src.Label));
 
         this.CreateMap<CreateTaskRequest, ProjectItem>();
+
+        this.CreateMap<CreateEventRequest, ProjectItem>();
     }
 }
