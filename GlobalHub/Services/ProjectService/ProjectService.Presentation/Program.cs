@@ -59,6 +59,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssemblyContaining(typeof(CreateProjectRequest));
+    cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
     cfg.AddOpenBehavior(typeof(DbTransactionBehavior<,>));
 });
 

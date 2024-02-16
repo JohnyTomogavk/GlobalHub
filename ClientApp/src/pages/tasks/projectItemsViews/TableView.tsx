@@ -14,7 +14,7 @@ import {
 import { TaskStatus, TaskStatusBadgeTypes, TaskStatusTitles } from '../../../enums/Projects/taskStatus';
 import type { PresetStatusColorType } from 'antd/es/_util/colors';
 import { GroupingMode } from '../../../enums/Projects/groupingMode';
-import { fillChildItems, projectItemDtoToTableViewModel } from '../../../helpers/projectItemHelper';
+import { fillChildItems, mapProjectItemDtoToTableViewModel } from '../../../helpers/projectItemHelper';
 import { SorterResult } from 'antd/lib/table/interface';
 import { nameof } from '../../../helpers/objectHelper';
 import { IProjectItemTableViewProps } from './IProjectItemTableViewProps';
@@ -47,7 +47,7 @@ export const TableView = ({
   const [tableItems, setTableItems] = useState<ProjectItemTableRow[]>([]);
 
   const getProjectItemsTableModels = (): ProjectItemTableRowModel[] => {
-    const models = projectItems.map(projectItemDtoToTableViewModel);
+    const models = projectItems.map(mapProjectItemDtoToTableViewModel);
     const topLevelItems = models.filter((model) => !model.parentProjectItemId);
     topLevelItems.map((model) => fillChildItems(model, models));
 
@@ -105,7 +105,7 @@ export const TableView = ({
         const statusLabel = TaskStatusTitles[statusValue];
         const badgeColor = TaskStatusBadgeTypes[statusValue] as PresetStatusColorType;
 
-        return <Badge status={badgeColor} text={statusLabel} />;
+        return statusValue === TaskStatus.Unknown ? <></> : <Badge status={badgeColor} text={statusLabel} />;
       },
       onCell: (data) => onCommonCell(data),
     },

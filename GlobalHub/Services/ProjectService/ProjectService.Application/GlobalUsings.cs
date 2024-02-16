@@ -6,6 +6,7 @@ global using Microsoft.AspNetCore.OData.Query;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.DependencyInjection;
 global using ProjectService.Application.Commands.ProjectItems;
+global using ProjectService.Application.Commands.ProjectItems.Base;
 global using ProjectService.Application.Commands.Tags;
 global using ProjectService.Application.Dto;
 global using ProjectService.Application.Interfaces;

@@ -7,7 +7,7 @@ import { BudgetItemDto } from '../dto/budgets/budgetItemDto';
 import { BudgetItemUpdateDto } from '../dto/budgetItems/budgetItemUpdateDto';
 import { CURRENCY_PRECISION } from '../constants/budgetConstants';
 
-export const budgetItemTableEntryToDrawerModel = (tableEntry: BudgetItemTableEntry): BudgetItemDrawerModel => ({
+export const mapBudgetItemTableEntryToDrawerModel = (tableEntry: BudgetItemTableEntry): BudgetItemDrawerModel => ({
   budgetItemId: tableEntry.key,
   title: tableEntry.title,
   description: tableEntry.description,
@@ -17,7 +17,7 @@ export const budgetItemTableEntryToDrawerModel = (tableEntry: BudgetItemTableEnt
   selectedTags: tableEntry.tagIds,
 });
 
-export const drawerModelToBudgetItemCreateDto = (
+export const mapDrawerModelToBudgetItemCreateDto = (
   drawerModel: BudgetItemDrawerModel,
   budgetId: number
 ): BudgetItemCreateDto => ({
@@ -31,7 +31,7 @@ export const drawerModelToBudgetItemCreateDto = (
   tagIds: drawerModel.selectedTags?.filter((tag) => typeof tag === 'number').map((tag) => tag as number),
 });
 
-export const drawerModelToBudgetItemUpdateDto = (
+export const mapDrawerModelToBudgetItemUpdateDto = (
   drawerModel: BudgetItemDrawerModel,
   budgetId: number,
   budgetItemId: number
@@ -47,7 +47,7 @@ export const drawerModelToBudgetItemUpdateDto = (
   tagIds: drawerModel.selectedTags?.filter((tag) => typeof tag === 'number').map((tag) => tag as number),
 });
 
-export const budgetItemDtoToTableEntry = (budgetItemDto: BudgetItemDto): BudgetItemTableEntry => ({
+export const mapBudgetItemDtoToTableEntry = (budgetItemDto: BudgetItemDto): BudgetItemTableEntry => ({
   key: budgetItemDto.id,
   title: budgetItemDto.itemTitle,
   description: budgetItemDto.itemDescription,

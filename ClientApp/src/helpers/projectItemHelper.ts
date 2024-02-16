@@ -6,21 +6,39 @@ import { ProjectItemFormModel } from '../pages/tasks/projectItemDrawer/projectIt
 import { TaskStatus } from '../enums/Projects/taskStatus';
 import { CreateTaskDto } from '../dto/projects/projectItems/createTaskDto';
 import { toNumber } from 'lodash';
+import { CreateEventDto } from '../dto/projects/projectItems/createEventDto';
 
-export const projectItemFormModelToCreateTaskDto = (item: ProjectItemFormModel, projectId: number): CreateTaskDto => ({
+export const mapProjectItemFormModelToCreateTaskDto = (
+  item: ProjectItemFormModel,
+  projectId: number
+): CreateTaskDto => ({
   projectId: projectId,
   title: item.title,
   description: item.description,
   itemType: toNumber(item.itemType),
   taskStatus: toNumber(item.taskStatus ?? TaskStatus.Unknown),
   itemPriority: toNumber(item.itemPriority),
-  startTime: item?.dateRange && item.dateRange[0]?.toDate(),
+  startDate: item?.dateRange && item.dateRange[0]?.toDate(),
   dueDate: item?.dateRange && item.dateRange[1]?.toDate(),
   tagIds: item.tagIds,
   parentProjectItemId: item.parentProjectItemId,
 });
 
-export const projectItemDtoToTableViewModel = (item: ProjectItemDto): ProjectItemTableRowModel => ({
+export const mapProjectItemFormModelToCreateEventDto = (
+  item: ProjectItemFormModel,
+  projectId: number
+): CreateEventDto => ({
+  projectId: projectId,
+  title: item.title,
+  description: item.description,
+  itemType: toNumber(item.itemType),
+  itemPriority: toNumber(item.itemPriority),
+  startDate: item?.dateRange && item.dateRange[0]?.toDate(),
+  dueDate: item?.dateRange && item.dateRange[1]?.toDate(),
+  tagIds: item.tagIds,
+});
+
+export const mapProjectItemDtoToTableViewModel = (item: ProjectItemDto): ProjectItemTableRowModel => ({
   id: item.id,
   key: item.id,
   parentProjectItemId: item.parentProjectItemId,

@@ -232,8 +232,6 @@ export const ProjectItemDrawer = ({
                     ]}
                   >
                     <RangePicker
-                      showSecond
-                      showTime={{ format: 'HH:mm' }}
                       format="YYYY-MM-DD HH:mm"
                       style={{ width: '100%' }}
                       placeholder={['Start date', 'Due date']}
