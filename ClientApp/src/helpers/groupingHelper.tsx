@@ -2,7 +2,7 @@ import { ProjectItemGroupHeaderRow } from '../models/projects/ProjectItemGroupHe
 import { ProjectItemDto } from '../dto/projects/projectItems/projectItemDto';
 import { getEnumValuesExcluding } from './enumHelper';
 import { TaskStatus, TaskStatusBadgeTypes, TaskStatusTitles } from '../enums/Projects/taskStatus';
-import { fillChildItems, projectItemDtoToTableViewModel } from './projectItemHelper';
+import { fillChildItems, mapProjectItemDtoToTableViewModel } from './projectItemHelper';
 import { groupBy } from 'lodash';
 import { Badge, Space } from 'antd';
 import React from 'react';
@@ -17,7 +17,7 @@ import { GroupingMode } from '../enums/Projects/groupingMode';
 export const getProjectItemTableModelsWithStatusGrouping = (
   projectItems: ProjectItemDto[]
 ): ProjectItemGroupHeaderRow[] => {
-  const itemModels = projectItems.map(projectItemDtoToTableViewModel);
+  const itemModels = projectItems.map(mapProjectItemDtoToTableViewModel);
 
   const topLevelItems = itemModels.filter((item) => !item.parentProjectItemId);
   topLevelItems.map((item) => fillChildItems(item, itemModels));
@@ -43,7 +43,7 @@ export const getProjectItemTableModelsWithStatusGrouping = (
 export const getProjectItemTableModelsWithPriorityGrouping = (
   projectItems: ProjectItemDto[]
 ): ProjectItemGroupHeaderRow[] => {
-  const itemModels = projectItems.map(projectItemDtoToTableViewModel);
+  const itemModels = projectItems.map(mapProjectItemDtoToTableViewModel);
 
   const topLevelItems = itemModels.filter((item) => !item.parentProjectItemId);
   topLevelItems.map((item) => fillChildItems(item, itemModels));

@@ -31,10 +31,10 @@ import { TagSelector } from '../../../components/tagSelector/TagSelector';
 import { BudgetItemDrawer } from '../budgetItemDrawer/BudgetItemDrawer';
 import { BudgetItemDrawerModel } from '../../../models/budgetItem/budgetItemDrawer/budgetItemDrawerModel';
 import {
-  budgetItemDtoToTableEntry,
-  budgetItemTableEntryToDrawerModel,
-  drawerModelToBudgetItemCreateDto,
-  drawerModelToBudgetItemUpdateDto,
+  mapBudgetItemDtoToTableEntry,
+  mapBudgetItemTableEntryToDrawerModel,
+  mapDrawerModelToBudgetItemCreateDto,
+  mapDrawerModelToBudgetItemUpdateDto,
 } from '../../../helpers/budgetItemHelper';
 import dayjs from 'dayjs';
 import { nameof } from '../../../helpers/objectHelper';
@@ -107,7 +107,7 @@ export const BudgetItemsTable = ({
 
   const initializeBudgetItemsTable = (budgetItemsDto: BudgetItemsPaginatedResponseDto): void => {
     const budgetItemEntries = budgetItemsDto.budgetItems.map(
-      (dto: BudgetItemDto): BudgetItemTableEntry => budgetItemDtoToTableEntry(dto)
+      (dto: BudgetItemDto): BudgetItemTableEntry => mapBudgetItemDtoToTableEntry(dto)
     );
 
     setBudgetItemsTableEntries(budgetItemEntries);
@@ -122,7 +122,7 @@ export const BudgetItemsTable = ({
   };
 
   const onBudgetItemTitleClick = (record: BudgetItemTableEntry): void => {
-    const drawerModel = budgetItemTableEntryToDrawerModel(record);
+    const drawerModel = mapBudgetItemTableEntryToDrawerModel(record);
 
     setBudgetItemDrawerConfig((config) => ({
       ...config,
@@ -144,7 +144,7 @@ export const BudgetItemsTable = ({
   };
 
   const onBudgetItemEditButtonClick = (record: BudgetItemTableEntry): void => {
-    const drawerModel = budgetItemTableEntryToDrawerModel(record);
+    const drawerModel = mapBudgetItemTableEntryToDrawerModel(record);
 
     setBudgetItemDrawerConfig((config) => ({
       ...config,
@@ -314,10 +314,10 @@ export const BudgetItemsTable = ({
 
   const onBudgetItemFormSubmit = async (submittedData: BudgetItemDrawerModel): Promise<void> => {
     if (submittedData.budgetItemId) {
-      const updateDto = drawerModelToBudgetItemUpdateDto(submittedData, budgetId, submittedData.budgetItemId);
+      const updateDto = mapDrawerModelToBudgetItemUpdateDto(submittedData, budgetId, submittedData.budgetItemId);
       await budgetItemsApi.update(updateDto);
     } else {
-      const createDto = drawerModelToBudgetItemCreateDto(submittedData, budgetId);
+      const createDto = mapDrawerModelToBudgetItemCreateDto(submittedData, budgetId);
       await budgetItemsApi.create(createDto);
     }
 
