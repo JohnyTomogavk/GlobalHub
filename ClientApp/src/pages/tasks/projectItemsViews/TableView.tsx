@@ -105,7 +105,7 @@ export const TableView = ({
         const statusLabel = TaskStatusTitles[statusValue];
         const badgeColor = TaskStatusBadgeTypes[statusValue] as PresetStatusColorType;
 
-        return statusValue !== TaskStatus.Unknown ? <Badge status={badgeColor} text={statusLabel} /> : <></>;
+        return statusValue === TaskStatus.Unknown ? <></> : <Badge status={badgeColor} text={statusLabel} />;
       },
       onCell: (data) => onCommonCell(data),
     },
