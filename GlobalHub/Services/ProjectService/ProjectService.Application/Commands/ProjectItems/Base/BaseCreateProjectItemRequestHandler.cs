@@ -10,7 +10,6 @@ public abstract class BaseCreateProjectItemRequestHandler<TRequest, TResponse> :
 
     protected BaseCreateProjectItemRequestHandler(
         ApplicationDbContext dbContext,
-        IValidator<TRequest> validator,
         IMapper mapper,
         IUserService userService,
         IAuthorizationService<Project> projectAuthorizationService)

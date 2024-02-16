@@ -6,11 +6,10 @@ public class CreateEventHandler : BaseCreateProjectItemRequestHandler<CreateEven
 {
     public CreateEventHandler(
         ApplicationDbContext dbContext,
-        IValidator<CreateEventRequest> validator,
         IMapper mapper,
         IUserService userService,
         IAuthorizationService<Project> projectAuthorizationService)
-        : base(dbContext, validator, mapper, userService, projectAuthorizationService)
+        : base(dbContext, mapper, userService, projectAuthorizationService)
     {
     }
 }
