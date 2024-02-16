@@ -9,25 +9,39 @@ public class UpdateProjectNameHandler : IRequestHandler<UpdateProjectNameRequest
 {
     private readonly ApplicationDbContext _applicationDbContext;
     private readonly IMapper _mapper;
+    private readonly IUserService _userService;
+    private readonly IAuthorizationService<Project> _projectAuthorizationService;
 
-    public UpdateProjectNameHandler(ApplicationDbContext applicationDbContext, IMapper mapper)
+    public UpdateProjectNameHandler(
+        ApplicationDbContext applicationDbContext,
+        IMapper mapper,
+        IUserService userService,
+        IAuthorizationService<Project> projectAuthorizationService)
     {
-        _applicationDbContext = applicationDbContext;
-        _mapper = mapper;
+        this._applicationDbContext = applicationDbContext;
+        this._mapper = mapper;
+        this._userService = userService;
+        this._projectAuthorizationService = projectAuthorizationService;
     }
 
     public async Task<ProjectDto> Handle(UpdateProjectNameRequest request, CancellationToken cancellationToken)
     {
-        var project = await _applicationDbContext.Projects.SingleOrDefaultAsync(
+        var isAuthorized =
+            await this._projectAuthorizationService.AuthorizeUpdate(this._userService.UserId, request.ProjectId);
+
+        if (!isAuthorized)
+        {
+            throw new AccessDeniedException();
+        }
+
+        var project = await this._applicationDbContext.Projects.SingleOrDefaultAsync(
             p => p.Id == request.ProjectId,
             cancellationToken: cancellationToken);
 
-        // TODO: Authorize access to project when auth service is implemented
-
         project.Title = request.NewTitle;
 
-        await _applicationDbContext.SaveChangesAsync(cancellationToken);
+        await this._applicationDbContext.SaveChangesAsync(cancellationToken);
 
-        return _mapper.Map<ProjectDto>(project);
+        return this._mapper.Map<ProjectDto>(project);
     }
 }

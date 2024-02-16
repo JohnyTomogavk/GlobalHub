@@ -56,6 +56,10 @@ builder.Services.AddAuthorization(options =>
         policy.RequireClaim("scope", "GlobalHub.ProjectsAPI");
     }));
 
+builder.Services.AddScoped<IAuthorizationService<Project>, ProjectAuthorizationService>();
+builder.Services.AddScoped<IAuthorizationService<Tag>, TagAuthorizationService>();
+builder.Services.AddScoped<IAuthorizationService<ProjectItem>, ProjectItemAuthorizationService>();
+
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssemblyContaining(typeof(CreateProjectRequest));

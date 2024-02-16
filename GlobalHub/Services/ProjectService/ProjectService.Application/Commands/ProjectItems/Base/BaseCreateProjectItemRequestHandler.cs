@@ -1,22 +1,35 @@
 ﻿namespace ProjectService.Application.Commands.ProjectItems.Base;
 
-public abstract class BaseProjectItemRequestHandler<TRequest, TResponse> : IRequestHandler<TRequest, TResponse>
+public abstract class BaseCreateProjectItemRequestHandler<TRequest, TResponse> : IRequestHandler<TRequest, TResponse>
     where TRequest : BaseProjectItemCreateRequest, IRequest<TResponse>
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
+    private readonly IUserService _userService;
+    private readonly IAuthorizationService<Project> _projectAuthorizationService;
 
-    protected BaseProjectItemRequestHandler(
+    protected BaseCreateProjectItemRequestHandler(
         ApplicationDbContext dbContext,
-        IMapper mapper)
+        IMapper mapper,
+        IUserService userService,
+        IAuthorizationService<Project> projectAuthorizationService)
     {
         this._dbContext = dbContext;
         this._mapper = mapper;
+        this._userService = userService;
+        this._projectAuthorizationService = projectAuthorizationService;
     }
 
     public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken)
     {
-        // TODO: Authorize access for creating project item on project when auth service is implemented
+        var isAuthorized =
+            await this._projectAuthorizationService.AuthorizeUpdate(this._userService.UserId, request.ProjectId);
+
+        if (!isAuthorized)
+        {
+            throw new AccessDeniedException();
+        }
+
         var projectItemToCreate = this._mapper.Map<ProjectItem>(request);
         await this._dbContext.ProjectItems.AddAsync(projectItemToCreate, cancellationToken);
         await this._dbContext.SaveChangesAsync(cancellationToken);

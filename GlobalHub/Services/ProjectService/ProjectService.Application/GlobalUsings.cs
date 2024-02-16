@@ -1,10 +1,14 @@
-﻿global using AutoMapper;
+﻿global using System.Linq.Expressions;
+global using AutoMapper;
 global using AutoMapper.AspNet.OData;
+global using Common.Exceptions;
+global using Common.Services.Abstract;
 global using FluentValidation;
 global using MediatR;
 global using Microsoft.AspNetCore.OData.Query;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.DependencyInjection;
+global using ProjectService.Application.Authorization.Interfaces;
 global using ProjectService.Application.Commands.ProjectItems;
 global using ProjectService.Application.Commands.ProjectItems.Base;
 global using ProjectService.Application.Commands.Tags;

@@ -13,6 +13,8 @@ global using Microsoft.IdentityModel.Logging;
 global using Microsoft.OData.Edm;
 global using Microsoft.OData.ModelBuilder;
 global using Microsoft.OpenApi.Models;
+global using ProjectService.Application.Authorization;
+global using ProjectService.Application.Authorization.Interfaces;
 global using ProjectService.Application.Behaviors;
 global using ProjectService.Application.Commands.ProjectItems;
 global using ProjectService.Application.Commands.Projects;

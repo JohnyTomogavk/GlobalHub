@@ -2,12 +2,14 @@
 
 public record CreateEventRequest : BaseProjectItemCreateRequest, ITransactional;
 
-public class CreateEventHandler : BaseProjectItemRequestHandler<CreateEventRequest, ProjectItemDto>
+public class CreateEventHandler : BaseCreateProjectItemRequestHandler<CreateEventRequest, ProjectItemDto>
 {
     public CreateEventHandler(
         ApplicationDbContext dbContext,
-        IMapper mapper)
-        : base(dbContext, mapper)
+        IMapper mapper,
+        IUserService userService,
+        IAuthorizationService<Project> projectAuthorizationService)
+        : base(dbContext, mapper, userService, projectAuthorizationService)
     {
     }
 }

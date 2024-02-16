@@ -12,16 +12,16 @@ public class CreateProjectHandler : IRequestHandler<CreateProjectRequest, Projec
 
     public CreateProjectHandler(ApplicationDbContext applicationDbContext, IMapper mapper)
     {
-        _applicationDbContext = applicationDbContext;
-        _mapper = mapper;
+        this._applicationDbContext = applicationDbContext;
+        this._mapper = mapper;
     }
 
     public async Task<ProjectDto> Handle(CreateProjectRequest request, CancellationToken cancellationToken)
     {
         var project = new Project();
-        var entityEntry = await _applicationDbContext.AddAsync(project, cancellationToken);
-        await _applicationDbContext.SaveChangesAsync(cancellationToken);
-        var updatedProjectDto = _mapper.Map<ProjectDto>(entityEntry.Entity);
+        var entityEntry = await this._applicationDbContext.AddAsync(project, cancellationToken);
+        await this._applicationDbContext.SaveChangesAsync(cancellationToken);
+        var updatedProjectDto = this._mapper.Map<ProjectDto>(entityEntry.Entity);
 
         return updatedProjectDto;
     }
