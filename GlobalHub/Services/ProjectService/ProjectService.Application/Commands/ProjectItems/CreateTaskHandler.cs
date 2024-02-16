@@ -7,13 +7,15 @@ public record CreateTaskRequest : BaseProjectItemCreateRequest, ITransactional
     public long? ParentProjectItemId { get; init; }
 }
 
-public class CreateTaskHandler : BaseProjectItemRequestHandler<CreateTaskRequest, ProjectItemDto>
+public class CreateTaskHandler : BaseCreateProjectItemRequestHandler<CreateTaskRequest, ProjectItemDto>
 {
     public CreateTaskHandler(
         ApplicationDbContext dbContext,
         IValidator<CreateTaskRequest> validator,
-        IMapper mapper)
-        : base(dbContext, validator, mapper)
+        IMapper mapper,
+        IUserService userService,
+        IAuthorizationService<Project> projectAuthorizationService)
+        : base(dbContext, validator, mapper, userService, projectAuthorizationService)
     {
     }
 }

@@ -41,8 +41,6 @@ public abstract class BaseController<TEntity, TDto> : ODataController
         var request = new QueryableSetRequest<TDto> { Key = key, QueryOptions = query, };
         var entity = await _mediator.Send(request);
 
-        // TODO: Authorize access to entity when auth service is implemented
-
         if (entity == null)
         {
             throw new EntityNotFoundException(nameof(entity));

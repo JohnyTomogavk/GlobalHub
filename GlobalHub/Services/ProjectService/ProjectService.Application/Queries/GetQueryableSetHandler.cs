@@ -16,8 +16,8 @@ public record QueryableSetRequest<TDto> : IRequest<IQueryable<TDto>>
 /// <summary>
 /// Generic query handler that returns IQueryable entity collection
 /// </summary>
-/// <typeparam name="TEntity">Type of entity to pull from data source</typeparam>
-/// <typeparam name="TDto">Dto type to project entities to</typeparam>
+/// <typeparam name="TEntity">Type of entity to pull from data source.</typeparam>
+/// <typeparam name="TDto">Dto type to project entities to.</typeparam>
 public class GetQueryableSetHandler<TEntity, TDto>
     : IRequestHandler<QueryableSetRequest<TDto>, IQueryable<TDto>>
     where TEntity : BaseEntity
@@ -25,27 +25,34 @@ public class GetQueryableSetHandler<TEntity, TDto>
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
+    private readonly IAuthorizationService<TEntity> _authService;
+    private readonly IUserService _userService;
 
-    public GetQueryableSetHandler(ApplicationDbContext dbContext, IMapper mapper)
+    public GetQueryableSetHandler(
+        ApplicationDbContext dbContext,
+        IMapper mapper,
+        IAuthorizationService<TEntity> authService,
+        IUserService userService)
     {
-        _dbContext = dbContext;
-        _mapper = mapper;
+        this._dbContext = dbContext;
+        this._mapper = mapper;
+        this._authService = authService;
+        this._userService = userService;
     }
 
     public async Task<IQueryable<TDto>> Handle(
         QueryableSetRequest<TDto> request,
         CancellationToken cancellationToken)
     {
-        var entities = _dbContext.Set<TEntity>().AsQueryable();
-
-        // TODO: Add filtration by user id
+        var filterExpressions = this._authService.GetSearchFilterExpressions(this._userService.UserId);
+        var entities = this._dbContext.Set<TEntity>().Where(filterExpressions).AsQueryable();
 
         if (request.Key != null)
         {
             entities = entities.Where(t => t.Id == request.Key);
         }
 
-        var odataQuery = await entities.GetQueryAsync(_mapper, request.QueryOptions);
+        var odataQuery = await entities.GetQueryAsync(this._mapper, request.QueryOptions);
 
         return odataQuery;
     }

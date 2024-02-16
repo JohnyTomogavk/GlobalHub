@@ -8,23 +8,35 @@ public record DeleteProjectRequest(long ProjectId) : IRequest<long>;
 public class DeleteProjectHandler : IRequestHandler<DeleteProjectRequest, long>
 {
     private readonly ApplicationDbContext _applicationDbContext;
+    private readonly IAuthorizationService<Project> _projectAuthService;
+    private readonly IUserService _userService;
 
-    public DeleteProjectHandler(ApplicationDbContext applicationDbContext)
+    public DeleteProjectHandler(
+        ApplicationDbContext applicationDbContext,
+        IAuthorizationService<Project> projectAuthService,
+        IUserService userService)
     {
-        _applicationDbContext = applicationDbContext;
+        this._applicationDbContext = applicationDbContext;
+        this._projectAuthService = projectAuthService;
+        this._userService = userService;
     }
 
     public async Task<long> Handle(DeleteProjectRequest request, CancellationToken cancellationToken)
     {
-        var project = await _applicationDbContext.Projects.SingleOrDefaultAsync(
+        var isAuthorized = await this._projectAuthService.AuthorizeDelete(this._userService.UserId, request.ProjectId);
+
+        if (!isAuthorized)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        var project = await this._applicationDbContext.Projects.SingleOrDefaultAsync(
             project => project.Id == request.ProjectId,
             cancellationToken: cancellationToken);
 
-        // TODO: Authorize project delete operation
+        var removedProject = this._applicationDbContext.Projects.Remove(project);
 
-        var removedProject = _applicationDbContext.Projects.Remove(project);
-
-        await _applicationDbContext.SaveChangesAsync(cancellationToken);
+        await this._applicationDbContext.SaveChangesAsync(cancellationToken);
 
         return removedProject.Entity.Id;
     }
