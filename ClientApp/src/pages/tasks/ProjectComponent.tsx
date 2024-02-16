@@ -27,8 +27,8 @@ import { ProjectItemFormModel } from './projectItemDrawer/projectItemFormModel';
 import { ProjectItemType } from '../../enums/Projects/projectItemType';
 import { TagDto } from '../../dto/budgetTags/tagDto';
 import {
-  projectItemFormModelToCreateEventDto,
-  projectItemFormModelToCreateTaskDto,
+  mapProjectItemFormModelToCreateEventDto,
+  mapProjectItemFormModelToCreateTaskDto,
 } from '../../helpers/projectItemHelper';
 
 interface SearchParams {
@@ -206,14 +206,14 @@ export const ProjectComponent = observer((): JSX.Element => {
   };
 
   const createProjectTask = async (formData: ProjectItemFormModel, projectId: number): Promise<HttpStatusCode> => {
-    const taskDto = projectItemFormModelToCreateTaskDto(formData, projectId);
+    const taskDto = mapProjectItemFormModelToCreateTaskDto(formData, projectId);
     const { status } = await projectItemsApi.createTask(taskDto);
 
     return status;
   };
 
   const createProjectEvent = async (formData: ProjectItemFormModel, projectId: number): Promise<HttpStatusCode> => {
-    const eventDto = projectItemFormModelToCreateEventDto(formData, projectId);
+    const eventDto = mapProjectItemFormModelToCreateEventDto(formData, projectId);
     const { status } = await projectItemsApi.createEvent(eventDto);
 
     return status;

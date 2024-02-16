@@ -4,7 +4,6 @@ public abstract class BaseCreateProjectItemRequestHandler<TRequest, TResponse> :
     where TRequest : BaseProjectItemCreateRequest, IRequest<TResponse>
 {
     private readonly ApplicationDbContext _dbContext;
-    private readonly IValidator<TRequest> _validator;
     private readonly IMapper _mapper;
     private readonly IUserService _userService;
     private readonly IAuthorizationService<Project> _projectAuthorizationService;
@@ -17,7 +16,6 @@ public abstract class BaseCreateProjectItemRequestHandler<TRequest, TResponse> :
         IAuthorizationService<Project> projectAuthorizationService)
     {
         this._dbContext = dbContext;
-        this._validator = validator;
         this._mapper = mapper;
         this._userService = userService;
         this._projectAuthorizationService = projectAuthorizationService;
@@ -31,13 +29,6 @@ public abstract class BaseCreateProjectItemRequestHandler<TRequest, TResponse> :
         if (!isAuthorized)
         {
             throw new UnauthorizedAccessException();
-        }
-
-        var validationResult = await this._validator.ValidateAsync(request, cancellationToken);
-
-        if (!validationResult.IsValid)
-        {
-            throw new ValidationException(validationResult.Errors);
         }
 
         var projectItemToCreate = this._mapper.Map<ProjectItem>(request);

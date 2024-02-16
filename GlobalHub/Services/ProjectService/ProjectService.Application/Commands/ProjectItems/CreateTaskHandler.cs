@@ -11,11 +11,10 @@ public class CreateTaskHandler : BaseCreateProjectItemRequestHandler<CreateTaskR
 {
     public CreateTaskHandler(
         ApplicationDbContext dbContext,
-        IValidator<CreateTaskRequest> validator,
         IMapper mapper,
         IUserService userService,
         IAuthorizationService<Project> projectAuthorizationService)
-        : base(dbContext, validator, mapper, userService, projectAuthorizationService)
+        : base(dbContext, mapper, userService, projectAuthorizationService)
     {
     }
 }

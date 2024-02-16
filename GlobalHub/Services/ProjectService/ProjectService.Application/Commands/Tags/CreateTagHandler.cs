@@ -9,7 +9,6 @@ public class CreateTagHandler : IRequestHandler<CreateTagRequest, TagDto>
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
-    private readonly IValidator<CreateTagRequest> _createTagDtoValidator;
     private readonly IAuthorizationService<Project> _projectAuthService;
     private readonly IUserService _userService;
 
@@ -18,17 +17,14 @@ public class CreateTagHandler : IRequestHandler<CreateTagRequest, TagDto>
     /// </summary>
     /// <param name="dbContext">Db context.</param>
     /// <param name="mapper">Automapper.</param>
-    /// <param name="validator">Create tag dto validator.</param>
     public CreateTagHandler(
         ApplicationDbContext dbContext,
         IMapper mapper,
-        IValidator<CreateTagRequest> validator,
         IAuthorizationService<Project> projectAuthService,
         IUserService userService)
     {
         this._dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        this._createTagDtoValidator = validator ?? throw new ArgumentNullException(nameof(validator));
         this._projectAuthService = projectAuthService ?? throw new ArgumentNullException(nameof(projectAuthService));
         this._userService = userService ?? throw new ArgumentNullException(nameof(userService));
     }
@@ -41,13 +37,6 @@ public class CreateTagHandler : IRequestHandler<CreateTagRequest, TagDto>
         if (!isAuthorized)
         {
             throw new UnauthorizedAccessException();
-        }
-
-        var validationResult = await this._createTagDtoValidator.ValidateAsync(request, cancellationToken);
-
-        if (!validationResult.IsValid)
-        {
-            throw new ValidationException(validationResult.Errors);
         }
 
         var tagToAdd = this._mapper.Map<Tag>(request);

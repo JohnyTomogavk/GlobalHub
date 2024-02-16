@@ -1,6 +1,6 @@
 ﻿namespace ProjectService.Application.Requests;
 
-public record BaseProjectItemCreateRequest : IRequest<ProjectItemDto>
+public record BaseProjectItemCreateRequest : IRequest<ProjectItemDto>, IValidatable
 {
     public long ProjectId { get; init; }
 
