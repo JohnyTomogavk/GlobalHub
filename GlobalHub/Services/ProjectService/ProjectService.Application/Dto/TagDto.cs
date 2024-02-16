@@ -9,6 +9,4 @@ public record TagDto
     public ETagColor Color { get; init; }
 
     public long ProjectId { get; init; }
-
-    public ProjectDto? Project { get; init; }
 }

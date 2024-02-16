@@ -1,4 +1,3 @@
-import { ProjectDto } from '../projectDto';
 import { TagColor } from '../../../enums/shared/tagColor';
 
 export interface ProjectTagDto {
@@ -6,5 +5,4 @@ export interface ProjectTagDto {
   label: string;
   color: TagColor;
   projectId: number;
-  project?: ProjectDto;
 }
