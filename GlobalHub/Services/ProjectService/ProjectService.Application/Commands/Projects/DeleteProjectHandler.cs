@@ -27,7 +27,7 @@ public class DeleteProjectHandler : IRequestHandler<DeleteProjectRequest, long>
 
         if (!isAuthorized)
         {
-            throw new UnauthorizedAccessException();
+            throw new AccessDeniedException();
         }
 
         var project = await this._applicationDbContext.Projects.SingleOrDefaultAsync(

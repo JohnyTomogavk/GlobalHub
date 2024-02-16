@@ -27,7 +27,7 @@ public abstract class BaseCreateProjectItemRequestHandler<TRequest, TResponse> :
 
         if (!isAuthorized)
         {
-            throw new UnauthorizedAccessException();
+            throw new AccessDeniedException();
         }
 
         var projectItemToCreate = this._mapper.Map<ProjectItem>(request);

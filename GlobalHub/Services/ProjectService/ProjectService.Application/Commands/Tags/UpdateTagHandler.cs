@@ -34,7 +34,7 @@ public class UpdateTagHandler : IRequestHandler<UpdateTagRequest, TagDto>
 
         if (!isAuthorized)
         {
-            throw new UnauthorizedAccessException();
+            throw new AccessDeniedException();
         }
 
         var tagToUpdate =

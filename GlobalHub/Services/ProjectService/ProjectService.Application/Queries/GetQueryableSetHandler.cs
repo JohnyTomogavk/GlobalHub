@@ -44,11 +44,19 @@ public class GetQueryableSetHandler<TEntity, TDto>
         QueryableSetRequest<TDto> request,
         CancellationToken cancellationToken)
     {
+        var entityId = request.Key;
         var filterExpressions = this._authService.GetSearchFilterExpressions(this._userService.UserId);
         var entities = this._dbContext.Set<TEntity>().Where(filterExpressions).AsQueryable();
 
-        if (request.Key != null)
+        if (entityId.HasValue)
         {
+            var isAuthenticated = await this._authService.AuthorizeRead(_userService.UserId, entityId.Value);
+
+            if (!isAuthenticated)
+            {
+                throw new AccessDeniedException();
+            }
+
             entities = entities.Where(t => t.Id == request.Key);
         }
 

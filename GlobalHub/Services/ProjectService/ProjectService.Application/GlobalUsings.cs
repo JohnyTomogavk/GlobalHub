@@ -1,6 +1,7 @@
 ﻿global using System.Linq.Expressions;
 global using AutoMapper;
 global using AutoMapper.AspNet.OData;
+global using Common.Exceptions;
 global using Common.Services.Abstract;
 global using FluentValidation;
 global using MediatR;

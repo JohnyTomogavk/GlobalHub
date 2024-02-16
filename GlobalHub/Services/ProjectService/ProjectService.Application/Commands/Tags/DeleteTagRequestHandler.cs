@@ -30,7 +30,7 @@ public class DeleteTagRequestHandler : IRequestHandler<DeleteTagRequest, long>
 
         if (!isAuthorized)
         {
-            throw new UnauthorizedAccessException();
+            throw new AccessDeniedException();
         }
 
         var tagToDelete = await this._dbContext.Tags.SingleOrDefaultAsync(

@@ -31,7 +31,7 @@ public class UpdateProjectNameHandler : IRequestHandler<UpdateProjectNameRequest
 
         if (!isAuthorized)
         {
-            throw new UnauthorizedAccessException();
+            throw new AccessDeniedException();
         }
 
         var project = await this._applicationDbContext.Projects.SingleOrDefaultAsync(

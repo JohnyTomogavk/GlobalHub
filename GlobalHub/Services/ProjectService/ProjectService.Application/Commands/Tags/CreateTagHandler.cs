@@ -36,7 +36,7 @@ public class CreateTagHandler : IRequestHandler<CreateTagRequest, TagDto>
 
         if (!isAuthorized)
         {
-            throw new UnauthorizedAccessException();
+            throw new AccessDeniedException();
         }
 
         var tagToAdd = this._mapper.Map<Tag>(request);
