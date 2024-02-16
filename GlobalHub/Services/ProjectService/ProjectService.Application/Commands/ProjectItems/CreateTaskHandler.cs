@@ -11,9 +11,8 @@ public class CreateTaskHandler : BaseProjectItemRequestHandler<CreateTaskRequest
 {
     public CreateTaskHandler(
         ApplicationDbContext dbContext,
-        IValidator<CreateTaskRequest> validator,
         IMapper mapper)
-        : base(dbContext, validator, mapper)
+        : base(dbContext, mapper)
     {
     }
 }

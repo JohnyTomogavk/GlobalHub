@@ -6,9 +6,8 @@ public class CreateEventHandler : BaseProjectItemRequestHandler<CreateEventReque
 {
     public CreateEventHandler(
         ApplicationDbContext dbContext,
-        IValidator<CreateEventRequest> validator,
         IMapper mapper)
-        : base(dbContext, validator, mapper)
+        : base(dbContext, mapper)
     {
     }
 }
