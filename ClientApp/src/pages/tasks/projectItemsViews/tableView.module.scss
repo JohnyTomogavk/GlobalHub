@@ -1,0 +1,26 @@
+.tableViewRow {
+  .titleCell {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .5rem;
+    height: 1.375rem;
+  }
+
+  .title {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  &:hover .openButton {
+    display: block;
+    opacity: 100%;
+    transition: opacity ease-out;
+  }
+
+  .openButton {
+    display: none;
+    opacity: 0;
+  }
+}

@@ -74,11 +74,11 @@ export const FiltersHeader = ({ tags, onFiltersUpdate, onGroupingUpdate }: Filte
       </Col>
       <Col>
         <Popover
-          placement={'bottomRight'}
+          autoAdjustOverflow={true}
           arrow={false}
-          overlayStyle={{ width: 300 }}
+          overlayStyle={{ width: 400 }}
           title={
-            <Flex justify={'space-between'} align={'center'}>
+            <Flex justify={'space-between'}>
               <span>Filter by</span>
               <Button type={'text'} onClick={onFiltersClear}>
                 Clear

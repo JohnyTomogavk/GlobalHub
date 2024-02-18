@@ -1,6 +1,6 @@
 import { Badge, Table, Tag } from 'antd';
 import React, { ReactNode, useEffect, useState } from 'react';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, RightSquareOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import Button from 'antd/es/button';
 import { ColumnsType } from 'antd/lib/table';
@@ -22,6 +22,7 @@ import { ProjectItemGroupHeaderRow } from '../../../models/projects/ProjectItemG
 import { ProjectItemTableRowModel } from '../../../models/projects/ProjectItemTableRowModel';
 import { ProjectItemTableRow } from '../../../models/projects/ProjectItemTableRow';
 import { groupedModelsAlgorithmByGroupingMode } from '../../../helpers/groupingHelper';
+import styles from './tableView.module.scss';
 
 const onLeadingGroupCell = (data: ProjectItemTableRow): object => {
   if (nameof<ProjectItemGroupHeaderRow>('isGroupingHeader') in data) {
@@ -79,8 +80,21 @@ export const TableView = ({
       key: 'title',
       width: 300,
       sorter: true,
-      ellipsis: true,
       onCell: (data) => onLeadingGroupCell(data),
+      render: (value, record: ProjectItemTableRow): JSX.Element => {
+        if (nameof<ProjectItemGroupHeaderRow>('isGroupingHeader') in record) {
+          return <>{value}</>;
+        }
+
+        return (
+          <div className={styles.titleCell}>
+            <span className={styles.title}>{value}</span>
+            <Button size={'small'} className={styles.openButton} icon={<RightSquareOutlined />}>
+              Open
+            </Button>
+          </div>
+        );
+      },
     },
     {
       title: 'Type',
@@ -125,25 +139,19 @@ export const TableView = ({
       onCell: (data) => onCommonCell(data),
     },
     {
-      title: 'Date range',
-      children: [
-        {
-          title: 'Start date',
-          dataIndex: nameof<ProjectItemTableRowModel>('startDate'),
-          sorter: true,
-          key: nameof<ProjectItemDto>('startDate'),
-          render: (value?: dayjs.Dayjs) => <>{value?.format('DD/MM/YYYY')}</>,
-          onCell: (data) => onCommonCell(data),
-        },
-        {
-          title: 'Due date',
-          dataIndex: nameof<ProjectItemTableRowModel>('dueDate'),
-          key: nameof<ProjectItemDto>('dueDate'),
-          sorter: true,
-          render: (value?: dayjs.Dayjs) => <>{value?.format('DD/MM/YYYY')}</>,
-          onCell: (data) => onCommonCell(data),
-        },
-      ],
+      title: 'Start date',
+      dataIndex: nameof<ProjectItemTableRowModel>('startDate'),
+      sorter: true,
+      key: nameof<ProjectItemDto>('startDate'),
+      render: (value?: dayjs.Dayjs) => <>{value?.format('DD/MM/YYYY')}</>,
+      onCell: (data) => onCommonCell(data),
+    },
+    {
+      title: 'Due date',
+      dataIndex: nameof<ProjectItemTableRowModel>('dueDate'),
+      key: nameof<ProjectItemDto>('dueDate'),
+      sorter: true,
+      render: (value?: dayjs.Dayjs) => <>{value?.format('DD/MM/YYYY')}</>,
       onCell: (data) => onCommonCell(data),
     },
     {
@@ -178,26 +186,27 @@ export const TableView = ({
   };
 
   return (
-    <Table
-      onChange={(__, _, sorter) => onTableChange(sorter)}
-      size="small"
-      sticky={true}
-      bordered={true}
-      columns={columns}
-      rowSelection={{
-        type: 'checkbox',
-      }}
-      pagination={false}
-      scroll={{ y: '50vh', x: '80vw' }}
-      expandable={{
-        indentSize: 25,
-      }}
-      dataSource={tableItems}
-      footer={() => (
-        <Button icon={<PlusOutlined />} block type={'default'} onClick={onCreateNewProjectItemClick}>
-          Create new item
-        </Button>
-      )}
-    />
+    <>
+      <Table
+        onChange={(__, _, sorter) => onTableChange(sorter)}
+        size="small"
+        sticky={true}
+        bordered={true}
+        columns={columns}
+        rowClassName={styles.tableViewRow}
+        rowSelection={{
+          type: 'checkbox',
+        }}
+        scroll={{ y: 'calc(100vh - 24rem)', x: '80vw' }}
+        pagination={false}
+        expandable={{
+          indentSize: 25,
+        }}
+        dataSource={tableItems}
+      />
+      <Button icon={<PlusOutlined />} block type={'default'} onClick={onCreateNewProjectItemClick}>
+        Create new item
+      </Button>
+    </>
   );
 };
