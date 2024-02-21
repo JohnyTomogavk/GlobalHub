@@ -7,6 +7,7 @@ import { TaskStatus } from '../enums/Projects/taskStatus';
 import { CreateTaskDto } from '../dto/projects/projectItems/createTaskDto';
 import { toNumber } from 'lodash';
 import { CreateEventDto } from '../dto/projects/projectItems/createEventDto';
+import { ProjectItemDisplayModel } from '../pages/tasks/projectItemModal/ProjectItemDisplayModal';
 
 export const mapProjectItemFormModelToCreateTaskDto = (
   item: ProjectItemFormModel,
@@ -50,6 +51,24 @@ export const mapProjectItemDtoToTableViewModel = (item: ProjectItemDto): Project
   startDate: item?.startDate ? dayjs(item.startDate) : undefined,
   dueDate: item?.dueDate ? dayjs(item.dueDate) : undefined,
   children: undefined,
+});
+
+export const mapProjectItemDtoToDisplayModalModel = (item: ProjectItemDto): ProjectItemDisplayModel => ({
+  id: item.id,
+  projectId: item.projectId,
+  description: item.description,
+  parentProjectItemId: item.parentProjectItemId,
+  itemType: item.itemType,
+  title: item.title,
+  itemPriority: item.itemPriority,
+  tagIds: item.projectItemTags?.map((tag) => tag.tagId) ?? [],
+  taskStatus: item.taskStatus,
+  startDate: item?.startDate ? dayjs(item.startDate) : undefined,
+  dueDate: item?.dueDate ? dayjs(item.dueDate) : undefined,
+  createdDate: new Date(item.createdDate),
+  createdBy: item.createdBy,
+  updatedDate: item?.updatedDate ? new Date(item.updatedDate) : undefined,
+  updatedBy: item?.updatedBy,
 });
 
 interface IChildFull {

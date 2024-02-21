@@ -23,6 +23,7 @@ import { ProjectItemTableRowModel } from '../../../models/projects/ProjectItemTa
 import { ProjectItemTableRow } from '../../../models/projects/ProjectItemTableRow';
 import { groupedModelsAlgorithmByGroupingMode } from '../../../helpers/groupingHelper';
 import styles from './tableView.module.scss';
+import { toNumber } from 'lodash';
 
 const onLeadingGroupCell = (data: ProjectItemTableRow): object => {
   if (nameof<ProjectItemGroupHeaderRow>('isGroupingHeader') in data) {
@@ -44,6 +45,7 @@ export const TableView = ({
   groupingCriteria,
   onTableSearchParamsChange,
   onCreateNewProjectItemClick,
+  onTriggerProjectItemOpen,
 }: IProjectItemTableViewProps): JSX.Element => {
   const [tableItems, setTableItems] = useState<ProjectItemTableRow[]>([]);
 
@@ -89,7 +91,12 @@ export const TableView = ({
         return (
           <div className={styles.titleCell}>
             <span className={styles.title}>{value}</span>
-            <Button size={'small'} className={styles.openButton} icon={<RightSquareOutlined />}>
+            <Button
+              size={'small'}
+              className={styles.openButton}
+              icon={<RightSquareOutlined />}
+              onClick={() => onTriggerProjectItemOpen(toNumber(record.key))}
+            >
               Open
             </Button>
           </div>

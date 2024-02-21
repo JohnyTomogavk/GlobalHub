@@ -13,4 +13,5 @@ export interface IProjectItemTableViewProps {
     sorter: SorterResult<ProjectItemTableRow> | SorterResult<ProjectItemTableRow>[]
   ) => Promise<void>;
   onCreateNewProjectItemClick: () => void;
+  onTriggerProjectItemOpen: (projectItemId: number) => void;
 }
