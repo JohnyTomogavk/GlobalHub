@@ -21,6 +21,7 @@ public abstract class BaseProjectItemCreateValidator<TValidated> : AbstractValid
                 ctx.AddFailure("Tags must belong to project item's project");
             }
         });
+        this.ValidateDateRange();
     }
 
     private bool AreTagsBelongToProject(long projectId, IEnumerable<long> tagIds)
@@ -31,5 +32,17 @@ public abstract class BaseProjectItemCreateValidator<TValidated> : AbstractValid
             .Select(p => p.Id);
 
         return tagIds.All(tagId => projectTagIds.Contains(tagId));
+    }
+
+    private void ValidateDateRange()
+    {
+        this.RuleFor(request => request).Custom((request, ctx) =>
+        {
+            if ((request.StartDate.HasValue && request.DueDate.HasValue) &&
+                request.StartDate.Value >= request.DueDate.Value)
+            {
+                ctx.AddFailure("Start date can't be after due date");
+            }
+        });
     }
 }
