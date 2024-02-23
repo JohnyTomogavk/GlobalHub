@@ -27,9 +27,11 @@ import { ProjectItemFormModel } from './projectItemDrawer/projectItemFormModel';
 import { ProjectItemType } from '../../enums/Projects/projectItemType';
 import { TagDto } from '../../dto/budgetTags/tagDto';
 import {
+  fillChildItems,
   mapProjectItemFormModelToCreateEventDto,
   mapProjectItemFormModelToCreateTaskDto,
 } from '../../helpers/projectItemHelper';
+import { ProjectItemDisplayModal } from './projectItemModal/ProjectItemDisplayModal';
 
 interface SearchParams {
   groupingMode: GroupingMode;
@@ -43,6 +45,11 @@ const defaultSearchParams = {
   filtersModel: undefined,
 } as SearchParams;
 
+interface DisplayModalConfig {
+  isOpened: boolean;
+  projectItemToDisplay?: ProjectItemDto;
+}
+
 export const ProjectComponent = observer((): JSX.Element => {
   const { sideMenuItems, projectsStore } = SideMenuIndexStore;
   const [isLoading, setIsLoading] = useState(true);
@@ -51,7 +58,10 @@ export const ProjectComponent = observer((): JSX.Element => {
   const [tags, setTags] = useState<TagDto[]>([]);
   const [projectItems, setProjectItems] = useState<ProjectItemDto[]>([]);
 
-  const [isProjectItemDrawerOpened, setIsProjectItemDrawerOpened] = useState(false);
+  const [isProjectItemCreateDrawerOpened, setIsProjectItemCreateDrawerOpened] = useState(false);
+  const [displayDrawerConfig, setDisplayDrawerConfig] = useState<DisplayModalConfig>({
+    isOpened: false,
+  });
 
   const [searchParams, setSearchParams] = useState<SearchParams>(defaultSearchParams);
 
@@ -169,7 +179,24 @@ export const ProjectComponent = observer((): JSX.Element => {
   };
 
   const onCreateNewProjectItemButtonClick = (): void => {
-    setIsProjectItemDrawerOpened(true);
+    setIsProjectItemCreateDrawerOpened(true);
+  };
+
+  const onTriggerProjectItemOpen = (projectItemId: number): void => {
+    const projectItemDtoToDisplay = projectItems.filter((e) => e.id === projectItemId)[0];
+    fillChildItems(projectItemDtoToDisplay, projectItems);
+
+    setDisplayDrawerConfig({
+      isOpened: true,
+      projectItemToDisplay: projectItemDtoToDisplay,
+    });
+  };
+
+  const onDisplayProjectItemModalCancel = (): void => {
+    setDisplayDrawerConfig((prevState) => ({
+      ...prevState,
+      isOpened: false,
+    }));
   };
 
   const tabItems = [
@@ -184,6 +211,7 @@ export const ProjectComponent = observer((): JSX.Element => {
           groupingCriteria={searchParams.groupingMode}
           onTableSearchParamsChange={onTableSearchParamsChange}
           onCreateNewProjectItemClick={onCreateNewProjectItemButtonClick}
+          onTriggerProjectItemOpen={onTriggerProjectItemOpen}
         />
       ),
     },
@@ -202,7 +230,7 @@ export const ProjectComponent = observer((): JSX.Element => {
   ];
 
   const onProjectItemDrawerClose = (): void => {
-    setIsProjectItemDrawerOpened(false);
+    setIsProjectItemCreateDrawerOpened(false);
   };
 
   const createProjectTask = async (formData: ProjectItemFormModel, projectId: number): Promise<HttpStatusCode> => {
@@ -247,6 +275,10 @@ export const ProjectComponent = observer((): JSX.Element => {
     setTags((prevState) => [...prevState, tag]);
   };
 
+  const reFetchProjectItems = async (): Promise<void> => {
+    await fetchProjectItems(searchParams.orderByOption, searchParams.filtersModel);
+  };
+
   if (isLoading) {
     return (
       <div className={styles.loaderContainer}>
@@ -289,7 +321,7 @@ export const ProjectComponent = observer((): JSX.Element => {
         />
         <ProjectItemDrawer
           projectId={toNumber(project?.id)}
-          isDrawerOpened={isProjectItemDrawerOpened}
+          isDrawerOpened={isProjectItemCreateDrawerOpened}
           projectTags={tags}
           projectItems={projectItems}
           onClose={onProjectItemDrawerClose}
@@ -298,6 +330,16 @@ export const ProjectComponent = observer((): JSX.Element => {
           onTagDelete={onProjectItemDrawerTagDelete}
           onTagEdit={onProjectItemDrawerTagEdit}
         />
+        {displayDrawerConfig?.projectItemToDisplay && (
+          <ProjectItemDisplayModal
+            projectItemToDisplay={displayDrawerConfig.projectItemToDisplay}
+            isOpened={displayDrawerConfig.isOpened}
+            onClose={onDisplayProjectItemModalCancel}
+            projectItems={projectItems}
+            tags={tags}
+            reFetchProjectItemsFetch={reFetchProjectItems}
+          />
+        )}
       </div>
     </>
   );

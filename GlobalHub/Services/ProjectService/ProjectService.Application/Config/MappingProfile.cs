@@ -36,5 +36,7 @@ public class MappingProfile : Profile
         this.CreateMap<CreateTaskRequest, ProjectItem>();
 
         this.CreateMap<CreateEventRequest, ProjectItem>();
+
+        this.CreateMap<ProjectItemUpdateRequest, ProjectItem>();
     }
 }

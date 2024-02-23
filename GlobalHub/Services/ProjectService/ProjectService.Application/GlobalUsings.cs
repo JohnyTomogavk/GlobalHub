@@ -4,6 +4,7 @@ global using AutoMapper.AspNet.OData;
 global using Common.Exceptions;
 global using Common.Services.Abstract;
 global using FluentValidation;
+global using FluentValidation.Results;
 global using MediatR;
 global using Microsoft.AspNetCore.OData.Query;
 global using Microsoft.EntityFrameworkCore;

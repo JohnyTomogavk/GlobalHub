@@ -20,6 +20,7 @@ export const ProjectItemPriorityTitles = {
 };
 
 export const ProjectItemPriorityIcons = {
+  [ProjectItemPriority.Unknown]: <></>,
   [ProjectItemPriority.Lowest]: <DoubleRightOutlined rotate={90} style={{ color: 'skyblue' }} />,
   [ProjectItemPriority.Lower]: <DownOutlined style={{ color: 'green' }} />,
   [ProjectItemPriority.Normal]: <PauseOutlined rotate={90} style={{ color: 'greenyellow' }} />,

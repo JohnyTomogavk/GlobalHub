@@ -70,7 +70,7 @@
     "@editorjs/simple-image": "^1.6.0",
     "@editorjs/warning": "^1.4.0",
     "@rxpm/editor-js-code": "^0.0.1",
-    "antd": "^5.12.4",
+    "antd": "^5.14.2",
     "axios": "^1.6.2",
     "codex.editor.code": "^2.3.1",
     "codex.editor.delimiter": "^1.0.2",

@@ -18,6 +18,10 @@ interface TagSelectorProps {
   isTagCreatorEnabled?: boolean;
   onTagUpdated?: (tagData: TagDto) => Promise<void>;
   onTagDelete?: (tagId: number) => Promise<void>;
+  isControlledField?: boolean;
+  selectedTagIds?: number[];
+  onChange?: (value: number[]) => void;
+  bordered?: boolean;
 }
 
 const { Option } = Select;
@@ -33,10 +37,15 @@ export const TagSelector = ({
   isTagCreatorEnabled,
   onTagUpdated,
   onTagDelete,
+  selectedTagIds,
+  isControlledField,
+  onChange,
+  bordered,
   ...defaultProps
 }: TagSelectorProps): JSX.Element => {
   const [tagEditForm] = useForm<TagFormModel>();
   const [isTagEditDrawerOpened, setIsTagEditDrawerOpened] = useState(false);
+
   const defaultTagColor = ColorValues[TagColor.Default];
 
   const handleTagEditDrawerClose = async (): Promise<void> => {
@@ -116,8 +125,12 @@ export const TagSelector = ({
       </Drawer>
       <Select
         allowClear
+        style={{ width: '100%' }}
+        value={isControlledField === true ? selectedTagIds : undefined}
+        onChange={isControlledField ? onChange : undefined}
         filterOption={(a: string, b: DefaultOptionType | undefined): boolean => filterOptionSelectHandler(a, b)}
         mode={isTagCreatorEnabled ? 'tags' : 'multiple'}
+        bordered={bordered}
         tagRender={(tagProps: CustomTagProps): ReactElement => {
           const isTagJustCreated = typeof tagProps.value === 'string';
 
@@ -146,6 +159,7 @@ export const TagSelector = ({
           );
         }}
         placeholder={'Find tags'}
+        suffixIcon={null}
         menuItemSelectedIcon={null}
         {...defaultProps}
       >

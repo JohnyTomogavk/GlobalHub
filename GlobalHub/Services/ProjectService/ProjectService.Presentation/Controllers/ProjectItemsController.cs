@@ -40,4 +40,17 @@ public class ProjectItemsController : BaseController<ProjectItem, ProjectItemDto
 
         return this.StatusCode(StatusCodes.Status201Created, createdEvent);
     }
+
+    /// <summary>
+    /// Updates project item
+    /// </summary>
+    /// <param name="updateRequest">Project item's data update.</param>
+    /// <returns>Updated project item.</returns>
+    [HttpPut]
+    public async Task<ActionResult<ProjectItemDto>> UpdateProjectItem(ProjectItemUpdateRequest updateRequest)
+    {
+        var updatedProjectItem = await this._mediator.Send(updateRequest);
+
+        return this.StatusCode(StatusCodes.Status200OK, updatedProjectItem);
+    }
 }

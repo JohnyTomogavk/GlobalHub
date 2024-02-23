@@ -11,7 +11,7 @@ export interface ProjectItemDto extends IHasAuthor, IHasDate {
   description: string;
   itemType: ProjectItemType;
   itemPriority: ProjectItemPriority;
-  taskStatus: TaskStatus;
+  taskStatus?: TaskStatus;
   startDate?: Date;
   dueDate?: Date;
   parentProjectItemId?: number;
