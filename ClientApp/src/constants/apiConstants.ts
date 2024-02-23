@@ -55,6 +55,7 @@ export const RENAME_PROJECT = '/Projects/UpdateTitle';
 export const GET_PROJECT_ITEMS = '/ProjectItems';
 export const CREATE_PROJECT_TASK = '/ProjectItems/CreateProjectTask';
 export const CREATE_PROJECT_EVENT = '/ProjectItems/CreateProjectEvent';
+export const UPDATE_PROJECT_ITEMS = '/ProjectItems/UpdateProjectItem';
 
 // Constants related to project tags
 export const CREATE_PROJECT_TAG = '/Tags/Create';

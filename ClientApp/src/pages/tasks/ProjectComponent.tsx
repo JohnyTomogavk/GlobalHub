@@ -275,6 +275,10 @@ export const ProjectComponent = observer((): JSX.Element => {
     setTags((prevState) => [...prevState, tag]);
   };
 
+  const reFetchProjectItems = async (): Promise<void> => {
+    await fetchProjectItems(searchParams.orderByOption, searchParams.filtersModel);
+  };
+
   if (isLoading) {
     return (
       <div className={styles.loaderContainer}>
@@ -333,6 +337,7 @@ export const ProjectComponent = observer((): JSX.Element => {
             onClose={onDisplayProjectItemModalCancel}
             projectItems={projectItems}
             tags={tags}
+            reFetchProjectItemsFetch={reFetchProjectItems}
           />
         )}
       </div>

@@ -8,6 +8,10 @@ import { CreateTaskDto } from '../dto/projects/projectItems/createTaskDto';
 import { toNumber } from 'lodash';
 import { CreateEventDto } from '../dto/projects/projectItems/createEventDto';
 import { ProjectItemDisplayModel } from '../pages/tasks/projectItemModal/ProjectItemDisplayModal';
+import { getEnumValueByKey } from './enumHelper';
+import { ProjectItemPriority } from '../enums/Projects/projectItemPriority';
+import { UpdateProjectItemDto } from '../dto/projects/projectItems/updateProjectItemDto';
+import { ProjectItemType } from '../enums/Projects/projectItemType';
 
 export const mapProjectItemFormModelToCreateTaskDto = (
   item: ProjectItemFormModel,
@@ -58,17 +62,41 @@ export const mapProjectItemDtoToDisplayModalModel = (item: ProjectItemDto): Proj
   projectId: item.projectId,
   description: item.description,
   parentProjectItemId: item.parentProjectItemId,
-  itemType: item.itemType,
+  itemType: typeof item.itemType === 'number' ? item.itemType : getEnumValueByKey(ProjectItemType, item.itemType),
   title: item.title,
-  itemPriority: item.itemPriority,
+  itemPriority:
+    typeof item.itemPriority === 'number'
+      ? item.itemPriority
+      : getEnumValueByKey(ProjectItemPriority, item.itemPriority),
   tagIds: item.projectItemTags?.map((tag) => tag.tagId) ?? [],
-  taskStatus: item.taskStatus,
+  taskStatus: item.taskStatus
+    ? typeof item.taskStatus === 'number'
+      ? item.taskStatus
+      : getEnumValueByKey(TaskStatus, item.taskStatus)
+    : undefined,
   startDate: item?.startDate ? dayjs(item.startDate) : undefined,
   dueDate: item?.dueDate ? dayjs(item.dueDate) : undefined,
   createdDate: new Date(item.createdDate),
   createdBy: item.createdBy,
   updatedDate: item?.updatedDate ? new Date(item.updatedDate) : undefined,
   updatedBy: item?.updatedBy,
+});
+
+export const mapProjectItemDisplayModalModelTo = (
+  model: ProjectItemDisplayModel,
+  overrides?: object
+): UpdateProjectItemDto => ({
+  id: model.id,
+  title: model.title,
+  description: model.description,
+  itemType: model.itemType,
+  itemPriority: model.itemPriority,
+  taskStatus: model.taskStatus,
+  startDate: model.startDate?.toDate(),
+  dueDate: model.dueDate?.toDate(),
+  parentProjectItemId: model.parentProjectItemId,
+  tagIds: model.tagIds,
+  ...overrides,
 });
 
 interface IChildFull {

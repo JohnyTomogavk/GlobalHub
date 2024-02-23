@@ -5,12 +5,11 @@ import { getResourceUrl } from '../../helpers/urlHelper';
 import { PROJECTS_API_SUFFIX, PROJECTS_ODATA_API_SUFFIX } from '../../constants/apiConstants';
 import * as apiConstants from '../../constants/apiConstants';
 import buildQuery from 'odata-query';
-
 import { ProjectItemFiltersModel } from '../../models/projects/projectItemFiltersModel';
-
 import { OdataCountedResponse } from '../../models/shared/odataCountedResponse';
 import { CreateTaskDto } from '../../dto/projects/projectItems/createTaskDto';
 import { CreateEventDto } from '../../dto/projects/projectItems/createEventDto';
+import { UpdateProjectItemDto } from '../../dto/projects/projectItems/updateProjectItemDto';
 
 interface IProjectItemsApi {
   get: (
@@ -20,10 +19,11 @@ interface IProjectItemsApi {
   ) => Promise<AxiosResponse<OdataCountedResponse<ProjectItemDto[]>>>;
   createTask: (createTaskDto: CreateTaskDto) => Promise<AxiosResponse<ProjectItemDto>>;
   createEvent: (createEventDto: CreateEventDto) => Promise<AxiosResponse<ProjectItemDto>>;
+  updateProjectItem: (updateProjectItemDto: UpdateProjectItemDto) => Promise<AxiosResponse<ProjectItemDto>>;
 }
 
 const useProjectItems = (): IProjectItemsApi => {
-  const { httpGet, httpPost } = useAxios();
+  const { httpGet, httpPost, httpPut } = useAxios();
 
   return {
     get: (
@@ -80,6 +80,11 @@ const useProjectItems = (): IProjectItemsApi => {
       const url = getResourceUrl(PROJECTS_API_SUFFIX, apiConstants.CREATE_PROJECT_EVENT);
 
       return httpPost(url, createEventDto);
+    },
+    updateProjectItem: (updateProjectItemDto: UpdateProjectItemDto): Promise<AxiosResponse<ProjectItemDto>> => {
+      const url = getResourceUrl(PROJECTS_API_SUFFIX, apiConstants.UPDATE_PROJECT_ITEMS);
+
+      return httpPut(url, updateProjectItemDto);
     },
   };
 };

@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import { Badge, Card, Col, DatePicker, Input, Modal, Progress, Row, Select, Space, Table, Typography } from 'antd';
 import { ProjectItemDto } from '../../../dto/projects/projectItems/projectItemDto';
 import { TagDto } from '../../../dto/budgetTags/tagDto';
@@ -9,18 +9,25 @@ import {
   ProjectItemPriorityIcons,
   ProjectItemPriorityTitles,
 } from '../../../enums/Projects/projectItemPriority';
-import { getEnumValueByKey, getEnumValues, getEnumValuesExcluding } from '../../../helpers/enumHelper';
+import { getEnumValueByKey, getEnumValuesExcluding } from '../../../helpers/enumHelper';
 import { PresetStatusColorType } from 'antd/lib/_util/colors';
 import { TaskStatus, TaskStatusBadgeTypes, TaskStatusTitles } from '../../../enums/Projects/taskStatus';
 import Title from 'antd/es/typography/Title';
 import styled from 'styled-components';
 import { TagSelector } from '../../../components/tagSelector/TagSelector';
 import dayjs from 'dayjs';
-import { mapProjectItemDtoToDisplayModalModel } from '../../../helpers/projectItemHelper';
+import {
+  mapProjectItemDisplayModalModelTo,
+  mapProjectItemDtoToDisplayModalModel,
+} from '../../../helpers/projectItemHelper';
 import { ColumnsType } from 'antd/lib/table';
 import { nameof } from '../../../helpers/objectHelper';
 import { IHasDate } from '../../../interfaces/IHasDate';
 import { IHasAuthor } from '../../../interfaces/IHasAuthor';
+import { debounce, toNumber } from 'lodash';
+import { UPDATE_PROJECT_TITLE_DEBOUNCE } from '../../../constants/projectsConstants';
+import useProjectItems from '../../../hooks/api/useProjectItems';
+import { HttpStatusCode } from 'axios';
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -32,6 +39,7 @@ interface IProjectItemModalProps {
   projectItemToDisplay: ProjectItemDto;
   projectItems: ProjectItemDto[];
   tags: TagDto[];
+  reFetchProjectItemsFetch: () => void;
 }
 
 const AppSelect = styled(Select)`
@@ -82,20 +90,129 @@ const columns: ColumnsType<ProjectItemShortModel> = [
   },
 ];
 
-export const ProjectItemDisplayModal = ({ projectItemToDisplay, ...props }: IProjectItemModalProps): JSX.Element => {
-  const [projectItemModel, setProjectItemModelModel] = useState<ProjectItemDisplayModel>(
+export const ProjectItemDisplayModal = ({
+  projectItemToDisplay,
+  reFetchProjectItemsFetch,
+  ...props
+}: IProjectItemModalProps): JSX.Element => {
+  const projectItemsApi = useProjectItems();
+  const [projectItemModel, setProjectItemModalModel] = useState<ProjectItemDisplayModel>(
     mapProjectItemDtoToDisplayModalModel(projectItemToDisplay)
+  );
+
+  const onProjectItemUpdated = (status: HttpStatusCode, updatedProjectItem: ProjectItemDto): void => {
+    if (status !== HttpStatusCode.Ok) return;
+
+    const displayModel = mapProjectItemDtoToDisplayModalModel(updatedProjectItem);
+    setProjectItemModalModel(displayModel);
+    reFetchProjectItemsFetch();
+  };
+
+  const onTextAreaChangeDebounced = useCallback(
+    debounce(async (description: string) => {
+      const updateDto = mapProjectItemDisplayModalModelTo(projectItemModel, {
+        description: description,
+      });
+
+      const { status, data: updatedProjectItem } = await projectItemsApi.updateProjectItem(updateDto);
+      onProjectItemUpdated(status, updatedProjectItem);
+    }, UPDATE_PROJECT_TITLE_DEBOUNCE),
+    [projectItemModel.id]
   );
 
   useEffect(() => {
     const projectItemDisplayModel = mapProjectItemDtoToDisplayModalModel(projectItemToDisplay);
-    setProjectItemModelModel(projectItemDisplayModel);
+    setProjectItemModalModel(projectItemDisplayModel);
+
+    return () => {
+      onTextAreaChangeDebounced.flush();
+    };
   }, [projectItemToDisplay]);
 
-  const getTitle = (): ReactNode => {
-    const typeValue = getEnumValueByKey(ProjectItemType, projectItemModel.itemType);
-    const icon = ProjectItemTypeIcons[typeValue];
-    const typeLabel = ProjectItemTypeLabels[typeValue];
+  const onDescriptionChange = (description: string): void => {
+    setProjectItemModalModel((prevState: ProjectItemDisplayModel) => ({
+      ...prevState,
+      description: description,
+    }));
+
+    onTextAreaChangeDebounced(description);
+  };
+
+  const onProjectItemPriorityChange = async (newPriority: string): Promise<void> => {
+    const priority = toNumber(newPriority) as ProjectItemPriority;
+
+    if (projectItemModel.itemPriority === priority) return;
+
+    const updateDto = mapProjectItemDisplayModalModelTo(projectItemModel, {
+      itemPriority: priority,
+    });
+    const { status, data: updatedProjectItem } = await projectItemsApi.updateProjectItem(updateDto);
+    onProjectItemUpdated(status, updatedProjectItem);
+  };
+
+  const onTaskStatusChange = async (newStatus: string): Promise<void> => {
+    const updateDto = mapProjectItemDisplayModalModelTo(projectItemModel, {
+      taskStatus: toNumber(newStatus),
+    });
+    const { status, data: updatedProjectItem } = await projectItemsApi.updateProjectItem(updateDto);
+    onProjectItemUpdated(status, updatedProjectItem);
+  };
+
+  const onProjectItemStartDateTimeChange = async (startDateTime: dayjs.Dayjs | null): Promise<void> => {
+    if (startDateTime && projectItemModel?.dueDate && startDateTime >= projectItemModel.dueDate) {
+      setProjectItemModalModel((prevState) => ({
+        ...prevState,
+        startDate: projectItemModel.dueDate?.add(-1, 'minutes'),
+      }));
+
+      return;
+    }
+
+    const updateDto = mapProjectItemDisplayModalModelTo(projectItemModel, {
+      startDate: startDateTime,
+    });
+    const { status, data: updatedProjectItem } = await projectItemsApi.updateProjectItem(updateDto);
+    onProjectItemUpdated(status, updatedProjectItem);
+  };
+
+  const onProjectItemDueDateTimeChange = async (dueDateTime: dayjs.Dayjs | null): Promise<void> => {
+    if (dueDateTime && projectItemModel?.startDate && dueDateTime <= projectItemModel.startDate) {
+      setProjectItemModalModel((prevState) => ({
+        ...prevState,
+        dueDate: projectItemModel.startDate?.add(1, 'minutes'),
+      }));
+
+      return;
+    }
+
+    const updateDto = mapProjectItemDisplayModalModelTo(projectItemModel, {
+      dueDate: dueDateTime,
+    });
+    const { status, data: updatedProjectItem } = await projectItemsApi.updateProjectItem(updateDto);
+    onProjectItemUpdated(status, updatedProjectItem);
+  };
+
+  const onProjectTitleUpdate = async (newTitle: string): Promise<void> => {
+    if (projectItemModel.title === newTitle) return;
+
+    const updateDto = mapProjectItemDisplayModalModelTo(projectItemModel, {
+      title: newTitle,
+    });
+    const { status, data: updatedProjectItem } = await projectItemsApi.updateProjectItem(updateDto);
+    onProjectItemUpdated(status, updatedProjectItem);
+  };
+
+  const onSelectedTagsUpdate = async (values: number[]): Promise<void> => {
+    const updateDto = mapProjectItemDisplayModalModelTo(projectItemModel, {
+      tagIds: values,
+    });
+    const { status, data: updatedProjectItem } = await projectItemsApi.updateProjectItem(updateDto);
+    onProjectItemUpdated(status, updatedProjectItem);
+  };
+
+  const getModalTitle = (): ReactNode => {
+    const icon = ProjectItemTypeIcons[projectItemModel.itemType];
+    const typeLabel = ProjectItemTypeLabels[projectItemModel.itemType];
 
     return (
       <Space className={styles.modalTitle}>
@@ -106,9 +223,8 @@ export const ProjectItemDisplayModal = ({ projectItemToDisplay, ...props }: IPro
   };
 
   const getProjectTypeTitle = (): ReactNode => {
-    const typeValue = getEnumValueByKey(ProjectItemType, projectItemModel.itemType);
-    const icon = ProjectItemTypeIcons[typeValue];
-    const typeLabel = ProjectItemTypeLabels[typeValue];
+    const icon = ProjectItemTypeIcons[projectItemModel.itemType];
+    const typeLabel = ProjectItemTypeLabels[projectItemModel.itemType];
 
     return (
       <Space className={styles.modalTitle}>
@@ -116,24 +232,6 @@ export const ProjectItemDisplayModal = ({ projectItemToDisplay, ...props }: IPro
         {typeLabel}
       </Space>
     );
-  };
-
-  const onProjectTitleUpdate = (value: string): void => {
-    // TODO: Update API to update title
-
-    setProjectItemModelModel((prevState) => ({
-      ...prevState,
-      title: value,
-    }));
-  };
-
-  const onSelectedTagsUpdate = (values: number[]): void => {
-    // TODO: Call API to update tags
-
-    setProjectItemModelModel((prevState) => ({
-      ...prevState,
-      tagIds: values,
-    }));
   };
 
   const getChildItemsInfoBlock = (): ReactNode => {
@@ -192,7 +290,7 @@ export const ProjectItemDisplayModal = ({ projectItemToDisplay, ...props }: IPro
   };
 
   return (
-    <Modal open={props.isOpened} title={getTitle()} footer={false} width={1000} onCancel={props.onClose}>
+    <Modal open={props.isOpened} title={getModalTitle()} footer={false} width={1000} onCancel={props.onClose}>
       <Row>
         <Col span={14}>
           <Title
@@ -212,7 +310,11 @@ export const ProjectItemDisplayModal = ({ projectItemToDisplay, ...props }: IPro
             </Col>
           </Row>
           <Row>
-            <TextArea placeholder={'Description'} />
+            <TextArea
+              value={projectItemModel.description}
+              onChange={(e) => onDescriptionChange(e.target.value)}
+              placeholder={'Description'}
+            />
           </Row>
         </Col>
         <Col span={9} offset={1}>
@@ -231,8 +333,9 @@ export const ProjectItemDisplayModal = ({ projectItemToDisplay, ...props }: IPro
                 <AppSelect
                   id={'appSelect'}
                   placeholder={'Priority'}
-                  value={getEnumValueByKey(ProjectItemPriority, projectItemModel.itemPriority).toString()}
-                  bordered={false}
+                  variant={'borderless'}
+                  value={projectItemModel.itemPriority.toString()}
+                  onChange={(priority) => onProjectItemPriorityChange(priority as string)}
                   rootClassName={styles.selectControl}
                   suffixIcon={null}
                 >
@@ -258,16 +361,14 @@ export const ProjectItemDisplayModal = ({ projectItemToDisplay, ...props }: IPro
                   <Col span={14}>
                     <AppSelect
                       id={'appSelect'}
+                      variant={'borderless'}
                       className={styles.selectControl}
                       placeholder={'Status'}
-                      value={getEnumValueByKey(
-                        TaskStatus,
-                        projectItemModel.taskStatus ?? TaskStatus.Unknown
-                      ).toString()}
-                      bordered={false}
+                      value={projectItemModel?.taskStatus?.toString()}
+                      onChange={onTaskStatusChange}
                       suffixIcon={null}
                     >
-                      {getEnumValues(TaskStatus).map((taskStatus) => (
+                      {getEnumValuesExcluding(TaskStatus, [TaskStatus.Unknown]).map((taskStatus) => (
                         <Select.Option key={taskStatus}>
                           <Badge
                             status={
@@ -306,10 +407,12 @@ export const ProjectItemDisplayModal = ({ projectItemToDisplay, ...props }: IPro
                 <DatePicker
                   style={{ width: '100%' }}
                   format="YYYY-MM-DD HH:mm"
-                  bordered={false}
+                  maxDate={projectItemModel.dueDate}
+                  variant={'borderless'}
                   suffixIcon={null}
                   size={'small'}
                   value={projectItemModel.startDate}
+                  onChange={onProjectItemStartDateTimeChange}
                   placeholder={'Start date'}
                 />
               </Col>
@@ -322,22 +425,24 @@ export const ProjectItemDisplayModal = ({ projectItemToDisplay, ...props }: IPro
                 <DatePicker
                   style={{ width: '100%' }}
                   format="YYYY-MM-DD HH:mm"
-                  bordered={false}
+                  minDate={projectItemModel.startDate}
+                  variant={'borderless'}
                   size={'small'}
                   suffixIcon={null}
                   value={projectItemModel.dueDate}
+                  onChange={onProjectItemDueDateTimeChange}
                   placeholder={'Due date'}
                 />
               </Col>
             </Row>
           </Card>
-          <Row justify={'space-between'}>
+          <Row justify={'space-between'} className={styles.secondaryInfoBlock}>
             <Col>
               <Text strong>Created at</Text>
             </Col>
             <Col span={14}>{projectItemModel.createdDate.toLocaleString()}</Col>
           </Row>
-          <Row justify={'space-between'}>
+          <Row justify={'space-between'} className={styles.secondaryInfoBlock}>
             <Col>
               <Text strong>Updated at</Text>
             </Col>
