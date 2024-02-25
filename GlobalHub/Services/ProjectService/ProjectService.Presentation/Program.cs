@@ -77,9 +77,18 @@ builder.Services.AddAutoMapper(config =>
 builder.Services.RegisterInfrastructureServices();
 builder.Services.RegisterRequestHandlers();
 
+var connectionString = Environment.GetEnvironmentVariable(ConfigConstants.ProjectsDbConnectionStringEnvKey);
+
+builder.Services.AddHangfire(configuration =>
+{
+    configuration.UseSqlServerStorage(connectionString)
+        .UseColouredConsoleLogProvider()
+        .UseSimpleAssemblyNameTypeSerializer()
+        .UseRecommendedSerializerSettings();
+});
+
 builder.Services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
 {
-    var connectionString = Environment.GetEnvironmentVariable(ConfigConstants.ProjectsDbConnectionStringEnvKey);
     optionsBuilder.UseSqlServer(connectionString);
 });
 
@@ -87,6 +96,9 @@ var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseSerilogRequestLogging();
+
+app.UseHangfireDashboard();
+app.UseHangfireServer();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsDockerComposeEnvironment())
 {

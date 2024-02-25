@@ -3,6 +3,7 @@ global using Common.Exceptions;
 global using Common.Extensions;
 global using Common.Logging;
 global using FluentValidation;
+global using Hangfire;
 global using MediatR;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.OData;
