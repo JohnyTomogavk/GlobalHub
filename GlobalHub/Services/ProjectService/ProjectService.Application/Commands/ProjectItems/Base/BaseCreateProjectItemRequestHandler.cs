@@ -34,8 +34,14 @@ public abstract class BaseCreateProjectItemRequestHandler<TRequest, TResponse> :
         await this._dbContext.ProjectItems.AddAsync(projectItemToCreate, cancellationToken);
         await this._dbContext.SaveChangesAsync(cancellationToken);
         await this.AssignTagsToProjectItem(projectItemToCreate.Id, request.TagIds, cancellationToken);
+        await this.PerformAfterCreation(projectItemToCreate);
 
         return this._mapper.Map<TResponse>(projectItemToCreate);
+    }
+
+    protected virtual Task PerformAfterCreation(ProjectItem createdEvent)
+    {
+        return Task.CompletedTask;
     }
 
     private async Task AssignTagsToProjectItem(
