@@ -48,6 +48,7 @@ export const TableView = ({
   onTriggerProjectItemOpen,
   selectedRowKeys,
   onSelectedItemsChange,
+  onCreateChildItem,
 }: IProjectItemTableViewProps): JSX.Element => {
   const [tableItems, setTableItems] = useState<ProjectItemTableRow[]>([]);
 
@@ -77,6 +78,10 @@ export const TableView = ({
     initTable();
   }, [projectItems, groupingCriteria]);
 
+  const triggerCreateChildItem = (itemId: number): void => {
+    onCreateChildItem(itemId);
+  };
+
   const columns: ColumnsType<ProjectItemTableRow> = [
     {
       title: 'Title',
@@ -95,7 +100,12 @@ export const TableView = ({
             <span className={styles.title}>{value}</span>
             <div className={styles.controlButtons}>
               <Button.Group size={'small'}>
-                <Button icon={<PlusOutlined />} title={'Create child item'} size={'small'} />
+                <Button
+                  icon={<PlusOutlined />}
+                  title={'Create child item'}
+                  size={'small'}
+                  onClick={() => triggerCreateChildItem(toNumber(record.key))}
+                />
                 <Button
                   size={'small'}
                   icon={<RightSquareOutlined />}

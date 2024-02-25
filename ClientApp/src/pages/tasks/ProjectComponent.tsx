@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Input, Tabs, theme } from 'antd';
 import styles from './projects.module.scss';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import useProjectsApi from '../../hooks/api/useProjects';
 import { Loader } from '../../components/loader/Loader';
 import useBreadcrumbs from '../../hooks/useBreadcrumbs';
@@ -68,6 +68,7 @@ export const ProjectComponent = observer((): JSX.Element => {
 
   const { id } = useParams();
   const location = useLocation();
+  const [_, setLocationSearchParams] = useSearchParams();
   const breadCrumbsItems = useBreadcrumbs(location.pathname, sideMenuItems);
 
   const projectsApi = useProjectsApi();
@@ -205,6 +206,14 @@ export const ProjectComponent = observer((): JSX.Element => {
     }));
   };
 
+  const onCreateChildItem = (parentItemId: number): void => {
+    setLocationSearchParams({
+      parentItemId: parentItemId.toString(),
+      itemTypeToCreate: ProjectItemType.Task.toString(),
+    });
+    setIsProjectItemCreateDrawerOpened(true);
+  };
+
   const tabItems = [
     {
       key: '1',
@@ -220,6 +229,7 @@ export const ProjectComponent = observer((): JSX.Element => {
           onTriggerProjectItemOpen={onTriggerProjectItemOpen}
           selectedRowKeys={selectedRowKeys}
           onSelectedItemsChange={onTableViewSelectedItemsChange}
+          onCreateChildItem={onCreateChildItem}
         />
       ),
     },

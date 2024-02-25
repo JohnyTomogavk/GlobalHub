@@ -84,7 +84,7 @@ export const FiltersHeader = ({
       </Col>
       <Col span={6} offset={1} className={styles.controlGroup}>
         {selectionInfo ? (
-          <Button.Group size={'small'}>
+          <Button.Group size={'middle'}>
             <Button icon={<CloseOutlined />} onClick={onSelectionCancel}>
               {selectionInfo}
             </Button>

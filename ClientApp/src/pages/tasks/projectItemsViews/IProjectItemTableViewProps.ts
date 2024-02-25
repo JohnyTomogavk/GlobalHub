@@ -16,4 +16,5 @@ export interface IProjectItemTableViewProps {
   onTriggerProjectItemOpen: (projectItemId: number) => void;
   selectedRowKeys: number[];
   onSelectedItemsChange: (selectedRowKeys: Key[]) => void;
+  onCreateChildItem: (parentItemId: number) => void;
 }
