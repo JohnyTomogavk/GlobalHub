@@ -68,7 +68,7 @@ export const ProjectComponent = observer((): JSX.Element => {
 
   const { id } = useParams();
   const location = useLocation();
-  const [_, setLocationSearchParams] = useSearchParams();
+  const setLocationSearchParams = useSearchParams()[1];
   const breadCrumbsItems = useBreadcrumbs(location.pathname, sideMenuItems);
 
   const projectsApi = useProjectsApi();

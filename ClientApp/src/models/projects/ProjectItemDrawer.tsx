@@ -14,7 +14,7 @@ import {
 } from '../../enums/Projects/projectItemPriority';
 import { TaskStatus, TaskStatusBadgeTypes, TaskStatusTitles } from '../../enums/Projects/taskStatus';
 import { PresetStatusColorType } from 'antd/lib/_util/colors';
-import { isNumber, toNumber } from 'lodash';
+import { toNumber } from 'lodash';
 import { tagSelectorValidator } from '../../validators/tagSelectorValidators';
 import { TagSelector } from '../../components/tagSelector/TagSelector';
 import { ProjectItemDto } from '../../dto/projects/projectItems/projectItemDto';
@@ -25,7 +25,6 @@ import { HttpStatusCode } from 'axios';
 import useNewTagFormWatcher from '../../hooks/api/useNewTagFormWatcher';
 import { TagDto } from '../../dto/budgetTags/tagDto';
 import { useSearchParams } from 'react-router-dom';
-import useForceUpdate from 'antd/lib/_util/hooks/useForceUpdate';
 
 const { TextArea } = Input;
 
