@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { Badge, Col, DatePicker, Dropdown, Flex, Form, Input, Popover, Row, Space } from 'antd';
 import styles from './fitlersHeader.module.scss';
-import { FilterOutlined, GroupOutlined } from '@ant-design/icons';
+import { CloseOutlined, DeleteOutlined, FilterOutlined, GroupOutlined } from '@ant-design/icons';
 import Button from 'antd/es/button';
 import { Checkbox } from 'antd';
 import { debounce, toNumber } from 'lodash';
@@ -27,9 +27,19 @@ interface FiltersHeaderProps {
   tags: TagDto[];
   onFiltersUpdate: (filterModel: ProjectItemFiltersModel) => void;
   onGroupingUpdate: (groupingMode: GroupingMode) => void;
+  selectionInfo?: string;
+  onSelectionDelete: () => void;
+  onSelectionCancel: () => void;
 }
 
-export const FiltersHeader = ({ tags, onFiltersUpdate, onGroupingUpdate }: FiltersHeaderProps): JSX.Element => {
+export const FiltersHeader = ({
+  tags,
+  onFiltersUpdate,
+  onGroupingUpdate,
+  selectionInfo,
+  onSelectionDelete,
+  onSelectionCancel,
+}: FiltersHeaderProps): JSX.Element => {
   const [searchItemsInputValue, setSearchItemsInputValue] = useState<string>('');
   const [filtersForm] = useForm<ProjectItemFiltersModel>();
   const formWatch = useWatch([], filtersForm);
@@ -68,11 +78,23 @@ export const FiltersHeader = ({ tags, onFiltersUpdate, onGroupingUpdate }: Filte
   };
 
   return (
-    <Row justify={'space-between'} className={styles.headerBlock}>
-      <Col span={4}>
+    <Row className={styles.headerBlock}>
+      <Col span={6}>
         <Input value={searchItemsInputValue} onChange={onSearchFilterUpdate} allowClear placeholder={'Search items'} />
       </Col>
-      <Col>
+      <Col span={6} offset={1} className={styles.controlGroup}>
+        {selectionInfo ? (
+          <Button.Group size={'middle'}>
+            <Button icon={<CloseOutlined />} onClick={onSelectionCancel}>
+              {selectionInfo}
+            </Button>
+            <Button danger icon={<DeleteOutlined />} onClick={onSelectionDelete} />
+          </Button.Group>
+        ) : (
+          <></>
+        )}
+      </Col>
+      <Col offset={7}>
         <Popover
           autoAdjustOverflow={true}
           arrow={false}

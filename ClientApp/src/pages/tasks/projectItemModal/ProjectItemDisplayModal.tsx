@@ -295,7 +295,7 @@ export const ProjectItemDisplayModal = ({
         <Col span={14}>
           <Title
             editable={{
-              triggerType: ['text'],
+              triggerType: ['icon', 'text'],
               onChange: onProjectTitleUpdate,
             }}
             level={5}
@@ -351,7 +351,7 @@ export const ProjectItemDisplayModal = ({
               </Col>
             </Row>
             {((): JSX.Element => {
-              if (getEnumValueByKey(ProjectItemType, projectItemModel.itemType) === ProjectItemType.Event) return <></>;
+              if (projectItemModel.itemType === ProjectItemType.Event) return <></>;
 
               return (
                 <Row className={styles.detailsRow}>
@@ -391,7 +391,6 @@ export const ProjectItemDisplayModal = ({
               </Col>
               <Col span={14}>
                 <TagSelector
-                  isControlledField={true}
                   bordered={false}
                   onChange={onSelectedTagsUpdate}
                   selectedTagIds={projectItemModel.tagIds}
@@ -410,6 +409,7 @@ export const ProjectItemDisplayModal = ({
                   maxDate={projectItemModel.dueDate}
                   variant={'borderless'}
                   suffixIcon={null}
+                  allowClear={projectItemModel.itemType === ProjectItemType.Task}
                   size={'small'}
                   value={projectItemModel.startDate}
                   onChange={onProjectItemStartDateTimeChange}
@@ -428,6 +428,7 @@ export const ProjectItemDisplayModal = ({
                   minDate={projectItemModel.startDate}
                   variant={'borderless'}
                   size={'small'}
+                  allowClear={projectItemModel.itemType === ProjectItemType.Task}
                   suffixIcon={null}
                   value={projectItemModel.dueDate}
                   onChange={onProjectItemDueDateTimeChange}

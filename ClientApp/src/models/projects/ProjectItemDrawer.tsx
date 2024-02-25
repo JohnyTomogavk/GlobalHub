@@ -24,6 +24,7 @@ import useProjectTagsApi from '../../hooks/api/useProjectTagsApi';
 import { HttpStatusCode } from 'axios';
 import useNewTagFormWatcher from '../../hooks/api/useNewTagFormWatcher';
 import { TagDto } from '../../dto/budgetTags/tagDto';
+import { useSearchParams } from 'react-router-dom';
 
 const { TextArea } = Input;
 
@@ -34,7 +35,6 @@ interface ProjectItemDrawerProps {
   projectId: number;
   isDrawerOpened: boolean;
   onClose: () => void;
-  initialFormData?: ProjectItemFormModel;
   projectTags: TagDto[];
   onFormSubmit: (formData: ProjectItemFormModel) => void;
   onTagEdit: (tagData: TagDto) => Promise<void>;
@@ -76,7 +76,6 @@ const getProjectItemTreeSelectData = (projectItemDtos: ProjectItemDto[]): TreeSe
 export const ProjectItemDrawer = ({
   projectId,
   isDrawerOpened,
-  initialFormData,
   onClose,
   onFormSubmit,
   projectTags,
@@ -88,6 +87,22 @@ export const ProjectItemDrawer = ({
   const [isLoading, setIsLoading] = useState(false);
   const [projectItemFormInstance] = useForm<ProjectItemFormModel>();
   const [projectItemsTreeData, setProjectItemsTreeData] = useState<TreeSelectEntry[] | undefined>(undefined);
+
+  const [searchParams] = useSearchParams();
+
+  const getDefaultParentItemId = (): number | undefined => {
+    const parentItemId = searchParams.get('parentItemId');
+
+    return parentItemId ? toNumber(parentItemId) : undefined;
+  };
+
+  useEffect(() => {
+    projectItemFormInstance.resetFields();
+    const parentItemId = getDefaultParentItemId();
+    projectItemFormInstance.setFieldsValue({
+      parentProjectItemId: parentItemId,
+    });
+  }, [searchParams]);
 
   const projectTagsApi = useProjectTagsApi();
 
@@ -184,14 +199,7 @@ export const ProjectItemDrawer = ({
         }
 
         return (
-          <Form
-            form={projectItemFormInstance}
-            initialValues={initialFormData}
-            title={initialFormData?.title ?? 'Project item'}
-            size={'small'}
-            layout={'vertical'}
-            labelAlign={'left'}
-          >
+          <Form form={projectItemFormInstance} size={'small'} layout={'vertical'} labelAlign={'left'}>
             <Form.Item
               rules={[{ required: true, message: 'Title is required' }]}
               name={nameof<ProjectItemFormModel>('title')}
@@ -203,6 +211,7 @@ export const ProjectItemDrawer = ({
               name={nameof<ProjectItemFormModel>('itemType')}
               label={'Item type'}
               rules={[{ required: true, message: 'Item type is required' }]}
+              initialValue={searchParams.get('itemTypeToCreate')}
             >
               <Select placeholder={'Item type'}>
                 {getEnumValuesExcluding(ProjectItemType, [ProjectItemType.Unknown]).map((itemTypeValue) => (

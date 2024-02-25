@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Input, Tabs, theme } from 'antd';
 import styles from './projects.module.scss';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import useProjectsApi from '../../hooks/api/useProjects';
 import { Loader } from '../../components/loader/Loader';
 import useBreadcrumbs from '../../hooks/useBreadcrumbs';
@@ -19,7 +19,7 @@ import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
 import { GroupingMode } from '../../enums/Projects/groupingMode';
 import { ProjectItemDto } from '../../dto/projects/projectItems/projectItemDto';
 import useProjectItemsApi from '../../hooks/api/useProjectItems';
-import { SorterResult } from 'antd/lib/table/interface';
+import { Key, SorterResult } from 'antd/lib/table/interface';
 import { getSingleColumnSorterConfig } from '../../helpers/antTableSorterHelper';
 import { ProjectItemTableRow } from '../../models/projects/ProjectItemTableRow';
 import { ProjectItemDrawer } from '../../models/projects/ProjectItemDrawer';
@@ -62,11 +62,13 @@ export const ProjectComponent = observer((): JSX.Element => {
   const [displayDrawerConfig, setDisplayDrawerConfig] = useState<DisplayModalConfig>({
     isOpened: false,
   });
+  const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
 
   const [searchParams, setSearchParams] = useState<SearchParams>(defaultSearchParams);
 
   const { id } = useParams();
   const location = useLocation();
+  const setLocationSearchParams = useSearchParams()[1];
   const breadCrumbsItems = useBreadcrumbs(location.pathname, sideMenuItems);
 
   const projectsApi = useProjectsApi();
@@ -134,6 +136,11 @@ export const ProjectComponent = observer((): JSX.Element => {
     };
   }, [id]);
 
+  const onTableViewSelectedItemsChange = (selectedKeys: Key[]): void => {
+    const selectedRowIds = selectedKeys.map((t) => toNumber(t));
+    setSelectedRowKeys(selectedRowIds);
+  };
+
   const onProjectTitleUpdate = (newTitle: string): void => {
     setProject(
       (oldValue) =>
@@ -199,6 +206,14 @@ export const ProjectComponent = observer((): JSX.Element => {
     }));
   };
 
+  const onCreateChildItem = (parentItemId: number): void => {
+    setLocationSearchParams({
+      parentItemId: parentItemId.toString(),
+      itemTypeToCreate: ProjectItemType.Task.toString(),
+    });
+    setIsProjectItemCreateDrawerOpened(true);
+  };
+
   const tabItems = [
     {
       key: '1',
@@ -212,6 +227,9 @@ export const ProjectComponent = observer((): JSX.Element => {
           onTableSearchParamsChange={onTableSearchParamsChange}
           onCreateNewProjectItemClick={onCreateNewProjectItemButtonClick}
           onTriggerProjectItemOpen={onTriggerProjectItemOpen}
+          selectedRowKeys={selectedRowKeys}
+          onSelectedItemsChange={onTableViewSelectedItemsChange}
+          onCreateChildItem={onCreateChildItem}
         />
       ),
     },
@@ -279,6 +297,21 @@ export const ProjectComponent = observer((): JSX.Element => {
     await fetchProjectItems(searchParams.orderByOption, searchParams.filtersModel);
   };
 
+  const onSelectionDelete = async (): Promise<void> => {
+    const { status, data: removedProjectItemIds } = await projectItemsApi.deleteProjectItems(selectedRowKeys);
+
+    if (status === HttpStatusCode.Ok) {
+      setProjectItems((prevState) =>
+        prevState.filter((projectItem) => !removedProjectItemIds.includes(projectItem.id))
+      );
+      setSelectedRowKeys([]);
+    }
+  };
+
+  const onSelectionCancel = (): void => {
+    setSelectedRowKeys([]);
+  };
+
   if (isLoading) {
     return (
       <div className={styles.loaderContainer}>
@@ -315,7 +348,14 @@ export const ProjectComponent = observer((): JSX.Element => {
           renderTabBar={(props, DefaultTabBar) => (
             <>
               <DefaultTabBar {...props} />
-              <FiltersHeader tags={tags} onFiltersUpdate={onFiltersUpdate} onGroupingUpdate={onGroupingModeUpdate} />
+              <FiltersHeader
+                tags={tags}
+                onFiltersUpdate={onFiltersUpdate}
+                onGroupingUpdate={onGroupingModeUpdate}
+                selectionInfo={selectedRowKeys.length ? `${selectedRowKeys.length} selected` : undefined}
+                onSelectionDelete={onSelectionDelete}
+                onSelectionCancel={onSelectionCancel}
+              />
             </>
           )}
         />

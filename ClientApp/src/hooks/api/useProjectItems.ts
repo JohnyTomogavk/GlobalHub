@@ -20,10 +20,11 @@ interface IProjectItemsApi {
   createTask: (createTaskDto: CreateTaskDto) => Promise<AxiosResponse<ProjectItemDto>>;
   createEvent: (createEventDto: CreateEventDto) => Promise<AxiosResponse<ProjectItemDto>>;
   updateProjectItem: (updateProjectItemDto: UpdateProjectItemDto) => Promise<AxiosResponse<ProjectItemDto>>;
+  deleteProjectItems: (projectItemsIdsToDelete: number[]) => Promise<AxiosResponse<number[]>>;
 }
 
 const useProjectItems = (): IProjectItemsApi => {
-  const { httpGet, httpPost, httpPut } = useAxios();
+  const { httpGet, httpPost, httpPut, httpDelete } = useAxios();
 
   return {
     get: (
@@ -85,6 +86,15 @@ const useProjectItems = (): IProjectItemsApi => {
       const url = getResourceUrl(PROJECTS_API_SUFFIX, apiConstants.UPDATE_PROJECT_ITEMS);
 
       return httpPut(url, updateProjectItemDto);
+    },
+    deleteProjectItems: (projectItemsIdsToDelete: number[]): Promise<AxiosResponse<number[]>> => {
+      const url = getResourceUrl(PROJECTS_API_SUFFIX, apiConstants.DELETE_PROJECT_ITEMS);
+
+      return httpDelete(url, {
+        data: {
+          projectItemIds: projectItemsIdsToDelete,
+        },
+      });
     },
   };
 };

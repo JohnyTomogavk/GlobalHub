@@ -1,3 +1,9 @@
 .headerBlock {
   margin-bottom: 16px;
+  flex-wrap: nowrap;
+}
+
+.controlGroup {
+  display: flex;
+  align-items: center;
 }
