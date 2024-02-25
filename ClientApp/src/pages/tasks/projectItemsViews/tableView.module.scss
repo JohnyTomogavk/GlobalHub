@@ -13,13 +13,13 @@
     white-space: nowrap;
   }
 
-  .openButton {
+  .controlButtons {
     display: none;
     opacity: 0;
   }
 
-  &:hover .openButton {
-    display: block;
+  &:hover .controlButtons {
+    display: flex;
     opacity: 1;
     transition: opacity ease-out;
   }

@@ -1,6 +1,6 @@
 import { ProjectItemDto } from '../../../dto/projects/projectItems/projectItemDto';
 import { GroupingMode } from '../../../enums/Projects/groupingMode';
-import { SorterResult } from 'antd/lib/table/interface';
+import { Key, SorterResult } from 'antd/lib/table/interface';
 
 import { ProjectItemTableRow } from '../../../models/projects/ProjectItemTableRow';
 import { TagDto } from '../../../dto/budgetTags/tagDto';
@@ -14,4 +14,6 @@ export interface IProjectItemTableViewProps {
   ) => Promise<void>;
   onCreateNewProjectItemClick: () => void;
   onTriggerProjectItemOpen: (projectItemId: number) => void;
+  selectedRowKeys: number[];
+  onSelectedItemsChange: (selectedRowKeys: Key[]) => void;
 }

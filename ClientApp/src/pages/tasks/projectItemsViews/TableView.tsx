@@ -46,6 +46,8 @@ export const TableView = ({
   onTableSearchParamsChange,
   onCreateNewProjectItemClick,
   onTriggerProjectItemOpen,
+  selectedRowKeys,
+  onSelectedItemsChange,
 }: IProjectItemTableViewProps): JSX.Element => {
   const [tableItems, setTableItems] = useState<ProjectItemTableRow[]>([]);
 
@@ -91,14 +93,18 @@ export const TableView = ({
         return (
           <div className={styles.titleCell}>
             <span className={styles.title}>{value}</span>
-            <Button
-              size={'small'}
-              className={styles.openButton}
-              icon={<RightSquareOutlined />}
-              onClick={() => onTriggerProjectItemOpen(toNumber(record.key))}
-            >
-              Open
-            </Button>
+            <div className={styles.controlButtons}>
+              <Button.Group size={'small'}>
+                <Button icon={<PlusOutlined />} title={'Create child item'} size={'small'} />
+                <Button
+                  size={'small'}
+                  icon={<RightSquareOutlined />}
+                  onClick={() => onTriggerProjectItemOpen(toNumber(record.key))}
+                >
+                  Open
+                </Button>
+              </Button.Group>
+            </div>
           </div>
         );
       },
@@ -203,12 +209,11 @@ export const TableView = ({
         rowClassName={styles.tableViewRow}
         rowSelection={{
           type: 'checkbox',
+          selectedRowKeys: selectedRowKeys,
+          onChange: (selectedKeys) => onSelectedItemsChange(selectedKeys),
         }}
         scroll={{ y: 'calc(100vh - 24rem)', x: '80vw' }}
         pagination={false}
-        expandable={{
-          indentSize: 25,
-        }}
         dataSource={tableItems}
       />
       <Button icon={<PlusOutlined />} block type={'default'} onClick={onCreateNewProjectItemClick}>

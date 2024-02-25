@@ -53,4 +53,17 @@ public class ProjectItemsController : BaseController<ProjectItem, ProjectItemDto
 
         return this.StatusCode(StatusCodes.Status200OK, updatedProjectItem);
     }
+
+    /// <summary>
+    /// Deletes project item by id
+    /// </summary>
+    /// <param name="request">Project item's data to delete.</param>
+    /// <returns>Id of deleted project item.</returns>
+    [HttpDelete]
+    public async Task<ActionResult<long[]>> DeleteProjectItems(DeleteProjectItemRequest request)
+    {
+        var deletedItemIds = await this._mediator.Send(request);
+
+        return this.StatusCode(StatusCodes.Status200OK, deletedItemIds);
+    }
 }

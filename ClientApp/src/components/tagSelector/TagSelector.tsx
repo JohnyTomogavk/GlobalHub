@@ -18,7 +18,6 @@ interface TagSelectorProps {
   isTagCreatorEnabled?: boolean;
   onTagUpdated?: (tagData: TagDto) => Promise<void>;
   onTagDelete?: (tagId: number) => Promise<void>;
-  isControlledField?: boolean;
   selectedTagIds?: number[];
   onChange?: (value: number[]) => void;
   bordered?: boolean;
@@ -38,7 +37,6 @@ export const TagSelector = ({
   onTagUpdated,
   onTagDelete,
   selectedTagIds,
-  isControlledField,
   onChange,
   bordered,
   ...defaultProps
@@ -126,8 +124,8 @@ export const TagSelector = ({
       <Select
         allowClear
         style={{ width: '100%' }}
-        value={isControlledField === true ? selectedTagIds : undefined}
-        onChange={isControlledField ? onChange : undefined}
+        value={selectedTagIds}
+        onChange={onChange}
         filterOption={(a: string, b: DefaultOptionType | undefined): boolean => filterOptionSelectHandler(a, b)}
         mode={isTagCreatorEnabled ? 'tags' : 'multiple'}
         bordered={bordered}
