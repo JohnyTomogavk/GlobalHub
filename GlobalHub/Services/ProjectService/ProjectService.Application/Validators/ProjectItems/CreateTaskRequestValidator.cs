@@ -13,10 +13,10 @@ public class CreateTaskRequestValidator : BaseProjectItemCreateValidator<CreateT
         this.RuleFor(request => request.ParentProjectItemId).GreaterThan(0);
         this.RuleFor(request => request.TaskStatus).NotEqual(ETaskStatus.Unknown);
         this.RuleFor(request => request.TaskStatus).IsInEnum();
-        this.EnsureParentProjectItemIsInTheSameProject();
+        this.ValidateParentProjectItem();
     }
 
-    private void EnsureParentProjectItemIsInTheSameProject()
+    private void ValidateParentProjectItem()
     {
         this.RuleFor(request => request).Custom((request, ctx) =>
         {
@@ -28,9 +28,14 @@ public class CreateTaskRequestValidator : BaseProjectItemCreateValidator<CreateT
             var parentProjectItem =
                 this._dbContext.ProjectItems.SingleOrDefault(e => e.Id == request.ParentProjectItemId.Value);
 
-            if (parentProjectItem == null || parentProjectItem?.ProjectId != request.ProjectId)
+            if (parentProjectItem == null || parentProjectItem.ProjectId != request.ProjectId)
             {
                 ctx.AddFailure("Parent project item must belong to the same project");
+            }
+
+            if (parentProjectItem.ItemType != EProjectItemType.Task)
+            {
+                ctx.AddFailure("Parent project item must be of Task type");
             }
         });
     }

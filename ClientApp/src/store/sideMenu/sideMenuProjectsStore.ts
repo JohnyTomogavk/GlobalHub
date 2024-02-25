@@ -6,6 +6,7 @@ import { EntityType } from '../../enums/entityType';
 import { getClientItemUrl } from '../../helpers/urlHelper';
 import * as ResourceNameConstants from '../../constants/resourceConstants';
 import { ProjectDto } from '../../dto/projects/projectDto';
+import { Key } from 'antd/lib/table/interface';
 
 class SideMenuProjectsStore {
   sideMenuProjectItems: SideMenuItemModel[] = [];
@@ -55,6 +56,10 @@ class SideMenuProjectsStore {
         entityType: EntityType.Project,
       })
     );
+  }
+
+  removeFromSideMenu(itemId: Key): void {
+    this.sideMenuProjectItems = this.sideMenuProjectItems.filter((item) => item.pageId !== itemId);
   }
 }
 

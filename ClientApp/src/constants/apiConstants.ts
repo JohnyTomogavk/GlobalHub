@@ -50,6 +50,7 @@ export const UPDATE_BUDGET_TAG_LIMITS = '/TagLimits/UpdateBudgetTagLimits';
 export const GET_USER_PROJECTS = '/Projects';
 export const CREATE_PROJECT = '/Projects/Create';
 export const RENAME_PROJECT = '/Projects/UpdateTitle';
+export const DELETE_PROJECT = '/Projects/Delete';
 
 // Constants related to project items
 export const GET_PROJECT_ITEMS = '/ProjectItems';

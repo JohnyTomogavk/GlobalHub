@@ -12,10 +12,11 @@ interface IProjectsApi {
   getUsersProjects: () => Promise<AxiosResponse<OdataResponse<ProjectDto[]>>>;
   createProject: () => Promise<AxiosResponse<ProjectDto>>;
   renameProject: (projectId: number, newTitle: string) => Promise<AxiosResponse<ProjectDto>>;
+  delete: (projectId: number) => Promise<AxiosResponse<number>>;
 }
 
 const useProjects = (): IProjectsApi => {
-  const { httpGet, httpPost, httpPut } = useAxios();
+  const { httpGet, httpPost, httpPut, httpDelete } = useAxios();
 
   return {
     getUsersProjects: (): Promise<AxiosResponse<OdataResponse<ProjectDto[]>>> => {
@@ -43,6 +44,13 @@ const useProjects = (): IProjectsApi => {
       return httpPut(url, {
         projectId,
         newTitle,
+      });
+    },
+    delete: (projectId: number): Promise<AxiosResponse<number>> => {
+      const url = getResourceUrl(PROJECTS_API_SUFFIX, apiConstants.DELETE_PROJECT);
+
+      return httpDelete(url, {
+        params: { projectId },
       });
     },
   };

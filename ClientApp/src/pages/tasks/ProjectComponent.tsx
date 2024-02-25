@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Input, Tabs, theme } from 'antd';
 import styles from './projects.module.scss';
-import { useLocation, useParams, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import useProjectsApi from '../../hooks/api/useProjects';
 import { Loader } from '../../components/loader/Loader';
 import useBreadcrumbs from '../../hooks/useBreadcrumbs';
@@ -68,6 +68,7 @@ export const ProjectComponent = observer((): JSX.Element => {
 
   const { id } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const setLocationSearchParams = useSearchParams()[1];
   const breadCrumbsItems = useBreadcrumbs(location.pathname, sideMenuItems);
 
@@ -154,7 +155,14 @@ export const ProjectComponent = observer((): JSX.Element => {
   };
 
   const onProjectDeleteCallback = async (): Promise<void> => {
-    // TODO: Implement delete
+    if (!id) return;
+
+    const { status } = await projectsApi.delete(toNumber(id));
+
+    if (status === HttpStatusCode.Ok) {
+      projectsStore.removeFromSideMenu(toNumber(id));
+      navigate('/');
+    }
   };
 
   const onFiltersUpdate = async (filters: ProjectItemFiltersModel): Promise<void> => {
