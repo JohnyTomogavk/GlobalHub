@@ -1,4 +1,4 @@
-﻿namespace ProjectService.Infrastructure.Services.Interfaces;
+﻿namespace ProjectService.Application.Services.Interfaces;
 
 /// <summary>
 /// Manages project items-related events
@@ -6,7 +6,7 @@
 public interface IProjectItemNotificationService
 {
     /// <summary>
-    /// Raises notification before event's start time
+    /// Raises notification before event's starts
     /// </summary>
     /// <param name="eventId">Event's id.</param>
     Task RaiseBeforeEventStartedNotification(long eventId);
@@ -18,8 +18,8 @@ public interface IProjectItemNotificationService
     Task RaiseOnEventStartedNotification(long eventId);
 
     /// <summary>
-    /// Raises notification before task's due date
+    /// Raises notification before task's due date is reached
     /// </summary>
     /// <param name="taskId">Task's id.</param>
-    Task RaiseTaskDueDateNotification(long taskId);
+    Task RaiseBeforeTaskDueDateNotification(long taskId);
 }

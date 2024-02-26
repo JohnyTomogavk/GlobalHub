@@ -41,7 +41,7 @@ public class CreateTaskHandler : BaseCreateProjectItemRequestHandler<CreateTaskR
 
         var timeToEnqueue = task.DueDate.Value.AddHours(-1);
         var jobId = this._backgroundJobClient.Schedule(
-            () => this._projectItemNotificationService.RaiseTaskDueDateNotification(task.Id),
+            () => this._projectItemNotificationService.RaiseBeforeTaskDueDateNotification(task.Id),
             timeToEnqueue);
 
         // TODO: Save jobId to have possibility to find and reschedule the job

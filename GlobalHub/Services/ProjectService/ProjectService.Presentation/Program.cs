@@ -59,6 +59,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddScoped<IAuthorizationService<Project>, ProjectAuthorizationService>();
 builder.Services.AddScoped<IAuthorizationService<Tag>, TagAuthorizationService>();
 builder.Services.AddScoped<IAuthorizationService<ProjectItem>, ProjectItemAuthorizationService>();
+builder.Services.AddScoped<IProjectItemNotificationService, ProjectItemNotificationService>();
 
 builder.Services.AddMediatR(cfg =>
 {
@@ -90,6 +91,18 @@ builder.Services.AddHangfire(configuration =>
 builder.Services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
 {
     optionsBuilder.UseSqlServer(connectionString);
+});
+
+builder.Services.AddMassTransit(massTransitConfig =>
+{
+    massTransitConfig.UsingRabbitMq((context, cfg) =>
+    {
+        var eventBusConnectionString =
+            Environment.GetEnvironmentVariable(CommonConstants.EVENT_BUS_CONNECTION_STRING_KEY);
+        ArgumentNullException.ThrowIfNull(eventBusConnectionString);
+
+        cfg.Host(new Uri(eventBusConnectionString));
+    });
 });
 
 var app = builder.Build();

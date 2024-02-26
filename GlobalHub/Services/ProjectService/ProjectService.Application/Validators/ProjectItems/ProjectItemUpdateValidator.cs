@@ -1,4 +1,6 @@
-﻿namespace ProjectService.Application.Validators.ProjectItems;
+﻿using ValidationResult = FluentValidation.Results.ValidationResult;
+
+namespace ProjectService.Application.Validators.ProjectItems;
 
 public class ProjectItemUpdateValidator : AbstractValidator<ProjectItemUpdateRequest>
 {
