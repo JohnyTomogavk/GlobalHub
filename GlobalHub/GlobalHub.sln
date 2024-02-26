@@ -55,6 +55,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectService.Application"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NotificationService", "NotificationService", "{8D2B43E2-2761-4DEA-A2C4-151810D0261F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService.API", "Services\NotificationService.API\NotificationService.API.csproj", "{2256FBFE-6BE5-4664-96D3-5785D6DE8349}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,6 +84,7 @@ Global
 		{41046D78-0EAC-4E23-837B-94742443ED53} = {A140D53C-2D8D-4A0D-B859-ECF3341BD7D5}
 		{304C133E-A8A6-47C6-BF4E-BD72C81F7617} = {A140D53C-2D8D-4A0D-B859-ECF3341BD7D5}
 		{8D2B43E2-2761-4DEA-A2C4-151810D0261F} = {0571EA3F-4DEB-4A6E-999D-2438493E4C88}
+		{2256FBFE-6BE5-4664-96D3-5785D6DE8349} = {8D2B43E2-2761-4DEA-A2C4-151810D0261F}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FF9AF57C-8469-4371-B051-E6A64EC1429B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -148,5 +151,9 @@ Global
 		{304C133E-A8A6-47C6-BF4E-BD72C81F7617}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{304C133E-A8A6-47C6-BF4E-BD72C81F7617}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{304C133E-A8A6-47C6-BF4E-BD72C81F7617}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2256FBFE-6BE5-4664-96D3-5785D6DE8349}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2256FBFE-6BE5-4664-96D3-5785D6DE8349}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2256FBFE-6BE5-4664-96D3-5785D6DE8349}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2256FBFE-6BE5-4664-96D3-5785D6DE8349}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

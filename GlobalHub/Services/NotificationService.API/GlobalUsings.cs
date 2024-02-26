@@ -1,6 +1,10 @@
-﻿global using Common.ExceptionHandling;
+﻿global using Common.Constants;
+global using Common.EventBus.Messages.Notifications;
+global using Common.ExceptionHandling;
 global using Common.Extensions;
 global using Common.Logging;
+global using MassTransit;
 global using Microsoft.IdentityModel.Logging;
 global using Microsoft.OpenApi.Models;
+global using NotificationService.API.Consumers;
 global using Serilog;

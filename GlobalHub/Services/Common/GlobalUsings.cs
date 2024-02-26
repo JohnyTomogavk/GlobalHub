@@ -11,6 +11,7 @@ global using Common.Services.Abstract;
 global using DotNetEnv;
 global using DotNetEnv.Configuration;
 global using FluentValidation;
+global using MassTransit;
 global using Microsoft.AspNetCore.Http;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.Hosting;
