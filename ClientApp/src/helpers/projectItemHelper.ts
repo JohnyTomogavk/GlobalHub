@@ -25,7 +25,7 @@ export const mapProjectItemFormModelToCreateTaskDto = (
   itemPriority: toNumber(item.itemPriority),
   startDate: item?.dateRange && item.dateRange[0]?.toDate(),
   dueDate: item?.dateRange && item.dateRange[1]?.toDate(),
-  tagIds: item.tagIds,
+  tagIds: item.tagIds ?? [],
   parentProjectItemId: item.parentProjectItemId,
 });
 
@@ -40,7 +40,7 @@ export const mapProjectItemFormModelToCreateEventDto = (
   itemPriority: toNumber(item.itemPriority),
   startDate: item?.dateRange && item.dateRange[0]?.toDate(),
   dueDate: item?.dateRange && item.dateRange[1]?.toDate(),
-  tagIds: item.tagIds,
+  tagIds: item.tagIds ?? [],
 });
 
 export const mapProjectItemDtoToTableViewModel = (item: ProjectItemDto): ProjectItemTableRowModel => ({

@@ -406,6 +406,9 @@ export const ProjectItemDisplayModal = ({
                 <DatePicker
                   style={{ width: '100%' }}
                   format="YYYY-MM-DD HH:mm"
+                  showTime={{
+                    defaultValue: dayjs('9:00:00'),
+                  }}
                   maxDate={projectItemModel.dueDate}
                   variant={'borderless'}
                   suffixIcon={null}
@@ -425,6 +428,9 @@ export const ProjectItemDisplayModal = ({
                 <DatePicker
                   style={{ width: '100%' }}
                   format="YYYY-MM-DD HH:mm"
+                  showTime={{
+                    defaultValue: dayjs('18:00:00'),
+                  }}
                   minDate={projectItemModel.startDate}
                   variant={'borderless'}
                   size={'small'}
