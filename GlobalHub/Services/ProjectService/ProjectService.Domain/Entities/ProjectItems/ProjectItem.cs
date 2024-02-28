@@ -3,7 +3,7 @@
 /// <summary>
 /// Entity represents user-created task or event
 /// </summary>
-public class ProjectItem : BaseEntity, IHasDate, IHasCreator
+public class ProjectItem : BaseEntity, IHasDate, IHasCreator, ICloneable
 {
     /// <summary>
     /// Item title
@@ -51,4 +51,9 @@ public class ProjectItem : BaseEntity, IHasDate, IHasCreator
     public string? CreatedBy { get; set; }
 
     public string? UpdatedBy { get; set; }
+
+    public object Clone()
+    {
+        return this.MemberwiseClone();
+    }
 }

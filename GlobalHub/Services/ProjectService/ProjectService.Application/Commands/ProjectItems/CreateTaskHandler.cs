@@ -9,7 +9,7 @@ public record CreateTaskRequest : BaseProjectItemCreateRequest, ITransactional
 
 public class CreateTaskHandler : BaseCreateProjectItemRequestHandler<CreateTaskRequest, ProjectItemDto>
 {
-    private readonly IBackgroundJobClient _backgroundJobClient;
+    private readonly IBackgroundJobClientV2 _backgroundJobClient;
     private readonly IProjectItemNotificationService _projectItemNotificationService;
 
     public CreateTaskHandler(
@@ -17,7 +17,7 @@ public class CreateTaskHandler : BaseCreateProjectItemRequestHandler<CreateTaskR
         IMapper mapper,
         IUserService userService,
         IAuthorizationService<Project> projectAuthorizationService,
-        IBackgroundJobClient backgroundJobClient,
+        IBackgroundJobClientV2 backgroundJobClient,
         IProjectItemNotificationService projectItemNotificationService)
         : base(dbContext, mapper, userService, projectAuthorizationService)
     {
@@ -40,10 +40,8 @@ public class CreateTaskHandler : BaseCreateProjectItemRequestHandler<CreateTaskR
         }
 
         var timeToEnqueue = task.DueDate.Value.AddHours(-1);
-        var jobId = this._backgroundJobClient.Schedule(
-            () => this._projectItemNotificationService.RaiseBeforeTaskDueDateNotification(task.Id),
+        this._backgroundJobClient.Schedule(
+            () => this._projectItemNotificationService.RaiseBeforeTaskDueDateNotification(task.Id, task.DueDate.Value),
             timeToEnqueue);
-
-        // TODO: Save jobId to have possibility to find and reschedule the job
     }
 }

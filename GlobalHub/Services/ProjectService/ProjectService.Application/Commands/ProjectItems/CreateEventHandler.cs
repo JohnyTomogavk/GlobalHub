@@ -4,7 +4,7 @@ public record CreateEventRequest : BaseProjectItemCreateRequest, ITransactional;
 
 public class CreateEventHandler : BaseCreateProjectItemRequestHandler<CreateEventRequest, ProjectItemDto>
 {
-    private readonly IBackgroundJobClient _backgroundJobClient;
+    private readonly IBackgroundJobClientV2 _backgroundJobClient;
     private readonly IProjectItemNotificationService _projectItemNotificationService;
 
     public CreateEventHandler(
@@ -12,7 +12,7 @@ public class CreateEventHandler : BaseCreateProjectItemRequestHandler<CreateEven
         IMapper mapper,
         IUserService userService,
         IAuthorizationService<Project> projectAuthorizationService,
-        IBackgroundJobClient backgroundJobClient,
+        IBackgroundJobClientV2 backgroundJobClient,
         IProjectItemNotificationService projectItemNotificationService)
         : base(dbContext, mapper, userService, projectAuthorizationService)
     {
@@ -22,27 +22,26 @@ public class CreateEventHandler : BaseCreateProjectItemRequestHandler<CreateEven
 
     protected override Task PerformAfterCreation(ProjectItem createdEvent)
     {
-        this.ScheduleBeforeEventStartNotification(createdEvent.Id, createdEvent.StartDate!.Value.AddMinutes(-10));
+        this.ScheduleBeforeEventStartNotification(createdEvent.Id, createdEvent.StartDate!.Value);
         this.ScheduleOnEventStartNotification(createdEvent.Id, createdEvent.StartDate!.Value);
 
         return Task.CompletedTask;
     }
 
-    private void ScheduleBeforeEventStartNotification(long projectItemId, DateTime enqueueTime)
+    private void ScheduleBeforeEventStartNotification(long projectItemId, DateTime eventStartTime)
     {
-        var jobId = this._backgroundJobClient.Schedule(
-            () => this._projectItemNotificationService.RaiseBeforeEventStartedNotification(projectItemId),
+        var enqueueTime = eventStartTime.AddMinutes(-5);
+        this._backgroundJobClient.Schedule(
+            () => this._projectItemNotificationService.RaiseBeforeEventStartedNotification(
+                projectItemId,
+                eventStartTime),
             enqueueTime);
-
-        // TODO: Save jobId to have possibility to find and reschedule the job
     }
 
-    private void ScheduleOnEventStartNotification(long projectItemId, DateTime enqueueTime)
+    private void ScheduleOnEventStartNotification(long projectItemId, DateTime eventStartTime)
     {
-        var jobId = this._backgroundJobClient.Schedule(
-            () => this._projectItemNotificationService.RaiseOnEventStartedNotification(projectItemId),
-            enqueueTime);
-
-        // TODO: Save jobId to have possibility to find and reschedule the job
+        this._backgroundJobClient.Schedule(
+            () => this._projectItemNotificationService.RaiseOnEventStartedNotification(projectItemId, eventStartTime),
+            eventStartTime);
     }
 }

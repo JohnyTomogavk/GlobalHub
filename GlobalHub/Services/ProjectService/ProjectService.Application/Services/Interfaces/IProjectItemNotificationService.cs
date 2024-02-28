@@ -9,17 +9,20 @@ public interface IProjectItemNotificationService
     /// Raises notification before event's starts
     /// </summary>
     /// <param name="eventId">Event's id.</param>
-    Task RaiseBeforeEventStartedNotification(long eventId);
+    /// <param name="eventStartDate">Event's start datetime.</param>
+    Task RaiseBeforeEventStartedNotification(long eventId, DateTime eventStartDate);
 
     /// <summary>
     /// Raises notification on event's start time
     /// </summary>
     /// <param name="eventId">Event's id.</param>
-    Task RaiseOnEventStartedNotification(long eventId);
+    /// <param name="eventStartDate">Event's start datetime.</param>
+    Task RaiseOnEventStartedNotification(long eventId, DateTime eventStartDate);
 
     /// <summary>
     /// Raises notification before task's due date is reached
     /// </summary>
     /// <param name="taskId">Task's id.</param>
-    Task RaiseBeforeTaskDueDateNotification(long taskId);
+    /// <param name="taskDueDate">Task's start datetime.</param>
+    Task RaiseBeforeTaskDueDateNotification(long taskId, DateTime taskDueDate);
 }
