@@ -112,6 +112,31 @@
         "X-Forwarded-Path": "/identity-api",
         "X-Forwarded-Proto": "https"
       }
+    },
+    {
+      "UpstreamPathTemplate": "/notifications-api/hubs/{path}",
+      "DownstreamPathTemplate": "/{path}",
+      "DownstreamScheme": "wss",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7207
+        }
+      ],
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "OPTIONS",
+        "CONNECT"
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [
+          "GlobalHub.NotificationsAPI"
+        ]
+      }
     }
   ],
   "GlobalConfiguration": {

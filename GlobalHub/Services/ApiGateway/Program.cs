@@ -11,7 +11,9 @@ builder.Host.UseSerilog(SerilogExtensions.LoggerConfiguration);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddOcelot(builder.Configuration);
+builder.Services.AddOcelot();
+builder.Services.AddCors();
+builder.Services.AddSignalR();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -39,9 +41,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseCors(corsBuilder => corsBuilder
+    .SetIsOriginAllowed(s => true)
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials()
+    .WithExposedHeaders("X-Correlation-id"));
 
+app.UseWebSockets();
 await app.UseOcelot();
 
 app.Run();
