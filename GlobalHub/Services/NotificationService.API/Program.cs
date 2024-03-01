@@ -1,16 +1,14 @@
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Configuration.AddEnvFilesToConfiguration();
 builder.Services.AddHttpContextAccessor();
-
 builder.Host.UseSerilog(SerilogExtensions.LoggerConfiguration);
-
-builder.Services.AddCors();
-builder.Services.AddControllers().RegisterOData();
+builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(action =>
 {
-    action.SwaggerDoc("v1", new OpenApiInfo { Title = "Projects API", Version = "v1" });
+    action.SwaggerDoc("v1", new OpenApiInfo { Title = "Notifications API", Version = "v1" });
     action.AddSecurityDefinition(
         "bearerAuth",
         new OpenApiSecurityScheme
@@ -36,7 +34,7 @@ builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(options =>
     {
         options.Authority = Environment.GetEnvironmentVariable("IDENTITY_SERVICE_URL");
-        options.Audience = "ProjectsAPI";
+        options.Audience = "NotificationsAPI";
 
         if (builder.Environment.IsDockerComposeEnvironment())
         {
@@ -53,79 +51,44 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("ApiScope", policy =>
     {
         policy.RequireAuthenticatedUser();
-        policy.RequireClaim("scope", "GlobalHub.ProjectsAPI");
+        policy.RequireClaim("scope", "GlobalHub.NotificationsAPI");
     }));
 
-builder.Services.AddScoped<IAuthorizationService<Project>, ProjectAuthorizationService>();
-builder.Services.AddScoped<IAuthorizationService<Tag>, TagAuthorizationService>();
-builder.Services.AddScoped<IAuthorizationService<ProjectItem>, ProjectItemAuthorizationService>();
-builder.Services.AddScoped<IProjectItemNotificationService, ProjectItemNotificationService>();
-
-builder.Services.AddMediatR(cfg =>
+builder.Services.AddMassTransit(configurator =>
 {
-    cfg.RegisterServicesFromAssemblyContaining(typeof(CreateProjectRequest));
-    cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
-    cfg.AddOpenBehavior(typeof(DbTransactionBehavior<,>));
-});
+    configurator.AddConsumer<OnEventStartedConsumer>();
+    configurator.AddConsumer<BeforeEventStartedConsumer>();
+    configurator.AddConsumer<BeforeTaskDueDateConsumer>();
 
-builder.Services.AddValidatorsFromAssemblyContaining(typeof(BaseTagValidator<>));
-
-builder.Services.AddAutoMapper(config =>
-{
-    config.AddProfile<MappingProfile>();
-});
-
-builder.Services.RegisterInfrastructureServices();
-builder.Services.RegisterRequestHandlers();
-
-var connectionString = Environment.GetEnvironmentVariable(ConfigConstants.ProjectsDbConnectionStringEnvKey);
-
-builder.Services.AddHangfire(configuration =>
-{
-    configuration.UseSqlServerStorage(connectionString)
-        .UseColouredConsoleLogProvider()
-        .UseSimpleAssemblyNameTypeSerializer()
-        .UseRecommendedSerializerSettings();
-});
-
-builder.Services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
-{
-    optionsBuilder.UseSqlServer(connectionString);
-});
-
-builder.Services.AddMassTransit(massTransitConfig =>
-{
-    massTransitConfig.UsingRabbitMq((context, cfg) =>
+    configurator.UsingRabbitMq((context, cfg) =>
     {
         var eventBusConnectionString =
             Environment.GetEnvironmentVariable(CommonConstants.EVENT_BUS_CONNECTION_STRING_KEY);
         ArgumentNullException.ThrowIfNull(eventBusConnectionString);
 
         cfg.Host(new Uri(eventBusConnectionString));
+        cfg.ConfigureEndpoints(context);
     });
 });
 
 var app = builder.Build();
-
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseSerilogRequestLogging();
-
-app.UseHangfireDashboard();
-app.UseHangfireServer();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsDockerComposeEnvironment())
 {
     IdentityModelEventSource.ShowPII = true;
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseODataRouteDebug();
 }
 
-app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
+app.UseCors(corsPolicyBuilder => corsPolicyBuilder
+    .AllowAnyOrigin()
+    .AllowAnyHeader()
+    .AllowAnyMethod()
     .WithExposedHeaders("X-Correlation-id"));
 
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
 app.Run();

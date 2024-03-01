@@ -82,7 +82,7 @@ export const FiltersHeader = ({
       <Col span={6}>
         <Input value={searchItemsInputValue} onChange={onSearchFilterUpdate} allowClear placeholder={'Search items'} />
       </Col>
-      <Col span={6} offset={1} className={styles.controlGroup}>
+      <Col flex={'auto'} className={styles.controlGroup}>
         {selectionInfo ? (
           <Button.Group size={'middle'}>
             <Button icon={<CloseOutlined />} onClick={onSelectionCancel}>

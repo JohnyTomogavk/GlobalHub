@@ -11,5 +11,5 @@ export interface ProjectItemFormModel {
   taskStatus?: TaskStatus;
   dateRange: [dayjs.Dayjs, dayjs.Dayjs];
   parentProjectItemId?: number;
-  tagIds: number[];
+  tagIds?: number[];
 }

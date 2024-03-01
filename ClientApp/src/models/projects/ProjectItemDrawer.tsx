@@ -25,6 +25,7 @@ import { HttpStatusCode } from 'axios';
 import useNewTagFormWatcher from '../../hooks/api/useNewTagFormWatcher';
 import { TagDto } from '../../dto/budgetTags/tagDto';
 import { useSearchParams } from 'react-router-dom';
+import dayjs from 'dayjs';
 
 const { TextArea } = Input;
 
@@ -170,7 +171,7 @@ export const ProjectItemDrawer = ({
     const { status } = await projectTagsApi.deleteTag(tagIdToDelete);
 
     if (status === HttpStatusCode.Ok) {
-      const selectedTags = projectItemFormInstance.getFieldsValue().tagIds;
+      const selectedTags = projectItemFormInstance.getFieldsValue().tagIds ?? [];
       const newSelectedTagsValues = selectedTags.filter((tagId: number) => tagId !== tagId);
       projectItemFormInstance.setFieldValue(nameof<ProjectItemFormModel>('tagIds'), newSelectedTagsValues);
 
@@ -243,6 +244,9 @@ export const ProjectItemDrawer = ({
                     <RangePicker
                       format="YYYY-MM-DD HH:mm"
                       style={{ width: '100%' }}
+                      showTime={{
+                        defaultValue: [dayjs('9:00:00', 'HH:mm:ss'), dayjs('18:00:00', 'HH:mm:ss')],
+                      }}
                       placeholder={['Start date', 'Due date']}
                       allowEmpty={[true, true]}
                     />
