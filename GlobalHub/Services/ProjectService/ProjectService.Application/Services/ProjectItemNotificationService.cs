@@ -5,13 +5,16 @@ public class ProjectItemNotificationService : IProjectItemNotificationService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IPublishEndpoint _publisherEndpoint;
+    private readonly IMapper _mapper;
 
     public ProjectItemNotificationService(
         ApplicationDbContext dbContext,
-        IPublishEndpoint publisherEndpoint)
+        IPublishEndpoint publisherEndpoint,
+        IMapper mapper)
     {
         this._dbContext = dbContext;
         this._publisherEndpoint = publisherEndpoint;
+        this._mapper = mapper;
     }
 
     public async Task RaiseBeforeEventStartedNotification(long eventId, DateTime eventStartDate)
@@ -23,12 +26,7 @@ public class ProjectItemNotificationService : IProjectItemNotificationService
             return;
         }
 
-        var message = new BeforeEventStartedNotification
-        {
-            RecipientId = projectItem.CreatedBy,
-            ProjectTitle = projectItem.Project.Title,
-            ProjectItemTitle = projectItem.Title,
-        };
+        var message = this._mapper.Map<BeforeEventStartedNotificationMessage>(projectItem);
 
         await this._publisherEndpoint.Publish(message);
     }
@@ -42,12 +40,7 @@ public class ProjectItemNotificationService : IProjectItemNotificationService
             return;
         }
 
-        var message = new OnEventStartedNotification
-        {
-            RecipientId = projectItem.CreatedBy,
-            ProjectTitle = projectItem.Project.Title,
-            ProjectItemTitle = projectItem.Title,
-        };
+        var message = this._mapper.Map<OnEventStartedNotificationMessage>(projectItem);
 
         await this._publisherEndpoint.Publish(message);
     }
@@ -61,13 +54,7 @@ public class ProjectItemNotificationService : IProjectItemNotificationService
             return;
         }
 
-        var message = new BeforeTaskDueDatedIsReachedNotification
-        {
-            RecipientId = projectItem.CreatedBy,
-            ProjectTitle = projectItem.Project.Title,
-            DueDate = projectItem.DueDate.Value,
-            ProjectItemTitle = projectItem.Title,
-        };
+        var message = this._mapper.Map<BeforeTaskDueDatedIsReachedNotificationMessage>(projectItem);
 
         await this._publisherEndpoint.Publish(message);
     }

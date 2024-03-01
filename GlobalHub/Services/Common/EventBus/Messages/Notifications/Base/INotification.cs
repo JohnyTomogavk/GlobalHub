@@ -6,5 +6,8 @@
 [ExcludeFromTopology]
 public interface INotification
 {
+    /// <summary>
+    /// User' id that is going to receive the notification
+    /// </summary>
     public string RecipientId { get; init; }
 }
