@@ -128,7 +128,7 @@ export const TagSelector = ({
         onChange={onChange}
         filterOption={(a: string, b: DefaultOptionType | undefined): boolean => filterOptionSelectHandler(a, b)}
         mode={isTagCreatorEnabled ? 'tags' : 'multiple'}
-        bordered={bordered}
+        variant={bordered === true || bordered === undefined ? 'outlined' : 'borderless'}
         tagRender={(tagProps: CustomTagProps): ReactElement => {
           const isTagJustCreated = typeof tagProps.value === 'string';
 
