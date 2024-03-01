@@ -4,6 +4,8 @@ builder.Configuration.AddEnvFilesToConfiguration();
 builder.Services.AddHttpContextAccessor();
 builder.Host.UseSerilog(SerilogExtensions.LoggerConfiguration);
 
+builder.Services.AddSignalR();
+builder.Services.AddCors();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(action =>
 {
@@ -44,6 +46,21 @@ builder.Services.AddAuthentication("Bearer")
                     HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
             };
         }
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+
+                if (!string.IsNullOrEmpty(accessToken))
+                {
+                    context.Token = accessToken;
+                }
+
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddAuthorization(options =>
@@ -70,6 +87,14 @@ builder.Services.AddMassTransit(configurator =>
     });
 });
 
+builder.Services.AddAutoMapper(config =>
+{
+    config.AddProfile<MappingProfile>();
+});
+
+builder.Services.AddScoped<NotificationStorageService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 var app = builder.Build();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseSerilogRequestLogging();
@@ -81,13 +106,19 @@ if (app.Environment.IsDevelopment() || app.Environment.IsDockerComposeEnvironmen
     app.UseSwaggerUI();
 }
 
-app.UseCors(corsPolicyBuilder => corsPolicyBuilder
-    .AllowAnyOrigin()
-    .AllowAnyHeader()
-    .AllowAnyMethod()
-    .WithExposedHeaders("X-Correlation-id"));
+app.UseCors(corsPolicyBuilder =>
+    corsPolicyBuilder
+        .SetIsOriginAllowed(s => true)
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials()
+        .WithExposedHeaders("X-Correlation-id"));
+
+app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
+
+app.MapHub<NotificationHub>("notifications");
+
 app.Run();
