@@ -3,7 +3,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvFilesToConfiguration();
 builder.Services.AddHttpContextAccessor();
 builder.Host.UseSerilog(SerilogExtensions.LoggerConfiguration);
-builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(action =>
