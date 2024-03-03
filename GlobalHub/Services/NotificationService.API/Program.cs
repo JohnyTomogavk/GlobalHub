@@ -6,6 +6,7 @@ builder.Host.UseSerilog(SerilogExtensions.LoggerConfiguration);
 
 builder.Services.AddSignalR();
 builder.Services.AddCors();
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(action =>
 {
@@ -115,9 +116,9 @@ app.UseCors(corsPolicyBuilder =>
         .WithExposedHeaders("X-Correlation-id"));
 
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapControllers();
 
 app.MapHub<NotificationHub>("notifications");
 

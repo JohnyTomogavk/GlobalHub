@@ -1,4 +1,5 @@
-﻿global using AutoMapper;
+﻿global using System.Text.Json.Serialization;
+global using AutoMapper;
 global using Common.Constants;
 global using Common.EventBus.Enums;
 global using Common.EventBus.Messages.Notifications;

@@ -28,20 +28,15 @@ public class NotificationHub : Hub
     /// <summary>
     /// Marks notification as viewed
     /// </summary>
-    public async Task MarkNotificationsAsViewed(IEnumerable<string> notificationIds)
+    public async Task MarkNotificationAsViewed(string notificationId)
     {
-        var documentsId = notificationIds.Select(id =>
+        var isIdValid = ObjectId.TryParse(notificationId, out _);
+
+        if (!isIdValid)
         {
-            var isIdValid = ObjectId.TryParse(id, out var notificationDocumentId);
+            throw new ValidationException("Object id is not valid");
+        }
 
-            if (!isIdValid)
-            {
-                throw new ValidationException("Object id is not valid");
-            }
-
-            return notificationDocumentId;
-        });
-
-        await _notificationStorageService.SetNotificationsViewed(documentsId);
+        await _notificationStorageService.SetNotificationsViewed(notificationId);
     }
 }

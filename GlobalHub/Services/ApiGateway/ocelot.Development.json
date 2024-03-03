@@ -114,6 +114,27 @@
       }
     },
     {
+      "UpstreamPathTemplate": "/notifications-api/{path}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "OPTIONS"
+      ],
+      "DownstreamPathTemplate": "/api/v1/{path}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5068
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [
+          "GlobalHub.NotificationsAPI"
+        ]
+      }
+    },
+    {
       "UpstreamPathTemplate": "/notifications-api/hubs/{path}",
       "DownstreamPathTemplate": "/{path}",
       "DownstreamScheme": "wss",
