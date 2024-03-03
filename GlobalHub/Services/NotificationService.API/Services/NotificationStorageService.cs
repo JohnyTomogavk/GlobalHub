@@ -34,22 +34,23 @@ public class NotificationStorageService
     /// <summary>
     /// Sets notification's state to viewed by user
     /// </summary>
-    /// <param name="notificationIds">Notification's Ids.</param>
-    public async Task SetNotificationsViewed(IEnumerable<ObjectId> notificationIds)
+    /// <param name="notificationId">Notification's Id.</param>
+    public async Task SetNotificationsViewed(string notificationId)
     {
         var userId = _userService.UserId;
-        var notifications = await (await
-                _notificationsCollection.FindAsync(notification => notificationIds.Contains(notification.Id)))
-            .ToListAsync();
+        var notification = await (await
+                _notificationsCollection.FindAsync(notification => notification.Id == notificationId))
+            .SingleOrDefaultAsync();
 
-        if (notifications.Any(notification => notification.RecipientId != userId))
+        if (notification.RecipientId != userId)
         {
             throw new AccessDeniedException();
         }
 
+        var update = Builders<NotificationBase>.Update.Set(notification => notification.HasBeenViewed, true);
         await this._notificationsCollection.UpdateManyAsync(
-            filter => notificationIds.Contains(filter.Id),
-            new BsonDocument(nameof(NotificationBase.HasBeenViewed), true));
+            filter => filter.Id == notificationId,
+            update);
     }
 
     /// <summary>
@@ -59,10 +60,11 @@ public class NotificationStorageService
     /// <returns>User's notifications.</returns>
     public async Task<IEnumerable<NotificationBase>> GetUserNotification(string userId)
     {
-        var notifications =
+        var notificationsCursor =
             await this._notificationsCollection.FindAsync(
                 new BsonDocument(nameof(NotificationBase.RecipientId), userId));
+        var notifications = await notificationsCursor.ToListAsync();
 
-        return await notifications.ToListAsync();
+        return notifications;
     }
 }

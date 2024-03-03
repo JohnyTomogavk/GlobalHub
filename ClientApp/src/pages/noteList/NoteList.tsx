@@ -93,7 +93,6 @@ export const NoteList = (): JSX.Element => {
       dataSource={notes}
       rowKey={(item: NoteTableItem): Key => item.id}
       pagination={false}
-      bordered
     />
   );
 };

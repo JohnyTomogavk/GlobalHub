@@ -3,6 +3,7 @@
 /// <summary>
 /// Controller manages notifications
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/v1/[controller]/[action]")]
 public class NotificationsController : ControllerBase
@@ -21,8 +22,10 @@ public class NotificationsController : ControllerBase
     /// </summary>
     /// <returns>User's notification's</returns>
     [HttpGet]
-    public async Task<IEnumerable<NotificationBase>> GetUserNotifications()
+    public async Task<ActionResult<IEnumerable<NotificationBase>>> GetUserNotifications()
     {
-        return await _notificationStorageService.GetUserNotification(_userService.UserId);
+        var notifications = await _notificationStorageService.GetUserNotification(_userService.UserId);
+
+        return StatusCode(StatusCodes.Status200OK, notifications);
     }
 }

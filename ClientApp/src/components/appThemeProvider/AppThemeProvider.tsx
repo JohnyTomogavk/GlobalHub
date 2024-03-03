@@ -1,4 +1,4 @@
-import { ConfigProvider, theme } from 'antd';
+import { App, ConfigProvider, theme } from 'antd';
 import { observer } from 'mobx-react-lite';
 import uiConfigStore from '../../store/uiConfigStore';
 import React from 'react';
@@ -15,7 +15,7 @@ export const AppThemeProvider = observer(({ children }: { children: JSX.Element 
         },
       }}
     >
-      {children}
+      <App>{children}</App>
     </ConfigProvider>
   );
 });

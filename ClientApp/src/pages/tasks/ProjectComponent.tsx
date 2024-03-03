@@ -348,7 +348,7 @@ export const ProjectComponent = observer((): JSX.Element => {
           onChange={(e) => onProjectTitleUpdate(e.target.value)}
           className={styles.projectTitle}
           placeholder={PROJECT_DEFAULT_NAME}
-          bordered={false}
+          variant={'borderless'}
         />
         <Tabs
           size={'small'}
