@@ -12,7 +12,9 @@ export const oidcConfig: AuthProviderProps = {
   redirect_uri: getEnvVar('REDIRECT_URI', process.env.REDIRECT_URI),
   post_logout_redirect_uri: getEnvVar('POST_LOGOUT_REDIRECT_URI', process.env.POST_LOGOUT_REDIRECT_URI),
   response_type: 'code',
-  scope: 'GlobalHub.BudgetsAPI GlobalHub.NotesAPI GlobalHub.ProjectsAPI GlobalHub.API_Gateway openid profile',
+  scope:
+    'GlobalHub.BudgetsAPI GlobalHub.NotesAPI GlobalHub.ProjectsAPI GlobalHub.NotificationsAPI' +
+    ' GlobalHub.API_Gateway openid profile',
   automaticSilentRenew: true,
   userStore: new WebStorageStateStore({ store: window.localStorage }),
 };

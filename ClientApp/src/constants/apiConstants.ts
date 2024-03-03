@@ -5,6 +5,7 @@ export const API_GATEWAY_BASE = getEnvVar('API_GATEWAY_URL', process.env.API_GAT
 // API Suffixes
 export const NOTES_API_SUFFIX = 'notes-api';
 export const BUDGETS_API_SUFFIX = 'budgets-api';
+export const NOTIFICATIONS_API_SUFFIX = 'notifications-api';
 export const PROJECTS_API_SUFFIX = 'projects-api';
 export const PROJECTS_ODATA_API_SUFFIX = 'projects-api/odata';
 export const IDENTITY_API_SUFFIX = 'identity-api';
@@ -63,3 +64,6 @@ export const DELETE_PROJECT_ITEMS = '/ProjectItems/DeleteProjectItems';
 export const CREATE_PROJECT_TAG = '/Tags/Create';
 export const UPDATE_PROJECT_TAG = '/Tags/Update';
 export const DELETE_PROJECT_TAG = '/Tags/Delete';
+
+// Constants related to notifications
+export const GET_USER_NOTIFICATIONS = '/Notifications/GetUserNotifications';
