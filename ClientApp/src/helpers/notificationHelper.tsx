@@ -7,8 +7,10 @@ import { Flex, Typography } from 'antd';
 import { BellOutlined, CalendarOutlined, FieldTimeOutlined, QuestionOutlined } from '@ant-design/icons';
 import { BeforeEventStartedNotification } from '../entities/notifications/beforeEventStartedNotification';
 import { BeforeTaskDueDateNotification } from '../entities/notifications/beforeTaskDueDateNotification';
-import { capitalize } from 'lodash';
 import ReactTimeAgo from 'react-time-ago';
+import { Link } from 'react-router-dom';
+import { getClientItemUrl } from './urlHelper';
+import { PROJECT_RESOURCE_NAME } from '../constants/resourceConstants';
 
 const { Text } = Typography;
 
@@ -28,7 +30,7 @@ const eventTypeToNotificationIcon = {
   [EEventType.BeforeTaskDueDate]: <FieldTimeOutlined />,
 };
 
-const getDescriptionRetriever = (notification: NotificationBase, makeTitlesLinked: boolean): (() => ReactNode) => {
+const getDescriptionRetriever = (notification: NotificationBase, linkifyTitles: boolean): (() => ReactNode) => {
   let func: () => ReactNode;
 
   switch (notification.eventType) {
@@ -38,11 +40,18 @@ const getDescriptionRetriever = (notification: NotificationBase, makeTitlesLinke
     case EEventType.OnEventStarted:
       func = (): ReactNode => {
         const concreteNotification = notification as OnEventStartedNotification;
+        const projectUrl = getClientItemUrl(PROJECT_RESOURCE_NAME, concreteNotification.projectId);
 
         return (
           <Text>
-            <Text strong>{capitalize(concreteNotification.projectItemTitle)}</Text> in&nbsp;
-            <Text strong>{concreteNotification.projectTitle}</Text> has been started.
+            <Text strong>{concreteNotification.projectItemTitle}</Text>
+            &nbsp;in&nbsp;
+            {linkifyTitles ? (
+              <Link to={projectUrl}>{concreteNotification.projectTitle}</Link>
+            ) : (
+              <Text strong>{concreteNotification.projectTitle}</Text>
+            )}
+            &nbsp;has been started.
           </Text>
         );
       };
@@ -50,11 +59,18 @@ const getDescriptionRetriever = (notification: NotificationBase, makeTitlesLinke
     case EEventType.BeforeEventStarted:
       func = (): ReactNode => {
         const concreteNotification = notification as BeforeEventStartedNotification;
+        const projectUrl = getClientItemUrl(PROJECT_RESOURCE_NAME, concreteNotification.projectId);
 
         return (
           <Text>
-            <Text strong>{capitalize(concreteNotification.projectItemTitle)}</Text> in&nbsp;
-            <Text strong>{concreteNotification.projectTitle}</Text> is about to start.
+            <Text strong>{concreteNotification.projectItemTitle}</Text>
+            &nbsp;in&nbsp;
+            {linkifyTitles ? (
+              <Link to={projectUrl}>{concreteNotification.projectTitle}</Link>
+            ) : (
+              <Text strong>{concreteNotification.projectTitle}</Text>
+            )}
+            &nbsp;is about to start.
           </Text>
         );
       };
@@ -62,11 +78,18 @@ const getDescriptionRetriever = (notification: NotificationBase, makeTitlesLinke
     case EEventType.BeforeTaskDueDate:
       func = (): ReactNode => {
         const concreteNotification = notification as BeforeTaskDueDateNotification;
+        const projectUrl = getClientItemUrl(PROJECT_RESOURCE_NAME, concreteNotification.projectId);
 
         return (
           <Text>
-            <Text strong>{capitalize(concreteNotification.projectItemTitle)}</Text> in&nbsp;
-            <Text strong>{concreteNotification.projectTitle}</Text> is about to reach due date -&nbsp;
+            <Text strong>{concreteNotification.projectItemTitle}</Text>
+            &nbsp;in&nbsp;
+            {linkifyTitles ? (
+              <Link to={projectUrl}>{concreteNotification.projectTitle}</Link>
+            ) : (
+              <Text strong>{concreteNotification.projectTitle}</Text>
+            )}
+            &nbsp;is about to reach due date -&nbsp;
             {concreteNotification.dueDate.toString()}
           </Text>
         );

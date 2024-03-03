@@ -32,7 +32,9 @@ const UserToolBar = observer((): JSX.Element => {
   const { notification } = App.useApp();
   const notificationsApi = useNotificationsApi();
   const [notifications, setNotifications] = useState<NotificationModel[]>([]);
-  const unviewedNotificationsCount = notifications.filter((t: NotificationModel) => !t.hasBeenViewed).length;
+  const uncheckedNotificationsCount = notifications.filter(
+    (notificationModel: NotificationModel) => !notificationModel.hasBeenViewed
+  ).length;
 
   const onNotificationViewedConnection = async (id: string): Promise<void> => {
     if (notificationHub === null) return;
@@ -140,7 +142,7 @@ const UserToolBar = observer((): JSX.Element => {
         autoAdjustOverflow={true}
         overlayClassName={styles.notificationOverlay}
       >
-        <Badge size="small" count={unviewedNotificationsCount}>
+        <Badge size="small" count={uncheckedNotificationsCount}>
           <Button title={'Notifications'} icon={<BellOutlined />}></Button>
         </Badge>
       </Popover>
