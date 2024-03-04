@@ -296,7 +296,7 @@ export const BudgetComponent = observer((): JSX.Element => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || !budgetDto) {
     return (
       <div className={styles.loaderContainer}>
         <Loader />
@@ -319,8 +319,8 @@ export const BudgetComponent = observer((): JSX.Element => {
           }
         }}
         breadCrumbsItems={breadCrumbsItems}
-        editedAt={budgetDto?.updatedDate}
-        createdAt={budgetDto?.createdDate ?? new Date()}
+        editedAt={new Date(budgetDto?.updatedDate ?? budgetDto.createdDate)}
+        createdAt={new Date(budgetDto.createdDate)}
         isLoading={false}
       />
       <div className={styles.pageContent}>

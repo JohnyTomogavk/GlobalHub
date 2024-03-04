@@ -38,17 +38,12 @@ export const ItemInfoSubHeader = (props: IItemInfoSubHeader): JSX.Element => {
               <Space direction={'vertical'}>
                 <span>
                   Created&nbsp;
-                  <ReactTimeAgo
-                    date={new Date(props.createdAt)}
-                    timeStyle={'round-minute'}
-                    locale={'en'}
-                    tooltip={false}
-                  />
+                  <ReactTimeAgo date={props.createdAt} timeStyle={'round-minute'} locale={'en'} tooltip={false} />
                 </span>
                 <span>
                   Updated&nbsp;
                   <ReactTimeAgo
-                    date={new Date(props.editedAt ? props.editedAt : props.createdAt)}
+                    date={props.editedAt ? props.editedAt : props.createdAt}
                     timeStyle={'round-minute'}
                     locale={'en'}
                     tooltip={false}
@@ -67,7 +62,7 @@ export const ItemInfoSubHeader = (props: IItemInfoSubHeader): JSX.Element => {
                 <>
                   <span>Edited </span>
                   <ReactTimeAgo
-                    date={new Date(props.editedAt ? props.editedAt : props.createdAt)}
+                    date={props.editedAt ? props.editedAt : props.createdAt}
                     timeStyle={'round-minute'}
                     locale={'en'}
                     tooltip={false}
