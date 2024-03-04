@@ -10,5 +10,5 @@ public class BeforeTaskDueDateNotification : NotificationBase
 
     public string ProjectItemTitle { get; set; }
 
-    public DateTime DueDate { get; set; }
+    public DateTimeOffset DueDate { get; set; }
 }

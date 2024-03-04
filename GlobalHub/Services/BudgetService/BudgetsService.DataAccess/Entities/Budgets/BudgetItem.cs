@@ -37,9 +37,9 @@ public class BudgetItem : BaseEntity, IHasDate
     /// </summary>
     public DateTime OperationDate { get; set; }
 
-    public DateTime CreatedDate { get; set; }
+    public DateTimeOffset CreatedDate { get; set; }
 
-    public DateTime? UpdatedDate { get; set; }
+    public DateTimeOffset? UpdatedDate { get; set; }
 
     /// <summary>
     /// Related budget item tags

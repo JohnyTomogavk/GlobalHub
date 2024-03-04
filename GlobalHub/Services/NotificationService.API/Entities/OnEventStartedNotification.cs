@@ -6,7 +6,7 @@ public class OnEventStartedNotification : NotificationBase
 
     public string ProjectTitle { get; set; }
 
-    public DateTime EventStartDate { get; set; }
+    public DateTimeOffset EventStartDate { get; set; }
 
     public long ProjectItemId { get; set; }
 

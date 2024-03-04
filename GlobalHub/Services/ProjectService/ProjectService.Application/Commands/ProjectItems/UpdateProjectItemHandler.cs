@@ -126,7 +126,7 @@ public class UpdateProjectItemHandler : IRequestHandler<ProjectItemUpdateRequest
         this.ScheduleOnEventStartNotification(updatedProjectItem.Id, updatedProjectItem.StartDate!.Value);
     }
 
-    private void ScheduleBeforeEventStartNotification(long projectItemId, DateTime eventStartTime)
+    private void ScheduleBeforeEventStartNotification(long projectItemId, DateTimeOffset eventStartTime)
     {
         var enqueueTime = eventStartTime.AddMinutes(-5);
         this._backgroundJobClient.Schedule(
@@ -136,7 +136,7 @@ public class UpdateProjectItemHandler : IRequestHandler<ProjectItemUpdateRequest
             enqueueTime);
     }
 
-    private void ScheduleOnEventStartNotification(long projectItemId, DateTime eventStartTime)
+    private void ScheduleOnEventStartNotification(long projectItemId, DateTimeOffset eventStartTime)
     {
         this._backgroundJobClient.Schedule(
             () => this._projectItemNotificationService.RaiseOnEventStartedNotification(projectItemId, eventStartTime),
