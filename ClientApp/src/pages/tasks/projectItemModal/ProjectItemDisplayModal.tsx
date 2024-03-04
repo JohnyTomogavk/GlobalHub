@@ -403,7 +403,7 @@ export const ProjectItemDisplayModal = ({
               </Col>
               <Col span={14}>
                 <DatePicker
-                  style={{ width: '100%' }}
+                  style={{ width: '100%', padding: 0 }}
                   format="YYYY-MM-DD HH:mm"
                   maxDate={projectItemModel.dueDate}
                   variant={'borderless'}
@@ -422,7 +422,7 @@ export const ProjectItemDisplayModal = ({
               </Col>
               <Col span={14}>
                 <DatePicker
-                  style={{ width: '100%' }}
+                  style={{ width: '100%', padding: 0 }}
                   format="YYYY-MM-DD HH:mm"
                   minDate={projectItemModel.startDate}
                   variant={'borderless'}

@@ -12,6 +12,7 @@ import { nameof } from '../../helpers/objectHelper';
 import { DefaultOptionType } from 'rc-select/lib/Select';
 import { ColorValues, TagColor } from '../../enums/shared/tagColor';
 import { TagDto } from '../../dto/budgetTags/tagDto';
+import styled from 'styled-components';
 
 interface TagSelectorProps {
   tags: TagDto[];
@@ -30,6 +31,12 @@ const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>): void => {
   event.preventDefault();
   event.stopPropagation();
 };
+
+const AppSelect = styled(Select)`
+  div.ant-select-selector {
+    padding: 0;
+  }
+`;
 
 export const TagSelector = ({
   tags,
@@ -121,7 +128,7 @@ export const TagSelector = ({
           </Button>
         </Popconfirm>
       </Drawer>
-      <Select
+      <AppSelect
         allowClear
         style={{ width: '100%' }}
         value={selectedTagIds}
@@ -198,7 +205,7 @@ export const TagSelector = ({
             </Row>
           </Option>
         ))}
-      </Select>
+      </AppSelect>
     </>
   );
 };
