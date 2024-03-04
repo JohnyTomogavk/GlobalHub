@@ -320,7 +320,7 @@ export const ProjectComponent = observer((): JSX.Element => {
     setSelectedRowKeys([]);
   };
 
-  if (isLoading) {
+  if (isLoading || !project) {
     return (
       <div className={styles.loaderContainer}>
         <Loader />
@@ -332,8 +332,8 @@ export const ProjectComponent = observer((): JSX.Element => {
     <>
       <ItemInfoSubHeader
         isLoading={isLoading}
-        createdAt={project?.createdDate ?? new Date()}
-        editedAt={project?.updatedDate}
+        createdAt={new Date(project.createdDate)}
+        editedAt={new Date(project?.updatedDate ?? project.createdDate)}
         onDeleteCallback={onProjectDeleteCallback}
         breadCrumbsItems={breadCrumbsItems}
       />

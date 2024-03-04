@@ -20,9 +20,9 @@ public class Project : BaseEntity, IHasDate, IHasCreator
     /// </summary>
     public virtual ICollection<ProjectItem> ProjectItems { get; set; } = new List<ProjectItem>();
 
-    public DateTime CreatedDate { get; set; }
+    public DateTimeOffset CreatedDate { get; set; }
 
-    public DateTime? UpdatedDate { get; set; }
+    public DateTimeOffset? UpdatedDate { get; set; }
 
     public string? CreatedBy { get; set; }
 

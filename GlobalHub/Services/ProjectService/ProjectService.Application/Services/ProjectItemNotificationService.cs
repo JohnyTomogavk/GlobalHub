@@ -17,7 +17,7 @@ public class ProjectItemNotificationService : IProjectItemNotificationService
         this._mapper = mapper;
     }
 
-    public async Task RaiseBeforeEventStartedNotification(long eventId, DateTime eventStartDate)
+    public async Task RaiseBeforeEventStartedNotification(long eventId, DateTimeOffset eventStartDate)
     {
         var projectItem = await this.GetProjectItem(eventId);
 
@@ -31,7 +31,7 @@ public class ProjectItemNotificationService : IProjectItemNotificationService
         await this._publisherEndpoint.Publish(message);
     }
 
-    public async Task RaiseOnEventStartedNotification(long eventId, DateTime eventStartDate)
+    public async Task RaiseOnEventStartedNotification(long eventId, DateTimeOffset eventStartDate)
     {
         var projectItem = await this.GetProjectItem(eventId);
 
@@ -45,7 +45,7 @@ public class ProjectItemNotificationService : IProjectItemNotificationService
         await this._publisherEndpoint.Publish(message);
     }
 
-    public async Task RaiseBeforeTaskDueDateNotification(long taskId, DateTime taskDueDate)
+    public async Task RaiseBeforeTaskDueDateNotification(long taskId, DateTimeOffset taskDueDate)
     {
         var projectItem = await this.GetProjectItem(taskId);
 

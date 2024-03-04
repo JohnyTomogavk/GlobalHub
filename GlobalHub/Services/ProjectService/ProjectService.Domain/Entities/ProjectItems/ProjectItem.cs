@@ -27,12 +27,12 @@ public class ProjectItem : BaseEntity, IHasDate, IHasCreator, ICloneable
     /// <summary>
     /// Represents date when task/event is going to be started
     /// </summary>
-    public DateTime? StartDate { get; set; }
+    public DateTimeOffset? StartDate { get; set; }
 
     /// <summary>
     /// Represents date when task/event is going to be finished
     /// </summary>
-    public DateTime? DueDate { get; set; }
+    public DateTimeOffset? DueDate { get; set; }
 
     public virtual ICollection<ProjectItemTag> ProjectItemTags { get; set; } = new List<ProjectItemTag>();
 
@@ -44,9 +44,9 @@ public class ProjectItem : BaseEntity, IHasDate, IHasCreator, ICloneable
 
     public virtual Project? Project { get; set; }
 
-    public DateTime CreatedDate { get; set; }
+    public DateTimeOffset CreatedDate { get; set; }
 
-    public DateTime? UpdatedDate { get; set; }
+    public DateTimeOffset? UpdatedDate { get; set; }
 
     public string? CreatedBy { get; set; }
 

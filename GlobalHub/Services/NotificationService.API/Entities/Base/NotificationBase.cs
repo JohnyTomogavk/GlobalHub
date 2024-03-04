@@ -23,5 +23,5 @@ public class NotificationBase
 
     public string RecipientId { get; set; }
 
-    public DateTime DateReceived { get; set; }
+    public DateTimeOffset DateReceived { get; set; }
 }

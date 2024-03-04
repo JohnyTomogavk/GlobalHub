@@ -10,5 +10,5 @@ public class BeforeEventStartedNotification : NotificationBase
 
     public string ProjectItemTitle { get; set; }
 
-    public DateTime EventStartDate { get; set; }
+    public DateTimeOffset EventStartDate { get; set; }
 }

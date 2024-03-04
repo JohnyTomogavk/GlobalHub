@@ -10,9 +10,9 @@ public record ProjectDto
 
     public ICollection<ProjectItemDto> ProjectItems { get; init; }
 
-    public DateTime CreatedDate { get; init; }
+    public DateTimeOffset CreatedDate { get; init; }
 
-    public DateTime? UpdatedDate { get; init; }
+    public DateTimeOffset? UpdatedDate { get; init; }
 
     public string CreatedBy { get; init; }
 

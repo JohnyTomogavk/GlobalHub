@@ -17,9 +17,9 @@ public class Budget : BaseEntity, IHasDate, IHasCreator
     /// </summary>
     public string BudgetDescription { get; set; } = string.Empty;
 
-    public DateTime CreatedDate { get; set; }
+    public DateTimeOffset CreatedDate { get; set; }
 
-    public DateTime? UpdatedDate { get; set; }
+    public DateTimeOffset? UpdatedDate { get; set; }
 
     /// <summary>
     /// Preserve from incoming percent

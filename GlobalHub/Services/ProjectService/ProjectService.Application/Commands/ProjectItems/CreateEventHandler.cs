@@ -28,7 +28,7 @@ public class CreateEventHandler : BaseCreateProjectItemRequestHandler<CreateEven
         return Task.CompletedTask;
     }
 
-    private void ScheduleBeforeEventStartNotification(long projectItemId, DateTime eventStartTime)
+    private void ScheduleBeforeEventStartNotification(long projectItemId, DateTimeOffset eventStartTime)
     {
         var enqueueTime = eventStartTime.AddMinutes(-5);
         this._backgroundJobClient.Schedule(
@@ -38,7 +38,7 @@ public class CreateEventHandler : BaseCreateProjectItemRequestHandler<CreateEven
             enqueueTime);
     }
 
-    private void ScheduleOnEventStartNotification(long projectItemId, DateTime eventStartTime)
+    private void ScheduleOnEventStartNotification(long projectItemId, DateTimeOffset eventStartTime)
     {
         this._backgroundJobClient.Schedule(
             () => this._projectItemNotificationService.RaiseOnEventStartedNotification(projectItemId, eventStartTime),

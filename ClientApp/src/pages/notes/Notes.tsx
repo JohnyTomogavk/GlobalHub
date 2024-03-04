@@ -130,7 +130,7 @@ export const NotesComponent = observer((): JSX.Element => {
         background: colorBgContainer,
       }}
     >
-      {isEditorLoading ? (
+      {isEditorLoading || !note ? (
         <div className={styles.editorLoader}>
           <Loader />
         </div>
@@ -138,8 +138,8 @@ export const NotesComponent = observer((): JSX.Element => {
         <ItemInfoSubHeader
           onDeleteCallback={onItemDelete}
           breadCrumbsItems={breadCrumbsItems}
-          editedAt={note?.updatedDate}
-          createdAt={note?.createdDate ?? new Date()}
+          editedAt={new Date(note?.updatedDate ?? note.createdDate)}
+          createdAt={new Date(note.createdDate)}
           isLoading={isFetching}
         />
       )}
@@ -155,7 +155,7 @@ export const NotesComponent = observer((): JSX.Element => {
             placeholder={NOTE_EMPTY_TITLE_PLACEHOLDER}
             className={styles.noteTitle}
             onChange={(e) => onTitleUpdate(e.target.value)}
-            bordered={false}
+            variant={'borderless'}
           />
         </div>
         {useMemo(

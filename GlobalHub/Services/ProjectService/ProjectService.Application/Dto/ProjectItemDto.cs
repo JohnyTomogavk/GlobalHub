@@ -14,9 +14,9 @@ public record ProjectItemDto
 
     public ETaskStatus TaskStatus { get; init; }
 
-    public DateTime? StartDate { get; init; }
+    public DateTimeOffset? StartDate { get; init; }
 
-    public DateTime? DueDate { get; init; }
+    public DateTimeOffset? DueDate { get; init; }
 
     public ICollection<ProjectItemTagDto> ProjectItemTags { get; init; }
 
@@ -26,9 +26,9 @@ public record ProjectItemDto
 
     public long ProjectId { get; init; }
 
-    public DateTime CreatedDate { get; init; }
+    public DateTimeOffset CreatedDate { get; init; }
 
-    public DateTime? UpdatedDate { get; init; }
+    public DateTimeOffset? UpdatedDate { get; init; }
 
     public string? CreatedBy { get; init; }
 
