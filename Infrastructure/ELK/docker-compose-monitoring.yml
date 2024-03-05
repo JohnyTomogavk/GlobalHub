@@ -1,8 +1,8 @@
 version: "3.9"
-name: 'global_hub_monitoring'
+name: "global_hub_monitoring"
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.2
     environment:
       - discovery.type=single-node
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
@@ -16,10 +16,12 @@ services:
       - elastic
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:8.8.0
+    image: docker.elastic.co/kibana/kibana:8.12.2
     ports:
       - target: 5601
         published: 5601
+    environment:
+      - ELASTICSEARCH_URL=http://localhost:9200
     depends_on:
       - elasticsearch
     networks:

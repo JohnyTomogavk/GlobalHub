@@ -5,7 +5,7 @@ public static class SerilogExtensions
     public static Action<HostBuilderContext, LoggerConfiguration> LoggerConfiguration =>
         (context, configuration) =>
         {
-            var logStorageUri = Environment.GetEnvironmentVariable("LOG_STORAGE");
+            var logStorageUri = Environment.GetEnvironmentVariable("ELASTIC_SEARCH_URL");
 
             configuration
                 .Enrich.WithMachineName()
