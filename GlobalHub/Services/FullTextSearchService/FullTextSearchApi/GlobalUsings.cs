@@ -1,5 +1,14 @@
-﻿global using Common.Extensions;
+﻿global using Common.Constants;
+global using Common.EventBus.Messages.FullTextSearchModels;
+global using Common.Extensions;
 global using Common.Logging;
+global using Common.Services;
+global using Common.Services.Abstract;
+global using Elastic.Clients.Elasticsearch;
+global using FullTextSearchApi.Configs;
+global using MassTransit;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.IdentityModel.Logging;
 global using Microsoft.OpenApi.Models;
 global using Serilog;

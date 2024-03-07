@@ -9,11 +9,16 @@ public class CreateProjectHandler : IRequestHandler<CreateProjectRequest, Projec
 {
     private readonly ApplicationDbContext _applicationDbContext;
     private readonly IMapper _mapper;
+    private readonly IPublishEndpoint _publishEndpoint;
 
-    public CreateProjectHandler(ApplicationDbContext applicationDbContext, IMapper mapper)
+    public CreateProjectHandler(
+        ApplicationDbContext applicationDbContext,
+        IMapper mapper,
+        IPublishEndpoint publishEndpoint)
     {
         this._applicationDbContext = applicationDbContext;
         this._mapper = mapper;
+        this._publishEndpoint = publishEndpoint;
     }
 
     public async Task<ProjectDto> Handle(CreateProjectRequest request, CancellationToken cancellationToken)
@@ -22,7 +27,14 @@ public class CreateProjectHandler : IRequestHandler<CreateProjectRequest, Projec
         var entityEntry = await this._applicationDbContext.AddAsync(project, cancellationToken);
         await this._applicationDbContext.SaveChangesAsync(cancellationToken);
         var updatedProjectDto = this._mapper.Map<ProjectDto>(entityEntry.Entity);
+        this.IndexCreatedProject(entityEntry.Entity);
 
         return updatedProjectDto;
+    }
+
+    private void IndexCreatedProject(Project createdProject)
+    {
+        var searchItemToIndex = this._mapper.Map<ProjectSearchItem>(createdProject);
+        this._publishEndpoint.Publish(searchItemToIndex);
     }
 }

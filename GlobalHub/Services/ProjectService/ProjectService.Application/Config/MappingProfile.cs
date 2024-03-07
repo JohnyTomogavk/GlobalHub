@@ -98,5 +98,43 @@ public class MappingProfile : Profile
             .ForMember(
                 dst => dst.RecipientId,
                 cfg => cfg.MapFrom(src => src.CreatedBy));
+
+        this.CreateMap<Project, ProjectSearchItem>()
+            .ForMember(
+                dst => dst.ProjectId,
+                cfg => cfg.MapFrom(src => src.Id))
+            .ForMember(
+                dst => dst.Tags,
+                cfg => cfg.MapFrom(src => src.Tags.Select(tag => tag.Title)))
+            .ForMember(
+                dst => dst.UserId,
+                cfg => cfg.MapFrom(src => src.CreatedBy))
+            .ForMember(
+                dst => dst.EntityType,
+                cfg => cfg.MapFrom(dst => EEntityType.Project));
+
+        this.CreateMap<ProjectItem, ProjectItemSearchItem>()
+            .ForMember(
+                dst => dst.ProjectId,
+                cfg => cfg.MapFrom(src => src.ProjectId))
+            .ForMember(
+                dst => dst.ProjectItemId,
+                cfg => cfg.MapFrom(src => src.Id))
+            .ForMember(
+                dst => dst.ProjectTitle,
+                cfg => cfg.MapFrom(src => src.Project.Title))
+            .ForMember(
+                dst => dst.ProjectItemTitle,
+                cfg => cfg.MapFrom(src => src.Title))
+            .ForMember(
+                dst => dst.Tags,
+                cfg =>
+                    cfg.MapFrom(src => src.ProjectItemTags.Select(itemTag => itemTag.Tag.Title)))
+            .ForMember(
+                dst => dst.UserId,
+                cfg => cfg.MapFrom(src => src.CreatedBy))
+            .ForMember(
+                dst => dst.EntityType,
+                cfg => cfg.MapFrom(dst => EEntityType.ProjectItem));
     }
 }

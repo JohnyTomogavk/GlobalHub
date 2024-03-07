@@ -5,6 +5,10 @@ builder.Host.UseSerilog(SerilogExtensions.LoggerConfiguration);
 builder.Services.AddControllers();
 builder.Services.AddCors();
 
+builder.Services.ConfigureMassTransit();
+builder.Services.ConfigureElasticSearch();
+builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(action =>
 {
