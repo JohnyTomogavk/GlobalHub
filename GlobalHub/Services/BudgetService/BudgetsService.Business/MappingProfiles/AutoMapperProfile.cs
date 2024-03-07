@@ -1,4 +1,6 @@
-﻿namespace BudgetsService.Business.MappingProfiles;
+﻿using Common.EventBus.Messages.FullTextSearchModels.Budgets;
+
+namespace BudgetsService.Business.MappingProfiles;
 
 public class AutoMapperProfile : Profile
 {

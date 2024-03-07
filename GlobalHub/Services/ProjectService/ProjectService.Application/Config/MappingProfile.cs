@@ -1,4 +1,6 @@
-﻿namespace ProjectService.Application.Config;
+﻿using Common.EventBus.Messages.FullTextSearchModels.Projects;
+
+namespace ProjectService.Application.Config;
 
 /// <inheritdoc />
 public class MappingProfile : Profile

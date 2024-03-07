@@ -1,6 +1,4 @@
-﻿using FullTextSearchApi.Consumers;
-
-namespace FullTextSearchApi.Configs;
+﻿namespace FullTextSearchApi.Configs;
 
 public static class MassTransitConfig
 {

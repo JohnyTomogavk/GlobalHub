@@ -1,4 +1,6 @@
-﻿namespace ProjectService.Application.Commands.ProjectItems.Base;
+﻿using Common.EventBus.Messages.FullTextSearchModels.Projects;
+
+namespace ProjectService.Application.Commands.ProjectItems.Base;
 
 public abstract class BaseCreateProjectItemRequestHandler<TRequest, TResponse> : IRequestHandler<TRequest, TResponse>
     where TRequest : BaseProjectItemCreateRequest, IRequest<TResponse>

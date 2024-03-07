@@ -1,4 +1,6 @@
-﻿namespace BudgetsService.Business.Services;
+﻿using Common.EventBus.Messages.FullTextSearchModels.Budgets;
+
+namespace BudgetsService.Business.Services;
 
 public class BudgetItemService : IBudgetItemService
 {

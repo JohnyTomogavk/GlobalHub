@@ -1,4 +1,6 @@
-﻿namespace ProjectService.Application.Commands.Projects;
+﻿using Common.EventBus.Messages.FullTextSearchModels.Projects;
+
+namespace ProjectService.Application.Commands.Projects;
 
 public record CreateProjectRequest : IRequest<ProjectDto>;
 

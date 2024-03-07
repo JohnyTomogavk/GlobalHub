@@ -1,4 +1,4 @@
-﻿namespace Common.EventBus.Messages.FullTextSearchModels;
+﻿namespace Common.EventBus.Messages.FullTextSearchModels.Base;
 
 public class BaseSearchItem
 {
