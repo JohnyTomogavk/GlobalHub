@@ -9,6 +9,8 @@ public class BudgetItemService : IBudgetItemService
     private readonly IValidator<BudgetItemUpdateDto> _updateDtoValidator;
     private readonly IAuthorizationService<Budget> _budgetAuthorizationService;
     private readonly IUserService _userService;
+    private readonly IPublishEndpoint _publishEndpoint;
+    private readonly ApplicationDbContext _dbContext;
 
     public BudgetItemService(IBudgetItemRepository budgetItemRepository,
         ITagRepository tagRepository,
@@ -16,7 +18,9 @@ public class BudgetItemService : IBudgetItemService
         IValidator<BudgetItemCreateDto> createDtoValidator,
         IValidator<BudgetItemUpdateDto> updateDtoValidator,
         IAuthorizationService<Budget> budgetAuthorizationService,
-        IUserService userService)
+        IUserService userService,
+        IPublishEndpoint publishEndpoint,
+        ApplicationDbContext dbContext)
     {
         _budgetItemRepository = budgetItemRepository;
         _tagRepository = tagRepository;
@@ -25,6 +29,8 @@ public class BudgetItemService : IBudgetItemService
         _updateDtoValidator = updateDtoValidator;
         _budgetAuthorizationService = budgetAuthorizationService;
         _userService = userService;
+        _publishEndpoint = publishEndpoint;
+        _dbContext = dbContext;
     }
 
     public async Task<BudgetItemPaginatedResponse> GetBudgetItemsByBudgetId(long id,
@@ -88,6 +94,9 @@ public class BudgetItemService : IBudgetItemService
         var createModel = _mapper.Map<BudgetItem>(createDto);
         var createdBudgetItem = await _budgetItemRepository.CreateBudgetItem(createModel);
         var createdBudgetItemDto = _mapper.Map<BudgetItemDto>(createdBudgetItem);
+        await this.UpdateBudgetItemTags(createdBudgetItemDto.Id, createDto.TagIds);
+
+        await this.IndexCreatedBudget(createdBudgetItem.Id);
 
         return createdBudgetItemDto;
     }
@@ -234,5 +243,17 @@ public class BudgetItemService : IBudgetItemService
         }
 
         return budgetItems;
+    }
+
+    private async Task IndexCreatedBudget(long budgetItemId)
+    {
+        var budgetItemToIndex = await this._dbContext.BudgetsItems
+            .Include(t => t.Budget)
+            .Include(t => t.BudgetItemTags)
+            .ThenInclude(t => t.Tag)
+            .SingleOrDefaultAsync(t => t.Id == budgetItemId);
+
+        var searchItem = this._mapper.Map<BudgetItemSearchItem>(budgetItemToIndex);
+        await this._publishEndpoint.Publish(searchItem);
     }
 }

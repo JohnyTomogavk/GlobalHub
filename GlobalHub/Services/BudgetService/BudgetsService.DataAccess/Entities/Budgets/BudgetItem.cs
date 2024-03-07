@@ -5,7 +5,7 @@ namespace BudgetsService.DataAccess.Entities.Budgets;
 /// <summary>
 /// Budget item is operation on budget
 /// </summary>
-public class BudgetItem : BaseEntity, IHasDate
+public class BudgetItem : BaseEntity, IHasDate, IHasCreator
 {
     /// <summary>
     /// Operation title
@@ -55,4 +55,8 @@ public class BudgetItem : BaseEntity, IHasDate
     /// Related budget
     /// </summary>
     public virtual Budget Budget { get; set; }
+
+    public string? CreatedBy { get; set; }
+
+    public string? UpdatedBy { get; set; }
 }

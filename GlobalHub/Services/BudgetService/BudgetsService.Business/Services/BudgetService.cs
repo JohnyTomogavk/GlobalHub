@@ -8,6 +8,7 @@ public class BudgetService : IBudgetService
     private readonly IValidator<UpdateBudgetPreservePercentDto> _preservePercentDto;
     private readonly IAuthorizationService<Budget> _budgetAuthorizationService;
     private readonly IUserService _userService;
+    private readonly IPublishEndpoint _publishEndpoint;
 
     public BudgetService(
         IBudgetRepository budgetRepository,
@@ -15,7 +16,8 @@ public class BudgetService : IBudgetService
         IValidator<Budget> budgetValidator,
         IValidator<UpdateBudgetPreservePercentDto> preservePercentDto,
         IAuthorizationService<Budget> budgetAuthorizationService,
-        IUserService userService)
+        IUserService userService,
+        IPublishEndpoint publishEndpoint)
     {
         _budgetRepository = budgetRepository;
         _mapper = mapper;
@@ -23,6 +25,7 @@ public class BudgetService : IBudgetService
         _preservePercentDto = preservePercentDto;
         _budgetAuthorizationService = budgetAuthorizationService;
         _userService = userService;
+        _publishEndpoint = publishEndpoint;
     }
 
     public async Task<IEnumerable<BudgetMap>> GetUserBudgetsMapAsync(string userId)
@@ -68,6 +71,8 @@ public class BudgetService : IBudgetService
 
         var createdEntity = await _budgetRepository.AddBudget(newBudget);
         var budgetDto = _mapper.Map<BudgetDto>(createdEntity);
+
+        await IndexCreatedBudget(newBudget);
 
         return budgetDto;
     }
@@ -243,5 +248,11 @@ public class BudgetService : IBudgetService
         }
 
         return avgDailyExpenses;
+    }
+
+    private async Task IndexCreatedBudget(Budget budgetToIndex)
+    {
+        var searchItem = this._mapper.Map<BudgetSearchItem>(budgetToIndex);
+        await this._publishEndpoint.Publish(searchItem);
     }
 }
