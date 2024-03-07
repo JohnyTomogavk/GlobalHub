@@ -27,14 +27,14 @@ public class CreateProjectHandler : IRequestHandler<CreateProjectRequest, Projec
         var entityEntry = await this._applicationDbContext.AddAsync(project, cancellationToken);
         await this._applicationDbContext.SaveChangesAsync(cancellationToken);
         var updatedProjectDto = this._mapper.Map<ProjectDto>(entityEntry.Entity);
-        this.IndexCreatedProject(entityEntry.Entity);
+        await this.IndexCreatedProject(entityEntry.Entity, cancellationToken);
 
         return updatedProjectDto;
     }
 
-    private void IndexCreatedProject(Project createdProject)
+    private async Task IndexCreatedProject(Project createdProject, CancellationToken cancellationToken)
     {
         var searchItemToIndex = this._mapper.Map<ProjectSearchItem>(createdProject);
-        this._publishEndpoint.Publish(searchItemToIndex);
+        await this._publishEndpoint.Publish(searchItemToIndex, cancellationToken);
     }
 }
