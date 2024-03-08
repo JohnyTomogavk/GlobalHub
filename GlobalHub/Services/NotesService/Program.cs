@@ -42,6 +42,18 @@ builder.Services.AddAuthorization(options =>
     })
 );
 
+builder.Services.AddMassTransit(massTransitConfig =>
+{
+    massTransitConfig.UsingRabbitMq((context, cfg) =>
+    {
+        var eventBusConnectionString =
+            Environment.GetEnvironmentVariable(CommonConstants.EVENT_BUS_CONNECTION_STRING_KEY);
+        ArgumentNullException.ThrowIfNull(eventBusConnectionString);
+
+        cfg.Host(new Uri(eventBusConnectionString));
+    });
+});
+
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();

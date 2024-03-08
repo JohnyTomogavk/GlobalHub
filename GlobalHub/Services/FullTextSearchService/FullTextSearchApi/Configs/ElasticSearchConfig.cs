@@ -7,8 +7,8 @@ public static class ElasticSearchConfig
         var elasticSearchConnectionString = Environment.GetEnvironmentVariable("ELASTIC_SEARCH_URL");
         ArgumentException.ThrowIfNullOrEmpty(elasticSearchConnectionString);
         var elasticUri = new Uri(elasticSearchConnectionString);
-        var client = new ElasticsearchClient(new ElasticsearchClientSettings(elasticUri));
-        serviceCollection.AddSingleton(client);
+        var client = new ElasticClient(elasticUri);
+        serviceCollection.AddSingleton<IElasticClient>(client);
 
         return serviceCollection;
     }

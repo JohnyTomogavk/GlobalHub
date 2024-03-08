@@ -7,16 +7,16 @@
 public class SearchItemCreatedConsumer<TSearchItem> : IConsumer<TSearchItem>
     where TSearchItem : BaseSearchItem
 {
-    private readonly ElasticsearchClient _elasticsearchClient;
+    private readonly IElasticClient _elasticClient;
 
-    public SearchItemCreatedConsumer(ElasticsearchClient elasticsearchClient)
+    public SearchItemCreatedConsumer(IElasticClient elasticClient)
     {
-        this._elasticsearchClient = elasticsearchClient;
+        this._elasticClient = elasticClient;
     }
 
     public async Task Consume(ConsumeContext<TSearchItem> context)
     {
-        await this._elasticsearchClient.IndexAsync(
+        await this._elasticClient.IndexAsync(
             context.Message,
             descriptor => descriptor.Index(typeof(TSearchItem).Name.ToLower()));
     }

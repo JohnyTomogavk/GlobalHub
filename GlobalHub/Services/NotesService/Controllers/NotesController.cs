@@ -9,11 +9,13 @@ public class NotesController : ControllerBase
 {
     private readonly INotesRepository _notesRepository;
     private readonly IUserService _userService;
+    private readonly IPublishEndpoint _publishEndpoint;
 
-    public NotesController(INotesRepository notesRepository, IUserService userService)
+    public NotesController(INotesRepository notesRepository, IUserService userService, IPublishEndpoint publishEndpoint)
     {
         _notesRepository = notesRepository;
         _userService = userService;
+        _publishEndpoint = publishEndpoint;
     }
 
     /// <summary>
@@ -73,13 +75,14 @@ public class NotesController : ControllerBase
     /// </summary>
     /// <param name="createNoteDto">Dto that contains data for the new note</param>
     [HttpPost]
-    public ActionResult<Note> CreateNote(CreateNoteDto createNoteDto)
+    public async Task<ActionResult<Note>> CreateNote(CreateNoteDto createNoteDto)
     {
         var newNote = new Note
         {
             CreatedDate = DateTime.Now, Title = createNoteDto.Title, CreatedBy = _userService.UserId
         };
         var createdNote = _notesRepository.Create(newNote);
+        await this.IndexCreatedNote(newNote);
 
         return StatusCode(StatusCodes.Status201Created, createdNote);
     }
@@ -96,6 +99,7 @@ public class NotesController : ControllerBase
         var note = _notesRepository.GetById(id);
         AuthorizeAccessToTheNote(note);
         note.RichTextContent = updateDto.Content;
+        note.HtmlContent = updateDto.HtmlContent;
         note.UpdatedDate = DateTime.Now;
         var updatedNote = _notesRepository.Update(note);
 
@@ -144,4 +148,16 @@ public class NotesController : ControllerBase
     }
 
     private bool IsNoteIdValid(string noteId) => ObjectId.TryParse(noteId, out var _);
+
+    private async Task IndexCreatedNote(Note note)
+    {
+        var noteSearchItem = note.CreateSearchItem(_userService.UserId);
+        await this._publishEndpoint.Publish(noteSearchItem);
+    }
+
+    private async Task ReIndexNote(Note note)
+    {
+        var noteSearchItem = note.CreateSearchItem(_userService.UserId);
+        await this._publishEndpoint.Publish(noteSearchItem);
+    }
 }

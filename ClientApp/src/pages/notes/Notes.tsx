@@ -14,6 +14,7 @@ import useBreadcrumbs from '../../hooks/useBreadcrumbs';
 import useNotesAPI from '../../hooks/api/useNotesApi';
 import { Loader } from '../../components/loader/Loader';
 import debounce from 'lodash/debounce';
+import edjsHTML from 'editorjs-html';
 
 export const NotesComponent = observer((): JSX.Element => {
   const { notesStore, commonSideMenuStore, sideMenuItems } = SideMenuIndexStore;
@@ -34,6 +35,14 @@ export const NotesComponent = observer((): JSX.Element => {
     token: { colorBgContainer },
   } = theme.useToken();
 
+  const getHtmlContentFromEditorJsOutput = (data: OutputData): string => {
+    const edjsParser = edjsHTML();
+    let htmlContent = edjsParser.parse(data);
+    const content = htmlContent.filter(t => !t.toString().startsWith("Error"))
+
+    return content.toString();
+  }
+
   const onNoteContentChange = async (data: OutputData): Promise<void> => {
     if (!note) return;
 
@@ -41,6 +50,7 @@ export const NotesComponent = observer((): JSX.Element => {
 
     const { data: updatedNote } = await notesApi.updateContent(note.id, {
       content: JSON.stringify(data),
+      htmlContent: getHtmlContentFromEditorJsOutput(data)
     });
 
     if (noteRef.current?.id === note.id) {
