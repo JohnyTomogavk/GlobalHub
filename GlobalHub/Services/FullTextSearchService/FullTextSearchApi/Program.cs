@@ -9,6 +9,8 @@ builder.Services.ConfigureMassTransit();
 builder.Services.ConfigureElasticSearch();
 builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.AddAutoMapper(config => { });
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(action =>
 {

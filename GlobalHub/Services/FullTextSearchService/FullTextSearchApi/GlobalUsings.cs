@@ -1,4 +1,5 @@
-﻿global using Common.Constants;
+﻿global using AutoMapper;
+global using Common.Constants;
 global using Common.EventBus.Messages.FullTextSearchModels.Base;
 global using Common.EventBus.Messages.FullTextSearchModels.Budgets;
 global using Common.EventBus.Messages.FullTextSearchModels.Notes;
@@ -9,6 +10,8 @@ global using Common.Services;
 global using Common.Services.Abstract;
 global using FullTextSearchApi.Configs;
 global using FullTextSearchApi.Consumers;
+global using FullTextSearchApi.Consumers.UpdateSearchItems;
+global using FullTextSearchApi.Extensions;
 global using MassTransit;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.IdentityModel.Logging;
