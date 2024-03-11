@@ -98,7 +98,7 @@ public class BudgetController : ControllerBase
     public async Task<ActionResult<long>> DeleteBudgetById(long budgetId)
     {
         var deletedId = await _budgetService.DeleteBudgetById(budgetId);
-        await this._fullTextIndexService.RemoveEntityFromIndex(budgetId);
+        await this._fullTextIndexService.RemoveEntitiesFromIndex(budgetId);
 
         return StatusCode(StatusCodes.Status200OK, deletedId);
     }

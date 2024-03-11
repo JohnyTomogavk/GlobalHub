@@ -9,5 +9,5 @@ public interface IFullTextIndexService<T>
 
     Task UpdateIndexedEntity(long entityId);
 
-    Task RemoveEntityFromIndex(long entityId);
+    Task RemoveEntitiesFromIndex(long entityId);
 }
