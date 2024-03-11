@@ -37,11 +37,11 @@ export const NotesComponent = observer((): JSX.Element => {
 
   const getHtmlContentFromEditorJsOutput = (data: OutputData): string => {
     const edjsParser = edjsHTML();
-    let htmlContent = edjsParser.parse(data);
-    const content = htmlContent.filter(t => !t.toString().startsWith("Error"))
+    const htmlContent = edjsParser.parse(data);
+    const content = htmlContent.filter((t) => !t.toString().startsWith('Error'));
 
     return content.toString();
-  }
+  };
 
   const onNoteContentChange = async (data: OutputData): Promise<void> => {
     if (!note) return;
@@ -50,7 +50,7 @@ export const NotesComponent = observer((): JSX.Element => {
 
     const { data: updatedNote } = await notesApi.updateContent(note.id, {
       content: JSON.stringify(data),
-      htmlContent: getHtmlContentFromEditorJsOutput(data)
+      htmlContent: getHtmlContentFromEditorJsOutput(data),
     });
 
     if (noteRef.current?.id === note.id) {
