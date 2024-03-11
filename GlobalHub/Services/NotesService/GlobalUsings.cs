@@ -3,6 +3,7 @@
 global using System.Security.Claims;
 global using Common.Constants;
 global using Common.EventBus.Enums;
+global using Common.EventBus.Messages.FullTextSearchModels.Base;
 global using Common.EventBus.Messages.FullTextSearchModels.Notes;
 global using Common.ExceptionHandling;
 global using Common.Exceptions;

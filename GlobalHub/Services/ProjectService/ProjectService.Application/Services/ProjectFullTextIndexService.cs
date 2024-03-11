@@ -29,7 +29,9 @@ public class ProjectFullTextIndexService : IFullTextIndexService<Project>
 
     public async Task RemoveEntityFromIndex(long entityId)
     {
-        throw new NotImplementedException();
+        var deleteRequest =
+            new DeleteSearchItemBase<ProjectSearchItem>() { DocumentIds = new[] { entityId.ToString() } };
+        await this._publishEndpoint.Publish(deleteRequest);
     }
 
     private async Task<Project?> GetProject(long entityId)

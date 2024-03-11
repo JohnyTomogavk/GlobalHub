@@ -63,6 +63,7 @@ builder.Services.AddScoped<IProjectItemNotificationService, ProjectItemNotificat
 
 builder.Services.AddScoped<IFullTextIndexService<Project>, ProjectFullTextIndexService>();
 builder.Services.AddScoped<IFullTextIndexService<ProjectItem>, ProjectItemFullTextIndexService>();
+builder.Services.AddScoped<IProjectItemFullTextSearchIndexService, ProjectItemFullTextIndexService>();
 
 builder.Services.AddMediatR(cfg =>
 {

@@ -10,15 +10,18 @@ public class DeleteProjectHandler : IRequestHandler<DeleteProjectRequest, long>
     private readonly ApplicationDbContext _applicationDbContext;
     private readonly IAuthorizationService<Project> _projectAuthService;
     private readonly IUserService _userService;
+    private readonly IFullTextIndexService<Project> _fullTextIndexService;
 
     public DeleteProjectHandler(
         ApplicationDbContext applicationDbContext,
         IAuthorizationService<Project> projectAuthService,
-        IUserService userService)
+        IUserService userService,
+        IFullTextIndexService<Project> fullTextIndexService)
     {
         this._applicationDbContext = applicationDbContext;
         this._projectAuthService = projectAuthService;
         this._userService = userService;
+        this._fullTextIndexService = fullTextIndexService;
     }
 
     public async Task<long> Handle(DeleteProjectRequest request, CancellationToken cancellationToken)
@@ -35,8 +38,8 @@ public class DeleteProjectHandler : IRequestHandler<DeleteProjectRequest, long>
             cancellationToken: cancellationToken);
 
         var removedProject = this._applicationDbContext.Projects.Remove(project);
-
         await this._applicationDbContext.SaveChangesAsync(cancellationToken);
+        await this._fullTextIndexService.RemoveEntityFromIndex(request.ProjectId);
 
         return removedProject.Entity.Id;
     }

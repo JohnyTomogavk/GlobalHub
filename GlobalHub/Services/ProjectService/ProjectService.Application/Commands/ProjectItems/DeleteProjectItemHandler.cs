@@ -7,15 +7,18 @@ public class DeleteProjectItemHandler : IRequestHandler<DeleteProjectItemRequest
     private readonly IAuthorizationService<ProjectItem> _authorizationService;
     private readonly ApplicationDbContext _dbContext;
     private readonly IUserService _userService;
+    private readonly IProjectItemFullTextSearchIndexService _fullTextIndexService;
 
     public DeleteProjectItemHandler(
         IAuthorizationService<ProjectItem> authorizationService,
         ApplicationDbContext dbContext,
-        IUserService userService)
+        IUserService userService,
+        IProjectItemFullTextSearchIndexService fullTextIndexService)
     {
         this._authorizationService = authorizationService;
         this._dbContext = dbContext;
         this._userService = userService;
+        this._fullTextIndexService = fullTextIndexService;
     }
 
     public async Task<long[]> Handle(DeleteProjectItemRequest request, CancellationToken cancellationToken)
@@ -37,6 +40,7 @@ public class DeleteProjectItemHandler : IRequestHandler<DeleteProjectItemRequest
 
         this._dbContext.ProjectItems.RemoveRange(projectItemsToDelete);
         await this._dbContext.SaveChangesAsync(cancellationToken);
+        await this._fullTextIndexService.RemoveManyEntityFromIndex(request.ProjectItemIds.Select(t => t.ToString()));
 
         return request.ProjectItemIds;
     }

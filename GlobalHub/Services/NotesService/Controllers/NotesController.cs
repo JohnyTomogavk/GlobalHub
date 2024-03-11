@@ -135,12 +135,13 @@ public class NotesController : ControllerBase
     /// </summary>
     /// <param name="id">Note's id</param>
     [HttpDelete]
-    public ActionResult<string> DeleteNote(string id)
+    public async Task<ActionResult<string>> DeleteNote(string id)
     {
         var note = _notesRepository.GetById(id);
         AuthorizeAccessToTheNote(note);
 
         _notesRepository.DeleteById(id);
+        await this.DeleteIndexedNote(id);
 
         return Ok(id);
     }
@@ -165,5 +166,11 @@ public class NotesController : ControllerBase
     {
         var noteSearchItem = note.CreateUpdateSearchItem(_userService.UserId);
         await this._publishEndpoint.Publish(noteSearchItem);
+    }
+
+    private async Task DeleteIndexedNote(string noteId)
+    {
+        var deleteRequest = new DeleteSearchItemBase<NoteSearchItem> { DocumentIds = new[] { noteId } };
+        await this._publishEndpoint.Publish(deleteRequest);
     }
 }

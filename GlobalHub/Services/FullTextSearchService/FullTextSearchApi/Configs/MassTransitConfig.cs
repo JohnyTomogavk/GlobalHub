@@ -18,6 +18,12 @@ public static class MassTransitConfig
             configurator.AddConsumer<UpdateBudgetSearchItemConsumer>();
             configurator.AddConsumer<UpdateBudgetItemSearchItemConsumer>();
 
+            configurator.AddConsumer<SearchItemDeleteConsumer<DeleteSearchItemBase<NoteSearchItem>, NoteSearchItem>>();
+            configurator.AddConsumer<SearchItemDeleteConsumer<DeleteSearchItemBase<ProjectSearchItem>, ProjectSearchItem>>();
+            configurator.AddConsumer<SearchItemDeleteConsumer<DeleteSearchItemBase<ProjectItemSearchItem>, ProjectItemSearchItem>>();
+            configurator.AddConsumer<SearchItemDeleteConsumer<DeleteSearchItemBase<BudgetSearchItem>, BudgetSearchItem>>();
+            configurator.AddConsumer<SearchItemDeleteConsumer<DeleteSearchItemBase<BudgetItemSearchItem>, BudgetItemSearchItem>>();
+
             configurator.UsingRabbitMq((context, cfg) =>
             {
                 var eventBusConnectionString =

@@ -27,8 +27,10 @@ public class BudgetFullTextIndexService : IFullTextIndexService<Budget>
         await this._publishEndpoint.Publish(searchItem);
     }
 
-    public Task RemoveEntityFromIndex(long budgetId)
+    public async Task RemoveEntitiesFromIndex(long budgetId)
     {
-        throw new NotImplementedException();
+        var deleteRequest =
+            new DeleteSearchItemBase<BudgetSearchItem>() { DocumentIds = new[] { budgetId.ToString() } };
+        await this._publishEndpoint.Publish(deleteRequest);
     }
 }

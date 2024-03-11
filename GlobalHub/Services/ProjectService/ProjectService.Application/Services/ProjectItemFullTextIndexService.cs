@@ -1,6 +1,6 @@
 ﻿namespace ProjectService.Application.Services;
 
-public class ProjectItemFullTextIndexService : IFullTextIndexService<ProjectItem>
+public class ProjectItemFullTextIndexService : IProjectItemFullTextSearchIndexService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IPublishEndpoint _publishEndpoint;
@@ -32,7 +32,16 @@ public class ProjectItemFullTextIndexService : IFullTextIndexService<ProjectItem
 
     public async Task RemoveEntityFromIndex(long entityId)
     {
-        throw new NotImplementedException();
+        var deleteRequest =
+            new DeleteSearchItemBase<ProjectItemSearchItem>() { DocumentIds = new[] { entityId.ToString() } };
+        await this._publishEndpoint.Publish(deleteRequest);
+    }
+
+    public async Task RemoveManyEntityFromIndex(IEnumerable<string> entityIds)
+    {
+        var deleteRequest =
+            new DeleteSearchItemBase<ProjectItemSearchItem>() { DocumentIds = entityIds.ToArray() };
+        await this._publishEndpoint.Publish(deleteRequest);
     }
 
     private async Task<ProjectItem?> GetProject(long entityId)

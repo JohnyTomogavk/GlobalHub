@@ -10,6 +10,7 @@ global using Common.Services;
 global using Common.Services.Abstract;
 global using FullTextSearchApi.Configs;
 global using FullTextSearchApi.Consumers;
+global using FullTextSearchApi.Consumers.DeleteSearchItem;
 global using FullTextSearchApi.Consumers.UpdateSearchItems;
 global using FullTextSearchApi.Extensions;
 global using MassTransit;

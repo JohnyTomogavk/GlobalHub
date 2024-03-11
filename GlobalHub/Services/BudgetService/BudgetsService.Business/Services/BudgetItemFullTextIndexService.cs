@@ -30,9 +30,11 @@ public class BudgetItemFullTextIndexService : IFullTextIndexService<BudgetItem>
         await this._publishEndpoint.Publish(searchItem);
     }
 
-    public Task RemoveEntityFromIndex(long entityId)
+    public async Task RemoveEntitiesFromIndex(long entityId)
     {
-        throw new NotImplementedException();
+        var deleteRequest =
+            new DeleteSearchItemBase<BudgetItemSearchItem>() { DocumentIds = new[] { entityId.ToString() } };
+        await this._publishEndpoint.Publish(deleteRequest);
     }
 
     private async Task<BudgetItem?> GetBudgetItem(long budgetItemId)
