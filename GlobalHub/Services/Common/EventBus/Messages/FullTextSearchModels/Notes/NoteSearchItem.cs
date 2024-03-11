@@ -1,7 +1,6 @@
-﻿using Nest;
+﻿namespace Common.EventBus.Messages.FullTextSearchModels.Notes;
 
-namespace Common.EventBus.Messages.FullTextSearchModels.Notes;
-
+[ElasticsearchType(IdProperty = nameof(NoteId))]
 public class NoteSearchItem : BaseSearchItem
 {
     public string Title { get; set; }

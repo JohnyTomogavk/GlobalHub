@@ -1,6 +1,4 @@
-﻿using Common.EventBus.Messages.FullTextSearchModels.Budgets;
-
-namespace BudgetsService.Business.MappingProfiles;
+﻿namespace BudgetsService.Business.MappingProfiles;
 
 public class AutoMapperProfile : Profile
 {
@@ -25,14 +23,13 @@ public class AutoMapperProfile : Profile
                 dst => dst.Title,
                 cfg => cfg.MapFrom(src => src.BudgetTitle))
             .ForMember(
-                dst => dst.Tags,
-                cfg => cfg.MapFrom(src => src.BudgetTags.Select(tag => tag.Label)))
-            .ForMember(
                 dst => dst.UserId,
                 cfg => cfg.MapFrom(src => src.CreatedBy))
             .ForMember(
                 dst => dst.EntityType,
                 cfg => cfg.MapFrom(dst => EEntityType.Budget));
+
+        this.CreateMap<Budget, UpdateBudgetSearchItem>().IncludeBase<Budget, BudgetSearchItem>();
 
         this.CreateMap<BudgetItem, BudgetItemSearchItem>()
             .ForMember(
@@ -57,5 +54,7 @@ public class AutoMapperProfile : Profile
             .ForMember(
                 dst => dst.EntityType,
                 cfg => cfg.MapFrom(dst => EEntityType.BudgetItem));
+
+        this.CreateMap<BudgetItem, UpdateBudgetItemSearchItem>().IncludeBase<BudgetItem, BudgetItemSearchItem>();
     }
 }

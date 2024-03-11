@@ -1,5 +1,4 @@
-﻿using BudgetsService.DataAccess.Entities.Budgets;
-using Common.Services;
+﻿using Common.Services;
 
 namespace BudgetsService.Web.Extensions;
 
@@ -24,6 +23,8 @@ public static class ServiceCollectionExtension
         serviceCollection.AddScoped<IDateTimeService, DateTimeService>();
         serviceCollection.AddScoped<IUserService, UserService>();
         serviceCollection.AddScoped<IAuthorizationService<Budget>, BudgetAuthorizationService>();
+        serviceCollection.AddScoped<IFullTextIndexService<Budget>, BudgetFullTextIndexService>();
+        serviceCollection.AddScoped<IFullTextIndexService<BudgetItem>, BudgetItemFullTextIndexService>();
 
         return serviceCollection;
     }

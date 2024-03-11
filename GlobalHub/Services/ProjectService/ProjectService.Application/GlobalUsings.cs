@@ -4,6 +4,7 @@ global using AutoMapper.AspNet.OData;
 global using Common.Constants;
 global using Common.EventBus.Enums;
 global using Common.EventBus.Messages.FullTextSearchModels;
+global using Common.EventBus.Messages.FullTextSearchModels.Projects;
 global using Common.EventBus.Messages.Notifications;
 global using Common.Exceptions;
 global using Common.Services.Abstract;

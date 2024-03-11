@@ -55,4 +55,18 @@ public class Note
 
         return noteSearchItem;
     }
+
+    public UpdateNoteSearchItem CreateUpdateSearchItem(string userId)
+    {
+        var noteSearchItem = new UpdateNoteSearchItem
+        {
+            NoteId = this.Id,
+            Title = this.Title,
+            EntityType = EEntityType.Note,
+            Content = this.HtmlContent,
+            UserId = userId,
+        };
+
+        return noteSearchItem;
+    }
 }

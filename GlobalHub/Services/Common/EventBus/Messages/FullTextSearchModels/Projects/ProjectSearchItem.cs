@@ -1,5 +1,6 @@
 ﻿namespace Common.EventBus.Messages.FullTextSearchModels.Projects;
 
+[ElasticsearchType(IdProperty = nameof(ProjectId))]
 public class ProjectSearchItem : BaseSearchItem
 {
     public string Title { get; set; }

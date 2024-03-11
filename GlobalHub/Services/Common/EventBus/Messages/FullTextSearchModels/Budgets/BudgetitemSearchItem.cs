@@ -1,5 +1,6 @@
 ﻿namespace Common.EventBus.Messages.FullTextSearchModels.Budgets;
 
+[ElasticsearchType(IdProperty = nameof(BudgetItemId))]
 public class BudgetItemSearchItem : BaseSearchItem
 {
     public string BudgetItemTitle { get; set; }

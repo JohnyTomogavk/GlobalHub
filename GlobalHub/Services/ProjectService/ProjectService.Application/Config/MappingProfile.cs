@@ -1,6 +1,4 @@
-﻿using Common.EventBus.Messages.FullTextSearchModels.Projects;
-
-namespace ProjectService.Application.Config;
+﻿namespace ProjectService.Application.Config;
 
 /// <inheritdoc />
 public class MappingProfile : Profile
@@ -138,5 +136,11 @@ public class MappingProfile : Profile
             .ForMember(
                 dst => dst.EntityType,
                 cfg => cfg.MapFrom(dst => EEntityType.ProjectItem));
+
+        this.CreateMap<Project, UpdateProjectSearchItem>()
+            .IncludeBase<Project, ProjectSearchItem>();
+
+        this.CreateMap<ProjectItem, UpdateProjectItemSearchItem>()
+            .IncludeBase<ProjectItem, ProjectItemSearchItem>();
     }
 }
