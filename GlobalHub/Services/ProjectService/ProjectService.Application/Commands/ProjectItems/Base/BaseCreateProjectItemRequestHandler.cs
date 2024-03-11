@@ -1,6 +1,4 @@
-﻿using Common.EventBus.Messages.FullTextSearchModels.Projects;
-
-namespace ProjectService.Application.Commands.ProjectItems.Base;
+﻿namespace ProjectService.Application.Commands.ProjectItems.Base;
 
 public abstract class BaseCreateProjectItemRequestHandler<TRequest, TResponse> : IRequestHandler<TRequest, TResponse>
     where TRequest : BaseProjectItemCreateRequest, IRequest<TResponse>
@@ -9,20 +7,20 @@ public abstract class BaseCreateProjectItemRequestHandler<TRequest, TResponse> :
     private readonly IMapper _mapper;
     private readonly IUserService _userService;
     private readonly IAuthorizationService<Project> _projectAuthorizationService;
-    private readonly IPublishEndpoint _publishEndpoint;
+    private readonly IFullTextIndexService<ProjectItem> _fullTextIndexService;
 
     protected BaseCreateProjectItemRequestHandler(
         ApplicationDbContext dbContext,
         IMapper mapper,
         IUserService userService,
         IAuthorizationService<Project> projectAuthorizationService,
-        IPublishEndpoint publishEndpoint)
+        IFullTextIndexService<ProjectItem> fullTextIndexService)
     {
         this._dbContext = dbContext;
         this._mapper = mapper;
         this._userService = userService;
         this._projectAuthorizationService = projectAuthorizationService;
-        this._publishEndpoint = publishEndpoint;
+        this._fullTextIndexService = fullTextIndexService;
     }
 
     public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken)
@@ -40,7 +38,7 @@ public abstract class BaseCreateProjectItemRequestHandler<TRequest, TResponse> :
         await this._dbContext.SaveChangesAsync(cancellationToken);
         await this.AssignTagsToProjectItem(projectItemToCreate.Id, request.TagIds, cancellationToken);
         await this.PerformAfterCreation(projectItemToCreate);
-        await this.IndexCreatedProject(projectItemToCreate.Id, cancellationToken);
+        await this._fullTextIndexService.IndexCreatedEntity(projectItemToCreate.Id);
 
         return this._mapper.Map<TResponse>(projectItemToCreate);
     }
@@ -62,18 +60,5 @@ public abstract class BaseCreateProjectItemRequestHandler<TRequest, TResponse> :
 
         await this._dbContext.ProjectItemTags.AddRangeAsync(projectTags, cancellationToken);
         await this._dbContext.SaveChangesAsync(cancellationToken);
-    }
-
-    private async Task IndexCreatedProject(long projectItemId, CancellationToken cancellationToken)
-    {
-        var projectItemToIndex =
-            await this._dbContext.ProjectItems
-                .Include(t => t.Project)
-                .Include(t => t.ProjectItemTags)
-                .ThenInclude(t => t.Tag)
-                .SingleOrDefaultAsync(item => item.Id == projectItemId, cancellationToken: cancellationToken);
-
-        var searchItemToIndex = this._mapper.Map<ProjectItemSearchItem>(projectItemToIndex);
-        await this._publishEndpoint.Publish(searchItemToIndex, cancellationToken);
     }
 }

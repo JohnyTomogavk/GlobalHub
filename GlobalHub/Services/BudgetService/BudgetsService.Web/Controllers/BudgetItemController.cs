@@ -9,12 +9,16 @@ public class BudgetItemController : ControllerBase
 {
     private readonly IBudgetItemService _budgetItemService;
     private readonly IDateTimeService _dateTimeService;
+    private readonly IFullTextIndexService<BudgetItem> _bFullTextIndexService;
 
-    public BudgetItemController(IBudgetItemService budgetItemService,
-        IDateTimeService dateTimeService)
+    public BudgetItemController(
+        IBudgetItemService budgetItemService,
+        IDateTimeService dateTimeService,
+        IFullTextIndexService<BudgetItem> bFullTextIndexService)
     {
         _budgetItemService = budgetItemService;
         _dateTimeService = dateTimeService;
+        _bFullTextIndexService = bFullTextIndexService;
     }
 
     /// <summary>
@@ -64,6 +68,7 @@ public class BudgetItemController : ControllerBase
     public async Task<ActionResult<BudgetItemDto>> CreateBudgetItem(BudgetItemCreateDto createDto)
     {
         var createdBudgetItemDto = await _budgetItemService.CreateBudgetItem(createDto);
+        await this._bFullTextIndexService.IndexCreatedEntity(createdBudgetItemDto.Id);
 
         return StatusCode(StatusCodes.Status201Created, createdBudgetItemDto);
     }
@@ -78,6 +83,7 @@ public class BudgetItemController : ControllerBase
     {
         await _budgetItemService.UpdateBudgetItem(updateDto);
         var updatedBudgetItem = await _budgetItemService.UpdateBudgetItemTags(updateDto.Id, updateDto.TagIds);
+        await this._bFullTextIndexService.UpdateIndexedEntity(updatedBudgetItem.Id);
 
         return StatusCode(StatusCodes.Status200OK, updatedBudgetItem);
     }
@@ -91,6 +97,7 @@ public class BudgetItemController : ControllerBase
     public async Task<ActionResult> DeleteBudgetItem(long budgetItemId)
     {
         await _budgetItemService.DeleteBudgetItem(budgetItemId);
+        await this._bFullTextIndexService.UpdateIndexedEntity(budgetItemId);
 
         return StatusCode(StatusCodes.Status200OK, budgetItemId);
     }

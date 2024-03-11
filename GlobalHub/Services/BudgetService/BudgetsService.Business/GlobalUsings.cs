@@ -18,6 +18,7 @@ global using BudgetsService.Infrastructure.Extensions;
 global using BudgetsService.Infrastructure.Models;
 global using Common.EventBus.Enums;
 global using Common.EventBus.Messages.FullTextSearchModels;
+global using Common.EventBus.Messages.FullTextSearchModels.Budgets;
 global using Common.Exceptions;
 global using Common.Services.Abstract;
 global using FluentValidation;

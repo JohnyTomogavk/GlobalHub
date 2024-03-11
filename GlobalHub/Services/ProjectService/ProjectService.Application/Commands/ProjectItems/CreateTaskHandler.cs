@@ -19,8 +19,9 @@ public class CreateTaskHandler : BaseCreateProjectItemRequestHandler<CreateTaskR
         IAuthorizationService<Project> projectAuthorizationService,
         IBackgroundJobClientV2 backgroundJobClient,
         IProjectItemNotificationService projectItemNotificationService,
-        IPublishEndpoint publishContext)
-        : base(dbContext, mapper, userService, projectAuthorizationService, publishContext)
+        IPublishEndpoint publishContext,
+        IFullTextIndexService<ProjectItem> fullTextIndexService)
+        : base(dbContext, mapper, userService, projectAuthorizationService, fullTextIndexService)
     {
         this._backgroundJobClient = backgroundJobClient;
         this._projectItemNotificationService = projectItemNotificationService;

@@ -94,14 +94,17 @@ public class NotesController : ControllerBase
     /// <param name="updateDto">Updated note's content</param>
     /// <returns>Updated note</returns>
     [HttpPut]
-    public ActionResult<Note> UpdateNoteContent(string id, [FromBody] UpdateNoteContentDto updateDto)
+    public async Task<ActionResult<Note>> UpdateNoteContent(string id, [FromBody] UpdateNoteContentDto updateDto)
     {
         var note = _notesRepository.GetById(id);
         AuthorizeAccessToTheNote(note);
+
         note.RichTextContent = updateDto.Content;
         note.HtmlContent = updateDto.HtmlContent;
         note.UpdatedDate = DateTime.Now;
+
         var updatedNote = _notesRepository.Update(note);
+        await this.UpdateIndexedNote(updatedNote);
 
         return Ok(updatedNote);
     }
@@ -113,13 +116,16 @@ public class NotesController : ControllerBase
     /// <param name="updateNoteTitleDto">Updated note's title</param>
     /// <returns>Updated note</returns>
     [HttpPut]
-    public ActionResult<Note> UpdateNoteTitle(string id, [FromBody] UpdateNoteTitleDto updateNoteTitleDto)
+    public async Task<ActionResult<Note>> UpdateNoteTitle(string id, [FromBody] UpdateNoteTitleDto updateNoteTitleDto)
     {
         var note = _notesRepository.GetById(id);
         AuthorizeAccessToTheNote(note);
+
         note.Title = updateNoteTitleDto.NewTitle;
         note.UpdatedDate = DateTime.Now;
+
         var updatedNote = _notesRepository.Update(note);
+        await this.UpdateIndexedNote(updatedNote);
 
         return Ok(updatedNote);
     }
@@ -155,9 +161,9 @@ public class NotesController : ControllerBase
         await this._publishEndpoint.Publish(noteSearchItem);
     }
 
-    private async Task ReIndexNote(Note note)
+    private async Task UpdateIndexedNote(Note note)
     {
-        var noteSearchItem = note.CreateSearchItem(_userService.UserId);
+        var noteSearchItem = note.CreateUpdateSearchItem(_userService.UserId);
         await this._publishEndpoint.Publish(noteSearchItem);
     }
 }

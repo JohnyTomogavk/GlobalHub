@@ -1,6 +1,4 @@
-﻿using Common.EventBus.Messages.FullTextSearchModels.Budgets;
-
-namespace BudgetsService.Business.Services;
+﻿namespace BudgetsService.Business.Services;
 
 public class BudgetService : IBudgetService
 {
@@ -73,8 +71,6 @@ public class BudgetService : IBudgetService
 
         var createdEntity = await _budgetRepository.AddBudget(newBudget);
         var budgetDto = _mapper.Map<BudgetDto>(createdEntity);
-
-        await IndexCreatedBudget(newBudget);
 
         return budgetDto;
     }
@@ -250,11 +246,5 @@ public class BudgetService : IBudgetService
         }
 
         return avgDailyExpenses;
-    }
-
-    private async Task IndexCreatedBudget(Budget budgetToIndex)
-    {
-        var searchItem = this._mapper.Map<BudgetSearchItem>(budgetToIndex);
-        await this._publishEndpoint.Publish(searchItem);
     }
 }

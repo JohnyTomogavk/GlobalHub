@@ -10,12 +10,18 @@ public class BudgetController : ControllerBase
     private readonly IBudgetService _budgetService;
     private readonly IDateTimeService _dateTimeService;
     private readonly IUserService _userService;
+    private readonly IFullTextIndexService<Budget> _fullTextIndexService;
 
-    public BudgetController(IBudgetService budgetService, IDateTimeService dateTimeService, IUserService userService)
+    public BudgetController(
+        IBudgetService budgetService,
+        IDateTimeService dateTimeService,
+        IUserService userService,
+        IFullTextIndexService<Budget> fullTextIndexService)
     {
         _budgetService = budgetService;
         _dateTimeService = dateTimeService;
         _userService = userService;
+        _fullTextIndexService = fullTextIndexService;
     }
 
     /// <summary>
@@ -63,6 +69,7 @@ public class BudgetController : ControllerBase
     public async Task<ActionResult<BudgetDto>> CreateNewBudget([FromBody] CreateBudgetDto newBudgetDto)
     {
         var createdBudget = await _budgetService.AddBudgetAsync(newBudgetDto);
+        await this._fullTextIndexService.IndexCreatedEntity(createdBudget.Id);
 
         return StatusCode(StatusCodes.Status201Created, createdBudget);
     }
@@ -91,6 +98,7 @@ public class BudgetController : ControllerBase
     public async Task<ActionResult<long>> DeleteBudgetById(long budgetId)
     {
         var deletedId = await _budgetService.DeleteBudgetById(budgetId);
+        await this._fullTextIndexService.RemoveEntityFromIndex(budgetId);
 
         return StatusCode(StatusCodes.Status200OK, deletedId);
     }
@@ -105,6 +113,7 @@ public class BudgetController : ControllerBase
     public async Task<ActionResult> UpdateBudgetTitle(long budgetId, [FromBody] BudgetTitleUpdateDto titleDto)
     {
         var updatedEntity = await _budgetService.UpdateBudgetTitle(budgetId, titleDto.Title);
+        await this._fullTextIndexService.UpdateIndexedEntity(budgetId);
 
         return StatusCode(StatusCodes.Status200OK, updatedEntity);
     }
@@ -120,6 +129,7 @@ public class BudgetController : ControllerBase
         [FromBody] BudgetDescriptionUpdateDto descriptionUpdateDto)
     {
         var updatedEntity = await _budgetService.UpdateBudgetDescription(budgetId, descriptionUpdateDto.Description);
+        await this._fullTextIndexService.UpdateIndexedEntity(budgetId);
 
         return StatusCode(StatusCodes.Status200OK, updatedEntity);
     }

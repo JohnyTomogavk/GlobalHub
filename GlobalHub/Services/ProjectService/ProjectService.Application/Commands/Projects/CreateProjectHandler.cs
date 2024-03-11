@@ -1,6 +1,4 @@
-﻿using Common.EventBus.Messages.FullTextSearchModels.Projects;
-
-namespace ProjectService.Application.Commands.Projects;
+﻿namespace ProjectService.Application.Commands.Projects;
 
 public record CreateProjectRequest : IRequest<ProjectDto>;
 
@@ -11,16 +9,16 @@ public class CreateProjectHandler : IRequestHandler<CreateProjectRequest, Projec
 {
     private readonly ApplicationDbContext _applicationDbContext;
     private readonly IMapper _mapper;
-    private readonly IPublishEndpoint _publishEndpoint;
+    private readonly IFullTextIndexService<Project> _fullTextIndexService;
 
     public CreateProjectHandler(
         ApplicationDbContext applicationDbContext,
         IMapper mapper,
-        IPublishEndpoint publishEndpoint)
+        IFullTextIndexService<Project> fullTextIndexService)
     {
         this._applicationDbContext = applicationDbContext;
         this._mapper = mapper;
-        this._publishEndpoint = publishEndpoint;
+        this._fullTextIndexService = fullTextIndexService;
     }
 
     public async Task<ProjectDto> Handle(CreateProjectRequest request, CancellationToken cancellationToken)
@@ -29,14 +27,8 @@ public class CreateProjectHandler : IRequestHandler<CreateProjectRequest, Projec
         var entityEntry = await this._applicationDbContext.AddAsync(project, cancellationToken);
         await this._applicationDbContext.SaveChangesAsync(cancellationToken);
         var updatedProjectDto = this._mapper.Map<ProjectDto>(entityEntry.Entity);
-        await this.IndexCreatedProject(entityEntry.Entity, cancellationToken);
+        await this._fullTextIndexService.IndexCreatedEntity(updatedProjectDto.Id);
 
         return updatedProjectDto;
-    }
-
-    private async Task IndexCreatedProject(Project createdProject, CancellationToken cancellationToken)
-    {
-        var searchItemToIndex = this._mapper.Map<ProjectSearchItem>(createdProject);
-        await this._publishEndpoint.Publish(searchItemToIndex, cancellationToken);
     }
 }
