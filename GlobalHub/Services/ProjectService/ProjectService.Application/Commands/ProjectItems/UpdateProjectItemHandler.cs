@@ -31,6 +31,7 @@ public class UpdateProjectItemHandler : IRequestHandler<ProjectItemUpdateRequest
     private readonly IUserService _userService;
     private readonly IProjectItemNotificationService _projectItemNotificationService;
     private readonly IBackgroundJobClientV2 _backgroundJobClient;
+    private readonly IFullTextIndexService<ProjectItem> _fullTextIndexService;
 
     public UpdateProjectItemHandler(
         ApplicationDbContext dbContext,
@@ -38,7 +39,8 @@ public class UpdateProjectItemHandler : IRequestHandler<ProjectItemUpdateRequest
         IAuthorizationService<ProjectItem> projectItemAuthorizationService,
         IUserService userService,
         IProjectItemNotificationService projectItemNotificationService,
-        IBackgroundJobClientV2 backgroundJobClient)
+        IBackgroundJobClientV2 backgroundJobClient,
+        IFullTextIndexService<ProjectItem> fullTextIndexService)
     {
         this._dbContext = dbContext;
         this._mapper = mapper;
@@ -46,6 +48,7 @@ public class UpdateProjectItemHandler : IRequestHandler<ProjectItemUpdateRequest
         this._userService = userService;
         this._projectItemNotificationService = projectItemNotificationService;
         this._backgroundJobClient = backgroundJobClient;
+        this._fullTextIndexService = fullTextIndexService;
     }
 
     public async Task<ProjectItemDto> Handle(
@@ -73,6 +76,7 @@ public class UpdateProjectItemHandler : IRequestHandler<ProjectItemUpdateRequest
         await this._dbContext.SaveChangesAsync(cancellationToken);
         await this.AssignTagsToProjectItem(projectItemToUpdate, request.TagIds, cancellationToken);
         this.HandleNotifications(originalProjectItem, updatedProjectItem);
+        await this._fullTextIndexService.UpdateIndexedEntity(updatedProjectItem.Id);
 
         return this._mapper.Map<ProjectItemDto>(projectItemToUpdate);
     }

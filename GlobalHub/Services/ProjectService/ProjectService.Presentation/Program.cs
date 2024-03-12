@@ -61,6 +61,10 @@ builder.Services.AddScoped<IAuthorizationService<Tag>, TagAuthorizationService>(
 builder.Services.AddScoped<IAuthorizationService<ProjectItem>, ProjectItemAuthorizationService>();
 builder.Services.AddScoped<IProjectItemNotificationService, ProjectItemNotificationService>();
 
+builder.Services.AddScoped<IFullTextIndexService<Project>, ProjectFullTextIndexService>();
+builder.Services.AddScoped<IFullTextIndexService<ProjectItem>, ProjectItemFullTextIndexService>();
+builder.Services.AddScoped<IProjectItemFullTextSearchIndexService, ProjectItemFullTextIndexService>();
+
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssemblyContaining(typeof(CreateProjectRequest));

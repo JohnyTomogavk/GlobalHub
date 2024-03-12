@@ -7,17 +7,20 @@ public abstract class BaseCreateProjectItemRequestHandler<TRequest, TResponse> :
     private readonly IMapper _mapper;
     private readonly IUserService _userService;
     private readonly IAuthorizationService<Project> _projectAuthorizationService;
+    private readonly IFullTextIndexService<ProjectItem> _fullTextIndexService;
 
     protected BaseCreateProjectItemRequestHandler(
         ApplicationDbContext dbContext,
         IMapper mapper,
         IUserService userService,
-        IAuthorizationService<Project> projectAuthorizationService)
+        IAuthorizationService<Project> projectAuthorizationService,
+        IFullTextIndexService<ProjectItem> fullTextIndexService)
     {
         this._dbContext = dbContext;
         this._mapper = mapper;
         this._userService = userService;
         this._projectAuthorizationService = projectAuthorizationService;
+        this._fullTextIndexService = fullTextIndexService;
     }
 
     public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken)
@@ -35,6 +38,7 @@ public abstract class BaseCreateProjectItemRequestHandler<TRequest, TResponse> :
         await this._dbContext.SaveChangesAsync(cancellationToken);
         await this.AssignTagsToProjectItem(projectItemToCreate.Id, request.TagIds, cancellationToken);
         await this.PerformAfterCreation(projectItemToCreate);
+        await this._fullTextIndexService.IndexCreatedEntity(projectItemToCreate.Id);
 
         return this._mapper.Map<TResponse>(projectItemToCreate);
     }

@@ -9,11 +9,13 @@ public class NotesController : ControllerBase
 {
     private readonly INotesRepository _notesRepository;
     private readonly IUserService _userService;
+    private readonly IPublishEndpoint _publishEndpoint;
 
-    public NotesController(INotesRepository notesRepository, IUserService userService)
+    public NotesController(INotesRepository notesRepository, IUserService userService, IPublishEndpoint publishEndpoint)
     {
         _notesRepository = notesRepository;
         _userService = userService;
+        _publishEndpoint = publishEndpoint;
     }
 
     /// <summary>
@@ -73,13 +75,14 @@ public class NotesController : ControllerBase
     /// </summary>
     /// <param name="createNoteDto">Dto that contains data for the new note</param>
     [HttpPost]
-    public ActionResult<Note> CreateNote(CreateNoteDto createNoteDto)
+    public async Task<ActionResult<Note>> CreateNote(CreateNoteDto createNoteDto)
     {
         var newNote = new Note
         {
             CreatedDate = DateTime.Now, Title = createNoteDto.Title, CreatedBy = _userService.UserId
         };
         var createdNote = _notesRepository.Create(newNote);
+        await this.IndexCreatedNote(newNote);
 
         return StatusCode(StatusCodes.Status201Created, createdNote);
     }
@@ -91,13 +94,17 @@ public class NotesController : ControllerBase
     /// <param name="updateDto">Updated note's content</param>
     /// <returns>Updated note</returns>
     [HttpPut]
-    public ActionResult<Note> UpdateNoteContent(string id, [FromBody] UpdateNoteContentDto updateDto)
+    public async Task<ActionResult<Note>> UpdateNoteContent(string id, [FromBody] UpdateNoteContentDto updateDto)
     {
         var note = _notesRepository.GetById(id);
         AuthorizeAccessToTheNote(note);
+
         note.RichTextContent = updateDto.Content;
+        note.HtmlContent = updateDto.HtmlContent;
         note.UpdatedDate = DateTime.Now;
+
         var updatedNote = _notesRepository.Update(note);
+        await this.UpdateIndexedNote(updatedNote);
 
         return Ok(updatedNote);
     }
@@ -109,13 +116,16 @@ public class NotesController : ControllerBase
     /// <param name="updateNoteTitleDto">Updated note's title</param>
     /// <returns>Updated note</returns>
     [HttpPut]
-    public ActionResult<Note> UpdateNoteTitle(string id, [FromBody] UpdateNoteTitleDto updateNoteTitleDto)
+    public async Task<ActionResult<Note>> UpdateNoteTitle(string id, [FromBody] UpdateNoteTitleDto updateNoteTitleDto)
     {
         var note = _notesRepository.GetById(id);
         AuthorizeAccessToTheNote(note);
+
         note.Title = updateNoteTitleDto.NewTitle;
         note.UpdatedDate = DateTime.Now;
+
         var updatedNote = _notesRepository.Update(note);
+        await this.UpdateIndexedNote(updatedNote);
 
         return Ok(updatedNote);
     }
@@ -125,12 +135,13 @@ public class NotesController : ControllerBase
     /// </summary>
     /// <param name="id">Note's id</param>
     [HttpDelete]
-    public ActionResult<string> DeleteNote(string id)
+    public async Task<ActionResult<string>> DeleteNote(string id)
     {
         var note = _notesRepository.GetById(id);
         AuthorizeAccessToTheNote(note);
 
         _notesRepository.DeleteById(id);
+        await this.DeleteIndexedNote(id);
 
         return Ok(id);
     }
@@ -144,4 +155,22 @@ public class NotesController : ControllerBase
     }
 
     private bool IsNoteIdValid(string noteId) => ObjectId.TryParse(noteId, out var _);
+
+    private async Task IndexCreatedNote(Note note)
+    {
+        var noteSearchItem = note.CreateSearchItem(_userService.UserId);
+        await this._publishEndpoint.Publish(noteSearchItem);
+    }
+
+    private async Task UpdateIndexedNote(Note note)
+    {
+        var noteSearchItem = note.CreateUpdateSearchItem(_userService.UserId);
+        await this._publishEndpoint.Publish(noteSearchItem);
+    }
+
+    private async Task DeleteIndexedNote(string noteId)
+    {
+        var deleteRequest = new DeleteSearchItemBase<NoteSearchItem> { DocumentIds = new[] { noteId } };
+        await this._publishEndpoint.Publish(deleteRequest);
+    }
 }

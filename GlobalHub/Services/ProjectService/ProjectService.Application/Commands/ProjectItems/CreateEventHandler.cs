@@ -13,8 +13,10 @@ public class CreateEventHandler : BaseCreateProjectItemRequestHandler<CreateEven
         IUserService userService,
         IAuthorizationService<Project> projectAuthorizationService,
         IBackgroundJobClientV2 backgroundJobClient,
-        IProjectItemNotificationService projectItemNotificationService)
-        : base(dbContext, mapper, userService, projectAuthorizationService)
+        IProjectItemNotificationService projectItemNotificationService,
+        IPublishEndpoint publishContext,
+        IFullTextIndexService<ProjectItem> fullTextIndexService)
+        : base(dbContext, mapper, userService, projectAuthorizationService, fullTextIndexService)
     {
         this._backgroundJobClient = backgroundJobClient;
         this._projectItemNotificationService = projectItemNotificationService;
