@@ -14,6 +14,6 @@ public class ProjectItemSearchItem : BaseSearchItem
 
     public long ProjectId { get; set; }
 
-    [Text]
+    [Keyword(Normalizer = "lowercase")]
     public IEnumerable<string> Tags { get; set; }
 }

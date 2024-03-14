@@ -19,6 +19,6 @@ public class BudgetItemSearchItem : BaseSearchItem
     [Number(NumberType.Double)]
     public double OperationCost { get; set; }
 
-    [Text]
+    [Keyword(Normalizer = "lowercase")]
     public IEnumerable<string> Tags { get; set; }
 }

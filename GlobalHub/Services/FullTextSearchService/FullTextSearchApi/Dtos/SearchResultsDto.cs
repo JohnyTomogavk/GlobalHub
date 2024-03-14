@@ -2,9 +2,9 @@
 
 public record SearchResultsDto
 {
-    public IEnumerable<ProjectSearchItem> ProjectSearchItems { get; set; }
-    public IEnumerable<ProjectItemSearchItem> ProjectItemSearchItems { get; set; }
-    public IEnumerable<BudgetSearchItem> BudgetSearchItemS { get; set; }
-    public IEnumerable<BudgetItemSearchItem> BudgetItemSearchItems { get; set; }
-    public IEnumerable<NoteSearchItem> NoteSearchItems { get; set; }
+    public IEnumerable<ProjectSearchItem> ProjectSearchItems { get; init; }
+    public IEnumerable<ProjectItemSearchItem> ProjectItemSearchItems { get; init; }
+    public IEnumerable<BudgetSearchItem> BudgetSearchItems { get; init; }
+    public IEnumerable<BudgetItemSearchItem> BudgetItemSearchItems { get; init; }
+    public IEnumerable<NoteSearchItem> NoteSearchItems { get; init; }
 }

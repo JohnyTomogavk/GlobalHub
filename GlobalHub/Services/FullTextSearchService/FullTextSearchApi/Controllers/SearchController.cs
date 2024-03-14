@@ -26,7 +26,7 @@ public class SearchController : ControllerBase
     /// <param name="searchString">User's query string.</param>
     /// <returns>Composed search results.</returns>
     [HttpGet]
-    public async Task<ActionResult<SearchResultsDto>> Search(string searchString)
+    public async Task<ActionResult<SearchResultsDto>> Search(string searchString = "")
     {
         if (string.IsNullOrEmpty(searchString))
         {
@@ -41,8 +41,8 @@ public class SearchController : ControllerBase
                 search.Query(q =>
                     (q.Match(match =>
                          match.Field(o => o.Title)
-                             .Fuzziness(Fuzziness.Auto)
-                             .Query(searchString))
+                             .Query(searchString)
+                             .Fuzziness(Fuzziness.Auto))
                      || q.Term(t => t.Tags, searchString))
                     && +q.Term(t => t.UserId, userId)));
 
@@ -50,9 +50,9 @@ public class SearchController : ControllerBase
                 search.Query(q =>
                     (q.Match(match =>
                          match.Field(o => o.ProjectItemTitle)
+                             .Query(searchString)
                              .Fuzziness(Fuzziness.Auto)
-                             .FuzzyTranspositions()
-                             .Query(searchString))
+                             .FuzzyTranspositions())
                      || q.Term(t => t.Tags, searchString))
                     && +q.Term(t => t.UserId, userId)));
 
@@ -60,23 +60,28 @@ public class SearchController : ControllerBase
                 search.Query(q =>
                     q.Match(match =>
                         match.Field(o => o.Title)
+                            .Query(searchString)
                             .Fuzziness(Fuzziness.Auto)
-                            .FuzzyTranspositions()
-                            .MinimumShouldMatch(MinimumShouldMatch.Fixed(2))
-                            .Query(searchString))
+                            .FuzzyTranspositions())
                     && +q.Term(t => t.UserId, userId)));
 
             ms.Search<BudgetItemSearchItem>(BudgetItemsSearchName, search =>
                 search.Query(q =>
+                (
                     (q.Match(match =>
                          match.Field(o => o.BudgetItemTitle)
                              .Fuzziness(Fuzziness.Auto)
                              .FuzzyTranspositions()
-                             .MinimumShouldMatch(MinimumShouldMatch.Fixed(2))
                              .Query(searchString))
-                     || q.Term(t => t.OperationCost, searchString)
-                     || q.Term(t => t.Tags, searchString))
-                    && +q.Term(t => t.UserId, userId)));
+                     || q.Match(m =>
+                         m.Field(f => f.OperationCost)
+                             .Lenient()
+                             .Query(searchString))
+                     || q.Match(m =>
+                         m.Field(o => o.Tags)
+                             .MinimumShouldMatch(MinimumShouldMatch.Percentage(70))
+                             .Query(searchString)))
+                    && +q.Term(t => t.UserId, userId))));
 
             ms.Search<NoteSearchItem>(NoteSearchName, search =>
                 search.Query(q =>
@@ -88,7 +93,6 @@ public class SearchController : ControllerBase
                      || q.Match(m =>
                          m.Field(o => o.Content)
                              .Fuzziness(Fuzziness.Auto)
-                             .FuzzyTranspositions()
                              .Query(searchString).Analyzer("html_analyzer")))
                     && +q.Term(t => t.UserId, userId)));
 
@@ -108,7 +112,7 @@ public class SearchController : ControllerBase
             ProjectSearchItems = multiSearchResponse.GetResponse<ProjectSearchItem>(ProjectsSearchName).Documents,
             ProjectItemSearchItems =
                 multiSearchResponse.GetResponse<ProjectItemSearchItem>(ProjectItemsSearchName).Documents,
-            BudgetSearchItemS = multiSearchResponse.GetResponse<BudgetSearchItem>(BudgetSearchName).Documents,
+            BudgetSearchItems = multiSearchResponse.GetResponse<BudgetSearchItem>(BudgetSearchName).Documents,
             BudgetItemSearchItems =
                 multiSearchResponse.GetResponse<BudgetItemSearchItem>(BudgetItemsSearchName).Documents,
             NoteSearchItems = multiSearchResponse.GetResponse<NoteSearchItem>(NoteSearchName).Documents,
