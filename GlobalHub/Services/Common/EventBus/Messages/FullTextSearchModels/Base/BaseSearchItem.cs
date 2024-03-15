@@ -10,8 +10,6 @@ public class BaseSearchItem
 {
     [Keyword] public string UserId { get; set; }
 
-    public EEntityType EntityType { get; set; }
-
     /// <summary>
     /// Used for displaying document's match reason
     /// </summary>

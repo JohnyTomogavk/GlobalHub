@@ -108,10 +108,7 @@ public class MappingProfile : Profile
                 cfg => cfg.MapFrom(src => src.Tags.Select(tag => tag.Title)))
             .ForMember(
                 dst => dst.UserId,
-                cfg => cfg.MapFrom(src => src.CreatedBy))
-            .ForMember(
-                dst => dst.EntityType,
-                cfg => cfg.MapFrom(dst => EEntityType.Project));
+                cfg => cfg.MapFrom(src => src.CreatedBy));
 
         this.CreateMap<ProjectItem, ProjectItemSearchItem>()
             .ForMember(
@@ -132,10 +129,7 @@ public class MappingProfile : Profile
                     cfg.MapFrom(src => src.ProjectItemTags.Select(itemTag => itemTag.Tag.Title)))
             .ForMember(
                 dst => dst.UserId,
-                cfg => cfg.MapFrom(src => src.CreatedBy))
-            .ForMember(
-                dst => dst.EntityType,
-                cfg => cfg.MapFrom(dst => EEntityType.ProjectItem));
+                cfg => cfg.MapFrom(src => src.CreatedBy));
 
         this.CreateMap<Project, UpdateProjectSearchItem>()
             .IncludeBase<Project, ProjectSearchItem>();

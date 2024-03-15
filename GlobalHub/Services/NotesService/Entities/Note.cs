@@ -46,11 +46,7 @@ public class Note
     {
         var noteSearchItem = new NoteSearchItem
         {
-            NoteId = this.Id,
-            Title = this.Title,
-            EntityType = EEntityType.Note,
-            Content = this.HtmlContent,
-            UserId = userId,
+            NoteId = this.Id, Title = this.Title, Content = this.HtmlContent, UserId = userId,
         };
 
         return noteSearchItem;
@@ -60,11 +56,7 @@ public class Note
     {
         var noteSearchItem = new UpdateNoteSearchItem
         {
-            NoteId = this.Id,
-            Title = this.Title,
-            EntityType = EEntityType.Note,
-            Content = this.HtmlContent,
-            UserId = userId,
+            NoteId = this.Id, Title = this.Title, Content = this.HtmlContent, UserId = userId,
         };
 
         return noteSearchItem;
