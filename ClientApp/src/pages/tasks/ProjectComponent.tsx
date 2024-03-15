@@ -69,7 +69,7 @@ export const ProjectComponent = observer((): JSX.Element => {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const setLocationSearchParams = useSearchParams()[1];
+  const [locationSearchParams, setLocationSearchParams] = useSearchParams();
   const breadCrumbsItems = useBreadcrumbs(location.pathname, sideMenuItems);
 
   const projectsApi = useProjectsApi();
@@ -197,21 +197,38 @@ export const ProjectComponent = observer((): JSX.Element => {
     setIsProjectItemCreateDrawerOpened(true);
   };
 
-  const onTriggerProjectItemOpen = (projectItemId: number): void => {
-    const projectItemDtoToDisplay = projectItems.filter((e) => e.id === projectItemId)[0];
-    fillChildItems(projectItemDtoToDisplay, projectItems);
+  const onTriggerProjectItemOpen = useCallback(
+    (projectItemId: number): void => {
+      const projectItemDtoToDisplay = projectItems.filter((e) => e.id === projectItemId)[0];
+      fillChildItems(projectItemDtoToDisplay, projectItems);
 
-    setDisplayDrawerConfig({
-      isOpened: true,
-      projectItemToDisplay: projectItemDtoToDisplay,
-    });
-  };
+      setDisplayDrawerConfig({
+        isOpened: true,
+        projectItemToDisplay: projectItemDtoToDisplay,
+      });
+    },
+    [projectItems]
+  );
+
+  useEffect(() => {
+    if (!locationSearchParams.has('cameFromSearch') || !locationSearchParams.has('projectItemId')) {
+      return;
+    }
+
+    const cameFromSearch = Boolean(locationSearchParams.get('cameFromSearch'));
+    const projectItemId = locationSearchParams.get('projectItemId');
+
+    if (cameFromSearch && projectItemId !== undefined) {
+      onTriggerProjectItemOpen(toNumber(projectItemId));
+    }
+  }, [locationSearchParams, onTriggerProjectItemOpen]);
 
   const onDisplayProjectItemModalCancel = (): void => {
     setDisplayDrawerConfig((prevState) => ({
       ...prevState,
       isOpened: false,
     }));
+    setLocationSearchParams({});
   };
 
   const onCreateChildItem = (parentItemId: number): void => {

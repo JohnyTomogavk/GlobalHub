@@ -6,7 +6,6 @@ import {
   DollarOutlined,
   DownOutlined,
   GlobalOutlined,
-  PieChartOutlined,
   ProjectOutlined,
   ReadOutlined,
 } from '@ant-design/icons';
@@ -204,6 +203,7 @@ export const SideMenu = observer((): JSX.Element => {
     },
     {
       className: styles.sideMenuItem,
+      selectable: false,
       title: getTopLevelItemTitle(t('SIDE_MENU.PROJECTS'), onProjectCreateClick),
       key: getClientItemUrl(ResourceNameConstants.PROJECT_RESOURCE_NAME),
       icon: <ProjectOutlined />,
@@ -212,15 +212,6 @@ export const SideMenu = observer((): JSX.Element => {
       children: isProjectsLoaded
         ? projectsStore.sideMenuProjectItems
         : [getLoaderNode(ResourceNameConstants.PROJECT_RESOURCE_NAME)],
-      entityType: EntityType.Unknown,
-    },
-    {
-      title: getTopLevelItemTitle(t('SIDE_MENU.REPORTS')),
-      key: getClientItemUrl(ResourceNameConstants.REPORT_RESOURCE_NAME),
-      icon: <PieChartOutlined />,
-      isLeaf: false,
-      children: [],
-      pageId: ResourceNameConstants.REPORT_RESOURCE_NAME,
       entityType: EntityType.Unknown,
     },
   ];
