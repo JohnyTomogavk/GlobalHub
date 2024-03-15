@@ -45,7 +45,7 @@ export const renderBudgetItemSearchResult = (model: BudgetItemSearchItem): React
     pathname: clientUrl,
     search: createSearchParams({
       cameFromSearch: true.toString(),
-      projectItemId: model.budgetItemId.toString(),
+      budgetItemId: model.budgetItemId.toString(),
     }).toString(),
   };
 

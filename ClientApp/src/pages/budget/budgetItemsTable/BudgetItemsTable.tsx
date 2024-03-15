@@ -44,6 +44,7 @@ import { BudgetItemDrawerConfig } from '../../../models/budgets/budgetItemDrawer
 import { AppTablePaginationConfig } from '../../../models/shared/tablePaginationConfig';
 import { TagColor } from '../../../enums/shared/tagColor';
 import { TagDto } from '../../../dto/budgetTags/tagDto';
+import { useSearchParams } from 'react-router-dom';
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -84,6 +85,7 @@ export const BudgetItemsTable = ({
 }: BudgetItemTableProps): JSX.Element => {
   const [budgetItemsTableEntries, setBudgetItemsTableEntries] = useState<BudgetItemTableEntry[]>([]);
   const [filtersForm] = useForm<BudgetItemsFiltersModel>();
+  const [searchParams, setSearchParams] = useSearchParams();
   const budgetItemsApi = useBudgetsItemsApi();
 
   const [budgetItemTableAggregationModel, setBudgetItemTableAggregationModel] =
@@ -143,17 +145,38 @@ export const BudgetItemsTable = ({
     }));
   };
 
-  const onBudgetItemEditButtonClick = (record: BudgetItemTableEntry): void => {
-    const drawerModel = mapBudgetItemTableEntryToDrawerModel(record);
-
+  const openBudgetItemEditDrawer = (model: BudgetItemDrawerModel): void => {
     setBudgetItemDrawerConfig((config) => ({
       ...config,
       title: 'Edit Budget Item',
       isDrawerOpened: true,
       isFormDisabled: false,
-      initFormValues: drawerModel,
+      initFormValues: model,
     }));
   };
+
+  const onBudgetItemEditButtonClick = (record: BudgetItemTableEntry): void => {
+    const drawerModel = mapBudgetItemTableEntryToDrawerModel(record);
+    openBudgetItemEditDrawer(drawerModel);
+  };
+
+  useEffect(() => {
+    if (!searchParams.has('cameFromSearch') || !searchParams.has('budgetItemId')) {
+      return;
+    }
+
+    const cameFromSearch = Boolean(searchParams.get('cameFromSearch'));
+    const budgetItemId = searchParams.get('budgetItemId');
+
+    if (cameFromSearch && budgetItemId !== undefined) {
+      const budgetItemEntry = budgetItemsTableEntries.filter((e) => e.key === toNumber(budgetItemId))[0];
+
+      if (!budgetItemEntry) return;
+
+      const drawerModel = mapBudgetItemTableEntryToDrawerModel(budgetItemEntry);
+      openBudgetItemEditDrawer(drawerModel);
+    }
+  }, [budgetItemsTableEntries, searchParams]);
 
   const onBudgetItemDeleteButtonClick = async (record: BudgetItemTableEntry): Promise<void> => {
     const { status } = await budgetItemsApi.delete(record.key);
@@ -330,6 +353,8 @@ export const BudgetItemsTable = ({
       isDrawerOpened: false,
       initFormValues: undefined,
     }));
+
+    setSearchParams({});
   };
 
   const onTagRemoved = (removedTagId: number): void => {
