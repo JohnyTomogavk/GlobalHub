@@ -38,63 +38,97 @@ public class SearchController : ControllerBase
         var foundDocsResponse = await this._elasticClient.MultiSearchAsync(selector: ms =>
         {
             ms.Search<ProjectSearchItem>(ProjectsSearchName, search =>
+            {
+                search.Highlight(h =>
+                    h.PreTags("<em><strong>")
+                        .PostTags("</strong></em>")
+                        .Fields(
+                            fh => fh.Field(f => f.Title),
+                            fh => fh.Field(f => f.Tags)));
+
                 search.Query(q =>
                     (q.Match(match =>
-                         match.Field(o => o.Title)
-                             .Query(searchString)
-                             .Fuzziness(Fuzziness.Auto))
+                         match.Field(o => o.Title).Query(searchString).Fuzziness(Fuzziness.Auto))
                      || q.Term(t => t.Tags, searchString))
-                    && +q.Term(t => t.UserId, userId)));
+                    && +q.Term(t => t.UserId, userId));
+
+                return search;
+            });
 
             ms.Search<ProjectItemSearchItem>(ProjectItemsSearchName, search =>
-                search.Query(q =>
-                    (q.Match(match =>
-                         match.Field(o => o.ProjectItemTitle)
-                             .Query(searchString)
-                             .Fuzziness(Fuzziness.Auto)
-                             .FuzzyTranspositions())
-                     || q.Term(t => t.Tags, searchString))
-                    && +q.Term(t => t.UserId, userId)));
+                search.Highlight(h =>
+                        h.PreTags("<em><strong>")
+                            .PostTags("</strong></em>")
+                            .Fields(
+                                fields => fields.Field(f => f.ProjectItemTitle),
+                                fields => fields.Field(f => f.Tags))
+                            .Order(HighlighterOrder.Score)
+                            .NumberOfFragments(1))
+                    .Query(q =>
+                        (q.Match(match =>
+                             match.Field(o => o.ProjectItemTitle)
+                                 .Query(searchString)
+                                 .Fuzziness(Fuzziness.Auto)
+                                 .FuzzyTranspositions())
+                         || q.Term(t => t.Tags, searchString))
+                        && +q.Term(t => t.UserId, userId)));
 
             ms.Search<BudgetSearchItem>(BudgetSearchName, search =>
-                search.Query(q =>
-                    q.Match(match =>
-                        match.Field(o => o.Title)
-                            .Query(searchString)
-                            .Fuzziness(Fuzziness.Auto)
-                            .FuzzyTranspositions())
-                    && +q.Term(t => t.UserId, userId)));
+                search.Highlight(h =>
+                        h.PreTags("<em><strong>")
+                            .PostTags("</strong></em>")
+                            .Fields(
+                                fields => fields.Field(f => f.Title)))
+                    .Query(q =>
+                        q.Match(match =>
+                            match.Field(o => o.Title)
+                                .Query(searchString)
+                                .Fuzziness(Fuzziness.Auto)
+                                .FuzzyTranspositions())
+                        && +q.Term(t => t.UserId, userId)));
 
             ms.Search<BudgetItemSearchItem>(BudgetItemsSearchName, search =>
-                search.Query(q =>
-                (
-                    (q.Match(match =>
-                         match.Field(o => o.BudgetItemTitle)
-                             .Fuzziness(Fuzziness.Auto)
-                             .FuzzyTranspositions()
-                             .Query(searchString))
-                     || q.Match(m =>
-                         m.Field(f => f.OperationCost)
-                             .Lenient()
-                             .Query(searchString))
-                     || q.Match(m =>
-                         m.Field(o => o.Tags)
-                             .MinimumShouldMatch(MinimumShouldMatch.Percentage(70))
-                             .Query(searchString)))
-                    && +q.Term(t => t.UserId, userId))));
+                search.Highlight(h =>
+                        h.PreTags("<em><strong>")
+                            .PostTags("</strong></em>")
+                            .Fields(
+                                fields => fields.Field(f => f.BudgetItemTitle),
+                                fields => fields.Field(f => f.OperationCost),
+                                fields => fields.Field(f => f.Tags)))
+                    .Query(q =>
+                    (
+                        (q.Match(match =>
+                             match.Field(o => o.BudgetItemTitle)
+                                 .Fuzziness(Fuzziness.Auto)
+                                 .FuzzyTranspositions()
+                                 .Query(searchString))
+                         || q.Match(m =>
+                             m.Field(f => f.OperationCost)
+                                 .Lenient()
+                                 .Query(searchString))
+                         || q.Match(m =>
+                             m.Field(o => o.Tags)
+                                 .Query(searchString)))
+                        && +q.Term(t => t.UserId, userId))));
 
             ms.Search<NoteSearchItem>(NoteSearchName, search =>
-                search.Query(q =>
-                    (q.Match(match =>
-                         match.Field(o => o.Title)
-                             .Fuzziness(Fuzziness.Auto)
-                             .FuzzyTranspositions()
-                             .Query(searchString))
-                     || q.Match(m =>
-                         m.Field(o => o.Content)
-                             .Fuzziness(Fuzziness.Auto)
-                             .Query(searchString).Analyzer("html_analyzer")))
-                    && +q.Term(t => t.UserId, userId)));
+                search.Highlight(h =>
+                        h.PreTags("<em><strong>")
+                            .PostTags("</strong></em>")
+                            .Fields(
+                                fields => fields.Field(f => f.Title),
+                                fields => fields.Field(f => f.Content)))
+                    .Query(q =>
+                        (q.Match(match =>
+                             match.Field(o => o.Title)
+                                 .Fuzziness(Fuzziness.Auto)
+                                 .FuzzyTranspositions()
+                                 .Query(searchString))
+                         || q.Match(m =>
+                             m.Field(o => o.Content)
+                                 .Fuzziness(Fuzziness.Auto)
+                                 .Query(searchString).Analyzer("html_analyzer")))
+                        && +q.Term(t => t.UserId, userId)));
 
             return ms;
         });
@@ -104,20 +138,42 @@ public class SearchController : ControllerBase
         return this.StatusCode(StatusCodes.Status200OK, searchItems);
     }
 
-    private SearchResultsDto GetSearchResults(
-        MultiSearchResponse multiSearchResponse)
+    private SearchResultsDto GetSearchResults(MultiSearchResponse multiSearchResponse)
     {
         var docs = new SearchResultsDto
         {
-            ProjectSearchItems = multiSearchResponse.GetResponse<ProjectSearchItem>(ProjectsSearchName).Documents,
+            ProjectSearchItems =
+                this.GetSearchResponse<ProjectSearchItem>(multiSearchResponse, ProjectsSearchName),
             ProjectItemSearchItems =
-                multiSearchResponse.GetResponse<ProjectItemSearchItem>(ProjectItemsSearchName).Documents,
-            BudgetSearchItems = multiSearchResponse.GetResponse<BudgetSearchItem>(BudgetSearchName).Documents,
+                this.GetSearchResponse<ProjectItemSearchItem>(multiSearchResponse, ProjectItemsSearchName),
+            BudgetSearchItems =
+                this.GetSearchResponse<BudgetSearchItem>(multiSearchResponse, BudgetSearchName),
             BudgetItemSearchItems =
-                multiSearchResponse.GetResponse<BudgetItemSearchItem>(BudgetItemsSearchName).Documents,
-            NoteSearchItems = multiSearchResponse.GetResponse<NoteSearchItem>(NoteSearchName).Documents,
+                this.GetSearchResponse<BudgetItemSearchItem>(multiSearchResponse, BudgetItemsSearchName),
+            NoteSearchItems =
+                this.GetSearchResponse<NoteSearchItem>(multiSearchResponse, NoteSearchName),
         };
 
         return docs;
+    }
+
+    private IEnumerable<TSearch> GetSearchResponse<TSearch>(
+        MultiSearchResponse multiSearchResponse,
+        string searchName)
+        where TSearch : BaseSearchItem
+    {
+        var documentsFound = multiSearchResponse.GetResponse<TSearch>(searchName).Documents;
+        var hits = multiSearchResponse.GetResponse<TSearch>(searchName).Hits;
+
+        var enrichedDocs = documentsFound.Select((document, index) =>
+        {
+            var documentHighlights = hits.ElementAt(index).Highlight;
+            var highlight = documentHighlights.Values.SingleOrDefault()?.FirstOrDefault();
+            document.Highlight = highlight;
+
+            return document;
+        }).ToList();
+
+        return enrichedDocs;
     }
 }

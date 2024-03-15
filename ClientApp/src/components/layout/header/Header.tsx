@@ -89,7 +89,7 @@ const AppHeader = (): JSX.Element => {
       }}
       className={styles.headerWrapper}
     >
-      <AutoComplete variant={'borderless'} className={styles.autocomplete} options={searchOptions}>
+      <AutoComplete className={styles.autocomplete} popupMatchSelectWidth={500} options={searchOptions}>
         <Input.Search
           loading={loading}
           value={value}
