@@ -118,6 +118,7 @@ public class SearchController : ControllerBase
                             .Fields(
                                 fields => fields.Field(f => f.Title),
                                 fields => fields.Field(f => f.Content)
+                                    .Order(HighlighterOrder.Score)
                                     .FragmentSize(25)))
                     .Query(q =>
                         (q.Match(match =>
@@ -127,6 +128,7 @@ public class SearchController : ControllerBase
                                  .Query(searchString))
                          || q.Match(m =>
                              m.Field(o => o.Content)
+                                 .Boost(1.5)
                                  .Fuzziness(Fuzziness.Auto)
                                  .Query(searchString)))
                         && +q.Term(t => t.UserId, userId)));
@@ -169,7 +171,7 @@ public class SearchController : ControllerBase
         var enrichedDocs = documentsFound.Select((document, index) =>
         {
             var documentHighlights = hits.ElementAt(index).Highlight;
-            var highlight = documentHighlights.Values.SingleOrDefault()?.FirstOrDefault();
+            var highlight = documentHighlights.Values.FirstOrDefault()?.FirstOrDefault();
             document.Highlight = highlight;
 
             return document;

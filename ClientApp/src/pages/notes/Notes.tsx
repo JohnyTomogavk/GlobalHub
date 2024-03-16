@@ -36,13 +36,57 @@ export const NotesComponent = observer((): JSX.Element => {
     token: { colorBgContainer },
   } = theme.useToken();
 
-
   const onNoteContentChange = async (data: OutputData, htmlData: string): Promise<void> => {
     if (!note) return;
 
     setLoading(true);
-    const plainText = convert(htmlData);
-    console.log(plainText);
+    const plainText = convert(htmlData, {
+      selectors: [
+        {
+          selector: '.tc-toolbox',
+          format: 'skip'
+        },
+        {
+          selector: 'br',
+          format: 'skip',
+        },
+        {
+          selector: 'select.rxpm-code__selector',
+          format: 'skip'
+        },
+        {
+          selector: 'h2',
+          options: {
+            uppercase: false
+          }
+        },
+        {
+          selector: 'h3',
+          options: {
+            uppercase: false
+          }
+        },
+        {
+          selector: 'h4',
+          options: {
+            uppercase: false
+          }
+        },
+        {
+          selector: 'h5',
+          options: {
+            uppercase: false
+          }
+        },
+        {
+          selector: 'h6',
+          options: {
+            uppercase: false
+          }
+        }
+      ],
+    });
+
     const { data: updatedNote } = await notesApi.updateContent(note.id, {
       content: JSON.stringify(data),
       plainTextContent: plainText,
