@@ -30,36 +30,56 @@ const AppHeader = (): JSX.Element => {
 
   const updateOptions = (searchResults: SearchResult): void => {
     const options = [
-      {
-        label: 'Projects',
-        options: searchResults.projectSearchItems.map((item) => ({
-          label: renderProjectSearchResult(item),
-        })),
-      },
-      {
-        label: 'Project Items',
-        options: searchResults.projectItemSearchItems.map((item) => ({
-          label: renderProjectItemSearchResult(item),
-        })),
-      },
-      {
-        label: 'Budgets',
-        options: searchResults.budgetSearchItems.map((item) => ({
-          label: renderBudgetSearchResult(item),
-        })),
-      },
-      {
-        label: 'Budget Items',
-        options: searchResults.budgetItemSearchItems.map((item) => ({
-          label: renderBudgetItemSearchResult(item),
-        })),
-      },
-      {
-        label: 'Notes',
-        options: searchResults.noteSearchItems.map((item) => ({
-          label: renderNoteSearchResult(item),
-        })),
-      },
+      ...(searchResults.projectSearchItems.length
+        ? [
+            {
+              label: 'Projects',
+              options: searchResults.projectSearchItems.map((item) => ({
+                label: renderProjectSearchResult(item),
+              })),
+            },
+          ]
+        : []),
+      ...(searchResults.projectItemSearchItems.length
+        ? [
+            {
+              label: 'Project Items',
+              options: searchResults.projectItemSearchItems.map((item) => ({
+                label: renderProjectItemSearchResult(item),
+              })),
+            },
+          ]
+        : []),
+      ...(searchResults.budgetSearchItems.length
+        ? [
+            {
+              label: 'Budgets',
+              options: searchResults.budgetSearchItems.map((item) => ({
+                label: renderBudgetSearchResult(item),
+              })),
+            },
+          ]
+        : []),
+      ...(searchResults.budgetItemSearchItems.length
+        ? [
+            {
+              label: 'Budget Items',
+              options: searchResults.budgetItemSearchItems.map((item) => ({
+                label: renderBudgetItemSearchResult(item),
+              })),
+            },
+          ]
+        : []),
+      ...(searchResults.noteSearchItems.length
+        ? [
+            {
+              label: 'Notes',
+              options: searchResults.noteSearchItems.map((item) => ({
+                label: renderNoteSearchResult(item),
+              })),
+            },
+          ]
+        : []),
     ];
 
     setSearchOptions(options);

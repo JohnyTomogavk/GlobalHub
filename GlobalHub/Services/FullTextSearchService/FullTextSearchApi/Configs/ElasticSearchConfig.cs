@@ -40,14 +40,6 @@ public static class ElasticSearchConfig
             .Map<BudgetItemSearchItem>(m => m.AutoMap()));
 
         await elasticClient.Indices.CreateAsync(typeof(NoteSearchItem).GetIndexName(), c => c
-            .Map<NoteSearchItem>(m => m.AutoMap())
-            .Settings(s => s.Analysis(a =>
-                a.Analyzers(analyzers => analyzers.Custom("html_analyzer", htmlAnalyzer =>
-                        htmlAnalyzer
-                            .Tokenizer("standard")
-                            .CharFilters("html_strip")
-                            .Filters("lowercase")))
-                    .CharFilters(cf => cf
-                        .HtmlStrip("html_strip", h => h)))));
+            .Map<NoteSearchItem>(m => m.AutoMap()));
     }
 }

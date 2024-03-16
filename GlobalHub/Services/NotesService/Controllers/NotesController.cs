@@ -100,7 +100,7 @@ public class NotesController : ControllerBase
         AuthorizeAccessToTheNote(note);
 
         note.RichTextContent = updateDto.Content;
-        note.HtmlContent = updateDto.HtmlContent;
+        note.PlainTextContent = updateDto.PlainTextContent;
         note.UpdatedDate = DateTime.Now;
 
         var updatedNote = _notesRepository.Update(note);

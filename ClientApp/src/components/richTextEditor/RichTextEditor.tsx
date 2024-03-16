@@ -9,7 +9,7 @@ import { isEqual } from 'lodash';
 import { NOTE_DEFAULT_EMPTY_BLOCK } from '../../constants/notesConstants';
 
 interface EditorParameters {
-  onChange: (data: OutputData) => Promise<void> | void;
+  onChange: (editorData: OutputData, editorHtmlData: string) => Promise<void> | void;
   data: OutputData;
 }
 
@@ -22,7 +22,7 @@ export const RichTextEditor = observer((props: EditorParameters): JSX.Element =>
     token: { colorText },
   } = theme.useToken();
 
-  const onEditorDataChange = async (data: OutputData): Promise<void> => {
+  const onEditorDataChange = async (data: OutputData, htmlData: HTMLElement): Promise<void> => {
     if (isEqual(data.blocks, props.data.blocks)) return;
 
     const dataToUpdate = {
@@ -30,7 +30,7 @@ export const RichTextEditor = observer((props: EditorParameters): JSX.Element =>
       blocks: data.blocks.length === 0 ? [JSON.parse(NOTE_DEFAULT_EMPTY_BLOCK)] : data.blocks,
     } as OutputData;
 
-    await props.onChange(dataToUpdate);
+    await props.onChange(dataToUpdate, htmlData.innerHTML);
   };
 
   useEffect(() => {
@@ -41,8 +41,9 @@ export const RichTextEditor = observer((props: EditorParameters): JSX.Element =>
       logLevel: 'ERROR' as LogLevels,
       onChange: async (api: API): Promise<void> => {
         const data = await api.saver.save();
+        const htmlData = api.ui.nodes.redactor;
 
-        await onEditorDataChange(data);
+        await onEditorDataChange(data, htmlData);
       },
     });
 
@@ -62,9 +63,5 @@ export const RichTextEditor = observer((props: EditorParameters): JSX.Element =>
     });
   }, [props.data]);
 
-  return (
-    <StyledEditorJsWrapper id={editorHolderId} $isDarkTheme={isDarkTheme} $textColor={colorText}>
-      <div id={editorHolderId}></div>
-    </StyledEditorJsWrapper>
-  );
+  return <StyledEditorJsWrapper id={editorHolderId} $isDarkTheme={isDarkTheme} $textColor={colorText} />;
 });

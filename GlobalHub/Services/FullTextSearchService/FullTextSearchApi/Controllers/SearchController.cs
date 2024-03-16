@@ -117,7 +117,8 @@ public class SearchController : ControllerBase
                             .PostTags("</strong></em>")
                             .Fields(
                                 fields => fields.Field(f => f.Title),
-                                fields => fields.Field(f => f.Content)))
+                                fields => fields.Field(f => f.Content)
+                                    .FragmentSize(25)))
                     .Query(q =>
                         (q.Match(match =>
                              match.Field(o => o.Title)
@@ -127,7 +128,7 @@ public class SearchController : ControllerBase
                          || q.Match(m =>
                              m.Field(o => o.Content)
                                  .Fuzziness(Fuzziness.Auto)
-                                 .Query(searchString).Analyzer("html_analyzer")))
+                                 .Query(searchString)))
                         && +q.Term(t => t.UserId, userId)));
 
             return ms;

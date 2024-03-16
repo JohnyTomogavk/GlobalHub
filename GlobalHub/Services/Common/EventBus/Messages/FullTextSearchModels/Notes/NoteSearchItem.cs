@@ -4,14 +4,13 @@
 [JsonDerivedType(typeof(UpdateNoteSearchItem))]
 public class NoteSearchItem : BaseSearchItem
 {
-    [Text] 
+    [Text]
     public string Title { get; set; }
 
     public string NoteId { get; set; }
 
     /// <summary>
-    /// Contains note's content in html format
+    /// Contains note's content in plain text format
     /// </summary>
-    [Text(Analyzer = "html_analyzer")]
     public string Content { get; set; }
 }

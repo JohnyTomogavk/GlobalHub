@@ -38,15 +38,15 @@ public class Note
     public string RichTextContent { get; set; } = NotesConstants.DefaultNoteContentValue;
 
     /// <summary>
-    /// Note's content in html format, used for indexing document in full-text index
+    /// Note's content in plain text format, used for indexing document in full-text index
     /// </summary>
-    public string HtmlContent { get; set; }
+    public string PlainTextContent { get; set; }
 
     public NoteSearchItem CreateSearchItem(string userId)
     {
         var noteSearchItem = new NoteSearchItem
         {
-            NoteId = this.Id, Title = this.Title, Content = this.HtmlContent, UserId = userId,
+            NoteId = this.Id, Title = this.Title, Content = this.PlainTextContent, UserId = userId,
         };
 
         return noteSearchItem;
@@ -56,7 +56,7 @@ public class Note
     {
         var noteSearchItem = new UpdateNoteSearchItem
         {
-            NoteId = this.Id, Title = this.Title, Content = this.HtmlContent, UserId = userId,
+            NoteId = this.Id, Title = this.Title, Content = this.PlainTextContent, UserId = userId,
         };
 
         return noteSearchItem;
