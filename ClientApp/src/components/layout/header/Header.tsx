@@ -4,7 +4,7 @@ import { AutoComplete, Input, InputRef, theme } from 'antd';
 import UserToolBar from '../userToolBar/UserToolBar';
 import styles from './Header.module.scss';
 import { useTranslation } from 'react-i18next';
-import { useDebounce, useEventListener, useEventTarget } from 'ahooks';
+import { useDebounce, useEventTarget, useKeyPress } from 'ahooks';
 import useSearchApi from '../../../hooks/api/useSearchApi';
 import { HttpStatusCode } from 'axios';
 import { SearchResult } from '../../../models/fullTextSearch/searchResult';
@@ -29,19 +29,9 @@ const AppHeader = (): JSX.Element => {
   const [searchOptions, setSearchOptions] = useState<DefaultOptionType[]>([]);
   const inputSearchRef = useRef<InputRef>(null);
 
-  useEventListener(
-    'keydown',
-    (event) => {
-      if (!event.altKey || event.code !== 'KeyK') {
-        return;
-      }
-
-      inputSearchRef?.current?.focus();
-    },
-    {
-      target: window,
-    }
-  );
+  useKeyPress('alt.k', () => {
+    inputSearchRef?.current?.focus();
+  });
 
   const updateOptions = (searchResults: SearchResult): void => {
     const options = [
