@@ -16,7 +16,6 @@ import { Loader } from '../../components/loader/Loader';
 import debounce from 'lodash/debounce';
 import { convert } from 'html-to-text';
 
-
 export const NotesComponent = observer((): JSX.Element => {
   const { notesStore, commonSideMenuStore, sideMenuItems } = SideMenuIndexStore;
 
@@ -44,7 +43,7 @@ export const NotesComponent = observer((): JSX.Element => {
       selectors: [
         {
           selector: '.tc-toolbox',
-          format: 'skip'
+          format: 'skip',
         },
         {
           selector: 'br',
@@ -52,38 +51,38 @@ export const NotesComponent = observer((): JSX.Element => {
         },
         {
           selector: 'select.rxpm-code__selector',
-          format: 'skip'
+          format: 'skip',
         },
         {
           selector: 'h2',
           options: {
-            uppercase: false
-          }
+            uppercase: false,
+          },
         },
         {
           selector: 'h3',
           options: {
-            uppercase: false
-          }
+            uppercase: false,
+          },
         },
         {
           selector: 'h4',
           options: {
-            uppercase: false
-          }
+            uppercase: false,
+          },
         },
         {
           selector: 'h5',
           options: {
-            uppercase: false
-          }
+            uppercase: false,
+          },
         },
         {
           selector: 'h6',
           options: {
-            uppercase: false
-          }
-        }
+            uppercase: false,
+          },
+        },
       ],
     });
 

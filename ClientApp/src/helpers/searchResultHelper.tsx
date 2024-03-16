@@ -7,7 +7,7 @@ import { ProjectItemSearchItem } from '../models/fullTextSearch/projectItemSearc
 import { BudgetSearchItem } from '../models/fullTextSearch/budgetSearchItem';
 import { BudgetItemSearchItem } from '../models/fullTextSearch/budgetItemSearchItem';
 import { NoteSearchItem } from '../models/fullTextSearch/noteSearchItem';
-import { Flex, Typography } from 'antd';
+import { Flex } from 'antd';
 
 export const renderProjectSearchResult = (model: ProjectSearchItem): React.ReactNode => {
   const clientUrl = getClientItemUrl(PROJECT_RESOURCE_NAME, model.projectId);
