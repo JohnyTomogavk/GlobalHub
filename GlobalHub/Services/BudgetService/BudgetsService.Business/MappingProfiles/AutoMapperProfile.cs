@@ -24,10 +24,7 @@ public class AutoMapperProfile : Profile
                 cfg => cfg.MapFrom(src => src.BudgetTitle))
             .ForMember(
                 dst => dst.UserId,
-                cfg => cfg.MapFrom(src => src.CreatedBy))
-            .ForMember(
-                dst => dst.EntityType,
-                cfg => cfg.MapFrom(dst => EEntityType.Budget));
+                cfg => cfg.MapFrom(src => src.CreatedBy));
 
         this.CreateMap<Budget, UpdateBudgetSearchItem>().IncludeBase<Budget, BudgetSearchItem>();
 
@@ -50,10 +47,7 @@ public class AutoMapperProfile : Profile
                     cfg.MapFrom(src => src.BudgetItemTags.Select(itemTag => itemTag.Tag.Label)))
             .ForMember(
                 dst => dst.UserId,
-                cfg => cfg.MapFrom(src => src.CreatedBy))
-            .ForMember(
-                dst => dst.EntityType,
-                cfg => cfg.MapFrom(dst => EEntityType.BudgetItem));
+                cfg => cfg.MapFrom(src => src.CreatedBy));
 
         this.CreateMap<BudgetItem, UpdateBudgetItemSearchItem>().IncludeBase<BudgetItem, BudgetItemSearchItem>();
     }

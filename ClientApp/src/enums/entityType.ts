@@ -1,6 +1,8 @@
 export enum EntityType {
   Unknown = 0,
-  Note = 1,
+  Project = 1,
+  ProjectItem,
   Budget,
-  Project,
+  BudgetItem,
+  Note,
 }

@@ -9,6 +9,7 @@ export const NOTIFICATIONS_API_SUFFIX = 'notifications-api';
 export const PROJECTS_API_SUFFIX = 'projects-api';
 export const PROJECTS_ODATA_API_SUFFIX = 'projects-api/odata';
 export const IDENTITY_API_SUFFIX = 'identity-api';
+export const SEARCH_API_SUFFIX = 'search-api';
 
 // Constants related to notes
 export const CREATE_NOTE = '/Notes/CreateNote';
@@ -67,3 +68,6 @@ export const DELETE_PROJECT_TAG = '/Tags/Delete';
 
 // Constants related to notifications
 export const GET_USER_NOTIFICATIONS = '/Notifications/GetUserNotifications';
+
+// Full-Text Search API
+export const GET_SEARCH = '/Search/Search';

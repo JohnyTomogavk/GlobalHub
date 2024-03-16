@@ -158,6 +158,27 @@
           "GlobalHub.NotificationsAPI"
         ]
       }
+    },
+    {
+      "UpstreamPathTemplate": "/search-api/{path}",
+      "DownstreamPathTemplate": "/api/v1/{path}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5218
+        }
+      ],
+      "UpstreamHttpMethod": [
+        "GET",
+        "OPTIONS"
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [
+          "GlobalHub.FullTextSearchAPI"
+        ]
+      }
     }
   ],
   "GlobalConfiguration": {

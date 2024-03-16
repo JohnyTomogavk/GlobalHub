@@ -29,7 +29,6 @@ import { BudgetItemsTable } from './budgetItemsTable/BudgetItemsTable';
 import { ExpensesDistributionByDaysChart } from './analyticCharts/ExpensesDistributionByDaysChart';
 import { TagLimitsStateBulletChart } from './analyticCharts/TagLimitsStateBulletChart';
 import { ExpensesByTagsChart } from './analyticCharts/ExpensesByTagsChart';
-import { BUDGET_LIST_ROUTE } from '../../constants/routingConstants';
 import { HttpStatusCode } from 'axios';
 import { observer } from 'mobx-react-lite';
 import SideMenuIndexStore from '../../store/sideMenu/sideMenuIndexStore';
@@ -314,7 +313,7 @@ export const BudgetComponent = observer((): JSX.Element => {
           const { status } = await budgetsApi.delete(parsedId);
 
           if (status === HttpStatusCode.Ok) {
-            navigate(`/${BUDGET_LIST_ROUTE}`);
+            navigate('/');
             budgetStore.removeBudget(parsedId);
           }
         }}

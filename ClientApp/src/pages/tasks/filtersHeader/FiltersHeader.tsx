@@ -78,11 +78,11 @@ export const FiltersHeader = ({
   };
 
   return (
-    <Row className={styles.headerBlock}>
+    <Row className={styles.headerBlock} justify={'end'}>
       <Col span={6}>
         <Input value={searchItemsInputValue} onChange={onSearchFilterUpdate} allowClear placeholder={'Search items'} />
       </Col>
-      <Col flex={'auto'} className={styles.controlGroup}>
+      <Col flex={'auto'} offset={1} className={styles.controlGroup}>
         {selectionInfo ? (
           <Button.Group size={'middle'}>
             <Button icon={<CloseOutlined />} onClick={onSelectionCancel}>
@@ -94,7 +94,7 @@ export const FiltersHeader = ({
           <></>
         )}
       </Col>
-      <Col offset={7}>
+      <Col>
         <Popover
           autoAdjustOverflow={true}
           arrow={false}

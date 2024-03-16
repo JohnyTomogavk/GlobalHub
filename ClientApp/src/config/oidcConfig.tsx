@@ -14,7 +14,7 @@ export const oidcConfig: AuthProviderProps = {
   response_type: 'code',
   scope:
     'GlobalHub.BudgetsAPI GlobalHub.NotesAPI GlobalHub.ProjectsAPI GlobalHub.NotificationsAPI' +
-    ' GlobalHub.API_Gateway openid profile',
+    ' GlobalHub.FullTextSearchAPI GlobalHub.API_Gateway openid profile',
   automaticSilentRenew: true,
   userStore: new WebStorageStateStore({ store: window.localStorage }),
 };

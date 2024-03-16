@@ -1,15 +1,16 @@
 ﻿namespace Common.EventBus.Messages.FullTextSearchModels.Notes;
 
 [ElasticsearchType(IdProperty = nameof(NoteId))]
+[JsonDerivedType(typeof(UpdateNoteSearchItem))]
 public class NoteSearchItem : BaseSearchItem
 {
+    [Text]
     public string Title { get; set; }
 
     public string NoteId { get; set; }
 
     /// <summary>
-    /// Contains note's content in html format
+    /// Contains note's content in plain text format
     /// </summary>
-    [Text(Analyzer = "html_stripper", Name = nameof(Content))]
     public string Content { get; set; }
 }

@@ -14,7 +14,7 @@ import useBreadcrumbs from '../../hooks/useBreadcrumbs';
 import useNotesAPI from '../../hooks/api/useNotesApi';
 import { Loader } from '../../components/loader/Loader';
 import debounce from 'lodash/debounce';
-import edjsHTML from 'editorjs-html';
+import { convert } from 'html-to-text';
 
 export const NotesComponent = observer((): JSX.Element => {
   const { notesStore, commonSideMenuStore, sideMenuItems } = SideMenuIndexStore;
@@ -35,22 +35,60 @@ export const NotesComponent = observer((): JSX.Element => {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const getHtmlContentFromEditorJsOutput = (data: OutputData): string => {
-    const edjsParser = edjsHTML();
-    const htmlContent = edjsParser.parse(data);
-    const content = htmlContent.filter((t) => !t.toString().startsWith('Error'));
-
-    return content.toString();
-  };
-
-  const onNoteContentChange = async (data: OutputData): Promise<void> => {
+  const onNoteContentChange = async (data: OutputData, htmlData: string): Promise<void> => {
     if (!note) return;
 
     setLoading(true);
+    const plainText = convert(htmlData, {
+      selectors: [
+        {
+          selector: '.tc-toolbox',
+          format: 'skip',
+        },
+        {
+          selector: 'br',
+          format: 'skip',
+        },
+        {
+          selector: 'select.rxpm-code__selector',
+          format: 'skip',
+        },
+        {
+          selector: 'h2',
+          options: {
+            uppercase: false,
+          },
+        },
+        {
+          selector: 'h3',
+          options: {
+            uppercase: false,
+          },
+        },
+        {
+          selector: 'h4',
+          options: {
+            uppercase: false,
+          },
+        },
+        {
+          selector: 'h5',
+          options: {
+            uppercase: false,
+          },
+        },
+        {
+          selector: 'h6',
+          options: {
+            uppercase: false,
+          },
+        },
+      ],
+    });
 
     const { data: updatedNote } = await notesApi.updateContent(note.id, {
       content: JSON.stringify(data),
-      htmlContent: getHtmlContentFromEditorJsOutput(data),
+      plainTextContent: plainText,
     });
 
     if (noteRef.current?.id === note.id) {
