@@ -15,6 +15,7 @@ import useNotesAPI from '../../hooks/api/useNotesApi';
 import { Loader } from '../../components/loader/Loader';
 import debounce from 'lodash/debounce';
 import { convert } from 'html-to-text';
+import { useKeyPress } from 'ahooks';
 
 export const NotesComponent = observer((): JSX.Element => {
   const { notesStore, commonSideMenuStore, sideMenuItems } = SideMenuIndexStore;
@@ -30,6 +31,10 @@ export const NotesComponent = observer((): JSX.Element => {
   const [isEditorLoading, setIsEditorLoading] = useState<boolean>(true);
   const noteRef = useRef(note);
   const notesApi = useNotesAPI();
+
+  useKeyPress('tab', (event) => {
+    event.preventDefault();
+  });
 
   const {
     token: { colorBgContainer },
