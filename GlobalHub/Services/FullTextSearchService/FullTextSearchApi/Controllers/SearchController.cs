@@ -128,7 +128,6 @@ public class SearchController : ControllerBase
                                  .Query(searchString))
                          || q.Match(m =>
                              m.Field(o => o.Content)
-                                 .Boost(1.5)
                                  .Fuzziness(Fuzziness.Auto)
                                  .Query(searchString)))
                         && +q.Term(t => t.UserId, userId)));

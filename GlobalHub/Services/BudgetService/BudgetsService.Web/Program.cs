@@ -29,6 +29,7 @@ builder.Services.AddAuthentication("Bearer")
     {
         options.Authority = Environment.GetEnvironmentVariable("IDENTITY_SERVICE_URL");
         options.Audience = "BudgetsAPI";
+        options.RequireHttpsMetadata = false;
 
         if (builder.Environment.IsDockerComposeEnvironment())
         {

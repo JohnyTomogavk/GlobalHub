@@ -29,6 +29,7 @@ global using IdentityService.Presentation.Pages.Account.Base;
 global using Microsoft.AspNetCore.Authentication;
 global using Microsoft.AspNetCore.Authentication.Google;
 global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.CookiePolicy;
 global using Microsoft.AspNetCore.HttpOverrides;
 global using Microsoft.AspNetCore.Identity;
 global using Microsoft.AspNetCore.Mvc;

@@ -8,10 +8,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		stylecop.json = stylecop.json
-		.env = .env
 		.dockerignore = .dockerignore
-		docker-compose.yml = docker-compose.yml
+		.env.template = .env.template
 	EndProjectSection
+EndProject
+	Project("{A5F6A63A-3E48-47BF-B9C5-14B27FBCE313}") = "docker-compose", "docker-compose.dcproj", "{9C31F76D-0249-4004-9B65-D5FA07CF95F8}"
+	EndProject
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{8A8803A9-8818-4CAB-8761-F8750F49423D}"
 EndProject

@@ -37,6 +37,7 @@ builder.Services.AddAuthentication("Bearer")
     {
         options.Authority = Environment.GetEnvironmentVariable("IDENTITY_SERVICE_URL");
         options.Audience = "ProjectsAPI";
+        options.RequireHttpsMetadata = false;
 
         if (builder.Environment.IsDockerComposeEnvironment())
         {
@@ -44,7 +45,7 @@ builder.Services.AddAuthentication("Bearer")
             options.BackchannelHttpHandler = new HttpClientHandler
             {
                 ServerCertificateCustomValidationCallback =
-                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
             };
         }
     });
@@ -83,7 +84,9 @@ builder.Services.RegisterInfrastructureServices();
 builder.Services.RegisterRequestHandlers();
 
 var connectionString = Environment.GetEnvironmentVariable(ConfigConstants.ProjectsDbConnectionStringEnvKey);
+ArgumentException.ThrowIfNullOrEmpty(connectionString);
 
+builder.Services.AddHangfireServer();
 builder.Services.AddHangfire(configuration =>
 {
     configuration.UseSqlServerStorage(connectionString)
@@ -115,7 +118,6 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseSerilogRequestLogging();
 
 app.UseHangfireDashboard();
-app.UseHangfireServer();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsDockerComposeEnvironment())
 {
@@ -125,6 +127,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsDockerComposeEnvironmen
     app.UseODataRouteDebug();
 }
 
+await MigrateDatabase(app.Services);
+
 app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
     .WithExposedHeaders("X-Correlation-id"));
 
@@ -133,3 +137,15 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+async Task MigrateDatabase(IServiceProvider appServices)
+{
+    using var serviceScope = appServices.CreateScope();
+    var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    if (dbContext.Database.GetPendingMigrations().Any())
+    {
+        await dbContext.Database.MigrateAsync();
+        Log.Logger.Warning("Projects database has been migrated");
+    }
+}

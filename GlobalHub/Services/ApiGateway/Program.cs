@@ -20,21 +20,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.Authority = Environment.GetEnvironmentVariable("IDENTITY_SERVICE_URL");
         options.Audience = "API_Gateway";
-
-        if (builder.Environment.IsDockerComposeEnvironment())
-        {
-            options.TokenValidationParameters.ValidateIssuer = false;
-            options.BackchannelHttpHandler = new HttpClientHandler
-            {
-                ServerCertificateCustomValidationCallback =
-                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-            };
-        }
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters.ValidateIssuer = false;
     });
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsDockerComposeEnvironment())
 {
     IdentityModelEventSource.ShowPII = true;
     app.UseSwagger();

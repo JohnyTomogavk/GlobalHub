@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <DockerfileContext>..\..</DockerfileContext>
     </PropertyGroup>
 
     <ItemGroup>
@@ -26,6 +27,9 @@
         <Link>.dockerignore</Link>
       </Content>
       <Content Update="appsettings.Development.json">
+        <DependentUpon>appsettings.json</DependentUpon>
+      </Content>
+      <Content Update="appsettings.DOCKER_COMPOSE_DEMO.json">
         <DependentUpon>appsettings.json</DependentUpon>
       </Content>
     </ItemGroup>
