@@ -13,7 +13,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "budget-service",
+          "Host": "budgets-service",
           "Port": 80
         }
       ],
@@ -37,7 +37,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "note-service",
+          "Host": "notes-service",
           "Port": 80
         }
       ],
@@ -57,7 +57,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "projects-api",
+          "Host": "projects-service",
           "Port": 80
         }
       ],
@@ -81,7 +81,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "projects-api",
+          "Host": "projects-service",
           "Port": 80
         }
       ],
@@ -107,10 +107,77 @@
         }
       ],
       "UpstreamHeaderTransform": {
-        "X-Forwarded-Host": "{BaseUrl}",
         "X-Forwarded-For": "{RemoteIpAddress}",
+        "X-Forwarded-Host": "{BaseUrl}",
         "X-Forwarded-Path": "/identity-api",
-        "X-Forwarded-Proto": "https"
+        "X-Forwarded-Proto": "http"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/notifications-api/hubs/{path}",
+      "DownstreamPathTemplate": "/{path}",
+      "DownstreamScheme": "ws",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "notifications-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "OPTIONS",
+        "CONNECT"
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [
+          "GlobalHub.NotificationsAPI"
+        ]
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/notifications-api/{path}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "OPTIONS"
+      ],
+      "DownstreamPathTemplate": "/api/v1/{path}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "notifications-service",
+          "Port": 80
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [
+          "GlobalHub.NotificationsAPI"
+        ]
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/search-api/{path}",
+      "DownstreamPathTemplate": "/api/v1/{path}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "full-text-search-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamHttpMethod": [
+        "GET",
+        "OPTIONS"
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [
+          "GlobalHub.FullTextSearchAPI"
+        ]
       }
     }
   ],

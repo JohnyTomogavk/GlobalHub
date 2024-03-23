@@ -1,8 +1,11 @@
 ﻿FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS build
 WORKDIR /app
 
-COPY NotesService/ ./NotesService
-COPY Common/ ./Common
+COPY Directory.Build.props .
+COPY stylecop.json .
+
+COPY Services/NotesService/ ./NotesService
+COPY Services/Common/ ./Common
 RUN dotnet build -c Release NotesService/NotesService.csproj
 
 FROM build as publish

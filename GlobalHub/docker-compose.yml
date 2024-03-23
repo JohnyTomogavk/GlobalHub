@@ -1,141 +1,127 @@
 ﻿version: "3.8"
-name: "global-hub-demo"
+name: "gh-demo"
 
 services:
   budgets-db:
-    container_name: budgets-db
+    container_name: dc-budgets-db
     image: postgres:16
-    volumes:
-      - budget-storage-volume:/var/lib/postgresql/data
-    environment:
-      - "POSTGRES_PASSWORD=Qwerty12345"
-    networks:
-      global-hub-net:
 
   notes-db:
-    container_name: notes-db
+    container_name: dc-notes-db
     image: mongo:7
-    volumes:
-      - notes-storage-volume:/data/db
-    networks:
-      global-hub-net:
+
+  notifications-db:
+    container_name: dc-notifications-db
+    image: mongo:7
 
   identity-db:
-    container_name: identity-db
+    container_name: dc-identity-db
     image: mcr.microsoft.com/mssql/server:2022-latest
-    environment:
-      - "MSSQL_SA_PASSWORD=Bamboozled_123456"
-      - "ACCEPT_EULA=Y"
-    volumes:
-      - identity-storage-volume:/var/opt/mssql
     healthcheck:
       test: /opt/mssql-tools/bin/sqlcmd -S localhost -U "sa" -P "$$MSSQL_SA_PASSWORD" -Q "Select 1"
       interval: 3s
       timeout: 3s
       retries: 10
-      start_period: 5s
-    networks:
-      global-hub-net:
+      start_period: 15s
+
+  projects-db:
+    container_name: dc-projects-db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U "sa" -P "$$MSSQL_SA_PASSWORD" -Q "Select 1"
+      interval: 3s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+
+  event-bus:
+    container_name: dc-event-bus
+    image: rabbitmq:3.12.13-management
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 3s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+
+  elasticsearch:
+    container_name: dc-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - xpack.security.enabled=false
+    image: elasticsearch:8.12.2
+    healthcheck:
+      test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:9200/
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 15s
 
   identity-service:
-    container_name: identity-service
+    container_name: dc-identity-service
     build:
-      context: ./Services
-      dockerfile: ./IdentityService/IdentityService.Presentation/Dockerfile
-    image: compose-identity-service
-    environment:
-      - "ASPNETCORE_ENVIRONMENT=DOCKER_COMPOSE_DEMO"
-      - "ASPNETCORE_URLS=https://+;http://+"
-      - "REINITIALIZE_IDENTITY_RESOURCES=true"
-      - "IDENTITY_DB_CONNECTION_STRING=Server=identity-db;User Id=sa;Password=Bamboozled_123456;Encrypt=False;"
-      - "OPERATIONAL_DB_CONNECTION_STRING=Server=identity-db;User Id=sa;Password=Bamboozled_123456;Encrypt=False;"
-      - "CONFIGURATION_DB_CONNECTION_STRING=Server=identity-db;User Id=sa;Password=Bamboozled_123456;Encrypt=False;"
-      - "IdentityServer__Clients__0__RedirectUris__0__RedirectUri=https://localhost:8080"
-      - "IdentityServer__Clients__0__PostLogoutRedirectUris__0__PostLogoutRedirectUri=https://localhost:8080/product"
-    ports:
-      - "5119:80"
-      - "7389:443"
-    volumes:
-      - "../Infrastructure/DevCertificates:/etc/https"
-    depends_on:
-      identity-db:
-        condition: service_healthy
-    networks:
-      global-hub-net:
+      context: .
+      dockerfile: ./Services/IdentityService/IdentityService.Presentation/Dockerfile
+    image: gh-identity-service:latest
 
   budgets-service:
-    container_name: budgets-service
+    container_name: dc-budgets-service
     build:
-      context: ./Services
-      dockerfile: ./BudgetService/BudgetsService.Web/Dockerfile
-    image: compose-budgets-service
-    ports:
-      - "5118:80"
-      - "7285:443"
-    environment:
-      - "ASPNETCORE_ENVIRONMENT=DOCKER_COMPOSE_DEMO"
-      - "ASPNETCORE_URLS=https://+;http://+"
-      - "BUDGETS_SERVICE_STORAGE_CONNECTION_STRING=User ID=postgres;Password=Qwerty12345;Host=budgets-db;Port=5432;Database=BudgetStorage"
-      - "IDENTITY_SERVICE_URL=https://identity-service:443"
-      - "LOG_STORAGE=localhost:9200"
-    volumes:
-      - "../Infrastructure/DevCertificates:/etc/https"
-    depends_on:
-      - budgets-db
-    networks:
-      global-hub-net:
+      context: .
+      dockerfile: ./Services/BudgetService/BudgetsService.Web/Dockerfile
+    image: gh-budgets-service:latest
 
   notes-service:
-    container_name: notes-service
+    container_name: dc-notes-service
     build:
-      context: ./Services
-      dockerfile: ./NotesService/Dockerfile
-    image: compose-notes-service
-    ports:
-      - "5143:80"
-      - "7198:443"
-    environment:
-      - "ASPNETCORE_ENVIRONMENT=DOCKER_COMPOSE_DEMO"
-      - "ASPNETCORE_URLS=https://+;http://+"
-      - "NOTES_SERVICE_STORAGE_CONNECTION_STRING=mongodb://notes-db:27017"
-      - "IDENTITY_SERVICE_URL=https://identity-service:443"
-      - "LOG_STORAGE=localhost:9200"
-    depends_on:
-      - notes-db
-    volumes:
-      - "../Infrastructure/DevCertificates:/etc/https"
-    networks:
-      global-hub-net:
+      context: .
+      dockerfile: ./Services/NotesService/Dockerfile
+    image: gh-notes-service:latest
+
+  projects-service:
+    container_name: dc-projects-service
+    build:
+      context: .
+      dockerfile: ./Services/ProjectService/ProjectService.Presentation/Dockerfile
+    image: gh-projects-service:latest
+  
+  notifications-service:
+    container_name: dc-notifications-service
+    build:
+      context: .
+      dockerfile: ./Services/NotificationService.API/Dockerfile
+    image: gh-notifications-service:latest
+
+  full-text-search-service:
+    container_name: dc-full-text-search-service
+    build:
+      context: .
+      dockerfile: ./Services/FullTextSearchService/FullTextSearchApi/Dockerfile
+    image: gh-full-text-search-service:latest
+
+  api-gateway-service:
+    container_name: dc-api-gateway-service
+    build:
+      context: .
+      dockerfile: ./Services/ApiGateway/Dockerfile
+    image: gh-api-gateway-service:latest
 
   global-hub-client:
-    container_name: global-hub-client
-    image: compose-dg-client
+    container_name: dc-global-hub-client
+    image: gh-client:latest
     build:
       context: ../ClientApp
       dockerfile: ../ClientApp/Dockerfile
-    environment:
-      - "NODE_ENV=production"
-      - "NOTES_SERVICE_BASE=https://localhost:7198/api/v1"
-      - "BUDGETS_SERVICE_BASE=https://localhost:7285/api/v1"
-      - "IDENTITY_SERVICE_BASE=https://localhost:7389"
-      - "CLIENT_ID=global-hub-local"
-      - "REDIRECT_URI=https://localhost:8080/notes"
-      - "POST_LOGOUT_REDIRECT_URI=https://localhost:8080"
-    ports:
-      - "8080:443"
-    volumes:
-      - "../Infrastructure/DevCertificates:/etc/https"
-    depends_on:
-      - budgets-service
-      - notes-service
-      - identity-service
-    networks:
-      global-hub-net:
 
 volumes:
   notes-storage-volume:
   budget-storage-volume:
   identity-storage-volume:
+  projects-storage-volume:
+  notifications-storage-volume:
+  elasticsearch-storage-volume:
+  event-bus-storage-volume:
 
 networks:
   global-hub-net:

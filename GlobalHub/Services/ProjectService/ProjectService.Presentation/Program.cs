@@ -37,6 +37,7 @@ builder.Services.AddAuthentication("Bearer")
     {
         options.Authority = Environment.GetEnvironmentVariable("IDENTITY_SERVICE_URL");
         options.Audience = "ProjectsAPI";
+        options.RequireHttpsMetadata = false;
 
         if (builder.Environment.IsDockerComposeEnvironment())
         {
@@ -44,7 +45,7 @@ builder.Services.AddAuthentication("Bearer")
             options.BackchannelHttpHandler = new HttpClientHandler
             {
                 ServerCertificateCustomValidationCallback =
-                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
             };
         }
     });
@@ -83,18 +84,22 @@ builder.Services.RegisterInfrastructureServices();
 builder.Services.RegisterRequestHandlers();
 
 var connectionString = Environment.GetEnvironmentVariable(ConfigConstants.ProjectsDbConnectionStringEnvKey);
+ArgumentException.ThrowIfNullOrEmpty(connectionString);
 
+builder.Services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
+{
+    optionsBuilder.UseSqlServer(connectionString);
+});
+
+await MigrateDatabase(builder.Services);
+
+builder.Services.AddHangfireServer();
 builder.Services.AddHangfire(configuration =>
 {
     configuration.UseSqlServerStorage(connectionString)
         .UseColouredConsoleLogProvider()
         .UseSimpleAssemblyNameTypeSerializer()
         .UseRecommendedSerializerSettings();
-});
-
-builder.Services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
-{
-    optionsBuilder.UseSqlServer(connectionString);
 });
 
 builder.Services.AddMassTransit(massTransitConfig =>
@@ -115,7 +120,6 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseSerilogRequestLogging();
 
 app.UseHangfireDashboard();
-app.UseHangfireServer();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsDockerComposeEnvironment())
 {
@@ -133,3 +137,15 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+async Task MigrateDatabase(IServiceCollection serviceCollection)
+{
+    var serviceProvider = serviceCollection.BuildServiceProvider();
+    var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
+
+    if (dbContext.Database.GetPendingMigrations().Any())
+    {
+        await dbContext.Database.MigrateAsync();
+        Log.Logger.Warning("Projects database has been migrated");
+    }
+}

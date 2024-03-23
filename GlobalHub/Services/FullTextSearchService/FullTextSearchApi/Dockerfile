@@ -6,6 +6,10 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
+COPY Directory.Build.props .
+COPY stylecop.json .
+
 COPY ["Services/FullTextSearchService/FullTextSearchApi/FullTextSearchApi.csproj", "Services/FullTextSearchService/FullTextSearchApi/"]
 RUN dotnet restore "Services/FullTextSearchService/FullTextSearchApi/FullTextSearchApi.csproj"
 COPY . .

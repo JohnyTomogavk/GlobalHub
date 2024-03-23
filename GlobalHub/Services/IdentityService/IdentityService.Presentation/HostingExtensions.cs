@@ -88,13 +88,19 @@ internal static class HostingExtensions
         {
             options.ForwardedHeaders = ForwardedHeaders.All;
 
-            if (!builder.Environment.IsDevelopment())
+            if (builder.Environment.IsProduction())
             {
                 var proxyIp = Environment.GetEnvironmentVariable("PROXY_IP");
                 ArgumentNullException.ThrowIfNull(proxyIp);
                 var parsedProxyIp = IPAddress.Parse(proxyIp);
 
                 options.KnownProxies.Add(parsedProxyIp);
+            }
+
+            if (builder.Environment.IsDockerComposeEnvironment())
+            {
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
             }
         });
 
@@ -118,8 +124,16 @@ internal static class HostingExtensions
         app.UseMiddleware<ExceptionHandlingMiddleware>();
         app.UseMiddleware<LogXForwardedHeadersMiddleware>();
         app.UseForwardedHeaders();
+
         app.UseMiddleware<UpdateRequestBasePathMiddleware>();
         app.UseSerilogRequestLogging();
+
+        app.UseCookiePolicy(new CookiePolicyOptions
+        {
+            HttpOnly = HttpOnlyPolicy.None,
+            MinimumSameSitePolicy = SameSiteMode.Lax,
+            Secure = CookieSecurePolicy.Always
+        });
 
         if (app.Environment.IsDevelopment())
         {

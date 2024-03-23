@@ -8,16 +8,19 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS build
 WORKDIR /src
 
-COPY ["IdentityService/IdentityService.Presentation/IdentityService.Presentation.csproj", "IdentityService/IdentityService.Presentation/"]
-COPY ["Common/Common.csproj", "Common/"]
-COPY ["IdentityService/IdentityService.Domain/IdentityService.Domain.csproj", "IdentityService/IdentityService.Domain/"]
-COPY ["IdentityService/IdentityService.Persistence/IdentityService.Persistence.csproj", "IdentityService/IdentityService.Persistence/"]
-COPY ["IdentityService/IdentityService.Infrastructure/IdentityService.Infrastructure.csproj", "IdentityService/IdentityService.Infrastructure/"]
+COPY Directory.Build.props .
+COPY stylecop.json .
 
-RUN dotnet restore "IdentityService/IdentityService.Presentation/IdentityService.Presentation.csproj"
+COPY ["Services/IdentityService/IdentityService.Presentation/IdentityService.Presentation.csproj", "Services/IdentityService/IdentityService.Presentation/"]
+COPY ["Services/Common/Common.csproj", "Services/Common/"]
+COPY ["Services/IdentityService/IdentityService.Domain/IdentityService.Domain.csproj", "Services/IdentityService/IdentityService.Domain/"]
+COPY ["Services/IdentityService/IdentityService.Persistence/IdentityService.Persistence.csproj", "Services/IdentityService/IdentityService.Persistence/"]
+COPY ["Services/IdentityService/IdentityService.Infrastructure/IdentityService.Infrastructure.csproj", "Services/IdentityService/IdentityService.Infrastructure/"]
+
+RUN dotnet restore "Services/IdentityService/IdentityService.Presentation/IdentityService.Presentation.csproj"
 COPY . .
 
-WORKDIR "/src/IdentityService/IdentityService.Presentation"
+WORKDIR "/src/Services/IdentityService/IdentityService.Presentation"
 RUN dotnet build "IdentityService.Presentation.csproj" -c Release -o /app/build
 
 FROM build AS publish

@@ -1,8 +1,11 @@
 ﻿FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS build
 WORKDIR /app
 
-COPY BudgetService/ ./BudgetService
-COPY Common/ ./Common
+COPY Directory.Build.props .
+COPY stylecop.json .
+
+COPY Services/BudgetService/ ./BudgetService
+COPY Services/Common/ ./Common
 RUN dotnet build -c Release BudgetService/BudgetService.sln
 
 FROM build as publish

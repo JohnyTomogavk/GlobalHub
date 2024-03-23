@@ -4,6 +4,8 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+    <UserSecretsId>3f41a7fa-61a2-48d6-b736-7e270ef512e2</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -41,9 +43,6 @@
       <Link>.dockerignore</Link>
     </Content>
     <Content Update="appsettings.Staging.json">
-      <DependentUpon>appsettings.json</DependentUpon>
-    </Content>
-    <Content Update="appsettings.DOCKER_COMPOSE_DEMO.json">
       <DependentUpon>appsettings.json</DependentUpon>
     </Content>
     <Content Update="Pages\Shared\_ExternalAuth.cshtml.cs">

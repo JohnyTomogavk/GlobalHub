@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Notes Service</RootNamespace>
     <Product>Notes Service</Product>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>.\..</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>

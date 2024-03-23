@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Header } from 'antd/es/layout/layout';
-import { AutoComplete, Input, theme } from 'antd';
+import { AutoComplete, Input, InputRef, theme } from 'antd';
 import UserToolBar from '../userToolBar/UserToolBar';
 import styles from './Header.module.scss';
 import { useTranslation } from 'react-i18next';
-import { useDebounce, useEventTarget } from 'ahooks';
+import { useDebounce, useEventTarget, useKeyPress } from 'ahooks';
 import useSearchApi from '../../../hooks/api/useSearchApi';
 import { HttpStatusCode } from 'axios';
 import { SearchResult } from '../../../models/fullTextSearch/searchResult';
@@ -27,6 +27,11 @@ const AppHeader = (): JSX.Element => {
   const debouncedSearchValue = useDebounce(value, { wait: 500 });
   const searchApi = useSearchApi();
   const [searchOptions, setSearchOptions] = useState<DefaultOptionType[]>([]);
+  const inputSearchRef = useRef<InputRef>(null);
+
+  useKeyPress('alt.k', () => {
+    inputSearchRef?.current?.focus();
+  });
 
   const updateOptions = (searchResults: SearchResult): void => {
     const options = [
@@ -109,8 +114,9 @@ const AppHeader = (): JSX.Element => {
       }}
       className={styles.headerWrapper}
     >
-      <AutoComplete className={styles.autocomplete} popupMatchSelectWidth={500} options={searchOptions}>
+      <AutoComplete className={styles.autocomplete} backfill={true} popupMatchSelectWidth={500} options={searchOptions}>
         <Input.Search
+          ref={inputSearchRef}
           loading={loading}
           value={value}
           onChange={onChange}
