@@ -17,7 +17,7 @@ services:
   teamcity-agent-1:
     image: global-hub-build-agent
     build:
-      dockerfile: ./BuildAgent/Dockerfile
+      dockerfile: ./BuildAgent/BuildAgent.Dockerfile
       context: .
     container_name: agent1
     privileged: true
@@ -34,7 +34,7 @@ services:
   teamcity-agent-2:
     image: global-hub-build-agent
     build:
-      dockerfile: ./BuildAgent/Dockerfile
+      dockerfile: ./BuildAgent/BuildAgent.Dockerfile
       context: .
     container_name: agent2
     privileged: true

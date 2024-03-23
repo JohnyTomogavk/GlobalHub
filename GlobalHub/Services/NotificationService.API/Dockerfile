@@ -5,6 +5,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
+
+COPY Directory.Build.props .
+COPY stylecop.json .
+
 COPY ["Services/NotificationService.API/NotificationService.API.csproj", "Services/NotificationService.API/"]
 COPY ["Services/Common/Common.csproj", "Services/Common/"]
 RUN dotnet restore "Services/NotificationService.API/NotificationService.API.csproj"

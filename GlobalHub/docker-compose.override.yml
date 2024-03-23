@@ -55,6 +55,11 @@ services:
       - ${RABBIT_MQ_COMMUNICATION_PORT}:5672
     volumes:
       - event-bus-storage-volume:/var/lib/rabbitmq
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
     networks:
       global-hub-net:
 

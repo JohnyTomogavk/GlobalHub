@@ -5,10 +5,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["ApiGateway/ApiGateway.csproj", "ApiGateway/"]
-RUN dotnet restore "ApiGateway/ApiGateway.csproj"
+
+COPY Directory.Build.props .
+COPY stylecop.json .
+
+COPY ["Services/ApiGateway/ApiGateway.csproj", "Services/ApiGateway/"]
+RUN dotnet restore "Services/ApiGateway/ApiGateway.csproj"
+
 COPY . .
-WORKDIR "/src/ApiGateway"
+
+WORKDIR "/src/Services/ApiGateway"
 RUN dotnet build "ApiGateway.csproj" -c Release -o /app/build
 
 FROM build AS publish

@@ -61,50 +61,50 @@ services:
   identity-service:
     container_name: dc-identity-service
     build:
-      context: ./Services
-      dockerfile: ./IdentityService/IdentityService.Presentation/Dockerfile
+      context: .
+      dockerfile: ./Services/IdentityService/IdentityService.Presentation/Dockerfile
     image: gh-identity-service:latest
 
   budgets-service:
     container_name: dc-budgets-service
     build:
-      context: ./Services
-      dockerfile: ./BudgetService/BudgetsService.Web/Dockerfile
+      context: .
+      dockerfile: ./Services/BudgetService/BudgetsService.Web/Dockerfile
     image: gh-budgets-service:latest
 
   notes-service:
     container_name: dc-notes-service
     build:
-      context: ./Services
-      dockerfile: ./NotesService/Dockerfile
+      context: .
+      dockerfile: ./Services/NotesService/Dockerfile
     image: gh-notes-service:latest
 
   projects-service:
     container_name: dc-projects-service
     build:
-      context: ./Services
-      dockerfile: ./ProjectService/ProjectService.Presentation/Dockerfile
+      context: .
+      dockerfile: ./Services/ProjectService/ProjectService.Presentation/Dockerfile
     image: gh-projects-service:latest
   
   notifications-service:
     container_name: dc-notifications-service
     build:
-      context: ./Services
-      dockerfile: ./NotificationService.API/Dockerfile
+      context: .
+      dockerfile: ./Services/NotificationService.API/Dockerfile
     image: gh-notifications-service:latest
 
   full-text-search-service:
     container_name: dc-full-text-search-service
     build:
-      context: ./Services
-      dockerfile: ./FullTextSearchService/FullTextSearchApi/Dockerfile
+      context: .
+      dockerfile: ./Services/FullTextSearchService/FullTextSearchApi/Dockerfile
     image: gh-full-text-search-service:latest
 
   api-gateway-service:
     container_name: dc-api-gateway-service
     build:
-      context: ./Services
-      dockerfile: ./ApiGateway/Dockerfile
+      context: .
+      dockerfile: ./Services/ApiGateway/Dockerfile
     image: gh-api-gateway-service:latest
 
   global-hub-client:

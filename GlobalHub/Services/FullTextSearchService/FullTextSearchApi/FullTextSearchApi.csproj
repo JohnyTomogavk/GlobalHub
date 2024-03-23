@@ -15,10 +15,6 @@
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.16" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.9"/>
         <PackageReference Include="NEST" Version="7.17.5" />
-        <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
     </ItemGroup>
 
@@ -36,10 +32,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Common\Common.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <AdditionalFiles Include="..\..\..\stylecop.json" Link="stylecop.json" />
     </ItemGroup>
 
 </Project>
