@@ -47,7 +47,7 @@
 <details>
 <summary>Running in demo mode using makefile</summary>
 
-**Before start ensure you have installed:**
+> **Before start ensure you have installed:**
 > 1. Docker
 > 2. GNU Make utility
 
