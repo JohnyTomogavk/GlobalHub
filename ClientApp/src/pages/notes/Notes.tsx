@@ -32,9 +32,15 @@ export const NotesComponent = observer((): JSX.Element => {
   const noteRef = useRef(note);
   const notesApi = useNotesAPI();
 
-  useKeyPress('tab', (event) => {
-    event.preventDefault();
-  });
+  useKeyPress(
+    'tab',
+    (event) => {
+      event.preventDefault();
+    },
+    {
+      exactMatch: true,
+    }
+  );
 
   const {
     token: { colorBgContainer },

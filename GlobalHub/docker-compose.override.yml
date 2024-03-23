@@ -54,12 +54,13 @@ services:
       - ${RABBIT_MQ_WEB_UI_PORT}:15672
       - ${RABBIT_MQ_COMMUNICATION_PORT}:5672
     volumes:
-      - event-bus-storage-volume:/var/lib/rabbitmq
+      - event-bus-storage-volume:/var/lib/rabbitmq/mnesia
     deploy:
       restart_policy:
         condition: on-failure
         delay: 5s
-        max_attempts: 3
+        max_attempts: 5
+        window: 10s
     networks:
       global-hub-net:
 

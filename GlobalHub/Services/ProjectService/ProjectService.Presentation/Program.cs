@@ -86,6 +86,13 @@ builder.Services.RegisterRequestHandlers();
 var connectionString = Environment.GetEnvironmentVariable(ConfigConstants.ProjectsDbConnectionStringEnvKey);
 ArgumentException.ThrowIfNullOrEmpty(connectionString);
 
+builder.Services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
+{
+    optionsBuilder.UseSqlServer(connectionString);
+});
+
+await MigrateDatabase(builder.Services);
+
 builder.Services.AddHangfireServer();
 builder.Services.AddHangfire(configuration =>
 {
@@ -93,11 +100,6 @@ builder.Services.AddHangfire(configuration =>
         .UseColouredConsoleLogProvider()
         .UseSimpleAssemblyNameTypeSerializer()
         .UseRecommendedSerializerSettings();
-});
-
-builder.Services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
-{
-    optionsBuilder.UseSqlServer(connectionString);
 });
 
 builder.Services.AddMassTransit(massTransitConfig =>
@@ -127,8 +129,6 @@ if (app.Environment.IsDevelopment() || app.Environment.IsDockerComposeEnvironmen
     app.UseODataRouteDebug();
 }
 
-await MigrateDatabase(app.Services);
-
 app.UseCors(corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
     .WithExposedHeaders("X-Correlation-id"));
 
@@ -138,10 +138,10 @@ app.MapControllers();
 
 app.Run();
 
-async Task MigrateDatabase(IServiceProvider appServices)
+async Task MigrateDatabase(IServiceCollection serviceCollection)
 {
-    using var serviceScope = appServices.CreateScope();
-    var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var serviceProvider = serviceCollection.BuildServiceProvider();
+    var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
 
     if (dbContext.Database.GetPendingMigrations().Any())
     {

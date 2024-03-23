@@ -36,7 +36,7 @@ services:
 
   event-bus:
     container_name: dc-event-bus
-    image: rabbitmq:3.10.7-management
+    image: rabbitmq:3.12.13-management
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 3s
