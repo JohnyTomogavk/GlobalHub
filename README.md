@@ -17,7 +17,7 @@
    * Table, ~~Timeline~~ and ~~Kanban~~ views for tasks displaying
    * Status transitions on tasks
    * Notifications on start and due dates
-4. Full-Text search across all your stuff
+4. :mag_right: Full-Text search across all your stuff
 
 ## :wrench: Architecture
 > The design based on microservice architecture with asynchronous communications\
@@ -44,18 +44,22 @@
 > For development purposes consider either running docker containers and configuring ports forwardings manually
 > or running services in IDE
 
-### Running in demo mode using makefile
-> [!Warning]
+<details>
+<summary>Running in demo mode using makefile</summary>
+>[!Warning]
 > **Before start ensure you have installed:**
 > 1. Docker
-> 2. Makefile utility 
+> GNU Make urility
+
 1. Clone the repository to your local folder
 2. In `GlobalHub/` directory create `.env` file using `.env.template` template, default values should be enough for app start.
 3. Run `make up` from  `GlobalHub/GlobalHub` directory
+</details>
 
-## Inspiration:
+## :bulb: Inspiration:
 1. Notion
 2. Jira
+3. Money Keeper
 
 ## :people_holding_hands: Contributing
 In case You are interested in contributing to the project, I would really appreciate it, if you could take care of some tasks from `GlobalHub` project.
