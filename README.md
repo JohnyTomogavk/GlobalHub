@@ -46,13 +46,13 @@
 
 <details>
   <summary>Running in demo mode using makefile</summary>
-  > Before start ensure you have installed:
-  > 1. Docker
-  > 2. GNU Make utility
+  Before start ensure you have installed:
+  1. Docker
+  2. GNU Make utility
 
-  1. Clone the repository to your local folder
-  2. In `GlobalHub/` directory create `.env` file using `.env.template` template, default values should be enough for app start.
-  3. Run `make up` from  `GlobalHub/GlobalHub` directory
+  3. Clone the repository to your local folder
+  4. In `GlobalHub/` directory create `.env` file using `.env.template` template, default values should be enough for app start.
+  5. Run `make up` from  `GlobalHub/GlobalHub` directory
 </details>
 
 ## :bulb: Inspiration
